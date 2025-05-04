@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package visionai.realtime;
+
+service DuplexService {
+  // 建立双向流通信
+  rpc StreamMessages (stream Message) returns (stream Message) {}
+  
+  // 发送单个消息并接收响应
+  rpc SendMessage (Message) returns (Message) {}
+  
+  // 注册客户端
+  rpc RegisterClient (ClientInfo) returns (RegistrationResponse) {}
+}
+
+// 消息结构
+message Message {
+  string id = 1;
+  string type = 2;
+  string action = 3;
+  bytes data = 4;
+  double timestamp = 5;
+  string session_id = 6;
+}
+
+// 客户端信息
+message ClientInfo {
+  string client_id = 1;
+  string client_type = 2;
+  map<string, string> capabilities = 3;
+}
+
+// 注册响应
+message RegistrationResponse {
+  string session_id = 1;
+  bool success = 2;
+  string message = 3;
+  string server_version = 4;
+} 
