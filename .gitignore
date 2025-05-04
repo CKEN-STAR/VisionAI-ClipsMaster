@@ -1,0 +1,195 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# 模型文件
+models/models/
+*.bin
+*.pth
+*.pt
+*.onnx
+*.model
+*.safetensors
+*.gguf
+
+# 数据和输出
+data/input/
+data/output/
+data/training/
+output/
+temp/
+final_videos/
+generated_srt/
+
+# 日志和缓存
+*.log
+logs/
+.cache/
+*.bak
+cache/
+
+# 环境配置
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+miniconda.exe
+
+# IDE相关
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# 系统文件
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# PyInstaller
+#  Usually these files are written by a python installer script
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+*.cover
+.hypothesis/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+local_settings.py
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# celery beat schedule file
+celerybeat-schedule
+
+# SageMath parsed files
+*.sage.py
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+
+# PyCharm
+.idea/
+
+# Model files and large data
+*.mp4
+*.mov
+*.avi
+*.mkv
+
+# Test files
+test*.srt
+
+# Database
+*.db
+*.sqlite3
+
+# Temp files
+*.tmp
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+
+# VSCode
+.vscode/
+
+# PyCharm
+.idea/
+
+# Model files and large data
+models/*.bin
+models/*.gguf
+models/*.pt
+models/*/quantized/*
+models/*/base/*
+*.mp4
+*.mov
+*.avi
+*.mkv
+
+# Logs
+logs/
+*.log
+
+# Test files
+test*.srt
+
+# Database
+*.db
+*.sqlite3
+
+# Temp files
+*.tmp
+.DS_Store 

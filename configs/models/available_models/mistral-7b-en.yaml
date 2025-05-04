@@ -1,0 +1,22 @@
+name: mistral-7b-en
+path: models\mistral\base
+type: pretrained
+language: en
+model_format: gguf
+quantization:
+  default: Q4_K_M
+  emergency: Q2_K
+  performance: Q5_K
+parameters:
+  max_length: 2048
+  temperature: 0.7
+  top_p: 0.9
+  repetition_penalty: 1.1
+memory_optimization:
+  chunk_size: 512
+  dynamic_unload: true
+  min_free_memory: 1024  # MB
+training:
+  enabled: true
+  batch_size: 4
+  gradient_accumulation: 2
