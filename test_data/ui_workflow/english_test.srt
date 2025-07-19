@@ -1,0 +1,19 @@
+1
+00:00:00,000 --> 00:00:03,000
+It was a beautiful sunny day
+
+2
+00:00:03,000 --> 00:00:06,000
+John was walking home from work
+
+3
+00:00:06,000 --> 00:00:09,000
+Suddenly he met his old friend
+
+4
+00:00:09,000 --> 00:00:12,000
+They had a wonderful conversation
+
+5
+00:00:12,000 --> 00:00:15,000
+It was truly a great encounter

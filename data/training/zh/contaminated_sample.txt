@@ -1,0 +1,7 @@
+这是一个带有英文污染的中文样本，用于测试检测机制。
+
+以下包含大量英文内容: This is English content designed to test the language contamination detection functionality. We need to ensure such files can be correctly identified. Files with mixed languages like this should be flagged as unqualified training samples.
+
+如果检测功能正常工作，这个文件应该被识别为受污染，因为相对于总内容长度，它包含超过5%的英文内容。
+
+更多中文内容接着出现以平衡文件内容，但英文内容仍应超过阈值。这能够帮助我们验证隔离检测机制是否有效。 

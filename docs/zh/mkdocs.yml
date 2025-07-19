@@ -1,0 +1,40 @@
+site_name: VisionAI-ClipsMaster 中文
+site_description: VisionAI-ClipsMaster短剧混剪AI项目文档
+site_author: VisionAI Team
+docs_dir: .
+site_dir: ../build/zh
+theme:
+  name: material
+  language: zh
+  features:
+    - navigation.instant
+    - navigation.tracking
+    - navigation.expand
+    - navigation.indexes
+    - search.highlight
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: 切换到深色模式
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: 切换到浅色模式
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - toc:
+      permalink: true
+nav:
+  - 首页: index.md
+  - 用户指南: USER_GUIDE.md
+  - API参考: API_REFERENCE.md
+  - 错误代码: ERROR_CODES.md

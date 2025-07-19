@@ -1,0 +1,118 @@
+{
+    "profiles": {
+        "high_end": {
+            "model_precision": "q4_k_m",
+            "batch_size": 8,
+            "context_length": 8192,
+            "preload_models": true,
+            "video_quality": "high",
+            "concurrent_tasks": 4
+        },
+        "mid_range": {
+            "model_precision": "q4_k_m",
+            "batch_size": 4,
+            "context_length": 4096,
+            "preload_models": true,
+            "video_quality": "medium",
+            "concurrent_tasks": 2
+        },
+        "low_end": {
+            "model_precision": "q3_k",
+            "batch_size": 2,
+            "context_length": 2048,
+            "preload_models": false,
+            "video_quality": "medium",
+            "concurrent_tasks": 1
+        },
+        "minimum": {
+            "model_precision": "q2_k",
+            "batch_size": 1,
+            "context_length": 1024,
+            "preload_models": false,
+            "video_quality": "low",
+            "concurrent_tasks": 1
+        }
+    },
+    "adaptive_modes": {
+        "performance": {
+            "memory_threshold": 0.9,
+            "cpu_threshold": 0.95,
+            "prioritize_speed": true,
+            "aggressive_gc": false,
+            "unload_unused_models_delay": 300
+        },
+        "balanced": {
+            "memory_threshold": 0.8,
+            "cpu_threshold": 0.85,
+            "prioritize_speed": false,
+            "aggressive_gc": false,
+            "unload_unused_models_delay": 120
+        },
+        "memory_saving": {
+            "memory_threshold": 0.7,
+            "cpu_threshold": 0.8,
+            "prioritize_speed": false,
+            "aggressive_gc": true,
+            "unload_unused_models_delay": 60
+        }
+    },
+    "model_specific_settings": {
+        "qwen2.5-7b-zh": {
+            "high_end": {
+                "context_length": 8192,
+                "batch_size": 8
+            },
+            "mid_range": {
+                "context_length": 4096,
+                "batch_size": 4
+            },
+            "low_end": {
+                "context_length": 2048,
+                "batch_size": 2,
+                "model_precision": "q3_k"
+            },
+            "minimum": {
+                "context_length": 1024,
+                "batch_size": 1,
+                "model_precision": "q2_k"
+            }
+        },
+        "mistral-7b-en": {
+            "high_end": {
+                "context_length": 8192,
+                "batch_size": 8
+            },
+            "mid_range": {
+                "context_length": 4096,
+                "batch_size": 4
+            },
+            "low_end": {
+                "context_length": 2048,
+                "batch_size": 2,
+                "model_precision": "q3_k"
+            },
+            "minimum": {
+                "context_length": 1024,
+                "batch_size": 1,
+                "model_precision": "q2_k"
+            }
+        }
+    },
+    "memory_optimization": {
+        "cache_limits": {
+            "high_end": 2048,
+            "mid_range": 1024,
+            "low_end": 512,
+            "minimum": 256
+        },
+        "gc_intervals": {
+            "high_end": 300,
+            "mid_range": 180,
+            "low_end": 120,
+            "minimum": 60
+        }
+    },
+    "monitor_interval": 10,
+    "enable_auto_adaptation": true,
+    "autodetect_hardware": true
+} 

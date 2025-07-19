@@ -1,0 +1,50 @@
+[
+  {
+    "scene_id": "scene001",
+    "text": "侦探王亮接到电话，被告知城郊别墅发生了一起离奇的密室谋杀案。",
+    "character": "王亮",
+    "duration": 5.5,
+    "tags": [
+      "开场"
+    ],
+    "meta": {
+      "structural_role": "hook",
+      "role_description": "悬念铺垫",
+      "connect_to": [
+        "scene002"
+      ]
+    }
+  },
+  {
+    "scene_id": "scene002",
+    "text": "王亮到达现场，发现死者是富商陈志明，房间内部的门窗全部锁死。",
+    "characters": [
+      "王亮",
+      "陈志明"
+    ],
+    "duration": 6.0,
+    "meta": {
+      "structural_role": "midpoint",
+      "role_description": "中点转折",
+      "connect_to": [
+        "scene003"
+      ],
+      "logic_chain": "伏笔A → 呼应B"
+    }
+  },
+  {
+    "scene_id": "scene003",
+    "text": "法医确认死亡时间是昨晚9点左右，死因是毒药，而非现场看到的外伤。",
+    "characters": [
+      "王亮",
+      "法医"
+    ],
+    "duration": 4.5,
+    "meta": {
+      "structural_role": "complication",
+      "role_description": "情节复杂化",
+      "connect_to": [],
+      "logic_chain": "伏笔A → 呼应B"
+    }
+  }
+]

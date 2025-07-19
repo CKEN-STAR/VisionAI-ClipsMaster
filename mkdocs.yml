@@ -1,0 +1,113 @@
+site_name: VisionAI-ClipsMaster 文档中心
+site_url: https://docs.clipsmaster.com
+repo_url: https://github.com/your-org/VisionAI-ClipsMaster
+repo_name: VisionAI-ClipsMaster
+
+nav:
+  - 主页: index.md
+  - 中文文档:
+      - v1.2:
+          - 用户手册: docs/zh_CN/USER_GUIDE.md
+          - API参考: docs/zh_CN/API_REFERENCE.md
+      - v1.1:
+          - 用户手册: docs/zh_CN/USER_GUIDE.md  # 可后续补充历史版本
+          - API参考: docs/zh_CN/API_REFERENCE.md
+  - English Docs:
+      - v1.2:
+          - User Guide: docs/en_US/USER_GUIDE.md
+          - API Reference: docs/en_US/API_REFERENCE.md
+      - v1.1:
+          - User Guide: docs/en_US/USER_GUIDE.md  # 可后续补充历史版本
+          - API Reference: docs/en_US/API_REFERENCE.md
+
+extra:
+  version:
+    provider: mike
+    default: latest
+  alternate:
+    - name: 中文
+      link: /zh_CN/
+      lang: zh
+    - name: English
+      link: /en_US/
+      lang: en
+  version_json: /configs/docs_version.json
+  analytics:
+    provider: google
+    property: UA-XXXXX-1
+
+theme:
+  name: material
+  language: zh
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - content.action.edit
+    - content.action.view
+    - toc.integrate
+    - navigation.instant
+    - navigation.tracking
+    - navigation.expand
+    - navigation.indexes
+    - navigation.footer
+    - navigation.path
+    - navigation.prune
+    - navigation.tabs.sticky
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  icon:
+    repo: fontawesome/brands/github
+  logo: assets/logo.png
+  favicon: assets/favicon.ico
+
+extra_css:
+  - docs/source/_static/version_selector.css
+
+extra_javascript:
+  - docs/source/_static/version_selector.js
+
+plugins:
+  - search
+  - i18n:
+      default_language: zh_CN
+      languages:
+        zh_CN: 中文
+        en_US: English
+  - mike:
+      version_selector: true
+      canonical_version: latest
+      css_dir: css
+      javascript_dir: js
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - codehilite
+  - footnotes
+  - meta
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.tabbed
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - toc:
+      permalink: true

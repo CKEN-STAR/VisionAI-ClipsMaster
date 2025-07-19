@@ -1,0 +1,34 @@
+# 模式实时更新器配置
+
+# 批处理设置
+batch_size: 50                   # 批处理大小
+update_threshold: 0.6            # 模式更新阈值（影响力分数）
+min_patterns_for_version: 10     # 创建新版本所需的最小模式数量
+
+# 版本管理
+auto_version: true               # 是否自动创建新版本
+version_interval: 86400          # 版本更新间隔（秒），默认24小时
+
+# 模式类型配置
+pattern_types:                   # 支持的模式类型
+  - opening                      # 开场模式
+  - climax                       # 高潮模式
+  - transition                   # 过渡模式
+  - conflict                     # 冲突模式
+  - resolution                   # 解决模式
+  - ending                       # 结束模式
+
+# 日志设置
+logging:
+  level: INFO                    # 日志级别
+  file: logs/pattern_updater.log # 日志文件
+
+# 性能设置
+performance:
+  max_threads: 4                 # 最大线程数
+  timeout: 300                   # 最大处理超时（秒）
+
+# 数据湖设置
+data_lake:
+  max_query_size: 1000           # 最大查询记录数
+  cache_ttl: 3600                # 缓存生存时间（秒） 

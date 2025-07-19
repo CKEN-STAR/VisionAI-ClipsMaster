@@ -1,0 +1,11 @@
+ORIGINAL: The teacher announces the test results to the class and most students passed.
+
+VIRAL: UNBELIEVABLE! What this teacher reveals next will SHOCK you! The students' reactions are ABSOLUTELY INCREDIBLE!
+
+METADATA:
+- Language: English
+- Genre: School
+- Difficulty: Easy
+- Quality Score: 0.87
+- Created: 2025-07-18
+- Source: High Quality Training

@@ -1,0 +1,57 @@
+narrative_patterns:
+  viral_elements:
+    - pattern: "conflict_resolution"
+      weight: 0.8
+      description: "Build tension and resolve conflicts"
+    - pattern: "emotional_arc"
+      weight: 0.9
+      description: "Create emotional resonance"
+    - pattern: "surprise_reveal"
+      weight: 0.7
+      description: "Unexpected plot twists"
+      
+  pacing:
+    optimal_clip_length:
+      min_seconds: 2
+      max_seconds: 15
+      default: 5
+    transition_rules:
+      - type: "match_on_action"
+        priority: 1
+      - type: "match_on_dialogue"
+        priority: 2
+        
+  language_specific:
+    en:
+      - cultural_references: "western_media"
+      - humor_style: "english_wordplay"
+      - dialogue_patterns: "casual_english"
+    zh:
+      - cultural_references: "chinese_culture"
+      - humor_style: "chinese_internet_slang"
+      - dialogue_patterns: "mandarin_natural"
+      
+  content_filters:
+    - type: "sensitive_topics"
+      action: "avoid"
+    - type: "copyright_content"
+      action: "remove"
+    - type: "platform_guidelines"
+      action: "comply"
+
+training_focus:
+  viral_patterns:
+    - source: "tiktok_trending"
+      weight: 0.4
+    - source: "youtube_shorts"
+      weight: 0.3
+    - source: "douyin_hot"
+      weight: 0.3
+      
+  adaptation_rules:
+    - rule: "preserve_key_moments"
+      priority: 1
+    - rule: "maintain_story_coherence"
+      priority: 2
+    - rule: "optimize_pacing"
+      priority: 3 

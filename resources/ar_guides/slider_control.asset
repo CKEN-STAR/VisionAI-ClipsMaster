@@ -1,0 +1,25 @@
+{
+  "type": "animation",
+  "name": "slider_control_guide",
+  "description": "Demonstrates how to use parameter sliders",
+  "visual": {
+    "type": "svg",
+    "content": "<svg width=\"300\" height=\"100\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"10\" y=\"45\" width=\"280\" height=\"10\" fill=\"#cccccc\" rx=\"5\" ry=\"5\"/><circle id=\"slider-knob\" cx=\"150\" cy=\"50\" r=\"15\" fill=\"#0088ff\"/><text x=\"150\" y=\"30\" font-family=\"Arial\" font-size=\"14\" fill=\"#0088ff\" text-anchor=\"middle\">拖动滑块调整参数</text><path id=\"arrow\" d=\"M100,50 L200,50\" stroke=\"#0088ff\" stroke-width=\"2\" marker-end=\"url(#arrowhead)\"/><defs><marker id=\"arrowhead\" markerWidth=\"10\" markerHeight=\"7\" refX=\"10\" refY=\"3.5\" orient=\"auto\"><polygon points=\"0 0, 10 3.5, 0 7\" fill=\"#0088ff\"/></marker></defs></svg>"
+  },
+  "animation": {
+    "type": "move",
+    "target": "#slider-knob",
+    "path": "M50,50 L250,50",
+    "duration": 3000,
+    "repeat": true,
+    "easing": "ease-in-out"
+  },
+  "position": {
+    "type": "relative",
+    "anchor": "bottom"
+  },
+  "interaction": {
+    "dismissible": true,
+    "next_step": "button_highlight"
+  }
+}

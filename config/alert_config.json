@@ -1,0 +1,58 @@
+{
+  "channels": {
+    "email": {
+      "enabled": true,
+      "smtp_server": "smtp.company.com",
+      "smtp_port": 587,
+      "username": "visionai-alerts@company.com",
+      "password": "YOUR_PASSWORD_HERE",
+      "from_email": "visionai-alerts@company.com",
+      "recipients": ["team-lead@company.com", "ai-support@company.com"]
+    },
+    "slack": {
+      "enabled": true,
+      "webhook_url": "https://hooks.slack.com/services/YOUR/WEBHOOK/HERE",
+      "channel": "#visionai-alerts"
+    },
+    "sms": {
+      "enabled": false,
+      "api_key": "YOUR_SMS_API_KEY",
+      "from": "+12345678900",
+      "to": ["+12345678901", "+12345678902"]
+    },
+    "call": {
+      "enabled": false,
+      "api_key": "YOUR_CALL_API_KEY",
+      "from": "+12345678900",
+      "to": ["+12345678901"]
+    }
+  },
+  "alert_cooldown_minutes": {
+    "critical": 15,
+    "warning": 60,
+    "info": 240
+  },
+  "thresholds": {
+    "performance": {
+      "response_time_increase": 15,
+      "memory_usage_increase": 20,
+      "cpu_usage_increase": 25
+    },
+    "quality": {
+      "test_coverage_decrease": 5,
+      "test_pass_rate_decrease": 2,
+      "max_allowed_failures": 3
+    },
+    "system": {
+      "max_error_rate": 1.5,
+      "max_disk_usage": 85
+    }
+  },
+  "notification_settings": {
+    "include_environment_info": true,
+    "include_system_stats": true,
+    "max_alert_details_length": 500,
+    "group_similar_alerts": true,
+    "timezone": "Asia/Shanghai"
+  }
+} 

@@ -1,0 +1,42 @@
+# 当前活动模型配置
+active_model:
+  language: "auto"  # auto/en/zh
+  current_model: null  # 当前加载的模型名称
+  last_switch_time: null  # 上次切换时间
+  memory_usage: 0  # 当前内存使用量(MB)
+
+# 运行时状态
+runtime_state:
+  is_model_loaded: false
+  is_switching: false
+  error_count: 0
+  last_error: null
+
+# 性能监控
+performance:
+  avg_inference_time: 0
+  peak_memory_usage: 0
+  total_switches: 0
+  successful_inferences: 0
+
+# 系统诊断
+diagnostics:
+  last_health_check: null
+  system_status: "ready"
+  resource_usage:
+    cpu_percent: 0
+    memory_percent: 0
+    disk_usage: 0
+
+# 切换策略
+switch_strategy:
+  auto_switch: true
+  min_confidence: 0.85
+  cooldown_period: 5  # 秒
+  preserve_context: true
+
+# 错误恢复
+error_recovery:
+  auto_recovery: true
+  max_consecutive_errors: 3
+  recovery_timeout: 30  # 秒

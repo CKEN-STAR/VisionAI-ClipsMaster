@@ -1,0 +1,1576 @@
+{
+  "unit_tests": {
+    "results": [
+      {
+        "file": "golden_metrics_validation_20250513_211052.json",
+        "path": "tests\\results\\golden_metrics_validation_20250513_211052.json",
+        "data": {
+          "passed": true,
+          "metrics": {
+            "system.memory_usage_percent": 0.0,
+            "application.process_rss_mb": 0.0,
+            "system.cpu_usage_sustained_percent": 0.0,
+            "cache_io.disk_usage_percent": 0.0,
+            "system.oom_kill_count": 0,
+            "user_experience.ui_frame_rate_fps": 30,
+            "cache_io.cache_hit_rate_percent": 75,
+            "system.swap_usage_mb": 50.0,
+            "system.page_fault_rate": 1000.0,
+            "system.cpu_usage_spike_percent": 75.0,
+            "application.startup_time_s": 15.0,
+            "application.model_load_time_s": 30.0,
+            "application.memory_leak_mb_per_hour": 5.0,
+            "application.process_growth_rate_mb_per_min": 0.5,
+            "inference.qwen_first_token_ms": 800.0,
+            "inference.qwen_per_token_ms": 50.0,
+            "inference.mistral_first_token_ms": 750.0,
+            "inference.mistral_per_token_ms": 45.0,
+            "inference.concurrent_requests": 1,
+            "user_experience.response_time_90th_ms": 500.0,
+            "user_experience.response_time_99th_ms": 900.0,
+            "user_experience.video_processing_ratio": 0.7,
+            "cache_io.disk_write_mb_per_min": 10.0,
+            "cache_io.disk_read_mb_per_s": 25.0
+          },
+          "raw": {
+            "passed": true,
+            "metrics": {
+              "system.memory_usage_percent": 0.0,
+              "application.process_rss_mb": 0.0,
+              "system.cpu_usage_sustained_percent": 0.0,
+              "cache_io.disk_usage_percent": 0.0,
+              "system.oom_kill_count": 0,
+              "user_experience.ui_frame_rate_fps": 30,
+              "cache_io.cache_hit_rate_percent": 75,
+              "system.swap_usage_mb": 50.0,
+              "system.page_fault_rate": 1000.0,
+              "system.cpu_usage_spike_percent": 75.0,
+              "application.startup_time_s": 15.0,
+              "application.model_load_time_s": 30.0,
+              "application.memory_leak_mb_per_hour": 5.0,
+              "application.process_growth_rate_mb_per_min": 0.5,
+              "inference.qwen_first_token_ms": 800.0,
+              "inference.qwen_per_token_ms": 50.0,
+              "inference.mistral_first_token_ms": 750.0,
+              "inference.mistral_per_token_ms": 45.0,
+              "inference.concurrent_requests": 1,
+              "user_experience.response_time_90th_ms": 500.0,
+              "user_experience.response_time_99th_ms": 900.0,
+              "user_experience.video_processing_ratio": 0.7,
+              "cache_io.disk_write_mb_per_min": 10.0,
+              "cache_io.disk_read_mb_per_s": 25.0
+            },
+            "validation": {
+              "system": {
+                "memory_usage_percent": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 80.0
+                  },
+                  "value": 0.0,
+                  "message": "指标 system.memory_usage_percent = 0.0 满足标准"
+                },
+                "swap_usage_mb": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 100.0
+                  },
+                  "value": 50.0,
+                  "message": "指标 system.swap_usage_mb = 50.0 满足标准"
+                },
+                "page_fault_rate": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 5000.0
+                  },
+                  "value": 1000.0,
+                  "message": "指标 system.page_fault_rate = 1000.0 满足标准"
+                },
+                "oom_kill_count": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 0
+                  },
+                  "value": 0,
+                  "message": "指标 system.oom_kill_count = 0 满足标准"
+                },
+                "cpu_usage_sustained_percent": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 85.0
+                  },
+                  "value": 0.0,
+                  "message": "指标 system.cpu_usage_sustained_percent = 0.0 满足标准"
+                },
+                "cpu_usage_spike_percent": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 95.0,
+                    "duration_s": 5.0
+                  },
+                  "value": 75.0,
+                  "message": "指标 system.cpu_usage_spike_percent = 75.0 满足标准"
+                }
+              },
+              "application": {
+                "startup_time_s": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 30.0
+                  },
+                  "value": 15.0,
+                  "message": "指标 application.startup_time_s = 15.0 满足标准"
+                },
+                "model_load_time_s": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 60.0
+                  },
+                  "value": 30.0,
+                  "message": "指标 application.model_load_time_s = 30.0 满足标准"
+                },
+                "memory_leak_mb_per_hour": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 10.0
+                  },
+                  "value": 5.0,
+                  "message": "指标 application.memory_leak_mb_per_hour = 5.0 满足标准"
+                },
+                "process_rss_mb": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 3200.0
+                  },
+                  "value": 0.0,
+                  "message": "指标 application.process_rss_mb = 0.0 满足标准"
+                },
+                "process_growth_rate_mb_per_min": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 1.0
+                  },
+                  "value": 0.5,
+                  "message": "指标 application.process_growth_rate_mb_per_min = 0.5 满足标准"
+                }
+              },
+              "inference": {
+                "qwen_first_token_ms": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 1500.0
+                  },
+                  "value": 800.0,
+                  "message": "指标 inference.qwen_first_token_ms = 800.0 满足标准"
+                },
+                "qwen_per_token_ms": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 100.0
+                  },
+                  "value": 50.0,
+                  "message": "指标 inference.qwen_per_token_ms = 50.0 满足标准"
+                },
+                "mistral_first_token_ms": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 1500.0
+                  },
+                  "value": 750.0,
+                  "message": "指标 inference.mistral_first_token_ms = 750.0 满足标准"
+                },
+                "mistral_per_token_ms": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 100.0
+                  },
+                  "value": 45.0,
+                  "message": "指标 inference.mistral_per_token_ms = 45.0 满足标准"
+                },
+                "concurrent_requests": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 1
+                  },
+                  "value": 1,
+                  "message": "指标 inference.concurrent_requests = 1 满足标准"
+                }
+              },
+              "user_experience": {
+                "response_time_90th_ms": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 1000.0
+                  },
+                  "value": 500.0,
+                  "message": "指标 user_experience.response_time_90th_ms = 500.0 满足标准"
+                },
+                "response_time_99th_ms": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 1500.0
+                  },
+                  "value": 900.0,
+                  "message": "指标 user_experience.response_time_99th_ms = 900.0 满足标准"
+                },
+                "ui_frame_rate_fps": {
+                  "status": "passed",
+                  "standard": {
+                    "min": 24.0
+                  },
+                  "value": 30,
+                  "message": "指标 user_experience.ui_frame_rate_fps = 30 满足标准"
+                },
+                "video_processing_ratio": {
+                  "status": "passed",
+                  "standard": {
+                    "min": 0.5
+                  },
+                  "value": 0.7,
+                  "message": "指标 user_experience.video_processing_ratio = 0.7 满足标准"
+                }
+              },
+              "cache_io": {
+                "cache_hit_rate_percent": {
+                  "status": "passed",
+                  "standard": {
+                    "min": 70.0
+                  },
+                  "value": 75,
+                  "message": "指标 cache_io.cache_hit_rate_percent = 75 满足标准"
+                },
+                "disk_write_mb_per_min": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 20.0
+                  },
+                  "value": 10.0,
+                  "message": "指标 cache_io.disk_write_mb_per_min = 10.0 满足标准"
+                },
+                "disk_read_mb_per_s": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 50.0
+                  },
+                  "value": 25.0,
+                  "message": "指标 cache_io.disk_read_mb_per_s = 25.0 满足标准"
+                },
+                "disk_usage_percent": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 90.0
+                  },
+                  "value": 0.0,
+                  "message": "指标 cache_io.disk_usage_percent = 0.0 满足标准"
+                }
+              }
+            },
+            "timestamp": "2025-05-13T21:10:52.581062",
+            "system_info": {
+              "platform": "win32",
+              "python_version": "3.11.11 | packaged by Anaconda, Inc. | (main, Dec 11 2024, 16:34:19) [MSC v.1929 64 bit (AMD64)]"
+            }
+          }
+        }
+      },
+      {
+        "file": "golden_metrics_validation_20250513_211123.json",
+        "path": "tests\\results\\golden_metrics_validation_20250513_211123.json",
+        "data": {
+          "passed": true,
+          "metrics": {
+            "system.memory_usage_percent": 0.0,
+            "application.process_rss_mb": 0.0,
+            "system.cpu_usage_sustained_percent": 0.0,
+            "cache_io.disk_usage_percent": 0.0,
+            "system.oom_kill_count": 0,
+            "user_experience.ui_frame_rate_fps": 30,
+            "cache_io.cache_hit_rate_percent": 75,
+            "system.swap_usage_mb": 50.0,
+            "system.page_fault_rate": 1000.0,
+            "system.cpu_usage_spike_percent": 75.0,
+            "application.startup_time_s": 15.0,
+            "application.model_load_time_s": 30.0,
+            "application.memory_leak_mb_per_hour": 5.0,
+            "application.process_growth_rate_mb_per_min": 0.5,
+            "inference.qwen_first_token_ms": 800.0,
+            "inference.qwen_per_token_ms": 50.0,
+            "inference.mistral_first_token_ms": 750.0,
+            "inference.mistral_per_token_ms": 45.0,
+            "inference.concurrent_requests": 1,
+            "user_experience.response_time_90th_ms": 500.0,
+            "user_experience.response_time_99th_ms": 900.0,
+            "user_experience.video_processing_ratio": 0.7,
+            "cache_io.disk_write_mb_per_min": 10.0,
+            "cache_io.disk_read_mb_per_s": 25.0
+          },
+          "raw": {
+            "passed": true,
+            "metrics": {
+              "system.memory_usage_percent": 0.0,
+              "application.process_rss_mb": 0.0,
+              "system.cpu_usage_sustained_percent": 0.0,
+              "cache_io.disk_usage_percent": 0.0,
+              "system.oom_kill_count": 0,
+              "user_experience.ui_frame_rate_fps": 30,
+              "cache_io.cache_hit_rate_percent": 75,
+              "system.swap_usage_mb": 50.0,
+              "system.page_fault_rate": 1000.0,
+              "system.cpu_usage_spike_percent": 75.0,
+              "application.startup_time_s": 15.0,
+              "application.model_load_time_s": 30.0,
+              "application.memory_leak_mb_per_hour": 5.0,
+              "application.process_growth_rate_mb_per_min": 0.5,
+              "inference.qwen_first_token_ms": 800.0,
+              "inference.qwen_per_token_ms": 50.0,
+              "inference.mistral_first_token_ms": 750.0,
+              "inference.mistral_per_token_ms": 45.0,
+              "inference.concurrent_requests": 1,
+              "user_experience.response_time_90th_ms": 500.0,
+              "user_experience.response_time_99th_ms": 900.0,
+              "user_experience.video_processing_ratio": 0.7,
+              "cache_io.disk_write_mb_per_min": 10.0,
+              "cache_io.disk_read_mb_per_s": 25.0
+            },
+            "validation": {
+              "system": {
+                "memory_usage_percent": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 80.0
+                  },
+                  "value": 0.0,
+                  "message": "指标 system.memory_usage_percent = 0.0 满足标准"
+                },
+                "swap_usage_mb": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 100.0
+                  },
+                  "value": 50.0,
+                  "message": "指标 system.swap_usage_mb = 50.0 满足标准"
+                },
+                "page_fault_rate": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 5000.0
+                  },
+                  "value": 1000.0,
+                  "message": "指标 system.page_fault_rate = 1000.0 满足标准"
+                },
+                "oom_kill_count": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 0
+                  },
+                  "value": 0,
+                  "message": "指标 system.oom_kill_count = 0 满足标准"
+                },
+                "cpu_usage_sustained_percent": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 85.0
+                  },
+                  "value": 0.0,
+                  "message": "指标 system.cpu_usage_sustained_percent = 0.0 满足标准"
+                },
+                "cpu_usage_spike_percent": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 95.0,
+                    "duration_s": 5.0
+                  },
+                  "value": 75.0,
+                  "message": "指标 system.cpu_usage_spike_percent = 75.0 满足标准"
+                }
+              },
+              "application": {
+                "startup_time_s": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 30.0
+                  },
+                  "value": 15.0,
+                  "message": "指标 application.startup_time_s = 15.0 满足标准"
+                },
+                "model_load_time_s": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 60.0
+                  },
+                  "value": 30.0,
+                  "message": "指标 application.model_load_time_s = 30.0 满足标准"
+                },
+                "memory_leak_mb_per_hour": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 10.0
+                  },
+                  "value": 5.0,
+                  "message": "指标 application.memory_leak_mb_per_hour = 5.0 满足标准"
+                },
+                "process_rss_mb": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 3200.0
+                  },
+                  "value": 0.0,
+                  "message": "指标 application.process_rss_mb = 0.0 满足标准"
+                },
+                "process_growth_rate_mb_per_min": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 1.0
+                  },
+                  "value": 0.5,
+                  "message": "指标 application.process_growth_rate_mb_per_min = 0.5 满足标准"
+                }
+              },
+              "inference": {
+                "qwen_first_token_ms": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 1500.0
+                  },
+                  "value": 800.0,
+                  "message": "指标 inference.qwen_first_token_ms = 800.0 满足标准"
+                },
+                "qwen_per_token_ms": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 100.0
+                  },
+                  "value": 50.0,
+                  "message": "指标 inference.qwen_per_token_ms = 50.0 满足标准"
+                },
+                "mistral_first_token_ms": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 1500.0
+                  },
+                  "value": 750.0,
+                  "message": "指标 inference.mistral_first_token_ms = 750.0 满足标准"
+                },
+                "mistral_per_token_ms": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 100.0
+                  },
+                  "value": 45.0,
+                  "message": "指标 inference.mistral_per_token_ms = 45.0 满足标准"
+                },
+                "concurrent_requests": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 1
+                  },
+                  "value": 1,
+                  "message": "指标 inference.concurrent_requests = 1 满足标准"
+                }
+              },
+              "user_experience": {
+                "response_time_90th_ms": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 1000.0
+                  },
+                  "value": 500.0,
+                  "message": "指标 user_experience.response_time_90th_ms = 500.0 满足标准"
+                },
+                "response_time_99th_ms": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 1500.0
+                  },
+                  "value": 900.0,
+                  "message": "指标 user_experience.response_time_99th_ms = 900.0 满足标准"
+                },
+                "ui_frame_rate_fps": {
+                  "status": "passed",
+                  "standard": {
+                    "min": 24.0
+                  },
+                  "value": 30,
+                  "message": "指标 user_experience.ui_frame_rate_fps = 30 满足标准"
+                },
+                "video_processing_ratio": {
+                  "status": "passed",
+                  "standard": {
+                    "min": 0.5
+                  },
+                  "value": 0.7,
+                  "message": "指标 user_experience.video_processing_ratio = 0.7 满足标准"
+                }
+              },
+              "cache_io": {
+                "cache_hit_rate_percent": {
+                  "status": "passed",
+                  "standard": {
+                    "min": 70.0
+                  },
+                  "value": 75,
+                  "message": "指标 cache_io.cache_hit_rate_percent = 75 满足标准"
+                },
+                "disk_write_mb_per_min": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 20.0
+                  },
+                  "value": 10.0,
+                  "message": "指标 cache_io.disk_write_mb_per_min = 10.0 满足标准"
+                },
+                "disk_read_mb_per_s": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 50.0
+                  },
+                  "value": 25.0,
+                  "message": "指标 cache_io.disk_read_mb_per_s = 25.0 满足标准"
+                },
+                "disk_usage_percent": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 90.0
+                  },
+                  "value": 0.0,
+                  "message": "指标 cache_io.disk_usage_percent = 0.0 满足标准"
+                }
+              }
+            },
+            "timestamp": "2025-05-13T21:11:23.285528",
+            "system_info": {
+              "platform": "win32",
+              "python_version": "3.11.11 | packaged by Anaconda, Inc. | (main, Dec 11 2024, 16:34:19) [MSC v.1929 64 bit (AMD64)]"
+            }
+          }
+        }
+      },
+      {
+        "file": "golden_metrics_validation_20250513_211158.json",
+        "path": "tests\\results\\golden_metrics_validation_20250513_211158.json",
+        "data": {
+          "passed": true,
+          "metrics": {
+            "system.memory_usage_percent": 0.0,
+            "application.process_rss_mb": 0.0,
+            "system.cpu_usage_sustained_percent": 0.0,
+            "cache_io.disk_usage_percent": 0.0,
+            "system.oom_kill_count": 0,
+            "user_experience.ui_frame_rate_fps": 30,
+            "cache_io.cache_hit_rate_percent": 75,
+            "system.swap_usage_mb": 50.0,
+            "system.page_fault_rate": 1000.0,
+            "system.cpu_usage_spike_percent": 75.0,
+            "application.startup_time_s": 15.0,
+            "application.model_load_time_s": 30.0,
+            "application.memory_leak_mb_per_hour": 5.0,
+            "application.process_growth_rate_mb_per_min": 0.5,
+            "inference.qwen_first_token_ms": 800.0,
+            "inference.qwen_per_token_ms": 50.0,
+            "inference.mistral_first_token_ms": 750.0,
+            "inference.mistral_per_token_ms": 45.0,
+            "inference.concurrent_requests": 1,
+            "user_experience.response_time_90th_ms": 500.0,
+            "user_experience.response_time_99th_ms": 900.0,
+            "user_experience.video_processing_ratio": 0.7,
+            "cache_io.disk_write_mb_per_min": 10.0,
+            "cache_io.disk_read_mb_per_s": 25.0
+          },
+          "raw": {
+            "passed": true,
+            "metrics": {
+              "system.memory_usage_percent": 0.0,
+              "application.process_rss_mb": 0.0,
+              "system.cpu_usage_sustained_percent": 0.0,
+              "cache_io.disk_usage_percent": 0.0,
+              "system.oom_kill_count": 0,
+              "user_experience.ui_frame_rate_fps": 30,
+              "cache_io.cache_hit_rate_percent": 75,
+              "system.swap_usage_mb": 50.0,
+              "system.page_fault_rate": 1000.0,
+              "system.cpu_usage_spike_percent": 75.0,
+              "application.startup_time_s": 15.0,
+              "application.model_load_time_s": 30.0,
+              "application.memory_leak_mb_per_hour": 5.0,
+              "application.process_growth_rate_mb_per_min": 0.5,
+              "inference.qwen_first_token_ms": 800.0,
+              "inference.qwen_per_token_ms": 50.0,
+              "inference.mistral_first_token_ms": 750.0,
+              "inference.mistral_per_token_ms": 45.0,
+              "inference.concurrent_requests": 1,
+              "user_experience.response_time_90th_ms": 500.0,
+              "user_experience.response_time_99th_ms": 900.0,
+              "user_experience.video_processing_ratio": 0.7,
+              "cache_io.disk_write_mb_per_min": 10.0,
+              "cache_io.disk_read_mb_per_s": 25.0
+            },
+            "validation": {
+              "system": {
+                "memory_usage_percent": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 80.0
+                  },
+                  "value": 0.0,
+                  "message": "指标 system.memory_usage_percent = 0.0 满足标准"
+                },
+                "swap_usage_mb": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 100.0
+                  },
+                  "value": 50.0,
+                  "message": "指标 system.swap_usage_mb = 50.0 满足标准"
+                },
+                "page_fault_rate": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 5000.0
+                  },
+                  "value": 1000.0,
+                  "message": "指标 system.page_fault_rate = 1000.0 满足标准"
+                },
+                "oom_kill_count": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 0
+                  },
+                  "value": 0,
+                  "message": "指标 system.oom_kill_count = 0 满足标准"
+                },
+                "cpu_usage_sustained_percent": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 85.0
+                  },
+                  "value": 0.0,
+                  "message": "指标 system.cpu_usage_sustained_percent = 0.0 满足标准"
+                },
+                "cpu_usage_spike_percent": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 95.0,
+                    "duration_s": 5.0
+                  },
+                  "value": 75.0,
+                  "message": "指标 system.cpu_usage_spike_percent = 75.0 满足标准"
+                }
+              },
+              "application": {
+                "startup_time_s": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 30.0
+                  },
+                  "value": 15.0,
+                  "message": "指标 application.startup_time_s = 15.0 满足标准"
+                },
+                "model_load_time_s": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 60.0
+                  },
+                  "value": 30.0,
+                  "message": "指标 application.model_load_time_s = 30.0 满足标准"
+                },
+                "memory_leak_mb_per_hour": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 10.0
+                  },
+                  "value": 5.0,
+                  "message": "指标 application.memory_leak_mb_per_hour = 5.0 满足标准"
+                },
+                "process_rss_mb": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 3200.0
+                  },
+                  "value": 0.0,
+                  "message": "指标 application.process_rss_mb = 0.0 满足标准"
+                },
+                "process_growth_rate_mb_per_min": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 1.0
+                  },
+                  "value": 0.5,
+                  "message": "指标 application.process_growth_rate_mb_per_min = 0.5 满足标准"
+                }
+              },
+              "inference": {
+                "qwen_first_token_ms": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 1500.0
+                  },
+                  "value": 800.0,
+                  "message": "指标 inference.qwen_first_token_ms = 800.0 满足标准"
+                },
+                "qwen_per_token_ms": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 100.0
+                  },
+                  "value": 50.0,
+                  "message": "指标 inference.qwen_per_token_ms = 50.0 满足标准"
+                },
+                "mistral_first_token_ms": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 1500.0
+                  },
+                  "value": 750.0,
+                  "message": "指标 inference.mistral_first_token_ms = 750.0 满足标准"
+                },
+                "mistral_per_token_ms": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 100.0
+                  },
+                  "value": 45.0,
+                  "message": "指标 inference.mistral_per_token_ms = 45.0 满足标准"
+                },
+                "concurrent_requests": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 1
+                  },
+                  "value": 1,
+                  "message": "指标 inference.concurrent_requests = 1 满足标准"
+                }
+              },
+              "user_experience": {
+                "response_time_90th_ms": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 1000.0
+                  },
+                  "value": 500.0,
+                  "message": "指标 user_experience.response_time_90th_ms = 500.0 满足标准"
+                },
+                "response_time_99th_ms": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 1500.0
+                  },
+                  "value": 900.0,
+                  "message": "指标 user_experience.response_time_99th_ms = 900.0 满足标准"
+                },
+                "ui_frame_rate_fps": {
+                  "status": "passed",
+                  "standard": {
+                    "min": 24.0
+                  },
+                  "value": 30,
+                  "message": "指标 user_experience.ui_frame_rate_fps = 30 满足标准"
+                },
+                "video_processing_ratio": {
+                  "status": "passed",
+                  "standard": {
+                    "min": 0.5
+                  },
+                  "value": 0.7,
+                  "message": "指标 user_experience.video_processing_ratio = 0.7 满足标准"
+                }
+              },
+              "cache_io": {
+                "cache_hit_rate_percent": {
+                  "status": "passed",
+                  "standard": {
+                    "min": 70.0
+                  },
+                  "value": 75,
+                  "message": "指标 cache_io.cache_hit_rate_percent = 75 满足标准"
+                },
+                "disk_write_mb_per_min": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 20.0
+                  },
+                  "value": 10.0,
+                  "message": "指标 cache_io.disk_write_mb_per_min = 10.0 满足标准"
+                },
+                "disk_read_mb_per_s": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 50.0
+                  },
+                  "value": 25.0,
+                  "message": "指标 cache_io.disk_read_mb_per_s = 25.0 满足标准"
+                },
+                "disk_usage_percent": {
+                  "status": "passed",
+                  "standard": {
+                    "max": 90.0
+                  },
+                  "value": 0.0,
+                  "message": "指标 cache_io.disk_usage_percent = 0.0 满足标准"
+                }
+              }
+            },
+            "timestamp": "2025-05-13T21:11:58.641966",
+            "system_info": {
+              "platform": "win32",
+              "python_version": "3.11.11 | packaged by Anaconda, Inc. | (main, Dec 11 2024, 16:34:19) [MSC v.1929 64 bit (AMD64)]"
+            }
+          }
+        }
+      }
+    ],
+    "summary": {
+      "total": 3,
+      "passed": 3,
+      "failed": 0,
+      "pass_rate": 1.0
+    }
+  },
+  "performance": {
+    "hardware": [],
+    "language": [
+      {
+        "file": "lang_comparison_20250518-192340.json",
+        "data": {
+          "zh_model": {
+            "language": "zh",
+            "model": "qwen2.5-7b-zh",
+            "quantization": "Q4_K_M",
+            "speed": 10.7358708841586,
+            "memory": 3.9935522006716146,
+            "output_tokens": 207,
+            "num_samples": 3,
+            "simulated": true
+          },
+          "en_model": {
+            "language": "en",
+            "model": "mistral-7b-en",
+            "quantization": "Q4_K_M",
+            "speed": 13.394504009885345,
+            "memory": 3.793599722719683,
+            "output_tokens": 184,
+            "num_samples": 3,
+            "simulated": true
+          },
+          "speed_ratio": 0.8015131337625766,
+          "memory_ratio": 1.0527078481038539,
+          "speed_in_range": false,
+          "memory_in_range": false,
+          "is_valid": false
+        }
+      },
+      {
+        "file": "lang_comparison_20250518-192450.json",
+        "data": {
+          "zh_model": {
+            "language": "zh",
+            "model": "qwen2.5-7b-zh",
+            "quantization": "Q4_K_M",
+            "speed": 9.99663227828312,
+            "memory": 3.9080389152598616,
+            "output_tokens": 173,
+            "num_samples": 3,
+            "simulated": true
+          },
+          "en_model": {
+            "language": "en",
+            "model": "mistral-7b-en",
+            "quantization": "Q4_K_M",
+            "speed": 11.264206742507872,
+            "memory": 3.7788958133419834,
+            "output_tokens": 225,
+            "num_samples": 3,
+            "simulated": true
+          },
+          "speed_ratio": 0.887468821089612,
+          "memory_ratio": 1.0341748246834217,
+          "speed_in_range": false,
+          "memory_in_range": true,
+          "is_valid": false
+        }
+      },
+      {
+        "file": "lang_comparison_20250518-192530.json",
+        "data": {
+          "zh_model": {
+            "language": "zh",
+            "model": "qwen2.5-7b-zh",
+            "quantization": "Q4_K_M",
+            "speed": 11.07279409248466,
+            "memory": 3.7404602757583985,
+            "output_tokens": 233,
+            "num_samples": 3,
+            "simulated": true
+          },
+          "en_model": {
+            "language": "en",
+            "model": "mistral-7b-en",
+            "quantization": "Q4_K_M",
+            "speed": 11.345220428906256,
+            "memory": 3.723676624738681,
+            "output_tokens": 213,
+            "num_samples": 3,
+            "simulated": true
+          },
+          "speed_ratio": 0.975987567793087,
+          "memory_ratio": 1.0045072794206171,
+          "speed_in_range": true,
+          "memory_in_range": true,
+          "is_valid": true
+        }
+      },
+      {
+        "file": "lang_comparison_20250518-192630.json",
+        "data": {
+          "zh_model": {
+            "language": "zh",
+            "model": "qwen2.5-7b-zh",
+            "quantization": "Q5_K",
+            "speed": 10.941113640683087,
+            "memory": 4.60875951879515,
+            "output_tokens": 173,
+            "num_samples": 3,
+            "simulated": true
+          },
+          "en_model": {
+            "language": "en",
+            "model": "mistral-7b-en",
+            "quantization": "Q5_K",
+            "speed": 11.78641203107751,
+            "memory": 4.710133507719611,
+            "output_tokens": 179,
+            "num_samples": 3,
+            "simulated": true
+          },
+          "speed_ratio": 0.9282819582273548,
+          "memory_ratio": 0.9784774701697275,
+          "speed_in_range": true,
+          "memory_in_range": true,
+          "is_valid": true
+        }
+      }
+    ],
+    "memory": [],
+    "power": [
+      {
+        "file": "energy_efficiency_result.json",
+        "data": {
+          "average_watts": 7.278941666666666,
+          "max_watts": 8.0025,
+          "min_watts": 6.84,
+          "duration": 30.030649185180664,
+          "samples_count": 60,
+          "total_energy_wh": 0.061663645049220436,
+          "frames_processed": 886,
+          "frames_per_second": 29.503191707131585,
+          "frames_per_watt": 121.72099194823424,
+          "target": 3.0,
+          "device_type": "桌面设备",
+          "passed": true
+        }
+      },
+      {
+        "file": "energy_test_results.json",
+        "data": {
+          "timestamp": "2025-05-18T22:36:29.951256",
+          "duration": 39.150875,
+          "results": {
+            "能耗效率": {
+              "passed": true,
+              "data": {
+                "average_watts": 7.278941666666666,
+                "max_watts": 8.0025,
+                "min_watts": 6.84,
+                "duration": 30.030649185180664,
+                "samples_count": 60,
+                "total_energy_wh": 0.061663645049220436,
+                "frames_processed": 886,
+                "frames_per_second": 29.503191707131585,
+                "frames_per_watt": 121.72099194823424,
+                "target": 3.0,
+                "device_type": "桌面设备",
+                "passed": true
+              }
+            }
+          }
+        }
+      }
+    ],
+    "platform": [],
+    "other": [],
+    "summary": {
+      "total_metrics": 6,
+      "categories": {
+        "language": 4,
+        "power": 2
+      }
+    }
+  },
+  "compliance": {
+    "legal": [
+      {
+        "file": "legal_audit.log",
+        "entries": [
+          {
+            "raw": "2025-05-05 19:38:05 | INFO     | {\"timestamp\": \"2025-05-05T19:38:05.955920\", \"session_id\": \"20250505193805-34e2a49c\", \"operation_id\": \"20250505193805-34e2a49c-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-05T19:38:05.950926\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-05 19:38:05 | INFO     | {\"timestamp\": \"2025-05-05T19:38:05.987044\", \"operation_type\": \"legal_metadata_injection\", \"status\": \"success\", \"details\": {\"content_type\": \"xml\", \"content_length\": 81, \"content_preview\": \"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n<project>\\n ...\"}}"
+          },
+          {
+            "raw": "2025-05-05 19:38:05 | INFO     | [法律嵌入] 时间:2025-05-05 19:38:05.988049 语言:zh 内容摘要:新测试公司AI生成内容..."
+          },
+          {
+            "raw": "2025-05-05 19:38:05 | INFO     | {\"timestamp\": \"2025-05-05T19:38:05.990054\", \"operation_type\": \"legal_metadata_injection\", \"status\": \"success\", \"details\": {\"content_type\": \"xml\", \"content_length\": 89, \"content_preview\": \"<?xml version=\\\"1.0\\\" encoding=\\\"UTF-8\\\"?>\\n<project>\\n ...\"}}"
+          },
+          {
+            "raw": "2025-05-05 19:38:05 | INFO     | [法律嵌入] 时间:2025-05-05 19:38:05.991068 语言:zh 内容摘要:新测试公司AI生成内容..."
+          },
+          {
+            "raw": "2025-05-05 19:40:11 | INFO     | {\"timestamp\": \"2025-05-05T19:40:11.135119\", \"session_id\": \"20250505194011-9b47b4c9\", \"operation_id\": \"20250505194011-9b47b4c9-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-05T19:40:11.128955\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-05 19:40:12 | INFO     | {\"timestamp\": \"2025-05-05T19:40:12.651423\", \"operation_type\": \"add_resource_start\", \"status\": \"success\", \"details\": {\"function\": \"add_resource\", \"file_path\": \"C:\\\\Users\\\\13075\\\\AppData\\\\Local\\\\Temp\\\\tmpx0aqer3z\\\\test_project.xml\"}}"
+          },
+          {
+            "raw": "2025-05-05 19:40:12 | INFO     | {\"timestamp\": \"2025-05-05T19:40:12.653431\", \"operation_type\": \"add_resource\", \"status\": \"success\", \"details\": {\"function\": \"add_resource\", \"file_path\": \"C:\\\\Users\\\\13075\\\\AppData\\\\Local\\\\Temp\\\\tmpx0aqer3z\\\\test_project.xml\", \"result\": \"success\"}}"
+          },
+          {
+            "raw": "2025-05-05 19:40:12 | INFO     | {\"timestamp\": \"2025-05-05T19:40:12.674199\", \"operation_type\": \"append_clip_start\", \"status\": \"success\", \"details\": {\"function\": \"append_clip\", \"file_path\": \"C:\\\\Users\\\\13075\\\\AppData\\\\Local\\\\Temp\\\\tmpw8_uqqv3\\\\test_project.xml\"}}"
+          },
+          {
+            "raw": "2025-05-05 19:40:12 | INFO     | {\"timestamp\": \"2025-05-05T19:40:12.677058\", \"operation_type\": \"append_clip\", \"status\": \"success\", \"details\": {\"function\": \"append_clip\", \"file_path\": \"C:\\\\Users\\\\13075\\\\AppData\\\\Local\\\\Temp\\\\tmpw8_uqqv3\\\\test_project.xml\", \"result\": \"success\"}}"
+          },
+          {
+            "raw": "2025-05-05 19:40:12 | INFO     | {\"timestamp\": \"2025-05-05T19:40:12.699245\", \"operation_type\": \"append_clips_start\", \"status\": \"success\", \"details\": {\"function\": \"append_clips\", \"file_path\": \"C:\\\\Users\\\\13075\\\\AppData\\\\Local\\\\Temp\\\\tmp_qzusp8v\\\\test_project.xml\"}}"
+          },
+          {
+            "raw": "2025-05-05 19:40:12 | INFO     | {\"timestamp\": \"2025-05-05T19:40:12.701225\", \"operation_type\": \"append_clips\", \"status\": \"success\", \"details\": {\"function\": \"append_clips\", \"file_path\": \"C:\\\\Users\\\\13075\\\\AppData\\\\Local\\\\Temp\\\\tmp_qzusp8v\\\\test_project.xml\", \"result\": \"success\"}}"
+          },
+          {
+            "raw": "2025-05-05 19:40:12 | INFO     | {\"timestamp\": \"2025-05-05T19:40:12.722172\", \"operation_type\": \"append_clip_start\", \"status\": \"success\", \"details\": {\"function\": \"append_clip\", \"file_path\": \"C:\\\\Users\\\\13075\\\\AppData\\\\Local\\\\Temp\\\\tmp85k2eqxa\\\\test_project.xml\"}}"
+          },
+          {
+            "raw": "2025-05-05 19:40:12 | INFO     | {\"timestamp\": \"2025-05-05T19:40:12.725185\", \"operation_type\": \"append_clip\", \"status\": \"success\", \"details\": {\"function\": \"append_clip\", \"file_path\": \"C:\\\\Users\\\\13075\\\\AppData\\\\Local\\\\Temp\\\\tmp85k2eqxa\\\\test_project.xml\", \"result\": \"success\"}}"
+          },
+          {
+            "raw": "2025-05-05 19:40:12 | INFO     | {\"timestamp\": \"2025-05-05T19:40:12.729714\", \"operation_type\": \"append_clip_start\", \"status\": \"success\", \"details\": {\"function\": \"append_clip\", \"file_path\": \"C:\\\\Users\\\\13075\\\\AppData\\\\Local\\\\Temp\\\\tmp85k2eqxa\\\\test_project.xml\"}}"
+          },
+          {
+            "raw": "2025-05-05 19:40:12 | INFO     | {\"timestamp\": \"2025-05-05T19:40:12.731747\", \"operation_type\": \"append_clip\", \"status\": \"success\", \"details\": {\"function\": \"append_clip\", \"file_path\": \"C:\\\\Users\\\\13075\\\\AppData\\\\Local\\\\Temp\\\\tmp85k2eqxa\\\\test_project.xml\", \"result\": \"success\"}}"
+          },
+          {
+            "raw": "2025-05-05 19:40:12 | INFO     | {\"timestamp\": \"2025-05-05T19:40:12.752965\", \"operation_type\": \"change_project_settings_start\", \"status\": \"success\", \"details\": {\"function\": \"change_project_settings\", \"file_path\": \"C:\\\\Users\\\\13075\\\\AppData\\\\Local\\\\Temp\\\\tmpkjskwvsq\\\\test_project.xml\"}}"
+          },
+          {
+            "raw": "2025-05-05 19:40:12 | INFO     | {\"timestamp\": \"2025-05-05T19:40:12.754884\", \"operation_type\": \"change_project_settings\", \"status\": \"success\", \"details\": {\"function\": \"change_project_settings\", \"file_path\": \"C:\\\\Users\\\\13075\\\\AppData\\\\Local\\\\Temp\\\\tmpkjskwvsq\\\\test_project.xml\", \"result\": \"success\"}}"
+          },
+          {
+            "raw": "2025-05-05 19:40:12 | INFO     | [法律嵌入] 时间:2025-05-05 19:40:12.777603 语言:zh 内容摘要:"
+          },
+          {
+            "raw": "本内容由AI生成，仅用于技术新演示 &..."
+          },
+          {
+            "raw": "2025-05-05 19:40:12 | INFO     | [法律嵌入] 时间:2025-05-05 19:40:12.778606 语言:zh 内容摘要:"
+          },
+          {
+            "raw": "本内容由AI生成，仅用于技术新演示 &..."
+          },
+          {
+            "raw": "2025-05-05 19:47:14 | INFO     | {\"timestamp\": \"2025-05-05T19:47:14.792430\", \"session_id\": \"20250505194714-55efe5fc\", \"operation_id\": \"20250505194714-55efe5fc-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-05T19:47:14.792430\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-05 19:47:35 | INFO     | {\"timestamp\": \"2025-05-05T19:47:35.725704\", \"session_id\": \"20250505194735-61b91e30\", \"operation_id\": \"20250505194735-61b91e30-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-05T19:47:35.720511\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-05 19:49:22 | INFO     | {\"timestamp\": \"2025-05-05T19:49:22.893171\", \"session_id\": \"20250505194922-93e0ee7c\", \"operation_id\": \"20250505194922-93e0ee7c-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-05T19:49:22.891551\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-05 19:49:37 | INFO     | {\"timestamp\": \"2025-05-05T19:49:37.524154\", \"session_id\": \"20250505194937-5b57d0e4\", \"operation_id\": \"20250505194937-5b57d0e4-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-05T19:49:37.516549\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-05 20:39:54 | INFO     | {\"timestamp\": \"2025-05-05T20:39:54.594772\", \"session_id\": \"20250505203954-08d72381\", \"operation_id\": \"20250505203954-08d72381-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-05T20:39:54.588132\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-05 20:56:30 | INFO     | {\"timestamp\": \"2025-05-05T20:56:30.434821\", \"session_id\": \"20250505205630-31346730\", \"operation_id\": \"20250505205630-31346730-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-05T20:56:30.429715\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-05 20:57:46 | INFO     | {\"timestamp\": \"2025-05-05T20:57:46.570807\", \"session_id\": \"20250505205746-53425b54\", \"operation_id\": \"20250505205746-53425b54-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-05T20:57:46.565744\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-05 21:04:41 | INFO     | {\"timestamp\": \"2025-05-05T21:04:41.720294\", \"session_id\": \"20250505210441-0507991e\", \"operation_id\": \"20250505210441-0507991e-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-05T21:04:41.714289\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-05 21:05:21 | INFO     | {\"timestamp\": \"2025-05-05T21:05:21.579672\", \"session_id\": \"20250505210521-60707cea\", \"operation_id\": \"20250505210521-60707cea-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-05T21:05:21.574665\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-05 21:12:59 | INFO     | {\"timestamp\": \"2025-05-05T21:12:59.033343\", \"session_id\": \"20250505211259-293d6f04\", \"operation_id\": \"20250505211259-293d6f04-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-05T21:12:59.028345\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-05 21:14:18 | INFO     | {\"timestamp\": \"2025-05-05T21:14:18.638658\", \"session_id\": \"20250505211418-a535f2a8\", \"operation_id\": \"20250505211418-a535f2a8-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-05T21:14:18.633530\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-05 21:15:09 | INFO     | {\"timestamp\": \"2025-05-05T21:15:09.878616\", \"session_id\": \"20250505211509-5b68fb91\", \"operation_id\": \"20250505211509-5b68fb91-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-05T21:15:09.873605\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-05 21:15:45 | INFO     | {\"timestamp\": \"2025-05-05T21:15:45.461963\", \"session_id\": \"20250505211545-aa9b63af\", \"operation_id\": \"20250505211545-aa9b63af-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-05T21:15:45.461963\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 19:44:41 | INFO     | {\"timestamp\": \"2025-05-06T19:44:41.797953\", \"session_id\": \"20250506194441-5927b8b2\", \"operation_id\": \"20250506194441-5927b8b2-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T19:44:41.789688\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 19:44:41 | INFO     | [法律嵌入] 时间:2025-05-06 19:44:41.937909 语言:zh 内容摘要:本视频由AI生成，仅用于技术新新演示与学..."
+          },
+          {
+            "raw": "2025-05-06 19:44:41 | INFO     | {\"timestamp\": \"2025-05-06T19:44:41.939176\", \"operation_type\": \"disclaimer_addition\", \"status\": \"success\", \"details\": {\"file_path\": \"C:\\\\Users\\\\13075\\\\AppData\\\\Local\\\\Temp\\\\tmpes6vyft4\\\\invalid.xml\", \"output_path\": \"C:\\\\Users\\\\13075\\\\AppData\\\\Local\\\\Temp\\\\tmpes6vyft4\\\\fixed.xml\", \"disclaimer_type\": \"xml_meta\", \"disclaimer_text\": \"本视频由AI生成，仅用于技术新演示与学习。AI Generated Content by ClipsMaster.\"}}"
+          },
+          {
+            "raw": "2025-05-06 19:46:11 | INFO     | {\"timestamp\": \"2025-05-06T19:46:11.210636\", \"session_id\": \"20250506194611-3f4c7151\", \"operation_id\": \"20250506194611-3f4c7151-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T19:46:11.208381\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 19:46:11 | INFO     | [法律嵌入] 时间:2025-05-06 19:46:11.284344 语言:zh 内容摘要:本视频由AI生成，仅用于技术新新演示与学..."
+          },
+          {
+            "raw": "2025-05-06 19:46:11 | INFO     | {\"timestamp\": \"2025-05-06T19:46:11.285750\", \"operation_type\": \"disclaimer_addition\", \"status\": \"success\", \"details\": {\"file_path\": \"C:\\\\Users\\\\13075\\\\AppData\\\\Local\\\\Temp\\\\tmp6bx5grf3\\\\invalid.xml\", \"output_path\": \"C:\\\\Users\\\\13075\\\\AppData\\\\Local\\\\Temp\\\\tmp6bx5grf3\\\\fixed.xml\", \"disclaimer_type\": \"xml_meta\", \"disclaimer_text\": \"本视频由AI生成，仅用于技术新演示与学习。AI Generated Content by ClipsMaster.\"}}"
+          },
+          {
+            "raw": "2025-05-06 19:48:57 | INFO     | {\"timestamp\": \"2025-05-06T19:48:57.249626\", \"session_id\": \"20250506194857-e761faf7\", \"operation_id\": \"20250506194857-e761faf7-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T19:48:57.237443\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 19:48:57 | INFO     | [法律嵌入] 时间:2025-05-06 19:48:57.306484 语言:zh 内容摘要:本视频由AI生成，仅用于技术新新演示与学..."
+          },
+          {
+            "raw": "2025-05-06 19:48:57 | INFO     | {\"timestamp\": \"2025-05-06T19:48:57.311926\", \"operation_type\": \"disclaimer_addition\", \"status\": \"success\", \"details\": {\"file_path\": \"C:\\\\Users\\\\13075\\\\AppData\\\\Local\\\\Temp\\\\tmpduxulrdn\\\\invalid.xml\", \"output_path\": \"C:\\\\Users\\\\13075\\\\AppData\\\\Local\\\\Temp\\\\tmpduxulrdn\\\\fixed.xml\", \"disclaimer_type\": \"xml_meta\", \"disclaimer_text\": \"本视频由AI生成，仅用于技术新演示与学习。AI Generated Content by ClipsMaster.\"}}"
+          },
+          {
+            "raw": "2025-05-06 19:50:00 | INFO     | {\"timestamp\": \"2025-05-06T19:50:00.980886\", \"session_id\": \"20250506195000-e4422d30\", \"operation_id\": \"20250506195000-e4422d30-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T19:50:00.976660\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 19:50:01 | INFO     | [法律嵌入] 时间:2025-05-06 19:50:01.047657 语言:zh 内容摘要:本视频由AI生成，仅用于技术新新演示与学..."
+          },
+          {
+            "raw": "2025-05-06 19:50:01 | INFO     | {\"timestamp\": \"2025-05-06T19:50:01.048655\", \"operation_type\": \"disclaimer_addition\", \"status\": \"success\", \"details\": {\"file_path\": \"C:\\\\Users\\\\13075\\\\AppData\\\\Local\\\\Temp\\\\tmp7k5ifk8t\\\\invalid.xml\", \"output_path\": \"C:\\\\Users\\\\13075\\\\AppData\\\\Local\\\\Temp\\\\tmp7k5ifk8t\\\\fixed.xml\", \"disclaimer_type\": \"xml_meta\", \"disclaimer_text\": \"本视频由AI生成，仅用于技术新演示与学习。AI Generated Content by ClipsMaster.\"}}"
+          },
+          {
+            "raw": "2025-05-06 20:06:20 | INFO     | {\"timestamp\": \"2025-05-06T20:06:20.288862\", \"session_id\": \"20250506200620-da291b99\", \"operation_id\": \"20250506200620-da291b99-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T20:06:20.288862\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 20:06:49 | INFO     | {\"timestamp\": \"2025-05-06T20:06:49.308625\", \"session_id\": \"20250506200649-e4334748\", \"operation_id\": \"20250506200649-e4334748-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T20:06:49.302910\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 20:07:14 | INFO     | {\"timestamp\": \"2025-05-06T20:07:14.798565\", \"session_id\": \"20250506200714-c7d2366d\", \"operation_id\": \"20250506200714-c7d2366d-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T20:07:14.798565\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 20:08:50 | INFO     | {\"timestamp\": \"2025-05-06T20:08:50.735576\", \"session_id\": \"20250506200850-360ef21b\", \"operation_id\": \"20250506200850-360ef21b-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T20:08:50.719712\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 20:21:00 | INFO     | {\"timestamp\": \"2025-05-06T20:21:00.261436\", \"session_id\": \"20250506202100-f9551398\", \"operation_id\": \"20250506202100-f9551398-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T20:21:00.261436\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 20:22:28 | INFO     | {\"timestamp\": \"2025-05-06T20:22:28.854366\", \"session_id\": \"20250506202228-bb54596e\", \"operation_id\": \"20250506202228-bb54596e-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T20:22:28.854366\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 20:25:14 | INFO     | {\"timestamp\": \"2025-05-06T20:25:14.515893\", \"session_id\": \"20250506202514-9266ab3c\", \"operation_id\": \"20250506202514-9266ab3c-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T20:25:14.515893\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 20:51:38 | INFO     | {\"timestamp\": \"2025-05-06T20:51:38.540087\", \"session_id\": \"20250506205138-45e91b48\", \"operation_id\": \"20250506205138-45e91b48-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T20:51:38.540087\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 20:54:43 | INFO     | {\"timestamp\": \"2025-05-06T20:54:43.580758\", \"session_id\": \"20250506205443-3b2f361d\", \"operation_id\": \"20250506205443-3b2f361d-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T20:54:43.565355\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 20:55:00 | INFO     | {\"timestamp\": \"2025-05-06T20:55:00.435305\", \"session_id\": \"20250506205500-b1e49c04\", \"operation_id\": \"20250506205500-b1e49c04-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T20:55:00.435305\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 20:56:02 | INFO     | {\"timestamp\": \"2025-05-06T20:56:02.011383\", \"session_id\": \"20250506205601-9e79a397\", \"operation_id\": \"20250506205601-9e79a397-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T20:56:01.996152\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 20:56:40 | INFO     | {\"timestamp\": \"2025-05-06T20:56:40.911886\", \"session_id\": \"20250506205640-66cdde88\", \"operation_id\": \"20250506205640-66cdde88-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T20:56:40.900426\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 20:57:34 | INFO     | {\"timestamp\": \"2025-05-06T20:57:34.281214\", \"session_id\": \"20250506205734-e4e95e0c\", \"operation_id\": \"20250506205734-e4e95e0c-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T20:57:34.281214\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 22:07:07 | INFO     | {\"timestamp\": \"2025-05-06T22:07:07.248555\", \"session_id\": \"20250506220707-34d6e0ed\", \"operation_id\": \"20250506220707-34d6e0ed-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T22:07:07.242868\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 22:07:22 | INFO     | {\"timestamp\": \"2025-05-06T22:07:22.003820\", \"session_id\": \"20250506220721-a3e44eba\", \"operation_id\": \"20250506220721-a3e44eba-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T22:07:21.987603\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 22:07:41 | INFO     | {\"timestamp\": \"2025-05-06T22:07:41.563569\", \"session_id\": \"20250506220741-3b1f8ddb\", \"operation_id\": \"20250506220741-3b1f8ddb-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T22:07:41.563569\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 22:09:10 | INFO     | {\"timestamp\": \"2025-05-06T22:09:10.594564\", \"session_id\": \"20250506220910-bfd568f0\", \"operation_id\": \"20250506220910-bfd568f0-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T22:09:10.594564\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 22:57:56 | INFO     | {\"timestamp\": \"2025-05-06T22:57:56.322102\", \"session_id\": \"20250506225756-0ac1ea91\", \"operation_id\": \"20250506225756-0ac1ea91-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T22:57:56.305477\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 22:58:12 | INFO     | {\"timestamp\": \"2025-05-06T22:58:12.143570\", \"session_id\": \"20250506225812-f945d0c1\", \"operation_id\": \"20250506225812-f945d0c1-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T22:58:12.143232\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 23:11:04 | INFO     | {\"timestamp\": \"2025-05-06T23:11:04.868048\", \"session_id\": \"20250506231104-7b5d9188\", \"operation_id\": \"20250506231104-7b5d9188-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T23:11:04.868048\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 23:12:26 | INFO     | {\"timestamp\": \"2025-05-06T23:12:26.397226\", \"session_id\": \"20250506231226-b9217f1d\", \"operation_id\": \"20250506231226-b9217f1d-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T23:12:26.390915\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 23:12:41 | INFO     | {\"timestamp\": \"2025-05-06T23:12:41.611816\", \"session_id\": \"20250506231241-717ead64\", \"operation_id\": \"20250506231241-717ead64-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T23:12:41.611816\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 23:14:15 | INFO     | {\"timestamp\": \"2025-05-06T23:14:15.368616\", \"session_id\": \"20250506231415-ff0a5e31\", \"operation_id\": \"20250506231415-ff0a5e31-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T23:14:15.368616\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 23:14:30 | INFO     | {\"timestamp\": \"2025-05-06T23:14:30.665355\", \"session_id\": \"20250506231430-84ee8d8f\", \"operation_id\": \"20250506231430-84ee8d8f-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T23:14:30.665355\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 23:14:57 | INFO     | {\"timestamp\": \"2025-05-06T23:14:57.439525\", \"session_id\": \"20250506231457-d0608a9b\", \"operation_id\": \"20250506231457-d0608a9b-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T23:14:57.439525\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-06 23:15:26 | INFO     | {\"timestamp\": \"2025-05-06T23:15:26.307201\", \"session_id\": \"20250506231526-5497252a\", \"operation_id\": \"20250506231526-5497252a-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-06T23:15:26.307201\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 87.2}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 10:51:36 | INFO     | {\"timestamp\": \"2025-05-07T10:51:36.790004\", \"session_id\": \"20250507105136-cc037386\", \"operation_id\": \"20250507105136-cc037386-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T10:51:36.782226\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 11:04:08 | INFO     | {\"timestamp\": \"2025-05-07T11:04:08.933923\", \"session_id\": \"20250507110408-d92054cf\", \"operation_id\": \"20250507110408-d92054cf-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T11:04:08.933923\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 11:05:17 | INFO     | {\"timestamp\": \"2025-05-07T11:05:17.132003\", \"session_id\": \"20250507110517-b572f64d\", \"operation_id\": \"20250507110517-b572f64d-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T11:05:17.127458\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 11:07:39 | INFO     | {\"timestamp\": \"2025-05-07T11:07:39.160681\", \"session_id\": \"20250507110739-b300c824\", \"operation_id\": \"20250507110739-b300c824-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T11:07:39.160681\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 11:08:57 | INFO     | {\"timestamp\": \"2025-05-07T11:08:57.435285\", \"session_id\": \"20250507110857-ff31f2e1\", \"operation_id\": \"20250507110857-ff31f2e1-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T11:08:57.429841\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 11:09:33 | INFO     | {\"timestamp\": \"2025-05-07T11:09:33.593051\", \"session_id\": \"20250507110933-418439e1\", \"operation_id\": \"20250507110933-418439e1-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T11:09:33.575156\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 11:10:49 | INFO     | {\"timestamp\": \"2025-05-07T11:10:49.938736\", \"session_id\": \"20250507111049-0ddd466c\", \"operation_id\": \"20250507111049-0ddd466c-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T11:10:49.938736\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 11:11:31 | INFO     | {\"timestamp\": \"2025-05-07T11:11:31.187166\", \"session_id\": \"20250507111131-b3320901\", \"operation_id\": \"20250507111131-b3320901-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T11:11:31.187166\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 11:12:21 | INFO     | {\"timestamp\": \"2025-05-07T11:12:21.319174\", \"session_id\": \"20250507111221-a2aa2079\", \"operation_id\": \"20250507111221-a2aa2079-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T11:12:21.305639\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 11:13:25 | INFO     | {\"timestamp\": \"2025-05-07T11:13:25.866687\", \"session_id\": \"20250507111325-707c9f8a\", \"operation_id\": \"20250507111325-707c9f8a-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T11:13:25.864756\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 11:19:31 | INFO     | {\"timestamp\": \"2025-05-07T11:19:31.088789\", \"session_id\": \"20250507111931-d4c4db4e\", \"operation_id\": \"20250507111931-d4c4db4e-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T11:19:31.083939\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 11:20:10 | INFO     | {\"timestamp\": \"2025-05-07T11:20:10.011710\", \"session_id\": \"20250507112009-1f2a4783\", \"operation_id\": \"20250507112009-1f2a4783-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T11:20:10.005414\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 11:21:46 | INFO     | {\"timestamp\": \"2025-05-07T11:21:46.811868\", \"session_id\": \"20250507112146-ca0b5c29\", \"operation_id\": \"20250507112146-ca0b5c29-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T11:21:46.811868\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 11:22:33 | INFO     | {\"timestamp\": \"2025-05-07T11:22:33.487889\", \"session_id\": \"20250507112233-fff8b3cc\", \"operation_id\": \"20250507112233-fff8b3cc-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T11:22:33.482467\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 11:23:30 | INFO     | {\"timestamp\": \"2025-05-07T11:23:30.956377\", \"session_id\": \"20250507112330-faa1d353\", \"operation_id\": \"20250507112330-faa1d353-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T11:23:30.953940\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 11:23:46 | INFO     | {\"timestamp\": \"2025-05-07T11:23:46.479300\", \"session_id\": \"20250507112346-843e08df\", \"operation_id\": \"20250507112346-843e08df-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T11:23:46.468562\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 11:24:27 | INFO     | {\"timestamp\": \"2025-05-07T11:24:27.968188\", \"session_id\": \"20250507112427-46af2d42\", \"operation_id\": \"20250507112427-46af2d42-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T11:24:27.952038\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 11:25:18 | INFO     | {\"timestamp\": \"2025-05-07T11:25:18.750807\", \"session_id\": \"20250507112518-fb417d19\", \"operation_id\": \"20250507112518-fb417d19-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T11:25:18.735062\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 11:26:01 | INFO     | {\"timestamp\": \"2025-05-07T11:26:01.218453\", \"session_id\": \"20250507112601-7024cfef\", \"operation_id\": \"20250507112601-7024cfef-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T11:26:01.202683\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 11:26:14 | INFO     | {\"timestamp\": \"2025-05-07T11:26:14.889301\", \"session_id\": \"20250507112614-6b4b870a\", \"operation_id\": \"20250507112614-6b4b870a-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T11:26:14.873080\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 11:26:45 | INFO     | {\"timestamp\": \"2025-05-07T11:26:45.290071\", \"session_id\": \"20250507112645-c243b9a3\", \"operation_id\": \"20250507112645-c243b9a3-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T11:26:45.290071\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 11:27:01 | INFO     | {\"timestamp\": \"2025-05-07T11:27:01.278106\", \"session_id\": \"20250507112701-bb3f68e2\", \"operation_id\": \"20250507112701-bb3f68e2-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T11:27:01.272285\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 11:35:38 | INFO     | {\"timestamp\": \"2025-05-07T11:35:38.559963\", \"session_id\": \"20250507113538-ea3d4dcf\", \"operation_id\": \"20250507113538-ea3d4dcf-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T11:35:38.559963\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 11:36:57 | INFO     | {\"timestamp\": \"2025-05-07T11:36:57.425375\", \"session_id\": \"20250507113657-c511a2c4\", \"operation_id\": \"20250507113657-c511a2c4-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T11:36:57.416265\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 11:37:06 | INFO     | {\"timestamp\": \"2025-05-07T11:37:06.068155\", \"session_id\": \"20250507113706-3db285df\", \"operation_id\": \"20250507113706-3db285df-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T11:37:06.061708\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 11:37:30 | INFO     | {\"timestamp\": \"2025-05-07T11:37:30.890146\", \"session_id\": \"20250507113730-10f6aad8\", \"operation_id\": \"20250507113730-10f6aad8-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T11:37:30.885667\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 11:38:35 | INFO     | {\"timestamp\": \"2025-05-07T11:38:35.818681\", \"session_id\": \"20250507113835-2ff4f9e3\", \"operation_id\": \"20250507113835-2ff4f9e3-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T11:38:35.803006\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 12:01:19 | INFO     | {\"timestamp\": \"2025-05-07T12:01:19.395694\", \"session_id\": \"20250507120119-308b4a14\", \"operation_id\": \"20250507120119-308b4a14-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T12:01:19.387170\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 12:02:40 | INFO     | {\"timestamp\": \"2025-05-07T12:02:40.239795\", \"session_id\": \"20250507120240-129a6e46\", \"operation_id\": \"20250507120240-129a6e46-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T12:02:40.232769\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 12:03:48 | INFO     | {\"timestamp\": \"2025-05-07T12:03:48.756205\", \"session_id\": \"20250507120348-9ae60c2f\", \"operation_id\": \"20250507120348-9ae60c2f-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T12:03:48.754171\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 18:09:02 | INFO     | {\"timestamp\": \"2025-05-07T18:09:02.720894\", \"session_id\": \"20250507180902-219eb809\", \"operation_id\": \"20250507180902-219eb809-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T18:09:02.714369\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 18:09:18 | INFO     | {\"timestamp\": \"2025-05-07T18:09:18.784773\", \"session_id\": \"20250507180918-00255c4e\", \"operation_id\": \"20250507180918-00255c4e-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T18:09:18.778764\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 18:09:47 | INFO     | {\"timestamp\": \"2025-05-07T18:09:47.869919\", \"session_id\": \"20250507180947-486a1e6a\", \"operation_id\": \"20250507180947-486a1e6a-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T18:09:47.862393\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 18:09:59 | INFO     | {\"timestamp\": \"2025-05-07T18:09:59.894857\", \"session_id\": \"20250507180959-d2a2356e\", \"operation_id\": \"20250507180959-d2a2356e-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T18:09:59.888861\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 18:10:08 | INFO     | {\"timestamp\": \"2025-05-07T18:10:08.511873\", \"session_id\": \"20250507181008-38580321\", \"operation_id\": \"20250507181008-38580321-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T18:10:08.506308\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 18:10:17 | INFO     | {\"timestamp\": \"2025-05-07T18:10:17.252879\", \"session_id\": \"20250507181017-90af5f23\", \"operation_id\": \"20250507181017-90af5f23-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T18:10:17.246353\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 18:24:28 | INFO     | {\"timestamp\": \"2025-05-07T18:24:28.477803\", \"session_id\": \"20250507182428-80066c6b\", \"operation_id\": \"20250507182428-80066c6b-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T18:24:28.471173\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 18:25:02 | INFO     | {\"timestamp\": \"2025-05-07T18:25:02.429723\", \"session_id\": \"20250507182502-eea01ac8\", \"operation_id\": \"20250507182502-eea01ac8-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T18:25:02.422191\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 18:25:20 | INFO     | {\"timestamp\": \"2025-05-07T18:25:20.532707\", \"session_id\": \"20250507182520-e2e7f515\", \"operation_id\": \"20250507182520-e2e7f515-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T18:25:20.524410\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 18:25:37 | INFO     | {\"timestamp\": \"2025-05-07T18:25:37.215885\", \"session_id\": \"20250507182537-f1191bf1\", \"operation_id\": \"20250507182537-f1191bf1-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T18:25:37.208620\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 18:27:03 | INFO     | {\"timestamp\": \"2025-05-07T18:27:03.067580\", \"session_id\": \"20250507182703-d09607ba\", \"operation_id\": \"20250507182703-d09607ba-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T18:27:03.059108\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 18:28:14 | INFO     | {\"timestamp\": \"2025-05-07T18:28:14.374580\", \"session_id\": \"20250507182814-fc69e75e\", \"operation_id\": \"20250507182814-fc69e75e-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T18:28:14.366546\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 18:28:32 | INFO     | {\"timestamp\": \"2025-05-07T18:28:32.665181\", \"session_id\": \"20250507182832-1b124683\", \"operation_id\": \"20250507182832-1b124683-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T18:28:32.657621\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 18:28:50 | INFO     | {\"timestamp\": \"2025-05-07T18:28:50.241983\", \"session_id\": \"20250507182850-61e6545a\", \"operation_id\": \"20250507182850-61e6545a-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T18:28:50.226668\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 19:32:23 | INFO     | {\"timestamp\": \"2025-05-07T19:32:23.129636\", \"session_id\": \"20250507193223-9b4842d0\", \"operation_id\": \"20250507193223-9b4842d0-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T19:32:23.126035\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 19:34:03 | INFO     | {\"timestamp\": \"2025-05-07T19:34:03.630964\", \"session_id\": \"20250507193403-46f52121\", \"operation_id\": \"20250507193403-46f52121-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T19:34:03.615226\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 19:34:19 | INFO     | {\"timestamp\": \"2025-05-07T19:34:19.108223\", \"session_id\": \"20250507193419-5b55f764\", \"operation_id\": \"20250507193419-5b55f764-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T19:34:19.101853\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          },
+          {
+            "raw": "2025-05-07 19:35:09 | INFO     | {\"timestamp\": \"2025-05-07T19:35:09.042619\", \"session_id\": \"20250507193509-c502c7c7\", \"operation_id\": \"20250507193509-c502c7c7-1\", \"operation_type\": \"system_event\", \"status\": \"success\", \"details\": {\"event\": \"system_start\", \"platform\": \"Windows-10-10.0.26100-SP0\", \"python_version\": \"3.11.11\", \"hostname\": \"LAPTOP-33K1VHP0\", \"ip_address\": \"10.206.4.93\", \"timestamp\": \"2025-05-07T19:35:09.023290\", \"cpu_count\": 16, \"memory_total\": 16893206528, \"disk_usage\": 86.6}, \"user\": {\"username\": \"13075\", \"hostname\": \"LAPTOP-33K1VHP0\", \"os\": \"Windows\", \"version\": \"10.0.26100\"}}"
+          }
+        ],
+        "count": 121
+      },
+      {
+        "file": "legal_risks.log",
+        "entries": [
+          {
+            "timestamp": "2025-05-18T09:59:01.381564",
+            "level": "WARNING",
+            "message": "训练数据缺少许可证信息: D:\\zancun\\VisionAI-ClipsMaster\\data\\training\\zh\\contaminated_sample.txt"
+          },
+          {
+            "timestamp": "2025-05-18T09:59:01.383567",
+            "level": "WARNING",
+            "message": "训练数据缺少许可证信息: D:\\zancun\\VisionAI-ClipsMaster\\data\\training\\zh\\sample1.txt"
+          },
+          {
+            "timestamp": "2025-05-18T09:59:01.388785",
+            "level": "WARNING",
+            "message": "训练数据缺少许可证信息: D:\\zancun\\VisionAI-ClipsMaster\\data\\training\\en\\contaminated_sample.txt"
+          },
+          {
+            "timestamp": "2025-05-18T09:59:01.389785",
+            "level": "WARNING",
+            "message": "训练数据缺少许可证信息: D:\\zancun\\VisionAI-ClipsMaster\\data\\training\\en\\sample1.txt"
+          }
+        ],
+        "count": 4
+      }
+    ],
+    "security": [
+      {
+        "file": "audit.log",
+        "entries": [
+          {
+            "raw": "2025-04-29 20:06:41.724 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:06:43.756 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:06:45.757 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:06:47.862 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:06:49.832 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:06:51.799 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:06:53.846 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:06:55.900 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:06:57.907 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:06:59.942 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:07:01.972 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:07:04.173 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:07:06.205 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:07:08.330 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:07:10.704 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:07:13.096 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:07:15.269 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:07:17.384 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:07:19.600 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:07:21.771 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:07:24.038 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:07:26.210 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:07:28.382 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:07:30.519 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:07:32.979 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:07:35.195 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:07:37.324 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:07:39.512 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:07:41.724 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:07:44.356 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:07:46.907 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:07:49.510 | AUDIT | 系统自动重启，由自动恢复触发"
+          },
+          {
+            "raw": "2025-04-29 20:07:52.134 | AUDIT | 系统自动重启，由自动恢复触发"
+          }
+        ],
+        "count": 33
+      },
+      {
+        "file": "security_20250516.log",
+        "entries": [
+          {
+            "timestamp": "2025-05-16T17:03:32.182928",
+            "event_type": "INTEGRITY",
+            "description": "验证黄金样本完整性",
+            "user": "13075",
+            "process_id": 12564,
+            "hostname": "LAPTOP-33K1VHP0",
+            "platform": "Windows",
+            "details": {
+              "success": false,
+              "errors_count": 1
+            }
+          },
+          {
+            "timestamp": "2025-05-16T17:03:51.710971",
+            "event_type": "ACCESS_CONTROL",
+            "description": "设置黄金样本目录权限",
+            "user": "13075",
+            "process_id": 29012,
+            "hostname": "LAPTOP-33K1VHP0",
+            "platform": "Windows",
+            "details": {
+              "path": "D:\\zancun\\VisionAI-ClipsMaster\\tests\\golden_samples",
+              "force": true
+            }
+          }
+        ],
+        "count": 2
+      }
+    ],
+    "audit": [],
+    "other": [],
+    "summary": {
+      "total_files": 4,
+      "category_counts": {
+        "legal": 125,
+        "security": 35
+      },
+      "warning_count": 4,
+      "error_count": 0
+    }
+  },
+  "metadata": {
+    "timestamp": "2025-05-19T20:16:58.289095",
+    "source_count": 13,
+    "sources": [
+      "golden_metrics_validation_20250513_211052.json",
+      "golden_metrics_validation_20250513_211123.json",
+      "golden_metrics_validation_20250513_211158.json",
+      "lang_comparison_20250518-192340.json",
+      "lang_comparison_20250518-192450.json",
+      "lang_comparison_20250518-192530.json",
+      "lang_comparison_20250518-192630.json",
+      "energy_efficiency_result.json",
+      "energy_test_results.json",
+      "legal_audit.log",
+      "legal_risks.log",
+      "audit.log",
+      "security_20250516.log"
+    ]
+  }
+}

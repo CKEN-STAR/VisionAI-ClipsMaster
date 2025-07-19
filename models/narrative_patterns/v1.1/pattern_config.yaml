@@ -1,0 +1,182 @@
+cross_platform:
+  douyin_to_kuaishou: 0.85
+  douyin_to_youtube: 0.6
+  kuaishou_to_douyin: 0.8
+  kuaishou_to_youtube: 0.65
+  youtube_to_douyin: 0.5
+  youtube_to_kuaishou: 0.55
+evaluation_weights:
+  audience_retention: 0.25
+  emotional_intensity: 0.3
+  narrative_coherence: 0.15
+  recommendation_weight: 0.2
+  viral_coefficient: 0.25
+feature_importance:
+  duration: 0.1
+  frequency: 0.3
+  position: 0.15
+  sentiment: 0.25
+  surprise_level: 0.2
+pattern_parameters:
+  climax:
+    ideal_duration:
+    - 3.0
+    - 8.0
+    ideal_position:
+    - 0.6
+    - 0.8
+    key_emotions:
+    - surprise
+    - joy
+    - sadness
+    - fear
+  conflict:
+    ideal_duration:
+    - 3.0
+    - 7.0
+    ideal_position:
+    - 0.3
+    - 0.5
+    key_emotions:
+    - anger
+    - fear
+    - tension
+  ending:
+    ideal_duration:
+    - 1.5
+    - 4.0
+    ideal_position:
+    - 0.85
+    - 1.0
+    key_emotions:
+    - surprise
+    - joy
+    - nostalgia
+  opening:
+    ideal_duration:
+    - 2.0
+    - 5.0
+    ideal_position:
+    - 0.0
+    - 0.15
+    key_emotions:
+    - surprise
+    - curiosity
+    - excitement
+  resolution:
+    ideal_duration:
+    - 2.0
+    - 6.0
+    ideal_position:
+    - 0.7
+    - 0.9
+    key_emotions:
+    - relief
+    - joy
+    - satisfaction
+  transition:
+    ideal_duration:
+    - 1.0
+    - 3.0
+    ideal_position:
+    - 0.2
+    - 0.6
+    key_emotions:
+    - anticipation
+    - curiosity
+pattern_types:
+- opening
+- climax
+- transition
+- conflict
+- resolution
+- ending
+- surprise
+platform_optimization:
+  bilibili:
+    engagement_metrics:
+      coins: 0.2
+      comments: 0.1
+      favorites: 0.1
+      likes: 0.2
+      watch_time: 0.4
+    key_positions:
+    - 0.0
+    - 0.3
+    - 0.6
+    - 0.9
+    recommended_duration:
+    - 30
+    - 300
+  douyin:
+    engagement_metrics:
+      comments: 0.3
+      likes: 0.4
+      shares: 0.3
+    key_positions:
+    - 0.0
+    - 0.2
+    - 0.8
+    recommended_duration:
+    - 15
+    - 60
+  kuaishou:
+    engagement_metrics:
+      comments: 0.25
+      likes: 0.5
+      shares: 0.25
+    key_positions:
+    - 0.0
+    - 0.3
+    - 0.7
+    recommended_duration:
+    - 20
+    - 90
+  youtube:
+    engagement_metrics:
+      comments: 0.15
+      likes: 0.2
+      shares: 0.15
+      watch_time: 0.5
+    key_positions:
+    - 0.0
+    - 0.25
+    - 0.75
+    recommended_duration:
+    - 60
+    - 600
+recommended_combinations:
+- description: 经典的故事拱形结构，包含完整的情感曲线
+  name: 标准叙事结构
+  patterns:
+  - opening
+  - conflict
+  - climax
+  - resolution
+  - ending
+- description: 以悬疑开场，通过过渡逐渐推向高潮，然后迅速结束
+  name: 悬疑结构
+  patterns:
+  - opening
+  - transition
+  - climax
+  - ending
+- description: 先给予观众情感高峰，再引入冲突，最后解决
+  name: 情感冲击波
+  patterns:
+  - opening
+  - climax
+  - conflict
+  - resolution
+  - ending
+- description: 以开场引入，通过冲突和过渡逐步推向高潮，然后有力收尾
+  name: 循环递进式
+  patterns:
+  - opening
+  - conflict
+  - transition
+  - climax
+  - ending
+thresholds:
+  min_confidence: 0.65
+  min_impact_score: 0.6

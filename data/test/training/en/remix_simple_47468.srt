@@ -1,0 +1,12 @@
+1
+00:00:20,000 --> 00:00:29,500
+This is a test drama scene showing tense conflict.
+
+2
+00:00:30,000 --> 00:00:39,500
+The scene transitions to countryside cottage, creating a tense and exciting atmosphere.
+
+3
+00:00:40,000 --> 00:00:49,500
+This is a test drama scene showing work environment.
+

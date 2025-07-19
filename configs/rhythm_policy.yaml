@@ -1,0 +1,197 @@
+# VisionAI-ClipsMaster 视频节奏分析规则配置
+# 用于控制剧本重构时的节奏和时长策略
+
+# 基础节奏配置
+rhythm_analysis:
+  enabled: true
+  version: "1.0.0"
+  
+  # 节奏检测参数
+  detection:
+    min_scene_duration: 2.0    # 最小场景时长（秒）
+    max_scene_duration: 30.0   # 最大场景时长（秒）
+    optimal_scene_duration: 8.0 # 最佳场景时长（秒）
+    
+    # 节奏变化检测
+    rhythm_change_threshold: 0.3  # 节奏变化阈值
+    emotion_intensity_weight: 0.4 # 情感强度权重
+    dialogue_density_weight: 0.3  # 对话密度权重
+    action_density_weight: 0.3    # 动作密度权重
+
+# 镜头时长策略
+shot_duration:
+  # 不同类型镜头的时长范围
+  dialogue_shots:
+    min_duration: 1.5    # 对话镜头最小时长
+    max_duration: 8.0    # 对话镜头最大时长
+    optimal_duration: 4.0 # 对话镜头最佳时长
+    
+  action_shots:
+    min_duration: 0.8    # 动作镜头最小时长
+    max_duration: 5.0    # 动作镜头最大时长
+    optimal_duration: 2.5 # 动作镜头最佳时长
+    
+  emotional_shots:
+    min_duration: 2.0    # 情感镜头最小时长
+    max_duration: 12.0   # 情感镜头最大时长
+    optimal_duration: 6.0 # 情感镜头最佳时长
+    
+  transition_shots:
+    min_duration: 0.5    # 转场镜头最小时长
+    max_duration: 3.0    # 转场镜头最大时长
+    optimal_duration: 1.5 # 转场镜头最佳时长
+
+# 节奏模式配置
+rhythm_patterns:
+  # 快节奏模式（适合动作、悬疑）
+  fast_paced:
+    average_shot_duration: 3.0
+    max_consecutive_long_shots: 2
+    preferred_cut_frequency: 0.33  # 每秒切换频率
+    tension_buildup_rate: 0.8
+    
+  # 中等节奏模式（适合剧情、爱情）
+  medium_paced:
+    average_shot_duration: 5.0
+    max_consecutive_long_shots: 3
+    preferred_cut_frequency: 0.2
+    tension_buildup_rate: 0.5
+    
+  # 慢节奏模式（适合文艺、深度剧情）
+  slow_paced:
+    average_shot_duration: 8.0
+    max_consecutive_long_shots: 5
+    preferred_cut_frequency: 0.125
+    tension_buildup_rate: 0.3
+
+# 转场逻辑配置
+transition_logic:
+  # 转场类型权重
+  cut_weight: 0.7        # 直切权重
+  fade_weight: 0.2       # 淡入淡出权重
+  dissolve_weight: 0.1   # 溶解权重
+  
+  # 转场时机判断
+  scene_change_threshold: 0.6    # 场景变化阈值
+  emotion_change_threshold: 0.5  # 情感变化阈值
+  time_jump_threshold: 300       # 时间跳跃阈值（秒）
+  
+  # 转场时长
+  cut_duration: 0.0      # 直切时长
+  fade_duration: 1.0     # 淡入淡出时长
+  dissolve_duration: 1.5 # 溶解时长
+
+# 情感节奏配置
+emotional_rhythm:
+  # 情感强度映射到节奏
+  intensity_to_pace:
+    low: "slow_paced"      # 低强度 -> 慢节奏
+    medium: "medium_paced" # 中强度 -> 中节奏
+    high: "fast_paced"     # 高强度 -> 快节奏
+    
+  # 情感变化处理
+  emotion_transition:
+    smooth_transition_duration: 2.0  # 平滑过渡时长
+    abrupt_change_threshold: 0.7     # 突变阈值
+    buildup_factor: 1.2              # 情感积累因子
+    
+  # 高潮处理
+  climax_detection:
+    enabled: true
+    min_buildup_duration: 10.0  # 最小积累时长
+    peak_duration: 5.0          # 高潮持续时长
+    resolution_duration: 8.0    # 解决时长
+
+# 对话节奏配置
+dialogue_rhythm:
+  # 对话速度分析
+  speech_rate:
+    slow_threshold: 120    # 慢速对话阈值（字符/分钟）
+    normal_threshold: 180  # 正常对话阈值
+    fast_threshold: 240    # 快速对话阈值
+    
+  # 对话间隔
+  pause_handling:
+    short_pause: 0.5       # 短暂停（秒）
+    medium_pause: 1.0      # 中等停顿
+    long_pause: 2.0        # 长停顿
+    dramatic_pause: 3.0    # 戏剧性停顿
+    
+  # 对话重叠处理
+  overlap_tolerance: 0.2   # 对话重叠容忍度
+
+# 动作节奏配置
+action_rhythm:
+  # 动作强度分类
+  intensity_levels:
+    low: 0.3      # 低强度动作
+    medium: 0.6   # 中强度动作
+    high: 0.9     # 高强度动作
+    
+  # 动作序列处理
+  sequence_handling:
+    min_action_duration: 1.0     # 最小动作时长
+    max_action_sequence: 15.0    # 最大动作序列时长
+    recovery_time: 3.0           # 恢复时间
+    
+  # 动作与对话平衡
+  action_dialogue_balance: 0.6   # 动作对话平衡比例
+
+# 音乐节奏同步
+music_sync:
+  enabled: false  # 暂时禁用，因为不处理BGM
+  beat_detection: false
+  tempo_matching: false
+
+# 长度控制策略
+length_control:
+  # 目标长度范围
+  target_length:
+    min_ratio: 0.3      # 最小压缩比例（相对原片）
+    max_ratio: 0.8      # 最大压缩比例
+    optimal_ratio: 0.6  # 最佳压缩比例
+    
+  # 长度调整策略
+  adjustment_strategy:
+    prefer_scene_removal: true    # 优先移除整个场景
+    allow_scene_trimming: true    # 允许场景修剪
+    preserve_key_moments: true    # 保留关键时刻
+    
+  # 关键场景保护
+  key_scene_protection:
+    climax_scenes: 1.0        # 高潮场景保护权重
+    emotional_peaks: 0.8      # 情感高峰保护权重
+    plot_points: 0.9          # 情节点保护权重
+    character_development: 0.7 # 角色发展保护权重
+
+# 质量控制
+quality_control:
+  # 连贯性检查
+  continuity_check:
+    enabled: true
+    min_narrative_flow: 0.7   # 最小叙事流畅度
+    max_time_gaps: 600        # 最大时间间隔（秒）
+    
+  # 节奏一致性
+  rhythm_consistency:
+    variance_threshold: 0.3   # 节奏变化阈值
+    smoothing_factor: 0.2     # 平滑因子
+    
+  # 输出验证
+  output_validation:
+    min_total_duration: 30    # 最小总时长（秒）
+    max_total_duration: 600   # 最大总时长（秒）
+    required_scene_count: 3   # 最少场景数量
+
+# 调试和监控
+debug:
+  enabled: false
+  log_rhythm_analysis: false
+  save_rhythm_data: false
+  visualization: false
+
+# 性能优化
+performance:
+  cache_rhythm_analysis: true
+  parallel_processing: false  # 4GB设备禁用并行处理
+  memory_limit_mb: 200       # 节奏分析内存限制

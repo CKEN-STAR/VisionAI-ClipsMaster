@@ -1,0 +1,96 @@
+# 情感强度图谱配置
+
+# 情感分析配置
+sentiment_analysis:
+  # 情感分析器配置
+  analyzer:
+    type: "simple"  # 分析器类型：simple或advanced
+    threshold:
+      positive: 0.6  # 积极情感阈值
+      negative: 0.4  # 消极情感阈值
+      neutral: 0.5   # 中性情感阈值
+    
+  # 情感词典配置
+  lexicon:
+    use_custom: true           # 是否使用自定义情感词典
+    custom_path: "configs/sentiment_lexicon.json"  # 自定义词典路径
+    
+  # 情感标记配置
+  markers:
+    positive: ["!", "!!!", "😄", "😊", "❤️"]  # 积极情感标记
+    negative: ["...", "😔", "😢", "💔"]       # 消极情感标记
+    surprise: ["?!", "?!?", "😮", "😲", "😱"]  # 惊讶情感标记
+
+# 强度曲线构建配置
+intensity_curve:
+  # 峰值计算配置
+  peak_detection:
+    exclamation_weight: 0.1    # 感叹号权重
+    question_weight: 0.05      # 问号权重
+    emphasis_weight: 0.15      # 强调效果权重
+    capitals_weight: 0.2       # 大写字母权重
+    
+  # 曲线平滑配置
+  smoothing:
+    enabled: true              # 是否启用平滑
+    window_size: 3             # 平滑窗口大小
+    weights: [0.25, 0.5, 0.25] # 权重分布
+    
+  # 极值检测配置
+  extremes:
+    peak_threshold: 0.7        # 峰值阈值
+    valley_threshold: 0.3      # 低谷阈值
+    highlight: true            # 是否高亮显示极值
+
+# 质量评估配置
+quality_assessment:
+  # 评分标准
+  weights:
+    range_weight: 0.3          # 变化范围权重
+    turning_point_weight: 0.2  # 转折点权重
+    climax_weight: 0.3         # 高潮权重
+    linearity_weight: 0.2      # 线性度权重 (负面因素)
+    
+  # 阈值设置
+  thresholds:
+    min_range: 0.2             # 最小变化范围
+    min_turning_points: 2      # 最小转折点数量
+    climax_threshold: 0.7      # 高潮阈值
+
+# 可视化配置
+visualization:
+  # 通用配置
+  common:
+    dpi: 300                   # 图像DPI
+    show_legend: true          # 显示图例
+    figure_size: [12, 7]       # 图表大小
+    
+  # 曲线图配置
+  curve:
+    line_width: 2.5            # 线宽
+    marker_size: 8             # 标记大小
+    color_scheme:              # 颜色方案
+      positive: "#1E88E5"      # 积极情感颜色
+      negative: "#E53935"      # 消极情感颜色
+      neutral: "#7CB342"       # 中性情感颜色
+      surprise: "#FFC107"      # 惊讶情感颜色
+      
+  # 热力图配置
+  heatmap:
+    colormap: "RdYlBu_r"       # 热力图颜色方案
+    
+  # 交互式图表配置
+  interactive:
+    enabled: true              # 是否启用交互式图表
+    height: 600                # 图表高度
+    template: "plotly_white"   # 图表模板
+
+# 输出配置
+output:
+  base_dir: "reports/emotion_intensity"  # 输出基础目录
+  curve_file: "emotion_intensity_curve.png"  # 曲线图文件名
+  heatmap_file: "emotion_intensity_heatmap.png"  # 热力图文件名
+  interactive_file: "emotion_interactive.html"  # 交互式图表文件名
+  data_file: "emotion_data.json"  # 数据文件名
+  report_file: "emotion_analysis_report.json"  # 报告文件名
+  html_report: "emotion_analysis_report.html"  # HTML报告文件名 

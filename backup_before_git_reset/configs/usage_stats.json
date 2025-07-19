@@ -1,0 +1,35 @@
+{
+  "export": {
+    "resolutions": {
+      "1080p": 1
+    },
+    "codecs": {
+      "h264": 1
+    },
+    "formats": {
+      "mp4": 1
+    }
+  },
+  "interface": {
+    "timeline_zoom": {
+      "5": 1
+    },
+    "theme": {
+      "dark": 1
+    }
+  },
+  "performance": {
+    "render_times": [
+      1.5
+    ],
+    "memory_usage": [
+      2048
+    ]
+  },
+  "first_run": true,
+  "last_update": null,
+  "update_count": 0,
+  "settings_overridden": [
+    "user.export.resolution"
+  ]
+}

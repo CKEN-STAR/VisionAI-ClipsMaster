@@ -1,0 +1,59 @@
+{
+  "level": "beginner",
+  "experience_points": 0,
+  "feature_usage": {
+    "timeline_edit": 1,
+    "subtitle_edit": 1,
+    "effect_simple": 1
+  },
+  "preferences": {
+    "interface": {
+      "compact_mode": true
+    },
+    "export": {
+      "default_format": "mov"
+    }
+  },
+  "last_actions": [
+    {
+      "type": "feature_used",
+      "data": {
+        "feature_name": "timeline_edit"
+      },
+      "timestamp": "2025-06-21T13:07:34.991290"
+    },
+    {
+      "type": "feature_used",
+      "data": {
+        "feature_name": "subtitle_edit"
+      },
+      "timestamp": "2025-06-21T13:07:34.991290"
+    },
+    {
+      "type": "feature_used",
+      "data": {
+        "feature_name": "effect_simple"
+      },
+      "timestamp": "2025-06-21T13:07:34.991290"
+    },
+    {
+      "type": "error",
+      "data": {
+        "message": "操作失败",
+        "code": "E1001"
+      },
+      "timestamp": "2025-06-21T13:07:34.991290"
+    }
+  ],
+  "session_count": 1,
+  "total_usage_time": 0.011526,
+  "last_session": "2025-06-21T13:07:34.998809",
+  "created_at": "2025-06-21T13:07:34.987283",
+  "updated_at": "2025-06-21T13:07:34.998809",
+  "shown_tips": {
+    "tip1": "2025-06-21T13:07:34.995289",
+    "tip2": "2025-06-21T13:07:34.995289",
+    "tip3": "2025-06-21T13:07:34.995289",
+    "tip4": "2025-06-21T13:07:34.995289"
+  }
+}

@@ -1,0 +1,125 @@
+# 数据湖配置
+storage:
+  base_path: "data/lake"
+  staging_area: "data/staging"
+  format: "parquet"
+  partitioning:
+    - "language"
+    - "source_type" 
+    - "year"
+    - "month"
+  
+# 数据结构配置
+schemas:
+  hits:
+    version: "1.0"
+    description: "爆款剧本转换对照数据"
+    fields:
+      - name: "origin_scene"
+        type: "string"
+        description: "原始场景描述"
+      - name: "hit_scene" 
+        type: "string"
+        description: "爆款场景描述"
+      - name: "modification_type"
+        type: "string" 
+        description: "转换类型"
+        allowed_values: ["动作强化", "冲突加剧", "悬念设置", "反转设计", "情感渲染"]
+      - name: "impact_score"
+        type: "float"
+        description: "效果评分"
+        range: [0.0, 1.0]
+      - name: "source_id"
+        type: "string"
+        description: "数据来源ID"
+      - name: "timestamp"
+        type: "timestamp"
+        description: "记录时间"
+  
+  scripts:
+    version: "1.0"
+    description: "完整剧本数据"
+    fields:
+      - name: "title"
+        type: "string"
+        description: "剧本标题"
+      - name: "language"
+        type: "string"
+        description: "语言"
+        allowed_values: ["zh", "en"]
+      - name: "scenes"
+        type: "list<map>"
+        description: "场景列表"
+      - name: "is_hit"
+        type: "boolean"
+        description: "是否爆款"
+      - name: "popularity_score"
+        type: "float"
+        description: "流行度评分"
+        range: [0.0, 100.0]
+      - name: "metadata"
+        type: "map"
+        description: "元数据"
+
+# 数据质量控制
+quality:
+  validation:
+    enabled: true
+    schema_validation: true
+    data_type_check: true
+    range_check: true
+    enum_check: true
+  data_cleaning:
+    remove_duplicates: true
+    handle_missing: "fill_default"
+    normalize_text: true
+
+# 元数据管理
+metadata:
+  capture:
+    source_tracking: true
+    lineage_tracking: true
+    timestamp: true
+    schema_version: true
+  index:
+    enabled: true
+    fields: ["origin_scene", "hit_scene", "title", "modification_type"]
+
+# 数据访问控制
+access_control:
+  default_permission: "read_only"
+  roles:
+    - name: "data_manager"
+      permissions: ["read", "write", "delete", "admin"]
+    - name: "model_trainer"
+      permissions: ["read", "write"]
+    - name: "viewer"
+      permissions: ["read"]
+
+# 性能配置
+performance:
+  compression: "snappy"
+  row_group_size: 100000
+  page_size: 8192
+  bloom_filter_columns: ["modification_type", "is_hit"]
+  
+# 集成配置
+integration:
+  sources:
+    - name: "manual_entry"
+      type: "ui"
+      enabled: true
+    - name: "batch_import" 
+      type: "file"
+      enabled: true
+      formats: ["csv", "json", "srt"]
+    - name: "api"
+      type: "rest"
+      enabled: true
+  sinks:
+    - name: "model_training"
+      type: "internal"
+      enabled: true
+    - name: "analytics"
+      type: "internal"
+      enabled: true 

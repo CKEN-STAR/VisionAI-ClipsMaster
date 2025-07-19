@@ -1,0 +1,42 @@
+{
+    "version": "2.0.0",
+    "release_date": "2022-06-30",
+    "supported_features": [
+        "advanced_transitions",
+        "timeline_markers",
+        "multi_track_export"
+    ],
+    "feature_config": {
+        "advanced_transitions": {
+            "enabled": true,
+            "max_duration": 3.0,
+            "available_presets": [
+                "fade",
+                "dissolve",
+                "wipe"
+            ]
+        },
+        "timeline_markers": {
+            "enabled": true,
+            "max_markers": 20,
+            "categories": [
+                "comment",
+                "chapter"
+            ]
+        },
+        "multi_track_export": {
+            "enabled": true,
+            "max_tracks": 4,
+            "formats": ["wav"]
+        }
+    },
+    "compatibility": {
+        "min_compatible_version": "2.0.0",
+        "max_compatible_version": "2.9.5"
+    },
+    "deprecated_features": [],
+    "metadata": {
+        "description": "基础版本，支持核心特性",
+        "created_by": "VisionAI团队"
+    }
+} 

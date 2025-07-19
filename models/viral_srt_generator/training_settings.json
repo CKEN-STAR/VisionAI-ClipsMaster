@@ -1,0 +1,9 @@
+{
+  "learning_rate": 5e-05,
+  "epochs": 3,
+  "batch_size": 4,
+  "max_seq_length": 512,
+  "use_gpu": false,
+  "save_steps": 500,
+  "eval_steps": 100
+}

@@ -1,0 +1,101 @@
+# VisionAI-ClipsMaster 内容过滤禁用词列表
+# 格式: 一行一个禁用词或短语
+# 支持中英文混合
+
+# 暴力内容
+violence
+violent
+血腥
+暴力
+杀人
+斗殴
+伤害
+abuse
+harm
+死亡
+weapon
+武器
+
+# 色情内容
+pornography
+porn
+色情
+情色
+露骨
+淫秽
+obscene
+性暗示
+nudity
+裸露
+性交
+sexual
+
+# 仇恨言论
+hate
+racist
+racism
+歧视
+种族歧视
+性别歧视
+discrimination
+bias
+偏见
+nazism
+纳粹
+极端主义
+terrorism
+恐怖主义
+
+# 违法内容
+illegal
+drugs
+毒品
+违法
+犯罪
+盗版
+hack
+黑客
+piracy
+盗窃
+fraud
+欺诈
+gambling
+赌博
+
+# 敏感政治内容
+政治
+敏感
+propaganda
+宣传
+政府
+制度
+颠覆
+overthrow
+煽动
+颠覆
+政权
+separatism
+分裂
+分裂国家
+
+# 不当产品营销
+假冒
+仿冒
+伪劣
+knockoff
+counterfeit
+盗版
+版权侵犯
+侵权
+未经授权
+绕过
+
+# 自动化检测绕过
+filterbypㄅss
+filterbyрass
+bypass检测
+绕过检查
+绕过审查
+审查绕过
+检测逃避
+规避检测 

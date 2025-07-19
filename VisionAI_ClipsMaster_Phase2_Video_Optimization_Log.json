@@ -1,0 +1,59 @@
+{
+  "optimization_phase": "Phase 2 - Video Optimization",
+  "start_time": "2025-07-19 10:53:12",
+  "initial_size": 1729836742,
+  "final_size": 1729836742,
+  "actual_reduction": 0,
+  "expected_reduction": 393216000,
+  "video_optimization": {
+    "initial_video_size": 486777867,
+    "final_video_size": 486777867,
+    "video_reduction": 0,
+    "files_kept": 8,
+    "files_deleted": 7
+  },
+  "operations": [
+    {
+      "type": "error",
+      "path": "d:\\zancun\\VisionAI-ClipsMaster-backup\\tests\\golden_samples\\zh\\7.mp4",
+      "error": "[WinError 5] 拒绝访问。: 'd:\\\\zancun\\\\VisionAI-ClipsMaster-backup\\\\tests\\\\golden_samples\\\\zh\\\\7.mp4'",
+      "status": "failed"
+    },
+    {
+      "type": "error",
+      "path": "d:\\zancun\\VisionAI-ClipsMaster-backup\\tests\\golden_samples\\zh\\5.mp4",
+      "error": "[WinError 5] 拒绝访问。: 'd:\\\\zancun\\\\VisionAI-ClipsMaster-backup\\\\tests\\\\golden_samples\\\\zh\\\\5.mp4'",
+      "status": "failed"
+    },
+    {
+      "type": "error",
+      "path": "d:\\zancun\\VisionAI-ClipsMaster-backup\\tests\\golden_samples\\zh\\9.mp4",
+      "error": "[WinError 5] 拒绝访问。: 'd:\\\\zancun\\\\VisionAI-ClipsMaster-backup\\\\tests\\\\golden_samples\\\\zh\\\\9.mp4'",
+      "status": "failed"
+    },
+    {
+      "type": "error",
+      "path": "d:\\zancun\\VisionAI-ClipsMaster-backup\\tests\\golden_samples\\zh\\8.mp4",
+      "error": "[WinError 5] 拒绝访问。: 'd:\\\\zancun\\\\VisionAI-ClipsMaster-backup\\\\tests\\\\golden_samples\\\\zh\\\\8.mp4'",
+      "status": "failed"
+    },
+    {
+      "type": "error",
+      "path": "d:\\zancun\\VisionAI-ClipsMaster-backup\\tests\\golden_samples\\zh\\4.mp4",
+      "error": "[WinError 5] 拒绝访问。: 'd:\\\\zancun\\\\VisionAI-ClipsMaster-backup\\\\tests\\\\golden_samples\\\\zh\\\\4.mp4'",
+      "status": "failed"
+    },
+    {
+      "type": "error",
+      "path": "d:\\zancun\\VisionAI-ClipsMaster-backup\\tests\\golden_samples\\zh\\6.mp4",
+      "error": "[WinError 5] 拒绝访问。: 'd:\\\\zancun\\\\VisionAI-ClipsMaster-backup\\\\tests\\\\golden_samples\\\\zh\\\\6.mp4'",
+      "status": "failed"
+    },
+    {
+      "type": "error",
+      "path": "d:\\zancun\\VisionAI-ClipsMaster-backup\\tests\\golden_samples\\zh\\1_20250317_203031.mp4",
+      "error": "[WinError 5] 拒绝访问。: 'd:\\\\zancun\\\\VisionAI-ClipsMaster-backup\\\\tests\\\\golden_samples\\\\zh\\\\1_20250317_203031.mp4'",
+      "status": "failed"
+    }
+  ]
+}

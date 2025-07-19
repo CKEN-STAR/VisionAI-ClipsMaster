@@ -1,0 +1,147 @@
+{
+  "kill two birds with one stone": {
+    "meaning": "achieve two goals with one action",
+    "zh_equivalent": "一箭双雕",
+    "contexts": ["efficiency", "strategy"]
+  },
+  "the ball is in your court": {
+    "meaning": "it's your turn to take action",
+    "zh_equivalent": "该你表态了",
+    "contexts": ["responsibility", "decision"]
+  },
+  "break the ice": {
+    "meaning": "overcome initial social awkwardness",
+    "zh_equivalent": "打破僵局",
+    "contexts": ["social", "beginning"]
+  },
+  "barking up the wrong tree": {
+    "meaning": "pursue a mistaken line of thought or action",
+    "zh_equivalent": "走错路了",
+    "contexts": ["mistake", "misunderstanding"]
+  },
+  "a piece of cake": {
+    "meaning": "something very easy to do",
+    "zh_equivalent": "小菜一碟",
+    "contexts": ["difficulty", "ease"]
+  },
+  "cost an arm and a leg": {
+    "meaning": "be very expensive",
+    "zh_equivalent": "价格不菲",
+    "contexts": ["expense", "value"]
+  },
+  "hit the nail on the head": {
+    "meaning": "describe exactly what is causing a situation or problem",
+    "zh_equivalent": "一针见血",
+    "contexts": ["accuracy", "assessment"]
+  },
+  "bite off more than you can chew": {
+    "meaning": "take on more than you can handle",
+    "zh_equivalent": "贪多嚼不烂",
+    "contexts": ["capacity", "overcommitment"]
+  },
+  "the last straw": {
+    "meaning": "the final problem that makes a situation unbearable",
+    "zh_equivalent": "压垮骆驼的最后一根稻草",
+    "contexts": ["patience", "limit"]
+  },
+  "cut corners": {
+    "meaning": "do something in the easiest or cheapest way",
+    "zh_equivalent": "偷工减料",
+    "contexts": ["quality", "effort"]
+  },
+  "devil's advocate": {
+    "meaning": "present a counter argument",
+    "zh_equivalent": "唱反调",
+    "contexts": ["argument", "perspective"]
+  },
+  "elephant in the room": {
+    "meaning": "an obvious problem no one wants to discuss",
+    "zh_equivalent": "视而不见的问题",
+    "contexts": ["avoidance", "awkwardness"]
+  },
+  "get your act together": {
+    "meaning": "organize yourself so you can do things effectively",
+    "zh_equivalent": "振作起来",
+    "contexts": ["organization", "efficiency"]
+  },
+  "miss the boat": {
+    "meaning": "miss an opportunity",
+    "zh_equivalent": "错失良机",
+    "contexts": ["opportunity", "timing"]
+  },
+  "once in a blue moon": {
+    "meaning": "very rarely",
+    "zh_equivalent": "千载难逢",
+    "contexts": ["frequency", "rarity"]
+  },
+  "pull someone's leg": {
+    "meaning": "joke with someone",
+    "zh_equivalent": "开玩笑",
+    "contexts": ["humor", "teasing"]
+  },
+  "under the weather": {
+    "meaning": "feeling ill",
+    "zh_equivalent": "不舒服",
+    "contexts": ["health", "condition"]
+  },
+  "wild goose chase": {
+    "meaning": "a foolish and hopeless search",
+    "zh_equivalent": "徒劳无功",
+    "contexts": ["effort", "futility"]
+  },
+  "back to square one": {
+    "meaning": "have to start all over again",
+    "zh_equivalent": "从头开始",
+    "contexts": ["progress", "setback"]
+  },
+  "beat around the bush": {
+    "meaning": "avoid coming to the point",
+    "zh_equivalent": "拐弯抹角",
+    "contexts": ["directness", "communication"]
+  },
+  "cross that bridge when you come to it": {
+    "meaning": "deal with a problem when it occurs",
+    "zh_equivalent": "船到桥头自然直",
+    "contexts": ["planning", "timing"]
+  },
+  "don't put all your eggs in one basket": {
+    "meaning": "don't risk everything on a single venture",
+    "zh_equivalent": "不要把所有鸡蛋放在一个篮子里",
+    "contexts": ["risk", "diversification"]
+  },
+  "every cloud has a silver lining": {
+    "meaning": "every difficult situation has some advantage",
+    "zh_equivalent": "塞翁失马，焉知非福",
+    "contexts": ["optimism", "perspective"]
+  },
+  "jump on the bandwagon": {
+    "meaning": "join a popular trend or activity",
+    "zh_equivalent": "随大流",
+    "contexts": ["trend", "conformity"]
+  },
+  "let the cat out of the bag": {
+    "meaning": "reveal a secret",
+    "zh_equivalent": "泄露秘密",
+    "contexts": ["secrecy", "revelation"]
+  },
+  "speak of the devil": {
+    "meaning": "said when someone appears just as you were talking about them",
+    "zh_equivalent": "说曹操，曹操到",
+    "contexts": ["coincidence", "timing"]
+  },
+  "the pot calling the kettle black": {
+    "meaning": "criticize someone for a fault you have yourself",
+    "zh_equivalent": "五十步笑百步",
+    "contexts": ["hypocrisy", "criticism"]
+  },
+  "you can't judge a book by its cover": {
+    "meaning": "don't judge by appearance",
+    "zh_equivalent": "人不可貌相",
+    "contexts": ["judgment", "appearance"]
+  },
+  "a bitter pill to swallow": {
+    "meaning": "an unpleasant fact that must be accepted",
+    "zh_equivalent": "难以接受的事实",
+    "contexts": ["acceptance", "difficulty"]
+  }
+} 

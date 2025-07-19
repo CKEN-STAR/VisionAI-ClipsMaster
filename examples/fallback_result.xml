@@ -1,0 +1,49 @@
+<project>
+  <info>
+    <metadata>
+      <title>4K示例项目</title>
+      <creator>VisionAI-ClipsMaster</creator>
+      <description>具有高级功能的项目</description>
+    </metadata>
+    <project_settings>
+      <resolution width="3840" height="2160" />
+      <frame_rate>30</frame_rate>
+      <color_space hdr="true" />
+    </project_settings>
+  </info>
+  <resources>
+    <video id="video1" path="videos/sample_4k.mp4" />
+    <audio id="audio1" path="audio/background.mp3" />
+  </resources>
+  <timeline id="main_timeline" duration="00:05:30.000">
+    <video_track>
+      <clip start="00:00:00.000" end="00:01:30.000" resource_id="video1">
+        <effects>
+          <color_correction brightness="1.2" contrast="1.1" />
+          <blur amount="0.3" />
+        </effects>
+        <keyframes>
+          <keyframe time="00:00:00.000" zoom="1.0" />
+          <keyframe time="00:00:05.000" zoom="1.2" />
+          <keyframe time="00:00:10.000" zoom="1.0" />
+        </keyframes>
+      </clip>
+      <nested_sequence id="nested1" start="00:01:30.000" end="00:03:00.000">
+        <timeline id="nested_timeline" duration="00:01:30.000">
+          <video_track>
+            <clip start="00:00:00.000" end="00:01:30.000" resource_id="video1" />
+          </video_track>
+        </timeline>
+      </nested_sequence>
+    </video_track>
+    <audio_track>
+      <clip start="00:00:00.000" end="00:05:30.000" resource_id="audio1">
+        <audio_effect type="fade_in" duration="2.0" />
+        <audio_effect type="fade_out" duration="3.0" />
+      </clip>
+    </audio_track>
+    <effects_track>
+      <effect start="00:00:00.000" end="00:01:00.000" type="3d_rotation" angle="45" />
+    </effects_track>
+  </timeline>
+</project>

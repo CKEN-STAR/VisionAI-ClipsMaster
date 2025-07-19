@@ -1,0 +1,208 @@
+# VisionAI-ClipsMaster 训练策略配置
+# 用于配置模型微调和训练参数
+
+# 基础训练配置
+training:
+  # 学习率配置
+  learning_rate:
+    initial: 2e-5
+    min: 1e-6
+    scheduler: "cosine"
+    warmup_steps: 100
+    
+  # 批次配置
+  batch_size:
+    train: 4
+    eval: 8
+    gradient_accumulation_steps: 4
+    
+  # 训练轮数
+  epochs:
+    max: 10
+    early_stopping_patience: 3
+    
+  # 优化器配置
+  optimizer:
+    type: "AdamW"
+    weight_decay: 0.01
+    beta1: 0.9
+    beta2: 0.999
+    eps: 1e-8
+
+# LoRA微调配置
+lora:
+  # LoRA参数
+  rank: 16
+  alpha: 32
+  dropout: 0.1
+  
+  # 目标模块
+  target_modules:
+    - "q_proj"
+    - "v_proj"
+    - "k_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+  
+  # 任务类型
+  task_type: "CAUSAL_LM"
+
+# 数据配置
+data:
+  # 数据集分割
+  train_split: 0.8
+  val_split: 0.1
+  test_split: 0.1
+  
+  # 数据预处理
+  max_length: 512
+  truncation: true
+  padding: "max_length"
+  
+  # 数据增强
+  augmentation:
+    enabled: true
+    synonym_replacement: 0.1
+    random_insertion: 0.1
+    random_swap: 0.1
+    random_deletion: 0.1
+
+# 模型配置
+model:
+  # 中文模型
+  chinese:
+    name: "Qwen/Qwen2.5-7B-Instruct"
+    max_length: 512
+    temperature: 0.7
+    top_p: 0.9
+    top_k: 50
+    
+  # 英文模型
+  english:
+    name: "mistralai/Mistral-7B-Instruct-v0.1"
+    max_length: 512
+    temperature: 0.7
+    top_p: 0.9
+    top_k: 50
+
+# 评估配置
+evaluation:
+  # 评估指标
+  metrics:
+    - "bleu"
+    - "rouge"
+    - "perplexity"
+    - "viral_score"
+    
+  # 评估频率
+  eval_steps: 100
+  save_steps: 200
+  logging_steps: 50
+  
+  # 最佳模型保存
+  metric_for_best_model: "viral_score"
+  greater_is_better: true
+
+# 硬件配置
+hardware:
+  # 内存优化
+  memory:
+    max_memory_mb: 3500  # 4GB设备的安全阈值
+    gradient_checkpointing: true
+    dataloader_pin_memory: false
+    
+  # CPU配置
+  cpu:
+    num_workers: 2
+    use_cpu: true
+    mixed_precision: false
+    
+  # 量化配置
+  quantization:
+    enabled: true
+    bits: 4
+    quant_type: "nf4"
+    use_double_quant: true
+
+# 输出配置
+output:
+  # 模型保存
+  output_dir: "./models/fine_tuned"
+  save_total_limit: 3
+  save_strategy: "steps"
+  
+  # 日志配置
+  logging_dir: "./logs/training"
+  report_to: ["tensorboard"]
+  
+  # 推送到Hub（可选）
+  push_to_hub: false
+  hub_model_id: null
+
+# 训练策略
+strategy:
+  # 训练模式
+  mode: "lora"  # 可选: "full", "lora", "prefix"
+  
+  # 数据策略
+  data_strategy: "balanced"  # 平衡中英文数据
+  
+  # 损失函数
+  loss_function: "cross_entropy"
+  label_smoothing: 0.1
+  
+  # 正则化
+  regularization:
+    dropout: 0.1
+    attention_dropout: 0.1
+    
+# 质量控制
+quality:
+  # 数据质量阈值
+  min_quality_score: 0.7
+  max_length_ratio: 3.0  # 输出/输入长度比例上限
+  
+  # 病毒式潜力评分
+  viral_potential:
+    min_score: 0.3
+    weight_factors:
+      suspense: 0.3
+      emotion: 0.25
+      conflict: 0.2
+      novelty: 0.15
+      engagement: 0.1
+
+# 实验配置
+experiment:
+  # 实验名称
+  name: "visionai_clipmaster_v1"
+  
+  # 种子设置
+  seed: 42
+  
+  # 调试模式
+  debug: false
+  
+  # A/B测试
+  ab_testing:
+    enabled: false
+    variants: ["baseline", "enhanced"]
+    
+# 部署配置
+deployment:
+  # 模型格式
+  export_format: "onnx"
+  
+  # 推理优化
+  inference:
+    batch_size: 1
+    max_new_tokens: 256
+    do_sample: true
+    
+  # 服务配置
+  service:
+    port: 8000
+    workers: 1
+    timeout: 30

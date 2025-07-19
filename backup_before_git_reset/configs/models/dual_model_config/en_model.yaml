@@ -1,0 +1,7 @@
+context_length: 8192
+language: en
+name: mistral-7b-en
+path: models/mistral/quantized/mistral-7b-instruct-v0.2-q4_k_m.gguf
+quantization: Q4_K_M
+temperature: 0.7
+top_p: 0.9

@@ -1,0 +1,41 @@
+{
+  "interface_tour": {
+    "name": "界面导览",
+    "description": "了解软件界面的主要功能区域",
+    "steps": [
+      {"component_id": "file_drop_area", "asset_name": "upload_video"},
+      {"component_id": "param_slider", "asset_name": "slider_control"},
+      {"component_id": "process_button", "asset_name": "button_highlight"}
+    ]
+  },
+  "upload_guide": {
+    "name": "上传指南",
+    "description": "如何上传和处理视频文件",
+    "steps": [
+      {"component_id": "file_drop_area", "asset_name": "upload_video"}
+    ]
+  },
+  "parameter_guide": {
+    "name": "参数调整指南",
+    "description": "如何调整处理参数",
+    "steps": [
+      {"component_id": "param_slider", "asset_name": "slider_control"}
+    ]
+  },
+  "processing_guide": {
+    "name": "处理指南",
+    "description": "如何处理视频文件",
+    "steps": [
+      {"component_id": "process_button", "asset_name": "button_highlight"}
+    ]
+  },
+  "complete_workflow": {
+    "name": "完整工作流程",
+    "description": "从上传到处理的完整工作流程",
+    "steps": [
+      {"component_id": "file_drop_area", "asset_name": "upload_video"},
+      {"component_id": "param_slider", "asset_name": "slider_control"},
+      {"component_id": "process_button", "asset_name": "button_highlight"}
+    ]
+  }
+} 

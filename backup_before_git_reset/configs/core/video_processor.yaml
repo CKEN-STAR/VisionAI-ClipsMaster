@@ -1,0 +1,82 @@
+# 视频处理器配置
+
+# 基本配置
+video_processor:
+  # FFmpeg路径，可以是绝对路径或命令名（如果在PATH中）
+  ffmpeg_path: "ffmpeg"
+  
+  # 最小片段时长（秒）
+  min_clip_duration: 3.0
+  
+  # 最大片段时长（秒）
+  max_clip_duration: 30.0
+  
+  # 场景变化检测阈值，值越大检测越不敏感
+  scene_change_threshold: 30.0
+  
+  # 音频峰值检测阈值（dB），值越小检测越敏感
+  audio_peak_threshold: -20
+  
+  # 是否使用LLM进行字幕内容分析
+  use_llm_for_subtitles: true
+  
+  # 片段评分配置
+  scoring:
+    # 基于字幕的片段基础分
+    subtitle_base_score: 50.0
+    
+    # 基于场景和音频的片段基础分
+    scene_audio_base_score: 30.0
+    
+    # 字幕内容分析评分范围
+    subtitle_content_max_score: 50.0
+    
+    # 音频峰值评分系数
+    audio_peak_score_factor: 2.0
+    
+    # 音频响度评分系数
+    audio_db_score_factor: 2.0
+  
+  # 输出配置
+  output:
+    # 视频编码
+    video_codec: "libx264"
+    
+    # 音频编码
+    audio_codec: "aac"
+    
+    # 编码预设
+    encode_preset: "fast"
+    
+    # 片段导出最大并行数
+    max_parallel_exports: 2
+
+# 字幕提取器配置
+subtitle_extractor:
+  # FFmpeg路径，可以是绝对路径或命令名（如果在PATH中）
+  ffmpeg_path: "ffmpeg"
+  
+  # 是否启用OCR识别硬字幕
+  enable_ocr: false
+  
+  # OCR识别配置
+  ocr:
+    # OCR引擎，支持tesseract、paddleocr
+    engine: "tesseract"
+    
+    # 采样间隔（秒）
+    sampling_interval: 1.0
+    
+    # 语言设置
+    language: "chi_sim+eng"
+    
+    # 最小信心度
+    min_confidence: 60
+  
+  # 字幕处理配置
+  processing:
+    # 合并时间间隔阈值（秒）
+    merge_threshold: 1.0
+    
+    # 最小字幕显示时长（秒）
+    min_duration: 0.5 

@@ -1,0 +1,107 @@
+{
+  "user_id": "default_user",
+  "level": "beginner",
+  "experience_points": 0,
+  "feature_usage": {
+    "basic_import": 5,
+    "basic_export": 3,
+    "timeline_edit": 2,
+    "subtitle_edit": 1,
+    "effect_simple": 0,
+    "transition_simple": 0,
+    "audio_adjust": 0,
+    "color_correction": 0,
+    "advanced_transition": 0,
+    "advanced_effects": 0,
+    "keyframe_animation": 0,
+    "script_automation": 0,
+    "custom_plugin": 0
+  },
+  "preferences": {
+    "ui": {
+      "theme": "light",
+      "language": "zh",
+      "show_tooltips": true,
+      "compact_mode": false,
+      "auto_save_interval": 5
+    },
+    "processing": {
+      "default_quality": "medium",
+      "use_gpu": true,
+      "threads": 4,
+      "cache_size_mb": 512
+    },
+    "tips": {
+      "show_upload_tips": true,
+      "show_processing_tips": true,
+      "show_performance_tips": true,
+      "show_feature_discovery": true,
+      "tip_frequency": "normal"
+    }
+  },
+  "last_actions": [
+    {
+      "type": "app_start",
+      "timestamp": "2025-06-21T15:00:00",
+      "data": {}
+    },
+    {
+      "type": "feature_used",
+      "timestamp": "2025-06-21T15:01:30",
+      "data": {
+        "feature_name": "basic_import",
+        "file_count": 1
+      }
+    },
+    {
+      "type": "tip_shown",
+      "timestamp": "2025-06-21T15:01:45",
+      "data": {
+        "tip_id": "uploading_1687334505",
+        "context": "uploading"
+      }
+    },
+    {
+      "type": "tip_closed",
+      "timestamp": "2025-06-21T15:02:10",
+      "data": {
+        "tip_id": "uploading_1687334505"
+      }
+    },
+    {
+      "type": "feature_used",
+      "timestamp": "2025-06-21T15:03:20",
+      "data": {
+        "feature_name": "timeline_edit",
+        "duration": 45
+      }
+    }
+  ],
+  "session_count": 1,
+  "total_usage_time": 300,
+  "last_session": "2025-06-21T15:00:00",
+  "created_at": "2025-06-21T15:00:00",
+  "updated_at": "2025-06-21T15:05:00",
+  "tip_history": [
+    {
+      "tip_id": "uploading_1687334505",
+      "context": "uploading",
+      "text": "您上传了1个文件，建议先检查格式兼容性",
+      "shown_at": "2025-06-21T15:01:45",
+      "closed_at": "2025-06-21T15:02:10",
+      "clicked": false
+    }
+  ],
+  "feature_discovery": {
+    "discovered": [
+      "basic_import",
+      "timeline_edit"
+    ],
+    "recommended": [
+      "subtitle_edit",
+      "effect_simple",
+      "transition_simple"
+    ],
+    "last_recommendation": "2025-06-21T15:03:30"
+  }
+}

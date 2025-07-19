@@ -1,0 +1,55 @@
+{
+  "probes": {
+    "enabled": true,
+    "points": [0.1, 0.25, 0.5, 0.75, 0.9],
+    "auto_adjust": true
+  },
+  "thresholds": {
+    "narrative_coherence": 0.7,
+    "audio_quality": 0.65,
+    "visual_quality": 0.6,
+    "emotion_consistency": 0.75,
+    "dialog_naturalness": 0.8,
+    "overall_quality": 0.75
+  },
+  "reporting": {
+    "auto_save": true,
+    "save_path": "data/quality_reports",
+    "generate_html": true,
+    "attach_to_export": true
+  },
+  "actions": {
+    "auto_repair": {
+      "enabled": true,
+      "min_threshold": 0.5,
+      "strategies": ["adjust_timing", "enhance_audio", "improve_resolution"]
+    },
+    "warnings": {
+      "enabled": true,
+      "threshold": 0.6,
+      "notify_user": true
+    },
+    "blocking": {
+      "enabled": false,
+      "threshold": 0.4,
+      "allow_override": true
+    }
+  },
+  "visualization": {
+    "color_scheme": {
+      "good": "#4CAF50",
+      "warning": "#FF9800",
+      "critical": "#F44336"
+    },
+    "metrics_display": ["overall", "narrative", "audio", "visual"],
+    "show_in_ui": true
+  },
+  "advanced": {
+    "sampling_rate": 1.0,
+    "ffmpeg_params": {
+      "metadata_format": "key=value",
+      "codec_copy": true
+    },
+    "memory_optimized": true
+  }
+} 

@@ -1,0 +1,247 @@
+# VisionAI-ClipsMaster .gitignore 模板
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Translations
+*.mo
+*.pot
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Scrapy stuff:
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# celery beat schedule file
+celerybeat-schedule
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.pydevproject
+
+# 操作系统
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# 项目特定 - 日志和临时文件
+logs/
+*.log
+test_output/
+benchmark_results/
+cache/
+temp/
+tmp/
+outputs/
+reports/
+*.backup
+*.bak
+*.old
+
+# 项目特定 - 大文件和二进制文件 (使用独立仓库或Git LFS)
+models/
+tools/ffmpeg/
+bin/
+data/large_datasets/
+downloads/
+spacy_wheels/
+miniconda.exe
+ffmpeg.zip
+ffmpeg.7z
+
+# AI模型文件 (使用Git LFS或独立仓库)
+*.bin
+*.safetensors
+*.gguf
+*.pt
+*.pth
+*.h5
+*.onnx
+*.pkl
+*.joblib
+
+# 视频和音频文件 (使用Git LFS)
+*.mp4
+*.avi
+*.mkv
+*.mov
+*.wmv
+*.flv
+*.webm
+*.m4v
+*.3gp
+*.ts
+*.mp3
+*.wav
+*.flac
+
+# 压缩文件
+*.zip
+*.tar.gz
+*.tar.bz2
+*.rar
+*.7z
+
+# 编译文件
+*.exe
+*.dll
+*.so
+*.dylib
+
+# 测试和开发
+test_data/videos/
+examples/compressed/
+simple_output/
+comprehensive_output/
+llm_output/
+llm_direct_output/
+screenplay_output/
+exporter_output/
+
+# 配置和密钥
+config/secrets/
+.env.local
+.env.production
+*.key
+*.pem
+*.p12
+
+# 数据库
+*.db
+*.sqlite
+*.sqlite3
+
+# 文档构建
+docs/build/
+docs/_build/
+site/
+
+# 性能分析
+*.prof
+*.lprof
+
+# 内存转储
+*.hprof
+*.dump
+
+# Git相关
+.git/
+.gitattributes.bak
+
+# 特定于VisionAI-ClipsMaster的忽略项
+ui_test_output/
+stability_test_output/
+integration_test_output/
+test_logs/
+recovery/
+snapshots/
+metadata/
+visualization/
+results/
+coverage_reports/
+crash_log.txt
+system_info.txt

@@ -1,0 +1,167 @@
+{
+  "timeline": {
+    "total_duration": 135.1602274517478,
+    "anchors": [
+      {
+        "id": "character_interaction_ed7deeb2",
+        "type": "character",
+        "position": 0.03568661446515973,
+        "time": 4.823410928093822,
+        "description": "多角色互动场景：李四, 小红, 赵六",
+        "importance": 0.7099922520502446,
+        "confidence": 0.7
+      },
+      {
+        "id": "character_interaction_7d17b565",
+        "type": "character",
+        "position": 0.12380938092354044,
+        "time": 16.73410408628581,
+        "description": "多角色互动场景：王五, 赵六",
+        "importance": 0.7346666266585912,
+        "confidence": 0.7
+      },
+      {
+        "id": "emotion_valley_1e11bec5",
+        "type": "emotion",
+        "position": 0.29330457091471235,
+        "time": 39.64311251746982,
+        "description": "情感低谷点 (-0.70)",
+        "importance": 1.0,
+        "confidence": 1.0
+      },
+      {
+        "id": "character_relation_cbb42a94",
+        "type": "character",
+        "position": 0.3789199198896554,
+        "time": 51.21490255828388,
+        "description": "角色关系转折：决裂",
+        "importance": 0.9788327727624828,
+        "confidence": 0.85
+      },
+      {
+        "id": "emotion_change_12c1394a",
+        "type": "emotion",
+        "position": 0.5203858609100624,
+        "time": 70.33547132327763,
+        "description": "情感变化点 (-0.30)",
+        "importance": 1.0,
+        "confidence": 1.0
+      },
+      {
+        "id": "emotion_peak_90e9059c",
+        "type": "emotion",
+        "position": 0.5744138053315871,
+        "time": 77.6379005800413,
+        "description": "情感高潮点 (1.00)",
+        "importance": 1.0,
+        "confidence": 1.0
+      },
+      {
+        "id": "emotion_change_75f1f709",
+        "type": "emotion",
+        "position": 0.6391852259312649,
+        "time": 86.39242052066658,
+        "description": "情感变化点 (0.60)",
+        "importance": 1.0,
+        "confidence": 1.0
+      },
+      {
+        "id": "character_interaction_ff0120c0",
+        "type": "character",
+        "position": 0.7248307362014591,
+        "time": 97.96828716900703,
+        "description": "多角色互动场景：赵六, 小明, 小刚",
+        "importance": 0.7770473938635915,
+        "confidence": 0.7
+      },
+      {
+        "id": "character_interaction_236b5db2",
+        "type": "character",
+        "position": 0.8368322679560016,
+        "time": 113.10643967589515,
+        "description": "多角色互动场景：王五, 小明, 李四",
+        "importance": 0.7456869649723195,
+        "confidence": 0.7
+      },
+      {
+        "id": "character_interaction_6577cdcd",
+        "type": "character",
+        "position": 0.897052598255546,
+        "time": 121.24583321640094,
+        "description": "多角色互动场景：赵六, 小红",
+        "importance": 0.7288252724884472,
+        "confidence": 0.7
+      },
+      {
+        "id": "character_interaction_d35baea4",
+        "type": "character",
+        "position": 0.9634536084588466,
+        "time": 130.22060885850487,
+        "description": "多角色互动场景：小明, 王五, 李四",
+        "importance": 0.7102329896315229,
+        "confidence": 0.7
+      }
+    ]
+  },
+  "anchor_types": {
+    "character": 7,
+    "emotion": 4
+  },
+  "importance_distribution": [
+    {
+      "type": "character",
+      "position": 0.03568661446515973,
+      "importance": 0.7099922520502446
+    },
+    {
+      "type": "character",
+      "position": 0.12380938092354044,
+      "importance": 0.7346666266585912
+    },
+    {
+      "type": "emotion",
+      "position": 0.29330457091471235,
+      "importance": 1.0
+    },
+    {
+      "type": "character",
+      "position": 0.3789199198896554,
+      "importance": 0.9788327727624828
+    },
+    {
+      "type": "emotion",
+      "position": 0.5203858609100624,
+      "importance": 1.0
+    },
+    {
+      "type": "emotion",
+      "position": 0.5744138053315871,
+      "importance": 1.0
+    },
+    {
+      "type": "emotion",
+      "position": 0.6391852259312649,
+      "importance": 1.0
+    },
+    {
+      "type": "character",
+      "position": 0.7248307362014591,
+      "importance": 0.7770473938635915
+    },
+    {
+      "type": "character",
+      "position": 0.8368322679560016,
+      "importance": 0.7456869649723195
+    },
+    {
+      "type": "character",
+      "position": 0.897052598255546,
+      "importance": 0.7288252724884472
+    },
+    {
+      "type": "character",
+      "position": 0.9634536084588466,
+      "importance": 0.7102329896315229
+    }
+  ]
+}

@@ -1,0 +1,214 @@
+{
+  "app_title": "VisionAI クリップマスター",
+  "main_menu": "メインメニュー",
+  "file": "ファイル",
+  "edit": "編集",
+  "view": "表示",
+  "help": "ヘルプ",
+  "import": "インポート",
+  "export": "エクスポート",
+  "settings": "設定",
+  "about": "情報",
+  "language": "言語",
+  "theme": "テーマ",
+  "date_format": "%Y年%m月%d日",
+  "time_format": "%H時%M分%S秒",
+  "confirm": "確認",
+  "cancel": "キャンセル",
+  "error": "エラー",
+  "warning": "警告",
+  "info": "情報",
+  "success": "成功",
+  "processing": "処理中...",
+  "generating": "生成中...",
+  "model_loading": "モデル読み込み中...",
+  
+  "import_video": "動画をインポート",
+  "export_video": "動画をエクスポート",
+  "preview": "プレビュー",
+  "save_project": "プロジェクトを保存",
+  "open_project": "プロジェクトを開く",
+  "new_project": "新規プロジェクト",
+  "exit": "終了",
+  
+  "subtitle_generation": "字幕生成",
+  "video_cutting": "動画カット",
+  "transition_effects": "トランジション効果",
+  "background_music": "背景音楽",
+  "apply_filters": "フィルターを適用",
+  "adjust_speed": "速度調整",
+  
+  "upload": "アップロード",
+  "download": "ダウンロード",
+  "share": "共有",
+  "delete": "削除",
+  "rename": "名前変更",
+  "copy": "コピー",
+  "paste": "貼り付け",
+  "cut": "切り取り",
+  
+  "dark_mode": "ダークモード",
+  "light_mode": "ライトモード",
+  "system_theme": "システム設定に従う",
+  
+  "video_quality": "動画品質",
+  "high_quality": "高品質",
+  "medium_quality": "中品質",
+  "low_quality": "低品質",
+  
+  "model_settings": "モデル設定",
+  "language_model": "言語モデル",
+  "video_model": "動画モデル",
+  
+  "general_settings": "一般設定",
+  "advanced_settings": "詳細設定",
+  "accessibility_settings": "アクセシビリティ設定",
+  
+  "import_from_local": "ローカルからインポート",
+  "import_from_url": "URLからインポート",
+  "export_to_local": "ローカルにエクスポート",
+  "export_to_cloud": "クラウドにエクスポート",
+  "export_to_jianying": "Jianyingにエクスポート",
+  
+  "loading": "読み込み中",
+  "initializing": "初期化中",
+  "ready": "準備完了",
+  
+  "project_name": "プロジェクト名",
+  "video_duration": "動画の長さ",
+  "created_time": "作成日時",
+  "modified_time": "更新日時",
+  
+  "undo": "元に戻す",
+  "redo": "やり直す",
+  "zoom_in": "拡大",
+  "zoom_out": "縮小",
+  
+  "apply": "適用",
+  "reset": "リセット",
+  "default": "デフォルト",
+  
+  "start_time": "開始時間",
+  "end_time": "終了時間",
+  "duration": "長さ",
+  
+  "welcome": "VisionAI クリップマスターへようこそ",
+  "getting_started": "はじめに",
+  "quick_tutorial": "クイックチュートリアル",
+  
+  "save_success": "保存しました",
+  "save_failed": "保存に失敗しました",
+  "load_success": "読み込みました",
+  "load_failed": "読み込みに失敗しました",
+  "export_success": "エクスポートしました",
+  "export_failed": "エクスポートに失敗しました",
+  
+  "confirm_delete": "削除してもよろしいですか？",
+  "confirm_exit": "終了してもよろしいですか？",
+  "unsaved_changes": "保存されていない変更があります",
+  "continue_without_saving": "保存せずに続行",
+  
+  "video_format": "動画フォーマット",
+  "audio_format": "音声フォーマット",
+  "image_format": "画像フォーマット",
+  
+  "version": "バージョン",
+  "build_date": "ビルド日付",
+  "copyright": "著作権",
+  
+  "error_loading_video": "動画の読み込み中にエラーが発生しました",
+  "error_generating_subtitles": "字幕の生成中にエラーが発生しました",
+  "error_exporting": "エクスポート中にエラーが発生しました",
+  
+  "memory_usage": "メモリ使用量",
+  "cpu_usage": "CPU使用率",
+  "gpu_usage": "GPU使用率",
+  
+  "auto_save": "自動保存",
+  "auto_save_interval": "自動保存間隔",
+  
+  "enable_screen_reader": "スクリーンリーダーを有効化",
+  "high_contrast": "ハイコントラスト",
+  "large_text": "大きいテキスト",
+  "reduce_motion": "モーションを減らす",
+  
+  "language_name": "日本語",
+  "language_native_name": "日本語",
+  
+  "errors": {
+    "file_not_found": "ファイルが見つかりません: {path}",
+    "failed_to_load": "{name}の読み込みに失敗しました",
+    "operation_failed": "操作に失敗しました: {message}",
+    "network_error": "ネットワークエラー: {code}",
+    "permission_denied": "権限がありません",
+    "disk_full": "ディスク容量が不足しています"
+  },
+  
+  "main_window": {
+    "title": "VisionAI クリップマスター",
+    "status_ready": "準備完了",
+    "status_processing": "処理中...",
+    "status_saving": "保存中...",
+    "welcome_message": "VisionAI クリップマスターへようこそ"
+  },
+  
+  "dialog": {
+    "title": "ダイアログ",
+    "ok": "OK",
+    "cancel": "キャンセル",
+    "apply": "適用",
+    "close": "閉じる"
+  },
+  
+  "settings_dialog": {
+    "title": "設定",
+    "general": "一般",
+    "appearance": "外観",
+    "advanced": "詳細",
+    "save_path": "保存パス",
+    "browse": "参照...",
+    "auto_save": "自動保存",
+    "auto_save_interval": "自動保存間隔（分）",
+    "language": "言語",
+    "theme": "テーマ",
+    "default": "デフォルト",
+    "dark": "ダーク",
+    "light": "ライト",
+    "system": "システム"
+  },
+  
+  "test": {
+    "title": "翻訳エンジンテスト",
+    "header": "動的翻訳エンジンテスト",
+    "switch_language": "言語切替",
+    "show_params": "パラメータ付きテキスト表示",
+    "show_context": "コンテキスト対応テキスト表示",
+    "description": "このデモは動的翻訳エンジンとコンテキスト対応の翻訳機能を示しています",
+    "basic_translation": "基本翻訳テスト",
+    "context_translation": "コンテキスト翻訳テスト",
+    "params_translation": "パラメータ翻訳テスト"
+  },
+  
+  "general": {
+    "ready": "準備完了",
+    "processing": "処理中",
+    "complete": "完了",
+    "file": "ファイル",
+    "edit": "編集",
+    "help": "ヘルプ",
+    "language_changed": "言語が変更されました: {code}"
+  },
+  
+  "video_editor": {
+    "cut": "カット",
+    "split": "分割",
+    "merge": "結合",
+    "speed": "速度",
+    "add_effect": "エフェクト追加",
+    "add_transition": "トランジション追加",
+    "add_text": "テキスト追加",
+    "preview": "プレビュー"
+  },
+  
+  "title": "デフォルトタイトル"
+} 

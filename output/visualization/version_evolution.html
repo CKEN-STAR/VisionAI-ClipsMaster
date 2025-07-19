@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <title>版本演化谱系图</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        
+        .node circle {
+            fill: #69b3a2;
+            stroke: #2c3e50;
+            stroke-width: 1.5px;
+        }
+        
+        .node text {
+            font-size: 12px;
+            font-family: sans-serif;
+        }
+        
+        .link {
+            fill: none;
+            stroke: #ccc;
+            stroke-width: 1.5px;
+        }
+        
+        .tooltip {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+    </style>
+</head>
+<body>
+    <div id="tree-container"></div>
+    <script>
+        // 树形图数据
+        const treeData = {"nodes": [{"id": "v1.0.0", "label": {"name": "\u521d\u59cb\u6df7\u526a\u7248\u672c", "description": "\u57fa\u672c\u7684\u6df7\u526a\u529f\u80fd\uff0c\u7b80\u5355\u573a\u666f\u5207\u6362", "emotion_intensity": 0.5, "features": ["\u57fa\u7840\u6df7\u526a", "\u81ea\u52a8\u573a\u666f\u5206\u5272"]}}, {"id": "v1.1.0", "label": {"name": "\u60c5\u611f\u589e\u5f3a\u7248", "description": "\u589e\u5f3a\u60c5\u611f\u8868\u8fbe\u548c\u6d41\u7545\u5ea6", "emotion_intensity": 0.8, "features": ["\u57fa\u7840\u6df7\u526a", "\u81ea\u52a8\u573a\u666f\u5206\u5272", "\u60c5\u611f\u5f3a\u5316", "\u97f3\u4e50\u540c\u6b65"]}}, {"id": "v1.1.2", "label": {"name": "\u81ea\u9002\u5e94\u60c5\u611f\u7248", "description": "\u57fa\u4e8e\u5185\u5bb9\u81ea\u52a8\u8c03\u6574\u60c5\u611f\u5f3a\u5ea6", "emotion_intensity": 0.7, "features": ["\u57fa\u7840\u6df7\u526a", "\u81ea\u52a8\u573a\u666f\u5206\u5272", "\u60c5\u611f\u5f3a\u5316", "\u97f3\u4e50\u540c\u6b65", "\u81ea\u9002\u5e94\u8c03\u8282"]}}, {"id": "v2.0.0", "label": {"name": "\u5b8c\u6574\u529f\u80fd\u7248", "description": "\u96c6\u6210\u6240\u6709\u529f\u80fd\u7684\u5b8c\u6574\u7248\u672c", "emotion_intensity": 0.7, "features": ["\u57fa\u7840\u6df7\u526a", "\u81ea\u52a8\u573a\u666f\u5206\u5272", "\u60c5\u611f\u5f3a\u5316", "\u97f3\u4e50\u540c\u6b65", "\u81ea\u9002\u5e94\u8c03\u8282", "\u4f4e\u8d44\u6e90\u6d88\u8017", "\u5feb\u901f\u6e32\u67d3", "\u591a\u5e73\u53f0\u652f\u6301"]}}, {"id": "v2.1.0", "label": {"name": "\u7a33\u5b9a\u53d1\u5e03\u7248", "description": "\u5168\u9762\u6d4b\u8bd5\u5e76\u4f18\u5316\u7684\u7a33\u5b9a\u7248\u672c", "emotion_intensity": 0.7, "features": ["\u57fa\u7840\u6df7\u526a", "\u81ea\u52a8\u573a\u666f\u5206\u5272", "\u60c5\u611f\u5f3a\u5316", "\u97f3\u4e50\u540c\u6b65", "\u81ea\u9002\u5e94\u8c03\u8282", "\u4f4e\u8d44\u6e90\u6d88\u8017", "\u5feb\u901f\u6e32\u67d3", "\u591a\u5e73\u53f0\u652f\u6301", "\u9519\u8bef\u4fee\u590d", "\u7a33\u5b9a\u6027\u589e\u5f3a"]}}], "links": [{"source": "v1.0.0", "target": "v1.1.0"}, {"source": "v1.1.0", "target": "v1.1.2"}, {"source": "v1.1.2", "target": "v2.0.0"}, {"source": "v2.0.0", "target": "v2.1.0"}]};
+        
+        // 设置画布尺寸
+        const width = 800;
+        const height = 600;
+        
+        // 创建树形布局
+        const svg = d3.select("#tree-container")
+            .append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .append("g")
+            .attr("transform", "translate(50, 50)");
+            
+        // 创建工具提示
+        const tooltip = d3.select("body").append("div")
+            .attr("class", "tooltip");
+        
+        // 创建层次结构链接
+        const links = treeData.links.map(d => Object.create(d));
+        const nodes = treeData.nodes.map(d => Object.create(d));
+        
+        // 创建力导向图
+        const simulation = d3.forceSimulation(nodes)
+            .force("link", d3.forceLink(links).id(d => d.id).distance(100))
+            .force("charge", d3.forceManyBody().strength(-200))
+            .force("x", d3.forceX(width / 2))
+            .force("y", d3.forceY(height / 2));
+        
+        // 绘制链接
+        const link = svg.append("g")
+            .attr("class", "links")
+            .selectAll("line")
+            .data(links)
+            .enter().append("line")
+            .attr("class", "link")
+            .attr("stroke-width", 2);
+        
+        // 创建节点组
+        const node = svg.append("g")
+            .attr("class", "nodes")
+            .selectAll(".node")
+            .data(nodes)
+            .enter().append("g")
+            .attr("class", "node")
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
+        
+        // 为节点添加圆形
+        node.append("circle")
+            .attr("r", 10)
+            .on("mouseover", function(event, d) {
+                tooltip.transition()
+                    .duration(200)
+                    .style("opacity", .9);
+                
+                let tooltipContent = `<strong>ID:</strong> ${d.id}<br/>`;
+                
+                if (d.label) {
+                    Object.entries(d.label).forEach(([key, value]) => {
+                        tooltipContent += `<strong>${key}:</strong> ${value}<br/>`;
+                    });
+                }
+                
+                tooltip.html(tooltipContent)
+                    .style("left", (event.pageX + 10) + "px")
+                    .style("top", (event.pageY - 28) + "px");
+            })
+            .on("mouseout", function() {
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
+        
+        // 为节点添加文本标签
+        node.append("text")
+            .attr("dy", -15)
+            .style("text-anchor", "middle")
+            .text(d => d.id.substring(0, 8) + "...");
+        
+        // 更新模拟位置
+        simulation.on("tick", function() {
+            link
+                .attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+            
+            node
+                .attr("transform", d => `translate(${d.x}, ${d.y})`);
+        });
+        
+        // 拖拽功能
+        function dragstarted(event, d) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+        
+        function dragged(event, d) {
+            d.fx = event.x;
+            d.fy = event.y;
+        }
+        
+        function dragended(event, d) {
+            if (!event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+    </script>
+</body>
+</html>

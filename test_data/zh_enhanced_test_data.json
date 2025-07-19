@@ -1,0 +1,65 @@
+{
+  "original_subtitles": [
+    "皇上，臣妾有重要的事情要禀报。",
+    "什么事情如此紧急？速速道来！",
+    "关于太子殿下的事情，臣妾深感不妥。",
+    "你竟敢质疑朕的决定？大胆！",
+    "臣妾不敢，只是担心江山社稷啊。",
+    "这件事关系重大，不可轻举妄动。",
+    "臣妾明白了，一切听从皇上安排。"
+  ],
+  "viral_subtitles": [
+    "皇上！我有爆炸性消息！",
+    "太子出大事了！",
+    "江山要变天了！"
+  ],
+  "key_plot_points": [
+    0,
+    2,
+    4,
+    5
+  ],
+  "emotions": [
+    "formal",
+    "urgent",
+    "worried",
+    "angry",
+    "fearful",
+    "serious",
+    "submissive"
+  ],
+  "emotion_intensities": [
+    0.6,
+    0.8,
+    0.7,
+    0.9,
+    0.8,
+    0.7,
+    0.5
+  ],
+  "characters": [
+    "皇上",
+    "妃子",
+    "太子"
+  ],
+  "genre": "古装剧",
+  "narrative_structure": {
+    "exposition": [
+      0,
+      1
+    ],
+    "rising_action": [
+      2,
+      3
+    ],
+    "climax": [
+      4
+    ],
+    "falling_action": [
+      5
+    ],
+    "resolution": [
+      6
+    ]
+  }
+}

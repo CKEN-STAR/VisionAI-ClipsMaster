@@ -1,0 +1,17 @@
+# 基本依赖
+numpy>=1.19.0
+matplotlib>=3.3.0
+
+# 压缩算法库
+zstandard>=0.15.0  # Zstandard压缩算法
+lz4>=3.1.0         # LZ4压缩算法
+python-snappy>=0.6.0  # Snappy压缩算法
+
+# 可视化和报告
+pandas>=1.1.0      # 用于数据处理
+seaborn>=0.11.0    # 增强可视化
+
+# 硬件加速依赖
+torch>=1.8.0       # PyTorch，用于CUDA支持
+cupy-cuda11x>=10.0.0  # CuPy，可选，更高性能的CUDA支持，根据CUDA版本选择
+# 可选依赖 iqat  # Intel QAT支持，需要单独安装

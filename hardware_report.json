@@ -1,0 +1,46 @@
+{
+  "cpu": {
+    "brand": "12th Gen Intel(R) Core(TM) i5-12500H",
+    "cores_physical": 12,
+    "cores_logical": 16,
+    "frequency": "3.1100 GHz",
+    "architecture": "X86_64",
+    "instruction_sets": {
+      "avx": true,
+      "avx2": true,
+      "avx512": false,
+      "sse4_2": true,
+      "neon": false,
+      "f16c": true
+    }
+  },
+  "memory": {
+    "total": 16893206528,
+    "total_gb": 15.73,
+    "available": 647823360,
+    "available_gb": 0.6,
+    "percent_used": 96.2
+  },
+  "gpu": {
+    "available": true,
+    "devices": [],
+    "type": "Intel Integrated",
+    "name": "Intel(R) Iris(R) Xe Graphics"
+  },
+  "system": {
+    "os": "Windows",
+    "os_version": "10.0.26100",
+    "os_release": "10",
+    "python_version": "3.11.11"
+  },
+  "recommendation": {
+    "quantization": "Q5_K_M",
+    "model_size": "base",
+    "use_gpu": true,
+    "gpu_type": "Intel Integrated",
+    "gpu_memory": "Unknown",
+    "batch_size": 4,
+    "loading_strategy": "normal"
+  },
+  "compatibility": true
+}

@@ -1,0 +1,7 @@
+path: en/model.bin
+memory_required: 1024
+device_requirements:
+  min_ram: 512
+  gpu_preferred: true
+type: TRANSFORMER
+checkpoint_path: en/checkpoint 

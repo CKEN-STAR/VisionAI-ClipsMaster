@@ -1,0 +1,10 @@
+{
+  "show_tips": true,
+  "tip_frequency": "medium",
+  "preferred_tip_categories": [
+    "all"
+  ],
+  "feedback_level": "detailed",
+  "auto_optimization": true,
+  "last_optimization": "2025-06-21T17:54:06.395009"
+}

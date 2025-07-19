@@ -1,0 +1,31 @@
+{
+  "original_subtitles": [
+    "Detective, we found something at the crime scene.",
+    "What did you find?",
+    "A bloody knife hidden under the bed.",
+    "That changes everything. Call forensics.",
+    "The suspect's alibi just fell apart."
+  ],
+  "viral_subtitles": [
+    "SHOCKING discovery at crime scene!",
+    "The evidence that changes EVERYTHING!",
+    "Suspect's alibi DESTROYED!"
+  ],
+  "key_plot_points": [
+    0,
+    2,
+    4
+  ],
+  "emotions": [
+    "suspense",
+    "shock",
+    "tension",
+    "urgency",
+    "revelation"
+  ],
+  "characters": [
+    "Detective",
+    "Officer"
+  ],
+  "genre": "crime_drama"
+}

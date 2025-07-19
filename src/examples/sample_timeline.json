@@ -1,0 +1,91 @@
+{
+  "project": "样例剪辑项目",
+  "version": "1.0",
+  "fps": 30,
+  "duration": 600,
+  "tracks": [
+    {
+      "name": "主视频轨道",
+      "type": "video",
+      "clips": [
+        {
+          "id": "v1",
+          "start": 0,
+          "end": 150,
+          "source": "assets/video1.mp4",
+          "scene": "开场"
+        },
+        {
+          "id": "v2",
+          "start": 150,
+          "end": 300,
+          "source": "assets/video2.mp4",
+          "scene": "主场景"
+        },
+        {
+          "id": "v3",
+          "start": 350,
+          "end": 500,
+          "source": "assets/video3.mp4",
+          "scene": "结尾"
+        }
+      ]
+    },
+    {
+      "name": "字幕轨道",
+      "type": "subtitle",
+      "clips": [
+        {
+          "id": "s1",
+          "start": 50,
+          "end": 100,
+          "text": "VisionAI-ClipsMaster示例"
+        },
+        {
+          "id": "s2",
+          "start": 200,
+          "end": 250,
+          "text": "中间字幕"
+        },
+        {
+          "id": "s3",
+          "start": 400,
+          "end": 550,
+          "text": "结束字幕"
+        }
+      ]
+    },
+    {
+      "name": "音频轨道",
+      "type": "audio",
+      "clips": [
+        {
+          "id": "a1",
+          "start": -10,
+          "end": 200,
+          "source": "assets/audio1.mp3"
+        },
+        {
+          "id": "a2",
+          "start": 200,
+          "end": 600,
+          "source": "assets/audio2.mp3"
+        }
+      ]
+    }
+  ],
+  "transitions": [
+    {
+      "id": "t1",
+      "start": 140,
+      "end": 160,
+      "type": "fade"
+    },
+    {
+      "id": "t2",
+      "start": 495,
+      "end": 505,
+      "type": "dissolve"
+    }
+  ]
+} 

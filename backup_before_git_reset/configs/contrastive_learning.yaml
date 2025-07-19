@@ -1,0 +1,121 @@
+# 对比学习模型配置文件
+# 包含模型参数、训练策略和数据增强设置
+
+# 模型相关配置
+model:
+  # 基础模型路径
+  model_path: "models/shared/bert-base-chinese"
+  # 隐藏层大小
+  hidden_size: 768
+  # 投影层大小
+  projection_size: 256
+  # 训练策略
+  margin: 1.0
+  # 输出特征维度
+  feature_dim: 256
+
+# 训练相关配置
+training:
+  # 学习率
+  learning_rate: 2e-5
+  # 批次大小（低资源环境使用小批次）
+  batch_size: 8
+  # 训练轮数
+  epochs: 30
+  # 优化器
+  optimizer: "Adam"
+  # 权重衰减
+  weight_decay: 1e-6
+  # 学习率调度器
+  scheduler: "linear_warmup"
+  # 热身步数
+  warmup_steps: 100
+  # 是否使用混合精度训练（低资源环境可能不支持）
+  mixed_precision: false
+  # 梯度累积步数
+  gradient_accumulation_steps: 1
+  # 模型保存频率（几轮保存一次）
+  save_every: 10
+  # 梯度裁剪值
+  max_grad_norm: 1.0
+
+# 难样本挖掘配置
+hard_negative_mining:
+  # 是否启用
+  enabled: true
+  # 挖掘频率（几轮挖掘一次）
+  mining_frequency: 2
+  # 每个样本保留的难负样本数量
+  top_k: 5
+  # 挖掘策略
+  strategy: "similarity"  # similarity, distance, random
+  # 是否缓存难样本
+  cache_hard_negatives: true
+  # 刷新比例
+  refresh_ratio: 0.3
+
+# 课程学习配置
+curriculum_learning:
+  # 是否启用
+  enabled: true
+  # 难度级别数量
+  levels: 3
+  # 进阶策略
+  strategy: "linear"  # linear, exponential, custom
+  # 级别持续轮数
+  steps_per_level: 10
+  # 初始难度（0~1）
+  initial_difficulty: 0.3
+
+# 数据增强配置
+data_augmentation:
+  # 是否启用
+  enabled: true
+  # 增强策略
+  strategies:
+    # 文本替换（同义词替换）
+    word_replacement:
+      enabled: true
+      ratio: 0.1
+    # 句子删除
+    sentence_deletion:
+      enabled: true
+      ratio: 0.1
+    # 句子顺序打乱
+    sentence_shuffle:
+      enabled: false
+      ratio: 0.1
+    # 随机掩码
+    random_masking:
+      enabled: true
+      ratio: 0.15
+
+# 特征提取配置
+feature_extraction:
+  # 句子表示方法
+  sentence_representation: "mean_pooling"  # cls, mean_pooling, max_pooling
+  # 是否使用注意力机制
+  use_attention: true
+  # 是否对句子特征进行归一化
+  normalize_features: true
+  # 最大序列长度
+  max_sequence_length: 128
+  # 是否使用层间特征融合
+  use_layer_fusion: false
+
+# 资源管理配置（针对低配置）
+resource:
+  # 是否启用低资源模式
+  low_resource_mode: true
+  # 最大内存使用量(MB)
+  max_memory_mb: 2048
+  # 使用量化（提高推理速度，降低内存占用）
+  use_quantization: true
+  # 量化精度
+  quantization_precision: 8  # 8位整数量化
+  # 是否启用内存优化
+  memory_optimization: true
+  # 是否使用梯度检查点
+  use_gradient_checkpointing: true
+  # 强制CPU模式
+  force_cpu: true 

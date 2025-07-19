@@ -1,0 +1,26 @@
+# Qwen2.5-7b-zh Q4_K_M 量化配置
+path: qwen/quantized/qwen2.5-7b-zh_Q4_K_M.gguf
+type: LLM
+memory_required: 2147483648  # 2GB
+device_requirements:
+  min_vram: 2147483648  # 2GB 显存
+  min_ram: 4294967296   # 4GB 系统内存
+  min_disk: 10737418240 # 10GB 磁盘空间
+  preferred_device: CUDA
+  fallback_device: CPU
+input_shape: [1, 4096]  # 批处理大小 x 最大序列长度
+warm_up_batch_size: 1
+warm_up_iterations: 5
+checkpoint_path: qwen/checkpoints
+quantization_info:
+  bits: 4
+  method: k-means
+  precision: middle
+performance_profile:
+  throughput: 25  # 每秒token
+  latency: 40     # ms每token
+  memory_usage: 1610612736  # 1.5GB 运行时内存
+compatibility:
+  torch_version: "2.0.0"
+  cuda_version: "11.8"
+  python_version: "3.10" 

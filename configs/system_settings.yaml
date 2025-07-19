@@ -1,0 +1,178 @@
+# VisionAI-ClipsMaster 系统设置
+# 全局系统配置，包括硬件适配和性能优化设置
+
+# 硬件检测与适配
+hardware:
+  auto_detect: true             # 自动检测硬件配置
+  performance_tier: "auto"      # 性能分级：auto, low, medium, high
+  min_memory_mb: 1024           # 最低内存要求（MB）
+  min_storage_mb: 5120          # 最低存储空间要求（MB）
+  gpu_acceleration: true        # 启用GPU加速（如可用）
+
+# 性能优化设置
+optimization:
+  # 低端设备优化 (≤4GB RAM)
+  low_tier:
+    model_quantization: "Q2_K"  # 最高压缩率量化
+    batch_size: 1               # 批处理大小
+    dynamic_unload: true        # 使用后立即卸载模型
+    worker_threads: 1           # 工作线程数
+    chunk_size: 256             # 模型分块大小(MB)
+    offload_to_disk: true       # 允许将模型部分卸载到磁盘
+    compute_device: "cpu"       # 强制使用CPU
+    realtime_preview: false     # 禁用实时预览
+    execution_mode: "efficiency" # 效率优先模式
+
+  # 中端设备优化 (4-8GB RAM)
+  medium_tier:
+    model_quantization: "Q4_K_M" # 平衡量化
+    batch_size: 2                # 批处理大小
+    dynamic_unload: true         # 使用后卸载模型
+    worker_threads: 2            # 工作线程数
+    chunk_size: 512              # 模型分块大小(MB)
+    offload_to_disk: false       # 不需要卸载到磁盘
+    compute_device: "gpu-light"  # 轻量级GPU模式（如可用）
+    realtime_preview: true       # 启用实时预览
+    execution_mode: "balanced"   # 平衡模式
+
+  # 高端设备优化 (>8GB RAM)
+  high_tier:
+    model_quantization: "Q5_K"   # 高质量量化
+    batch_size: 4                # 批处理大小
+    dynamic_unload: false        # 保持模型在内存中
+    worker_threads: 4            # 工作线程数
+    chunk_size: 1024             # 模型分块大小(MB)
+    offload_to_disk: false       # 不需要卸载到磁盘
+    compute_device: "gpu"        # 完全GPU模式（如可用）
+    realtime_preview: true       # 启用实时预览
+    execution_mode: "performance" # 性能优先模式
+
+# 界面性能设置
+ui_performance:
+  throttle_ms: 16               # 界面刷新限制（毫秒）
+  animation_enabled: true       # 是否启用动画效果
+  thumbnail_quality: "auto"     # 缩略图质量：low, medium, high, auto
+  lazy_loading: true            # 延迟加载界面元素
+  hardware_acceleration: true   # 界面硬件加速
+
+# 语言处理设置
+nlp:
+  max_context_length: 2048      # 最大文本上下文长度
+  temperature: 0.7              # 生成温度
+  top_p: 0.9                    # Top-P采样参数
+
+# 系统资源限制
+resource_limits:
+  max_memory_percent: 85        # 最大内存使用百分比
+  max_cpu_percent: 90           # 最大CPU使用百分比
+  emergency_save_threshold: 95  # 紧急保存阈值（内存百分比）
+
+# 调试设置
+debug:
+  verbose_logging: false        # 详细日志记录
+  performance_metrics: true     # 记录性能指标
+  crash_reporting: true         # 崩溃报告
+  developer_mode: false         # 开发者模式
+
+default_settings:
+  cache:
+    enabled: true
+    location: system_temp
+    size_limit: 1315
+  cpu:
+    threads: 12
+  gpu:
+    device: auto
+    enabled: true
+    memory_limit: 2048
+  logging:
+    file_rotation: 7
+    level: info
+    max_size: 100
+  paths:
+    base_dir: .
+    config_dir: ./configs
+    logs_dir: ./logs
+    models_dir: ./models
+    temp_dir: ./temp
+  telemetry:
+    anonymous: true
+    enabled: true
+system_config_schema:
+  cache:
+    enabled:
+      default: true
+      type: bool
+    location:
+      default: system_temp
+      type: str
+    size_limit:
+      default: 10240
+      max: 102400
+      min: 1024
+      type: int
+  cpu:
+    threads:
+      default: auto
+      max: 64
+      min: 1
+      type: int
+  gpu:
+    device:
+      default: auto
+      type: str
+    enabled:
+      default: true
+      type: bool
+    memory_limit:
+      default: 2048
+      max: 16384
+      min: 512
+      type: int
+  logging:
+    file_rotation:
+      default: 7
+      max: 90
+      min: 1
+      type: int
+    level:
+      default: info
+      enum:
+      - debug
+      - info
+      - warning
+      - error
+      type: str
+    max_size:
+      default: 100
+      max: 1024
+      min: 1
+      type: int
+  paths:
+    base_dir:
+      default: .
+      must_exist: true
+      type: path
+    config_dir:
+      default: ./configs
+      must_exist: true
+      type: path
+    logs_dir:
+      default: ./logs
+      must_exist: false
+      type: path
+    models_dir:
+      default: ./models
+      must_exist: true
+      type: path
+    temp_dir:
+      default: ./temp
+      must_exist: false
+      type: path
+  telemetry:
+    anonymous:
+      default: true
+      type: bool
+    enabled:
+      default: true
+      type: bool

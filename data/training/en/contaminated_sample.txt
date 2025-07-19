@@ -1,0 +1,7 @@
+This is an English sample with Chinese contamination to test the detection mechanism.
+
+The following contains significant Chinese content: 这是中文内容，用于测试语言污染检测功能。我们需要确保这样的文件能被正确识别出来。这样的混合语言文件应当被标记为不合格的训练样本。
+
+If the detection works properly, this file should be identified as contaminated because it contains more than 5% Chinese content relative to the total content length.
+
+More English content follows to balance things out, but the Chinese content should still be above the threshold. 

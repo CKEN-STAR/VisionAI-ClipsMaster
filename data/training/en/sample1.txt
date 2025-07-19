@@ -1,0 +1,7 @@
+This is a sample English text for testing purposes. It should contain only English content to ensure proper language isolation. 
+
+The model should be able to identify that this file is in English and does not contain any significant Chinese content. This helps ensure that our English training data remains clean and free from contamination.
+
+We need to check that the content ratio of other languages is below the acceptable threshold, in this case less than 5% of Chinese content.
+
+This allows the models trained on this data to be more accurate for their specific language tasks. 

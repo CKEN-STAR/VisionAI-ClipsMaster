@@ -1,0 +1,67 @@
+{
+  "video_id": "complex_video_mix_001",
+  "weakest_link": {
+    "id": "temporal_alignment",
+    "name": "时间轴对齐",
+    "score": 0.65,
+    "details": {
+      "sync_error": 0.12,
+      "drift": "minimal",
+      "model": "alignment_model_v1"
+    }
+  },
+  "critical_path": [
+    {
+      "id": "audio_processing",
+      "name": "音频处理",
+      "score": 0.68,
+      "details": {
+        "noise_level": "medium",
+        "clarity": 0.65,
+        "model": "audio_model_v1"
+      }
+    },
+    {
+      "id": "temporal_alignment",
+      "name": "时间轴对齐",
+      "score": 0.65,
+      "details": {
+        "sync_error": 0.12,
+        "drift": "minimal",
+        "model": "alignment_model_v1"
+      }
+    }
+  ],
+  "root_causes": [
+    {
+      "type": "model_issue",
+      "description": "模型 alignment_model_v1 在 时间轴对齐 环节表现不佳",
+      "confidence": 0.85,
+      "suggestions": [
+        "更新 alignment_model_v1 到最新版本",
+        "为 alignment_model_v1 提供更多训练数据",
+        "微调 alignment_model_v1 参数以提高性能"
+      ]
+    },
+    {
+      "type": "dependency_issue",
+      "description": "音频处理 环节的低质量可能影响了 时间轴对齐 的表现",
+      "confidence": 0.7,
+      "suggestions": [
+        "优化 音频处理 环节",
+        "调整 音频处理 与 时间轴对齐 之间的过渡参数"
+      ]
+    },
+    {
+      "type": "sync_issue",
+      "description": "音视频同步误差超过阈值",
+      "confidence": 0.95,
+      "suggestions": [
+        "修正音视频对齐算法",
+        "使用增强型同步引擎",
+        "增加同步标记点"
+      ]
+    }
+  ],
+  "timestamp": "2025-05-03T19:32:32.644512"
+}

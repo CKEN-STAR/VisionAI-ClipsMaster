@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>测试报告</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1, h2 { color: #333; }
+        img { max-width: 100%; }
+    </style>
+</head>
+<body>
+    <h1>VisionAI-ClipsMaster 测试报告</h1>
+    <div>
+        <h2>覆盖率雷达图</h2>
+        <img src="static/{{ coverage_radar }}" alt="覆盖率雷达图">
+    </div>
+    <div>
+        <h2>性能趋势</h2>
+        <img src="static/{{ perf_trend }}" alt="性能趋势图">
+    </div>
+    <div>
+        <h2>合规矩阵</h2>
+        {{ compliance_matrix }}
+    </div>
+</body>
+</html>

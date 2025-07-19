@@ -1,0 +1,34 @@
+{
+  "uploading:beginner": "您上传了{file_count}个文件，建议先检查格式兼容性",
+  "uploading:intermediate": "上传完成，可以使用快捷键Ctrl+P预览内容",
+  "uploading:expert": "已上传{file_count}个文件，可使用批处理功能一次处理多个文件",
+  
+  "model_loading:beginner": "模型加载中，剩余时间约{eta}秒",
+  "model_loading:intermediate": "正在加载{model_name}模型，可以同时准备数据",
+  "model_loading:expert": "加载{model_name}中，可配置模型参数以优化性能",
+  "model_loading:all": "模型加载中，剩余时间约{eta}秒",
+  
+  "processing:beginner": "正在处理，完成度{progress}%，请耐心等待",
+  "processing:intermediate": "处理中({progress}%)，可以查看日志了解详情",
+  "processing:expert": "处理中({progress}%)，当前速度{speed}帧/秒",
+  
+  "high_cpu:beginner": "系统繁忙，可能需要等待较长时间",
+  "high_cpu:intermediate": "CPU使用率较高({cpu_usage}%)，可以暂停其他任务",
+  "high_cpu:expert": "CPU负载{cpu_usage}%，建议调整线程数或批处理大小",
+  
+  "training:beginner": "训练已开始，预计需要{eta}分钟完成",
+  "training:intermediate": "训练中，当前损失值为{loss}，准确率{accuracy}%",
+  "training:expert": "训练中，Epoch {epoch}/{total_epochs}，学习率{lr}，可考虑调整批量大小",
+  
+  "exporting:beginner": "导出中，请稍候...",
+  "exporting:intermediate": "正在导出为{format}格式，可同时准备下一个任务",
+  "exporting:expert": "导出{format}中，压缩率{compression}%，预计文件大小{size}MB",
+  
+  "settings:beginner": "在设置中可以调整界面主题和语言",
+  "settings:intermediate": "可以在设置中配置默认保存路径和文件格式",
+  "settings:expert": "高级设置中可以调整性能参数和API密钥",
+  
+  "error:beginner": "遇到错误，请尝试重新启动应用",
+  "error:intermediate": "错误代码{code}，可能是{reason}导致的",
+  "error:expert": "发生{error_type}错误，查看日志获取详细信息，或尝试{solution}"
+}

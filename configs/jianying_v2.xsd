@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:annotation>
+    <xs:documentation>
+      XSD Schema for Jianying XML format (version 2)
+      This schema defines the structure for Jianying export files with multi-track support.
+    </xs:documentation>
+  </xs:annotation>
+  
+  <!-- Root element -->
+  <xs:element name="jianying_project">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="info" type="InfoType" minOccurs="1" maxOccurs="1"/>
+        <xs:element name="resources" type="ResourcesType" minOccurs="1" maxOccurs="1"/>
+        <xs:element name="timeline" type="TimelineType" minOccurs="1" maxOccurs="1"/>
+        <xs:element name="composition" type="CompositionType" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+      <xs:attribute name="version" type="xs:string" use="required"/>
+    </xs:complexType>
+  </xs:element>
+  
+  <!-- Information section -->
+  <xs:complexType name="InfoType">
+    <xs:sequence>
+      <xs:element name="metadata" type="MetadataType" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="project_settings" type="ProjectSettingsType" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <!-- Metadata section -->
+  <xs:complexType name="MetadataType">
+    <xs:sequence>
+      <xs:element name="jy_type" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="project_id" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="title" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="author" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="created_time" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="modified_time" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="disclaimer" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="software_version" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="export_date" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="app_info" type="AppInfoType" minOccurs="0" maxOccurs="1"/>
+      <xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <!-- App Info type -->
+  <xs:complexType name="AppInfoType">
+    <xs:sequence>
+      <xs:element name="app_name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="app_version" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="platform" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="device" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <!-- Project settings -->
+  <xs:complexType name="ProjectSettingsType">
+    <xs:sequence>
+      <xs:element name="resolution" type="ResolutionType" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="frame_rate" type="xs:decimal" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="duration" type="xs:duration" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="color_space" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="aspect_ratio" type="AspectRatioType" minOccurs="0" maxOccurs="1"/>
+      <xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <!-- Resolution type -->
+  <xs:complexType name="ResolutionType">
+    <xs:attribute name="width" type="xs:integer" use="required"/>
+    <xs:attribute name="height" type="xs:integer" use="required"/>
+  </xs:complexType>
+  
+  <!-- Aspect Ratio type -->
+  <xs:complexType name="AspectRatioType">
+    <xs:attribute name="horizontal" type="xs:integer" use="required"/>
+    <xs:attribute name="vertical" type="xs:integer" use="required"/>
+  </xs:complexType>
+  
+  <!-- Resources section -->
+  <xs:complexType name="ResourcesType">
+    <xs:sequence>
+      <xs:element name="asset" type="AssetType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="folder" type="FolderType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="collection" type="CollectionType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <!-- Asset type -->
+  <xs:complexType name="AssetType">
+    <xs:sequence>
+      <xs:element name="file" type="FileType" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="metadata" type="AssetMetadataType" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="marker" type="MarkerType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:ID" use="required"/>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="type" type="AssetTypeEnum" use="required"/>
+    <xs:attribute name="proxy_available" type="xs:boolean" use="optional" default="false"/>
+  </xs:complexType>
+  
+  <!-- Asset type enumeration -->
+  <xs:simpleType name="AssetTypeEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="video"/>
+      <xs:enumeration value="audio"/>
+      <xs:enumeration value="image"/>
+      <xs:enumeration value="text"/>
+      <xs:enumeration value="effect"/>
+      <xs:enumeration value="subtitle"/>
+      <xs:enumeration value="caption"/>
+      <xs:enumeration value="template"/>
+      <xs:enumeration value="other"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <!-- File type -->
+  <xs:complexType name="FileType">
+    <xs:attribute name="path" type="xs:string" use="required"/>
+    <xs:attribute name="size" type="xs:long" use="optional"/>
+    <xs:attribute name="duration" type="xs:duration" use="optional"/>
+    <xs:attribute name="format" type="xs:string" use="optional"/>
+    <xs:attribute name="codec" type="xs:string" use="optional"/>
+    <xs:attribute name="hash" type="xs:string" use="optional"/>
+  </xs:complexType>
+  
+  <!-- Asset metadata type -->
+  <xs:complexType name="AssetMetadataType">
+    <xs:sequence>
+      <xs:element name="resolution" type="ResolutionType" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="frame_rate" type="xs:decimal" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="color_space" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="audio_channels" type="xs:integer" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="audio_sample_rate" type="xs:integer" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="create_date" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="keywords" type="KeywordsType" minOccurs="0" maxOccurs="1"/>
+      <xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <!-- Keywords type -->
+  <xs:complexType name="KeywordsType">
+    <xs:sequence>
+      <xs:element name="keyword" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+  <!-- Folder type -->
+  <xs:complexType name="FolderType">
+    <xs:sequence>
+      <xs:element name="asset" type="AssetType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="folder" type="FolderType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:ID" use="required"/>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+  </xs:complexType>
+  
+  <!-- Collection type - for grouping resources -->
+  <xs:complexType name="CollectionType">
+    <xs:sequence>
+      <xs:element name="asset_ref" type="AssetRefType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:ID" use="required"/>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="type" type="xs:string" use="optional"/>
+  </xs:complexType>
+  
+  <!-- Asset Reference type -->
+  <xs:complexType name="AssetRefType">
+    <xs:attribute name="asset_id" type="xs:IDREF" use="required"/>
+  </xs:complexType>
+  
+  <!-- Timeline section -->
+  <xs:complexType name="TimelineType">
+    <xs:sequence>
+      <xs:element name="track" type="TrackType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="subtitle_track" type="SubtitleTrackType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="marker" type="MarkerType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:ID" use="required"/>
+    <xs:attribute name="name" type="xs:string" use="optional"/>
+    <xs:attribute name="duration" type="xs:duration" use="required"/>
+  </xs:complexType>
+  
+  <!-- Track type -->
+  <xs:complexType name="TrackType">
+    <xs:sequence>
+      <xs:element name="clip" type="ClipType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="transition" type="TransitionType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:ID" use="required"/>
+    <xs:attribute name="name" type="xs:string" use="optional"/>
+    <xs:attribute name="type" type="TrackTypeEnum" use="required"/>
+    <xs:attribute name="locked" type="xs:boolean" use="optional" default="false"/>
+    <xs:attribute name="enabled" type="xs:boolean" use="optional" default="true"/>
+    <xs:attribute name="height" type="xs:integer" use="optional"/>
+  </xs:complexType>
+  
+  <!-- Subtitle Track type -->
+  <xs:complexType name="SubtitleTrackType">
+    <xs:sequence>
+      <xs:element name="subtitle" type="SubtitleType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:ID" use="required"/>
+    <xs:attribute name="name" type="xs:string" use="optional"/>
+    <xs:attribute name="locked" type="xs:boolean" use="optional" default="false"/>
+    <xs:attribute name="enabled" type="xs:boolean" use="optional" default="true"/>
+    <xs:attribute name="language" type="xs:string" use="optional"/>
+  </xs:complexType>
+  
+  <!-- Subtitle type -->
+  <xs:complexType name="SubtitleType">
+    <xs:sequence>
+      <xs:element name="text" type="xs:string" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="style" type="TextStyleType" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:ID" use="required"/>
+    <xs:attribute name="start" type="xs:duration" use="required"/>
+    <xs:attribute name="duration" type="xs:duration" use="required"/>
+  </xs:complexType>
+  
+  <!-- Text Style type -->
+  <xs:complexType name="TextStyleType">
+    <xs:attribute name="font" type="xs:string" use="optional"/>
+    <xs:attribute name="size" type="xs:integer" use="optional"/>
+    <xs:attribute name="color" type="xs:string" use="optional"/>
+    <xs:attribute name="alignment" type="xs:string" use="optional"/>
+    <xs:attribute name="bold" type="xs:boolean" use="optional"/>
+    <xs:attribute name="italic" type="xs:boolean" use="optional"/>
+    <xs:attribute name="underline" type="xs:boolean" use="optional"/>
+  </xs:complexType>
+  
+  <!-- Track type enumeration -->
+  <xs:simpleType name="TrackTypeEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="video"/>
+      <xs:enumeration value="audio"/>
+      <xs:enumeration value="effect"/>
+      <xs:enumeration value="text"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <!-- Clip type -->
+  <xs:complexType name="ClipType">
+    <xs:sequence>
+      <xs:element name="effect" type="EffectType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="marker" type="MarkerType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:ID" use="required"/>
+    <xs:attribute name="asset_id" type="xs:IDREF" use="optional"/>
+    <xs:attribute name="start" type="xs:duration" use="required"/>
+    <xs:attribute name="duration" type="xs:duration" use="required"/>
+    <xs:attribute name="in_point" type="xs:duration" use="optional"/>
+    <xs:attribute name="out_point" type="xs:duration" use="optional"/>
+    <xs:attribute name="enabled" type="xs:boolean" use="optional" default="true"/>
+    <xs:attribute name="speed" type="xs:decimal" use="optional" default="1.0"/>
+  </xs:complexType>
+  
+  <!-- Effect type -->
+  <xs:complexType name="EffectType">
+    <xs:sequence>
+      <xs:element name="parameter" type="ParameterType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:ID" use="required"/>
+    <xs:attribute name="type" type="xs:string" use="required"/>
+    <xs:attribute name="name" type="xs:string" use="optional"/>
+    <xs:attribute name="start" type="xs:duration" use="optional"/>
+    <xs:attribute name="duration" type="xs:duration" use="optional"/>
+    <xs:attribute name="enabled" type="xs:boolean" use="optional" default="true"/>
+  </xs:complexType>
+  
+  <!-- Parameter type -->
+  <xs:complexType name="ParameterType">
+    <xs:sequence>
+      <xs:element name="keyframe" type="KeyframeType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="value" type="xs:string" use="optional"/>
+    <xs:attribute name="type" type="xs:string" use="optional"/>
+  </xs:complexType>
+  
+  <!-- Keyframe type -->
+  <xs:complexType name="KeyframeType">
+    <xs:attribute name="time" type="xs:duration" use="required"/>
+    <xs:attribute name="value" type="xs:string" use="required"/>
+    <xs:attribute name="interpolation" type="InterpolationEnum" use="optional" default="linear"/>
+  </xs:complexType>
+  
+  <!-- Transition type -->
+  <xs:complexType name="TransitionType">
+    <xs:sequence>
+      <xs:element name="parameter" type="ParameterType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:ID" use="required"/>
+    <xs:attribute name="type" type="xs:string" use="required"/>
+    <xs:attribute name="name" type="xs:string" use="optional"/>
+    <xs:attribute name="start" type="xs:duration" use="required"/>
+    <xs:attribute name="duration" type="xs:duration" use="required"/>
+    <xs:attribute name="from_clip" type="xs:IDREF" use="optional"/>
+    <xs:attribute name="to_clip" type="xs:IDREF" use="optional"/>
+  </xs:complexType>
+  
+  <!-- Marker type -->
+  <xs:complexType name="MarkerType">
+    <xs:attribute name="id" type="xs:ID" use="required"/>
+    <xs:attribute name="name" type="xs:string" use="optional"/>
+    <xs:attribute name="time" type="xs:duration" use="required"/>
+    <xs:attribute name="color" type="xs:string" use="optional"/>
+    <xs:attribute name="type" type="MarkerTypeEnum" use="optional"/>
+    <xs:attribute name="comment" type="xs:string" use="optional"/>
+  </xs:complexType>
+  
+  <!-- Marker type enumeration -->
+  <xs:simpleType name="MarkerTypeEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="standard"/>
+      <xs:enumeration value="chapter"/>
+      <xs:enumeration value="comment"/>
+      <xs:enumeration value="to_do"/>
+      <xs:enumeration value="custom"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <!-- Interpolation type enumeration -->
+  <xs:simpleType name="InterpolationEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="linear"/>
+      <xs:enumeration value="bezier"/>
+      <xs:enumeration value="ease-in"/>
+      <xs:enumeration value="ease-out"/>
+      <xs:enumeration value="ease-in-out"/>
+      <xs:enumeration value="step"/>
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <!-- Composition type for reused elements -->
+  <xs:complexType name="CompositionType">
+    <xs:sequence>
+      <xs:element name="track" type="TrackType" minOccurs="0" maxOccurs="unbounded"/>
+      <xs:element name="marker" type="MarkerType" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:ID" use="required"/>
+    <xs:attribute name="name" type="xs:string" use="required"/>
+    <xs:attribute name="duration" type="xs:duration" use="required"/>
+  </xs:complexType>
+</xs:schema> 

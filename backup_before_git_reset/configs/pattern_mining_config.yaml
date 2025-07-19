@@ -1,0 +1,53 @@
+# 模式挖掘配置
+
+# FP-Growth算法配置
+fp_growth:
+  min_support: 0.1  # 最小支持度阈值(0-1)
+  max_patterns: 100  # 最大返回模式数
+  min_pattern_length: 2  # 最小模式长度
+  use_multiprocessing: false  # 是否使用多进程
+  memory_efficient: true  # 是否使用内存高效模式
+
+# PrefixSpan算法配置
+prefix_span:
+  min_support: 0.1  # 最小支持度阈值(0-1)
+  max_len: 5  # 最大模式长度
+  max_patterns: 100  # 最大返回模式数
+  use_multiprocessing: false  # 是否使用多进程
+
+# 叙事模式分析配置
+narrative_analysis:
+  min_support: 0.1  # 最小支持度阈值
+  min_confidence: 0.2  # 最小置信度
+
+  # 节拍类型转换模式
+  beat_transitions:
+    enabled: true
+    significance_threshold: 0.2  # 重要性阈值
+
+  # 情感模式分析
+  emotion_patterns:
+    enabled: true
+    change_threshold: 0.2  # 情感变化阈值
+    
+  # 情感强度模式
+  intensity_patterns:
+    enabled: true
+    high_threshold: 0.7  # 高强度阈值
+    medium_threshold: 0.4  # 中等强度阈值
+
+# 叙事指纹配置
+narrative_fingerprint:
+  enabled: true
+  feature_weights:
+    beat_type_distribution: 0.5  # 节拍类型分布权重
+    sentiment_features: 0.3  # 情感特征权重
+    dominant_transitions: 0.2  # 主导转换权重
+  similarity_threshold: 0.7  # 相似度阈值
+
+# 性能优化配置
+performance:
+  memory_limit: 3800  # 内存限制(MB)
+  cache_results: true  # 是否缓存结果
+  cache_max_size: 1000  # 最大缓存条目数
+  timeout: 60  # 超时时间(秒) 

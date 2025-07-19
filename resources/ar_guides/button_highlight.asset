@@ -1,0 +1,26 @@
+{
+  "type": "highlight",
+  "name": "button_highlight_guide",
+  "description": "Highlights important buttons for user interaction",
+  "visual": {
+    "type": "svg",
+    "content": "<svg width=\"150\" height=\"80\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"5\" y=\"5\" width=\"140\" height=\"70\" fill=\"none\" stroke=\"#ff8800\" stroke-width=\"3\" rx=\"8\" ry=\"8\"/><text x=\"75\" y=\"30\" font-family=\"Arial\" font-size=\"14\" fill=\"#ff8800\" text-anchor=\"middle\">点击此按钮</text><path d=\"M75,40 L75,60\" stroke=\"#ff8800\" stroke-width=\"2\" stroke-dasharray=\"3,3\"/><circle cx=\"75\" cy=\"65\" r=\"5\" fill=\"#ff8800\"/></svg>"
+  },
+  "animation": {
+    "type": "flash",
+    "duration": 1500,
+    "repeat": true
+  },
+  "position": {
+    "type": "absolute",
+    "offset": {
+      "x": 0,
+      "y": -10
+    }
+  },
+  "interaction": {
+    "dismissible": true,
+    "trigger": "click",
+    "next_step": "interface_tour"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "model_name": "example_model",
+  "version": 1.0,
+  "creation_time": 1746841914.2134519,
+  "last_modified": 1746841956.8369408,
+  "shards": {
+    "shard_001": {
+      "layers": [
+        "embedding",
+        "attention_1"
+      ],
+      "hash": null,
+      "depends_on": [],
+      "created_at": 1746841928.2931595,
+      "updated_at": 1746841928.2931597
+    },
+    "shard_002": {
+      "layers": [
+        "ffn_1",
+        "attention_2"
+      ],
+      "hash": null,
+      "depends_on": [
+        "shard_001"
+      ],
+      "created_at": 1746841956.8369398,
+      "updated_at": 1746841956.8369398
+    }
+  }
+}

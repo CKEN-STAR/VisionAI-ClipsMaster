@@ -1,0 +1,24 @@
+1
+00:00:00,000 --> 00:00:09,500
+This is a test drama scene showing daily life.
+
+2
+00:00:10,000 --> 00:00:19,500
+This is a test drama scene showing work environment.
+
+3
+00:00:20,000 --> 00:00:29,500
+The dialogue between characters reveals a secret about true identities.
+
+4
+00:00:30,000 --> 00:00:39,500
+This is a test drama scene showing family gathering.
+
+5
+00:00:40,000 --> 00:00:49,500
+This is a test drama scene showing outdoor activity.
+
+6
+00:00:50,000 --> 00:00:59,500
+This is a test drama scene showing outdoor activity.
+

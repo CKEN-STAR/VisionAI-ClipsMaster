@@ -1,0 +1,18 @@
+# 语言判定规则配置
+
+# 主导语言阈值
+dominant_threshold:
+  zh: 0.65  # 中文阈值
+  en: 0.75  # 英文阈值
+
+# 混合语言回退选项
+hybrid_fallback: "zh"  # 默认回退到中文
+
+# 最小文本长度
+min_text_length: 2
+
+# 置信度阈值
+confidence_threshold: 0.6
+
+# 启用自动调整
+enable_auto_adjust: true 

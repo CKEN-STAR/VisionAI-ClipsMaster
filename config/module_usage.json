@@ -1,0 +1,132 @@
+{
+  "PyQt6.QtWidgets": {
+    "usage_count": 2,
+    "last_used": 1752473433.4294643,
+    "load_success": true
+  },
+  "PyQt6.QtCore": {
+    "usage_count": 2,
+    "last_used": 1752473433.4294643,
+    "load_success": true
+  },
+  "PyQt6.QtGui": {
+    "usage_count": 2,
+    "last_used": 1752473433.4294643,
+    "load_success": true
+  },
+  "ui.fixes.integrated_fix": {
+    "usage_count": 2,
+    "last_used": 1752473433.4294643,
+    "load_success": true
+  },
+  "ui.config.environment": {
+    "usage_count": 2,
+    "last_used": 1752473433.4294643,
+    "load_success": true
+  },
+  "ui.compat": {
+    "usage_count": 2,
+    "last_used": 1752473433.4361188,
+    "load_success": true
+  },
+  "src.ui.enhanced_style_manager": {
+    "usage_count": 2,
+    "last_used": 1752473433.8926117,
+    "load_success": true
+  },
+  "ui.utils.enhanced_css_processor": {
+    "usage_count": 2,
+    "last_used": 1752473433.895295,
+    "load_success": true
+  },
+  "ui.utils.unified_css_manager": {
+    "usage_count": 2,
+    "last_used": 1752473433.895295,
+    "load_success": true
+  },
+  "ui.hardware.performance_tier": {
+    "usage_count": 2,
+    "last_used": 1752473433.8940103,
+    "load_success": true
+  },
+  "ui.responsive.simple_ui_adapter": {
+    "usage_count": 2,
+    "last_used": 1752473433.8940103,
+    "load_success": true
+  },
+  "ui.components.alert_manager": {
+    "usage_count": 2,
+    "last_used": 1752473433.8940103,
+    "load_success": true
+  },
+  "ui.feedback.error_visualizer": {
+    "usage_count": 2,
+    "last_used": 1752473433.8963246,
+    "load_success": true
+  },
+  "ui.monitor.system_monitor_app": {
+    "usage_count": 2,
+    "last_used": 1752473433.8963246,
+    "load_success": true
+  },
+  "ui.progress.tracker": {
+    "usage_count": 2,
+    "last_used": 1752473433.895295,
+    "load_success": true
+  },
+  "ui.hardware.memory_manager": {
+    "usage_count": 2,
+    "last_used": 1752473433.8974438,
+    "load_success": true
+  },
+  "ui.hardware.disk_cache": {
+    "usage_count": 2,
+    "last_used": 1752473433.8974438,
+    "load_success": true
+  },
+  "ui.performance.memory_guard": {
+    "usage_count": 2,
+    "last_used": 1752473433.8963246,
+    "load_success": true
+  },
+  "ui.optimize.panel_perf": {
+    "usage_count": 2,
+    "last_used": 1752473433.8969953,
+    "load_success": true
+  },
+  "ui.hardware.render_optimizer": {
+    "usage_count": 2,
+    "last_used": 1752473433.8974438,
+    "load_success": true
+  },
+  "ui.hardware.input_latency": {
+    "usage_count": 2,
+    "last_used": 1752473433.8974438,
+    "load_success": true
+  },
+  "ui.hardware.power_manager": {
+    "usage_count": 2,
+    "last_used": 1752473433.8974438,
+    "load_success": true
+  },
+  "ui.utils.hotkey_manager": {
+    "usage_count": 2,
+    "last_used": 1752473433.8984938,
+    "load_success": true
+  },
+  "ui.hardware.compute_offloader": {
+    "usage_count": 0,
+    "last_used": 0,
+    "load_success": true
+  },
+  "ui.hardware.enterprise_deploy": {
+    "usage_count": 0,
+    "last_used": 0,
+    "load_success": true
+  },
+  "ui.utils.text_direction": {
+    "usage_count": 0,
+    "last_used": 0,
+    "load_success": true
+  }
+}

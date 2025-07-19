@@ -1,0 +1,62 @@
+{
+  "threshold": 3.0,
+  "monitoring_interval": 3600,
+  "auto_visualization": true,
+  "notification_enabled": true,
+  "data_collection": {
+    "enabled": true,
+    "anonymous": true,
+    "user_consent_required": true
+  },
+  "language_models": {
+    "chinese": {
+      "enabled": true,
+      "model": "Qwen2.5-7B",
+      "collect_metrics": true
+    },
+    "english": {
+      "enabled": false,
+      "model": "Mistral-7B",
+      "collect_metrics": true
+    }
+  },
+  "metrics": {
+    "mental_demand": {
+      "weight": 1.0,
+      "threshold": 3.2
+    },
+    "physical_demand": {
+      "weight": 0.5,
+      "threshold": 2.0
+    },
+    "temporal_demand": {
+      "weight": 0.8,
+      "threshold": 3.0
+    },
+    "performance": {
+      "weight": 1.0,
+      "threshold": 2.5
+    },
+    "effort": {
+      "weight": 1.0,
+      "threshold": 3.5
+    },
+    "frustration": {
+      "weight": 1.2,
+      "threshold": 2.8
+    }
+  },
+  "visualization": {
+    "default_format": "html",
+    "auto_generate": true,
+    "show_in_browser": false,
+    "save_to_file": true,
+    "color_scheme": "default"
+  },
+  "reporting": {
+    "enabled": true,
+    "frequency": "daily",
+    "include_anonymous_data": true,
+    "recipients": []
+  }
+} 

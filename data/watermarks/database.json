@@ -1,0 +1,16 @@
+{
+  "watermarks": {
+    "sample-watermark-1": {
+      "id": "sample-watermark-1",
+      "name": "样例水印1",
+      "features": [0.021, 0.033, 0.018, 0.027, 0.041, 0.037, 0.022, 0.019, 0.025, 0.031],
+      "signature": "signature-sample-1",
+      "metadata": {
+        "source": "示例",
+        "description": "示例水印，用于测试"
+      },
+      "added_at": "2023-07-15T10:30:00"
+    }
+  },
+  "updated_at": "2023-07-15T10:30:00"
+} 

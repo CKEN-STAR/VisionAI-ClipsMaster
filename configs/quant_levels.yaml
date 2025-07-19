@@ -1,0 +1,96 @@
+# 量化等级配置文件
+# VisionAI-ClipsMaster
+# 定义不同量化级别的详细参数和性能特征
+
+version: "1.0.0"
+description: "大型语言模型量化配置参数"
+
+# 全局设置
+default_level: "Q4_K_M"  # 默认使用的量化级别
+auto_select: true       # 是否允许系统根据内存自动选择量化级别
+
+# 量化等级定义
+quant_levels:
+  - name: "Q2_K"
+    desc: "极限压缩模式"
+    full_name: "2-bit Keys Quantization"
+    memory_usage: 2800  # MB
+    precision_loss: 0.35
+    token_speed: 15     # 约15个token/s (相对值)
+    recommended_min_ram: 3072  # 最小建议内存 (MB)
+    suitable_for: "极限低配设备，8GB以下总内存"
+    use_case: "紧急场景，内存不足时的备选方案"
+    quality_score: 65   # 模型质量评分(0-100)
+    stability: "可能不稳定"
+  
+  - name: "Q3_K_M"
+    desc: "低内存模式"
+    full_name: "3-bit Keys+Muls Quantization"
+    memory_usage: 3400  # MB
+    precision_loss: 0.22
+    token_speed: 18     # tokens/s
+    recommended_min_ram: 4096  # MB
+    suitable_for: "低配设备，8GB总内存"
+    use_case: "资源受限场景，性能要求不高的任务"
+    quality_score: 78
+    stability: "基本稳定"
+  
+  - name: "Q4_K_M"
+    desc: "平衡模式"
+    full_name: "4-bit Keys+Muls Quantization"
+    memory_usage: 4100  # MB
+    precision_loss: 0.15
+    token_speed: 22     # tokens/s
+    recommended_min_ram: 6144  # MB
+    suitable_for: "主流配置，16GB总内存"
+    use_case: "默认推荐，平衡性能与资源占用"
+    quality_score: 85
+    stability: "稳定"
+  
+  - name: "Q5_K_M"
+    desc: "高质量模式"
+    full_name: "5-bit Keys+Muls Quantization"
+    memory_usage: 5200  # MB
+    precision_loss: 0.08
+    token_speed: 20     # tokens/s
+    recommended_min_ram: 8192  # MB
+    suitable_for: "较高配置，16-32GB总内存"
+    use_case: "需要高质量输出的场景"
+    quality_score: 92
+    stability: "非常稳定"
+  
+  - name: "Q6_K"
+    desc: "最高精度模式"
+    full_name: "6-bit Keys Quantization"
+    memory_usage: 6300  # MB
+    precision_loss: 0.05
+    token_speed: 18     # tokens/s（由于数据精度更高，可能略慢于5-bit版本）
+    recommended_min_ram: 12288  # MB
+    suitable_for: "高配设备，32GB以上总内存"
+    use_case: "追求最高质量输出的场景"
+    quality_score: 97
+    stability: "极其稳定"
+
+# 特定模型的量化调优参数
+model_specific:
+  "qwen2.5-7b-zh":
+    default_level: "Q4_K_M"
+    quant_params:
+      Q4_K_M:
+        context_size: 8192       # 上下文窗口大小
+        tensor_split: [0, 1, 0]  # GPU:CPU:SHARED 资源分配
+
+  "mistral-7b-en":
+    default_level: "Q4_K_M"
+    quant_params:
+      Q4_K_M:
+        context_size: 8192
+        tensor_split: [0, 1, 0]
+
+# 自动选择量化级别的内存阈值（单位: MB）
+auto_select_thresholds:
+  emergency: 3500    # 当可用内存低于3.5GB时，使用Q2_K
+  low: 4500          # 当可用内存低于4.5GB时，使用Q3_K_M
+  normal: 6500       # 当可用内存低于6.5GB时，使用Q4_K_M
+  high: 9000         # 当可用内存低于9GB时，使用Q5_K_M
+  abundant: null     # 当可用内存充足时，使用Q6_K 

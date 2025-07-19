@@ -1,0 +1,227 @@
+# VisionAI-ClipsMaster 优化版 .gitignore
+# 防止项目体积不必要增长
+
+# ===== Python 相关 =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# ===== 虚拟环境 =====
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+test_venv/
+
+# ===== IDE 配置 =====
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ===== 操作系统文件 =====
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ===== 日志文件 =====
+*.log
+logs/
+*.log.*
+crash_log.txt
+
+# ===== 临时文件和缓存 =====
+temp/
+tmp/
+cache/
+*.tmp
+*.temp
+*.cache
+
+# ===== 测试和基准测试结果 =====
+benchmark_results/
+test_results/
+coverage_reports/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ===== 模型文件 (大文件) =====
+# 原始未量化模型
+models/*/base/*.safetensors
+models/*/base/*.bin
+models/*/base/*.pt
+models/*/base/*.pth
+
+# 大型训练数据
+*.pkl
+*.pickle
+test_data.bin
+*_test_model_*.pkl
+
+# ===== 视频和媒体文件 =====
+# 大型测试视频
+tests/golden_samples/*/*.mp4
+tests/golden_samples/*/*.avi
+tests/golden_samples/*/*.mkv
+*.mp4
+*.avi
+*.mkv
+*.mov
+*.wmv
+*.flv
+*.webm
+
+# 音频文件
+*.mp3
+*.wav
+*.flac
+*.aac
+
+# ===== 工具和依赖 =====
+# FFmpeg 压缩包
+tools/ffmpeg/*.zip
+tools/ffmpeg/*.7z
+tools/ffmpeg/*.tar.gz
+
+# Llama.cpp 源码
+llama.cpp/
+tools/llama.cpp/
+
+# Node.js (如果有前端组件)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ===== 构建产物 =====
+*.exe
+*.msi
+*.deb
+*.rpm
+*.dmg
+*.app
+
+# ===== 备份文件 =====
+backup_*/
+*_backup/
+*.backup
+*.bak
+
+# ===== 报告和文档 =====
+# 自动生成的报告
+*_report_*.md
+*_report_*.json
+*_COMPLETE*.md
+*_FIX_*.md
+*_SUMMARY*.md
+optimization_report.json
+cleanup_report.json
+
+# ===== 数据文件 =====
+# 大型数据集
+data/training/*/raw_data/
+data/training/*/large_datasets/
+data/input/large_files/
+
+# 输出文件
+output/
+outputs/
+simple_output/
+comprehensive_output/
+llm_output/
+llm_direct_output/
+screenplay_output/
+exporter_output/
+
+# ===== 恢复和快照 =====
+recovery/
+snapshots/
+checkpoints/
+
+# ===== 压缩文件 =====
+*.zip
+*.rar
+*.7z
+*.tar
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+
+# ===== 配置文件 (敏感信息) =====
+.env
+.env.local
+.env.*.local
+config/secrets/
+*.key
+*.pem
+
+# ===== 特定于项目的排除 =====
+# 用户配置
+user_config/
+user_settings.json
+
+# 元数据
+metadata/temp/
+temp_metadata_integration/
+
+# 测试环境
+test_env/
+
+# 压缩缓冲区
+temp_buffers/
+compressed/
+
+# 演示数据
+temp_demo/
+
+# 样本文件
+spacy_wheels/
+
+# ===== 保留重要文件 =====
+# 确保这些文件不被忽略
+!src/
+!configs/
+!requirements.txt
+!README.md
+!LICENSE
+!.gitignore
+
+# 保留核心工具 (仅二进制文件)
+!tools/ffmpeg/bin/ffmpeg.exe
+!tools/ffmpeg/bin/ffprobe.exe
+!tools/ffmpeg/bin/ffplay.exe
+
+# 保留量化模型
+!models/*/quantized/*.gguf
+!models/*/quantized/*.q4
+!models/*/quantized/*.q5
+
+# 保留核心测试数据
+!test_data/sample*.srt
+!test_data/test*.srt
+!test_data/sample_drama.mp4

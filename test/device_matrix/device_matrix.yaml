@@ -1,0 +1,139 @@
+# 设备兼容性矩阵配置
+# 定义不同设备类型及其支持的模型量化级别
+
+test_cases:
+  # Windows环境
+  - device: "i5-11350G/4GB"
+    os: "Windows 11"
+    quant_level: "Q4_K_M"
+    memory_limit: 4096
+    performance_target: 15  # 最低FPS
+    quality_threshold: 0.7  # 最低质量分数
+
+  - device: "i7-12700H/8GB"
+    os: "Windows 11"
+    quant_level: "Q5_K_M"
+    memory_limit: 8192
+    performance_target: 25
+    quality_threshold: 0.8
+
+  - device: "RTX 3060/6GB"  
+    os: "Windows 11"
+    quant_level: "F16"
+    memory_limit: 6144
+    performance_target: 60
+    quality_threshold: 0.95
+    gpu: true
+
+  # macOS环境  
+  - device: "M1 Mac/8GB"
+    os: "macOS 14"
+    quant_level: "Q5_K"
+    memory_limit: 8192
+    performance_target: 20
+    quality_threshold: 0.75
+
+  - device: "M2 Pro/16GB"
+    os: "macOS 14"  
+    quant_level: "Q6_K"
+    memory_limit: 16384
+    performance_target: 40
+    quality_threshold: 0.85
+
+  # Linux环境
+  - device: "Ryzen 5 5500U/16GB"
+    os: "Ubuntu 22.04"
+    quant_level: "Q4_K_M"
+    memory_limit: 16384
+    performance_target: 20
+    quality_threshold: 0.75
+
+  - device: "Intel i9-13900K/32GB"
+    os: "Ubuntu 22.04"
+    quant_level: "Q8_0"
+    memory_limit: 32768
+    performance_target: 50
+    quality_threshold: 0.9
+
+  - device: "RTX 4090/24GB"
+    os: "Ubuntu 22.04"
+    quant_level: "F16"
+    memory_limit: 24576
+    performance_target: 120
+    quality_threshold: 0.98
+    gpu: true
+
+# 量化级别定义
+quantization_levels:
+  - name: "Q4_K_M"
+    description: "4-bit量化，小型模型"
+    memory_ratio: 0.25
+    performance_ratio: 1.5
+    quality_ratio: 0.7
+  
+  - name: "Q5_K"
+    description: "5-bit量化，中型模型"
+    memory_ratio: 0.3
+    performance_ratio: 1.3
+    quality_ratio: 0.75
+  
+  - name: "Q5_K_M"
+    description: "5-bit量化，中大型模型"
+    memory_ratio: 0.32
+    performance_ratio: 1.2
+    quality_ratio: 0.8
+  
+  - name: "Q6_K"
+    description: "6-bit量化，中型模型"
+    memory_ratio: 0.4
+    performance_ratio: 1.1
+    quality_ratio: 0.85
+  
+  - name: "Q8_0"
+    description: "8-bit量化，大型模型"
+    memory_ratio: 0.5
+    performance_ratio: 1.0
+    quality_ratio: 0.9
+  
+  - name: "F16"
+    description: "16-bit浮点，完整模型"
+    memory_ratio: 1.0
+    performance_ratio: 0.7
+    quality_ratio: 1.0
+
+# 特性兼容性矩阵
+feature_compatibility:
+  parallel_processing:
+    Windows: true
+    macOS: true
+    Ubuntu: true
+  
+  gpu_acceleration:
+    Windows: 
+      NVIDIA: true
+      AMD: false
+      Intel: false
+    macOS:
+      Apple: true
+      NVIDIA: false
+      AMD: false
+    Ubuntu:
+      NVIDIA: true
+      AMD: true
+      Intel: false
+  
+  hardware_acceleration:
+    Windows:
+      AVX2: true
+      AVX512: false
+    macOS:
+      ANE: true
+      AMX: true
+    Ubuntu:
+      AVX2: true
+      AVX512: true
+  
+  memory_mapping:
+    Windows: true
+    macOS: true
+    Ubuntu: true 

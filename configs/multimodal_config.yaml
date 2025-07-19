@@ -1,0 +1,71 @@
+# 多模态对齐配置文件
+# 用于控制视频、音频与文本的对齐参数和阈值
+
+# 时间对齐参数
+time_alignment:
+  time_tolerance: 0.5        # 时间容差（秒）
+  max_time_diff: 2.0         # 最大允许的时间差异（秒）
+  min_overlap_ratio: 0.3     # 最小时间重叠比例
+
+# 视频分析参数
+video_analysis:
+  keyframe_extraction:
+    method: 'uniform'         # 关键帧提取方法: 'uniform', 'difference', 'scene'
+    num_frames: 20            # 均匀提取的帧数
+    diff_threshold: 25.0      # 差异阈值
+    scene_threshold: 30.0     # 场景变化阈值
+  
+  scene_analysis:
+    min_scene_duration: 1.0   # 最小场景持续时间（秒）
+    max_scenes: 100           # 最大场景数量
+    use_external_models: false # 是否使用外部场景分类模型
+
+# 文本分析参数
+text_analysis:
+  use_ocr: false             # 是否使用OCR识别视频中的文字
+  min_text_confidence: 0.6   # 最小文本识别置信度
+  max_words_per_frame: 50    # 每帧最大词数
+  ignore_stopwords: true     # 是否忽略停用词
+
+# 语音分析参数
+speech_analysis:
+  use_speech_recognition: false  # 是否使用语音识别
+  language: 'zh-CN'              # 语音识别语言
+  min_speech_confidence: 0.7     # 最小语音识别置信度
+
+# 对齐质量阈值
+alignment_quality:
+  high_confidence: 0.8       # 高置信度阈值
+  medium_confidence: 0.5     # 中等置信度阈值
+  low_confidence: 0.3        # 低置信度阈值
+  warning_percentage: 20     # 警告百分比阈值
+
+# 内容增强选项
+content_enhancement:
+  add_visual_context: true   # 是否添加视觉上下文
+  add_scene_info: true       # 是否添加场景信息
+  add_confidence_score: true # 是否添加置信度分数
+  generate_report: true      # 是否生成对齐报告
+
+# 外部模型配置（未来扩展使用）
+external_models:
+  scene_classifier:
+    enabled: false
+    model_path: ""
+    confidence_threshold: 0.7
+  
+  ocr_engine:
+    enabled: false
+    model_type: "tesseract"  # 'tesseract', 'paddleocr'
+    language: "chi_sim+eng"
+  
+  speech_recognition:
+    enabled: false
+    model_type: "whisper"    # 'whisper', 'vosk'
+    model_size: "small"      # 'tiny', 'small', 'medium', 'large'
+
+# 调试选项
+debug:
+  save_keyframes: false      # 是否保存关键帧图像
+  verbose_logging: false     # 是否启用详细日志
+  output_directory: "debug_output"  # 调试输出目录 

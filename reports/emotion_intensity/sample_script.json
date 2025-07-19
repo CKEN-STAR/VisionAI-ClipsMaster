@@ -1,0 +1,241 @@
+[
+  {
+    "id": "scene_1",
+    "start": "00:00:00,000",
+    "end": "00:00:15,000",
+    "text": "刘洋独自一人在商场，愤怒地等待着什么。",
+    "characters": [
+      "刘洋"
+    ],
+    "location": "商场",
+    "emotion": {
+      "type": "negative",
+      "description": "恐惧",
+      "score": 0.3
+    }
+  },
+  {
+    "id": "scene_2",
+    "start": "00:00:30,000",
+    "end": "00:00:45,000",
+    "text": "刘洋在商场里放松地向小雨求婚。小雨在一旁愉快地看着这一切。",
+    "characters": [
+      "刘洋",
+      "小雨",
+      "赵琳"
+    ],
+    "location": "商场",
+    "emotion": {
+      "type": "positive",
+      "description": "喜悦",
+      "score": 0.3
+    }
+  },
+  {
+    "id": "scene_3",
+    "start": "00:01:00,000",
+    "end": "00:01:16,000",
+    "text": "周静在学校里期待地帮助。",
+    "characters": [
+      "周静"
+    ],
+    "location": "学校",
+    "emotion": {
+      "type": "positive",
+      "description": "期待",
+      "score": 0.3
+    }
+  },
+  {
+    "id": "scene_4",
+    "start": "00:01:30,000",
+    "end": "00:01:50,000",
+    "text": "赵琳在家里里开心地向刘洋告别。",
+    "characters": [
+      "赵琳",
+      "刘洋",
+      "小雨"
+    ],
+    "location": "家里",
+    "emotion": {
+      "type": "positive",
+      "description": "安心",
+      "score": 0.3
+    }
+  },
+  {
+    "id": "scene_5",
+    "start": "00:02:00,000",
+    "end": "00:02:19,000",
+    "text": "小雨在餐厅里思考地思考着。",
+    "characters": [
+      "小雨"
+    ],
+    "location": "餐厅",
+    "emotion": {
+      "type": "neutral",
+      "description": "迷茫",
+      "score": 0.36666666666666664
+    }
+  },
+  {
+    "id": "scene_6",
+    "start": "00:02:30,000",
+    "end": "00:02:53,000",
+    "text": "刘洋在公园里愤怒地冲突。",
+    "characters": [
+      "刘洋"
+    ],
+    "location": "公园",
+    "emotion": {
+      "type": "negative",
+      "description": "内疚",
+      "score": 0.43333333333333335
+    }
+  },
+  {
+    "id": "scene_7",
+    "start": "00:03:00,000",
+    "end": "00:03:22,000",
+    "text": "小雨在餐厅里克制地思考着。",
+    "characters": [
+      "小雨",
+      "赵琳",
+      "刘洋"
+    ],
+    "location": "餐厅",
+    "emotion": {
+      "type": "neutral",
+      "description": "平静",
+      "score": 0.5
+    }
+  },
+  {
+    "id": "scene_8",
+    "start": "00:03:30,000",
+    "end": "00:03:55,000",
+    "text": "赵琳在酒店大堂里嫉妒地与周静告别。",
+    "characters": [
+      "赵琳",
+      "周静"
+    ],
+    "location": "酒店大堂",
+    "emotion": {
+      "type": "negative",
+      "description": "失望",
+      "score": 0.5666666666666667
+    }
+  },
+  {
+    "id": "scene_9",
+    "start": "00:04:00,000",
+    "end": "00:04:18,000",
+    "text": "刘洋在酒店大堂里烦躁地与周静告别。周静在一旁吃惊地看着这一切。",
+    "characters": [
+      "刘洋",
+      "周静"
+    ],
+    "location": "酒店大堂",
+    "emotion": {
+      "type": "negative",
+      "description": "愤怒",
+      "score": 0.6333333333333333
+    }
+  },
+  {
+    "id": "scene_10",
+    "start": "00:04:30,000",
+    "end": "00:04:46,000",
+    "text": "小雨在办公室里迷茫地思考着。",
+    "characters": [
+      "小雨",
+      "赵琳",
+      "刘洋"
+    ],
+    "location": "办公室",
+    "emotion": {
+      "type": "neutral",
+      "description": "克制",
+      "score": 0.7
+    }
+  },
+  {
+    "id": "scene_11",
+    "start": "00:05:00,000",
+    "end": "00:05:21,000",
+    "text": "周静在商场里放松地冲突。",
+    "characters": [
+      "周静"
+    ],
+    "location": "商场",
+    "emotion": {
+      "type": "positive",
+      "description": "幸福",
+      "score": 0.7666666666666666
+    }
+  },
+  {
+    "id": "scene_12",
+    "start": "00:05:30,000",
+    "end": "00:05:52,000",
+    "text": "在公园里，周静突然面临意外情况，意外。小雨在一旁放松地看着这一切。",
+    "characters": [
+      "周静",
+      "小雨"
+    ],
+    "location": "公园",
+    "emotion": {
+      "type": "surprise",
+      "description": "难以置信",
+      "score": 0.8333333333333333
+    }
+  },
+  {
+    "id": "scene_13",
+    "start": "00:06:00,000",
+    "end": "00:06:15,000",
+    "text": "赵琳在餐厅里兴奋地向周静表白。",
+    "characters": [
+      "赵琳",
+      "周静"
+    ],
+    "location": "餐厅",
+    "emotion": {
+      "type": "positive",
+      "description": "期待",
+      "score": 0.9
+    }
+  },
+  {
+    "id": "scene_14",
+    "start": "00:06:30,000",
+    "end": "00:06:54,000",
+    "text": "在车站里，周静突然面临意外情况，好奇。",
+    "characters": [
+      "周静",
+      "赵琳"
+    ],
+    "location": "车站",
+    "emotion": {
+      "type": "surprise",
+      "description": "惊喜",
+      "score": 0.8
+    }
+  },
+  {
+    "id": "scene_15",
+    "start": "00:07:00,000",
+    "end": "00:07:16,000",
+    "text": "在办公室，赵琳、周静终于解开了误会，喜悦地告别。",
+    "characters": [
+      "赵琳",
+      "周静"
+    ],
+    "location": "办公室",
+    "emotion": {
+      "type": "positive",
+      "description": "放松",
+      "score": 0.7000000000000001
+    }
+  }
+]

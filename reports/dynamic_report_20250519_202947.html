@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>测试报告</title>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1, h2 { color: #333; }
+        img { max-width: 100%; }
+    </style>
+</head>
+<body>
+    <h1>VisionAI-ClipsMaster 测试报告</h1>
+    <div>
+        <h2>覆盖率雷达图</h2>
+        <img src="static/coverage_radar.png" alt="覆盖率雷达图">
+    </div>
+    <div>
+        <h2>性能趋势</h2>
+        <img src="static/performance_trend.png" alt="性能趋势图">
+    </div>
+    <div>
+        <h2>合规矩阵</h2>
+        
+        <table class="compliance-table">
+            <thead>
+                <tr>
+                    <th>合规项目</th>
+                    <th>状态</th>
+                    <th>分数</th>
+                    <th>重要性</th>
+                    <th>说明</th>
+                </tr>
+            </thead>
+            <tbody>
+        
+                <tr>
+                    <td>隐私保护检查</td>
+                    <td><span class="status-label status-passed">通过</span></td>
+                    <td><span class="excellent">95.5%</span></td>
+                    <td>高</td>
+                    <td>确保系统能够正确识别并保护个人身份信息</td>
+                </tr>
+            
+                <tr>
+                    <td>数据匿名化</td>
+                    <td><span class="status-label status-passed">通过</span></td>
+                    <td><span class="excellent">98.2%</span></td>
+                    <td>高</td>
+                    <td>确保用户数据在处理过程中被适当匿名化</td>
+                </tr>
+            
+                <tr>
+                    <td>水印检测</td>
+                    <td><span class="status-label status-passed">通过</span></td>
+                    <td><span class="excellent">97.8%</span></td>
+                    <td>中</td>
+                    <td>检测剪辑素材是否带有版权水印</td>
+                </tr>
+            
+                <tr>
+                    <td>著作权验证</td>
+                    <td><span class="status-label status-passed">通过</span></td>
+                    <td><span class="excellent">96.5%</span></td>
+                    <td>高</td>
+                    <td>验证素材使用是否符合版权要求</td>
+                </tr>
+            
+                <tr>
+                    <td>许可证合规</td>
+                    <td><span class="status-label status-passed">通过</span></td>
+                    <td><span class="excellent">100.0%</span></td>
+                    <td>中</td>
+                    <td>确保所有依赖库的许可证合规</td>
+                </tr>
+            
+            </tbody>
+        </table>
+        
+    </div>
+</body>
+</html>

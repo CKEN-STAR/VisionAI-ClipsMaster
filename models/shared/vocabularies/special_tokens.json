@@ -1,0 +1,52 @@
+{
+    "video_editing": {
+        "scene_transition": {
+            "cut": "<CUT>",
+            "fade": "<FADE>",
+            "dissolve": "<DISSOLVE>"
+        },
+        "timing": {
+            "pause": "<PAUSE>",
+            "speed_up": "<SPEED_UP>",
+            "slow_down": "<SLOW_DOWN>"
+        },
+        "emphasis": {
+            "highlight": "<HIGHLIGHT>",
+            "zoom": "<ZOOM>",
+            "focus": "<FOCUS>"
+        }
+    },
+    "narrative": {
+        "emotion": {
+            "intense": "<INTENSE>",
+            "dramatic": "<DRAMATIC>",
+            "humorous": "<HUMOROUS>"
+        },
+        "pacing": {
+            "fast": "<FAST_PACE>",
+            "normal": "<NORMAL_PACE>",
+            "slow": "<SLOW_PACE>"
+        },
+        "structure": {
+            "hook": "<HOOK>",
+            "buildup": "<BUILDUP>",
+            "climax": "<CLIMAX>",
+            "resolution": "<RESOLUTION>"
+        }
+    },
+    "language_specific": {
+        "en": {
+            "emphasis": ["<EN_EMPH>", "<EN_STRONG>"],
+            "tone": ["<EN_CASUAL>", "<EN_FORMAL>"]
+        },
+        "zh": {
+            "emphasis": ["<ZH_EMPH>", "<ZH_STRONG>"],
+            "tone": ["<ZH_CASUAL>", "<ZH_FORMAL>"]
+        }
+    },
+    "metadata": {
+        "version": "1.0.0",
+        "last_updated": "2024-03-20",
+        "total_tokens": 28
+    }
+} 

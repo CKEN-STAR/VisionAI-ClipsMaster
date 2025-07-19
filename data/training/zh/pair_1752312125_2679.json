@@ -1,0 +1,41 @@
+{
+  "id": "pair_1752312125_2679",
+  "metadata": {
+    "source": "test_data",
+    "quality": "high",
+    "timestamp": "2025-07-12T17:22:05.392118",
+    "language": "zh",
+    "original_count": 3,
+    "remix_count": 2
+  },
+  "original_subtitles": [
+    {
+      "start": 0,
+      "end": 3,
+      "text": "这是一个原始的故事"
+    },
+    {
+      "start": 3,
+      "end": 6,
+      "text": "包含了很多详细的情节"
+    },
+    {
+      "start": 6,
+      "end": 9,
+      "text": "有着复杂的剧情发展"
+    }
+  ],
+  "remix_subtitles": [
+    {
+      "start": 0,
+      "end": 2,
+      "text": "震惊！真相大白"
+    },
+    {
+      "start": 2,
+      "end": 4,
+      "text": "接下来的剧情让人意想不到"
+    }
+  ],
+  "training_status": "pending"
+}

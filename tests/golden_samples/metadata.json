@@ -1,0 +1,97 @@
+{
+  "version": "1.0",
+  "created_at": "2025-05-16T15:11:25.375106",
+  "samples_count": 9,
+  "samples": [
+    {
+      "name": "base_30s",
+      "duration": 30,
+      "lang": "zh",
+      "type": "剧情混剪",
+      "video_path": "tests\\golden_samples\\zh\\base_30s.mp4",
+      "video_hash": "4d0316ccdaf43b5afb6ed4674f9154a97005e0799d00dae613a09841f6fa53c7",
+      "srt_path": "tests\\golden_samples\\zh\\base_30s.srt",
+      "srt_hash": "b4726ad2087945db42470a31614b84f26b4b4cc344da80a03caf92085513df14"
+    },
+    {
+      "name": "complex_1m",
+      "duration": 60,
+      "lang": "en",
+      "type": "多场景切换",
+      "video_path": "tests\\golden_samples\\en\\complex_1m.mp4",
+      "video_hash": "f12ca4f27f88bdc8b78ae9d681ca5ee84d304955cc54acb1dd6e502ae3470ff3",
+      "srt_path": "tests\\golden_samples\\en\\complex_1m.srt",
+      "srt_hash": "ed1e60e6be4f16b58f6f5dfbddb366aea56a8c043b85c76f2e5d806ffdfa720f"
+    },
+    {
+      "name": "edge_5s",
+      "duration": 5,
+      "lang": "zh",
+      "type": "超短视频",
+      "video_path": "tests\\golden_samples\\zh\\edge_5s.mp4",
+      "video_hash": "c16eee4b69e01ea2cdd0a6bb0abeab9f7aff8118029d4d41a01c3fb97695240b",
+      "srt_path": "tests\\golden_samples\\zh\\edge_5s.srt",
+      "srt_hash": "06474951ce89cfcddc82d90f2ecc780216e532a8808da33ca32c063744940ba6"
+    },
+    {
+      "name": "dialog_heavy",
+      "duration": 45,
+      "lang": "zh",
+      "type": "对白密集型",
+      "video_path": "tests\\golden_samples\\zh\\dialog_heavy.mp4",
+      "video_hash": "7875793e81d61ab25e6f6ad3b4217924a439a8b2ffc7e89eb9169e5c657fb258",
+      "srt_path": "tests\\golden_samples\\zh\\dialog_heavy.srt",
+      "srt_hash": "bad72063c22f21eeb398165c2e96b70b22f249726b93a41cb5da6f0ac13c7d4d"
+    },
+    {
+      "name": "multi_speaker",
+      "duration": 40,
+      "lang": "en",
+      "type": "多人对话",
+      "video_path": "tests\\golden_samples\\en\\multi_speaker.mp4",
+      "video_hash": "f0dc5d6736a65db639d924802d37d9e2934bdfdfaf8f0fb8aed49b26abee4b33",
+      "srt_path": "tests\\golden_samples\\en\\multi_speaker.srt",
+      "srt_hash": "477f31c73228a86fabb982d90490d89d3e2310908dc7b9856fbe204a57e229fa"
+    },
+    {
+      "name": "action_scene",
+      "duration": 25,
+      "lang": "zh",
+      "type": "动作场景",
+      "video_path": "tests\\golden_samples\\zh\\action_scene.mp4",
+      "video_hash": "ec53787cc6750da39477395bdfe61b222130f8d2f4a6540134d50c68dddeecd3",
+      "srt_path": "tests\\golden_samples\\zh\\action_scene.srt",
+      "srt_hash": "6c5e237449b887febf9caf3590e842e444ad62f94c3e83e4bf8127c56582c9c1"
+    },
+    {
+      "name": "narrative",
+      "duration": 35,
+      "lang": "en",
+      "type": "旁白主导",
+      "video_path": "tests\\golden_samples\\en\\narrative.mp4",
+      "video_hash": "c9b0a48d493c05e36d4887ddc54e3ec2068a1fbb8782040a2659db6f2889b508",
+      "srt_path": "tests\\golden_samples\\en\\narrative.srt",
+      "srt_hash": "e8f5a0d147a564699e082bce287702970fd250e0f17c32c87d432d186a8bfca3"
+    },
+    {
+      "name": "special_chars",
+      "duration": 20,
+      "lang": "zh",
+      "type": "特殊字符",
+      "video_path": "tests\\golden_samples\\zh\\special_chars.mp4",
+      "video_hash": "6ebd17647003044999cafa08362bba8bc295589a5d1e8399d32e0f09d6829b68",
+      "srt_path": "tests\\golden_samples\\zh\\special_chars.srt",
+      "srt_hash": "2ebee4f18f2151092f75b4137d621545ed139e7ad76bb448adbb9bb9cecfbb8e"
+    },
+    {
+      "name": "empty_segments",
+      "duration": 15,
+      "lang": "en",
+      "type": "空白片段",
+      "video_path": "tests\\golden_samples\\en\\empty_segments.mp4",
+      "video_hash": "45de98b0d7d87d5848c9e9af2513c09db12fd38e53e9f04e0501902dd4a31617",
+      "srt_path": "tests\\golden_samples\\en\\empty_segments.srt",
+      "srt_hash": "75ba2cbd02e50673e54a504ea6f231f2e40e056878ff2ad16cf7b87a5e56a4fe"
+    }
+  ]
+}

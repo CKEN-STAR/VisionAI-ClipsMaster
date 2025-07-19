@@ -1,0 +1,54 @@
+{
+  "version_id": "v1",
+  "title": "测试版本 1",
+  "scenes": [
+    {
+      "scene_id": "s1",
+      "text": "版本1的场景1",
+      "start_time": 0,
+      "emotion_score": 0.016053014895298118
+    },
+    {
+      "scene_id": "s2",
+      "text": "版本1的场景2",
+      "start_time": 5,
+      "emotion_score": 0.10942288024160454
+    },
+    {
+      "scene_id": "s3",
+      "text": "版本1的场景3",
+      "start_time": 10,
+      "emotion_score": 0.22733667404032926
+    },
+    {
+      "scene_id": "s4",
+      "text": "版本1的场景4",
+      "start_time": 15,
+      "emotion_score": 0.34936216625586974
+    },
+    {
+      "scene_id": "s5",
+      "text": "版本1的场景5",
+      "start_time": 20,
+      "emotion_score": 0.5033238211703969
+    },
+    {
+      "scene_id": "s6",
+      "text": "版本1的场景6",
+      "start_time": 25,
+      "emotion_score": 0.5479997142139039
+    },
+    {
+      "scene_id": "s7",
+      "text": "版本1的场景7",
+      "start_time": 30,
+      "emotion_score": 0.6761980833029105
+    },
+    {
+      "scene_id": "s8",
+      "text": "版本1的场景8",
+      "start_time": 35,
+      "emotion_score": 0.8152492413742947
+    }
+  ]
+}

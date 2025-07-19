@@ -1,0 +1,39 @@
+{
+  "model_name": "Mistral-7B-Instruct-v0.2",
+  "model_type": "mistral",
+  "version": "0.2",
+  "size": "7B",
+  "is_chat_model": true,
+  "language": "en",
+  "quantization": "4bit",
+  "context_length": 8192,
+  "parameters": {
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "repetition_penalty": 1.1,
+    "max_tokens": 4096
+  },
+  "paths": {
+    "base_model": "models/mistral/base",
+    "quantized_model": "models/mistral/quantized",
+    "tokenizer": "models/mistral/tokenizer"
+  },
+  "hardware_requirements": {
+    "min_ram": "4GB",
+    "recommended_ram": "8GB",
+    "gpu_required": false,
+    "min_vram": null,
+    "recommended_vram": "4GB"
+  },
+  "performance": {
+    "tokens_per_second_cpu": 4.8,
+    "tokens_per_second_gpu": 24.3,
+    "loading_time_seconds": 10.5
+  },
+  "meta": {
+    "description": "Mistral-7B-Instruct is an instruction-tuned language model optimized for following instructions and generating creative content.",
+    "license": "Apache 2.0",
+    "compatible_with": ["GGUF"],
+    "last_updated": "2024-05-18"
+  }
+} 

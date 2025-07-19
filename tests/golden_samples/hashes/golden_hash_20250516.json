@@ -1,0 +1,26 @@
+{
+  "video": {
+    "golden_sample_action_20250516": "accd6433517e264c273e12902fa74137187daf35c00fef85223d9ed11033b478",
+    "golden_sample_comedy_20250516": "a70c5e95df2f68c692a363c09fb4ac63ed4c344581c66cf4d4881f89dc176fcf",
+    "golden_sample_drama_20250516": "c36692d45bbc3083c4857afc281c4e639d8d9aff0aff49a97eac0d8f8eca88b4",
+    "golden_sample_family_20250516": "a306e86b02eabbf3757e1f25106d5f8fddcf295fad70cadee1abd01dd1c5b7e5",
+    "golden_sample_historical_20250516": "f29eb418365a6d614068cbdd72298c3839f31e92548d8b66415182ecf08f8442",
+    "golden_sample_romance_20250516": "0f768aefd15cc6e5530a903047581ed80baab0f5fc7e7ff562727edee7965af0",
+    "golden_sample_sci-fi_20250516": "a9170fcbf08a0c7c38ff7de2c68d87c18f249e59be3ded71dcb8a8ab922e94a5",
+    "golden_sample_thriller_20250516": "0ea0b5a0e8932aab1eb0a2756522362318272f48d1bcdc67d6bce1ecba71d541",
+    "golden_sample_wuxia_20250516": "a4b3aa977032c9715b4d2280c7e846203f590eed20da16968235d548eef9575e",
+    "golden_sample_youth_20250516": "0963d65a6d533880622a75d83b8e441bc355565ad2f6caf839e313eb21d367c2"
+  },
+  "xml": {
+    "golden_sample_action_20250516": "ebaff5c3970d98b52f45e93f84d6ce88c1d087801c992b80edc1fad140973b13",
+    "golden_sample_comedy_20250516": "5d6efdef9bba7556138526ab24e1b18c9cecc1bf236aab3f8fd1496443317479",
+    "golden_sample_drama_20250516": "aaee0e1a8063232210d4c99aecfcafcb37be0d38dbb378d428bde7cab78f2187",
+    "golden_sample_family_20250516": "00af0dea2a31a7c61d1a9b13b0894172b52591e7c2a3ce50f7aa9543d49cf1ec",
+    "golden_sample_historical_20250516": "3319a4dcae08ddf7d5bb2df5a7f29c4400843fa1c00910bbf160f59788d757d1",
+    "golden_sample_romance_20250516": "aef8fcdd60d88fee78e65ec0cbd5c3732e5c9733a36a92e98abad2d031e23ac9",
+    "golden_sample_sci-fi_20250516": "0bfa594bfa9cc45e164d3485fecc3d0ae1b41434be6f1b6e6101980a1518d11b",
+    "golden_sample_thriller_20250516": "06acf9030d33dc18a63010ee86d118121b6cc5788f07ea2695065db5d68811b1",
+    "golden_sample_wuxia_20250516": "206e04f2a77d62640847920da552c899c80d883489cb9a5d7434edd38e176971",
+    "golden_sample_youth_20250516": "282d4c09866b69c8611dcff2d7148871fa5d3cc984382e41c7a7e0feb506a7f2"
+  }
+}

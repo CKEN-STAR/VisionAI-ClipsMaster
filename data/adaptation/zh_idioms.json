@@ -1,0 +1,152 @@
+{
+  "一箭双雕": {
+    "literal": "hit two vultures with one arrow",
+    "meaning": "kill two birds with one stone",
+    "contexts": ["efficiency", "strategy"]
+  },
+  "守株待兔": {
+    "literal": "guard a tree stump waiting for rabbits",
+    "meaning": "wait passively for opportunities",
+    "contexts": ["passivity", "luck"]
+  },
+  "一鸣惊人": {
+    "literal": "a cry that startles people",
+    "meaning": "make a sudden and brilliant achievement",
+    "contexts": ["achievement", "surprise"]
+  },
+  "眼高手低": {
+    "literal": "high eye but low hand",
+    "meaning": "have high standards but poor abilities",
+    "contexts": ["criticism", "skill"]
+  },
+  "画蛇添足": {
+    "literal": "draw a snake and add feet",
+    "meaning": "ruin something by adding unnecessary details",
+    "contexts": ["redundancy", "mistake"]
+  },
+  "狐假虎威": {
+    "literal": "fox borrowing tiger's power",
+    "meaning": "bully others by flaunting powerful connections",
+    "contexts": ["deception", "power"]
+  },
+  "塞翁失马": {
+    "literal": "an old man lost his horse",
+    "meaning": "a blessing in disguise, good things come from bad situations",
+    "contexts": ["fortune", "perspective"]
+  },
+  "班门弄斧": {
+    "literal": "display one's axe before Lu Ban (master carpenter)",
+    "meaning": "show off in front of an expert",
+    "contexts": ["humility", "expertise"]
+  },
+  "胸有成竹": {
+    "literal": "have bamboo in one's chest",
+    "meaning": "have a well-thought-out plan",
+    "contexts": ["preparation", "confidence"]
+  },
+  "四面楚歌": {
+    "literal": "surrounded by Chu songs",
+    "meaning": "be in a desperate situation with enemies all around",
+    "contexts": ["isolation", "danger"]
+  },
+  "杯弓蛇影": {
+    "literal": "the shadow of a bow in a cup appears as a snake",
+    "meaning": "be frightened by imaginary fears",
+    "contexts": ["fear", "misperception"]
+  },
+  "入木三分": {
+    "literal": "penetrate three fen into the wood",
+    "meaning": "profound and incisive",
+    "contexts": ["depth", "skill"]
+  },
+  "对牛弹琴": {
+    "literal": "play the lute to a cow",
+    "meaning": "address the wrong audience",
+    "contexts": ["communication", "waste"]
+  },
+  "纸上谈兵": {
+    "literal": "talk about military tactics on paper",
+    "meaning": "engage in empty talk without practical experience",
+    "contexts": ["theory", "inexperience"]
+  },
+  "亡羊补牢": {
+    "literal": "mend the fence after losing the sheep",
+    "meaning": "it's never too late to fix a mistake",
+    "contexts": ["correction", "timing"]
+  },
+  "叶公好龙": {
+    "literal": "Lord Ye's love of dragons",
+    "meaning": "profess to like something while actually fearing it",
+    "contexts": ["hypocrisy", "inconsistency"]
+  },
+  "掩耳盗铃": {
+    "literal": "cover one's ears while stealing a bell",
+    "meaning": "deceive oneself",
+    "contexts": ["self-deception", "foolishness"]
+  },
+  "鹬蚌相争": {
+    "literal": "snipe and clam fight each other",
+    "meaning": "both sides lose in a conflict while a third party benefits",
+    "contexts": ["conflict", "lose-lose"]
+  },
+  "买椟还珠": {
+    "literal": "return the pearl but keep the box",
+    "meaning": "fail to recognize the true value of something",
+    "contexts": ["judgment", "value"]
+  },
+  "井底之蛙": {
+    "literal": "frog at the bottom of a well",
+    "meaning": "have a narrow worldview",
+    "contexts": ["ignorance", "perspective"]
+  },
+  "刻舟求剑": {
+    "literal": "mark the boat to find a sword",
+    "meaning": "take a static approach to a changing situation",
+    "contexts": ["methodology", "inflexibility"]
+  },
+  "兵来将挡，水来土掩": {
+    "literal": "meet soldiers with generals, water with earth",
+    "meaning": "deal with changing situations appropriately",
+    "contexts": ["adaptability", "strategy"]
+  },
+  "风马牛不相及": {
+    "literal": "horses and cows blown by the wind won't meet",
+    "meaning": "completely unrelated",
+    "contexts": ["relevance", "connection"]
+  },
+  "水到渠成": {
+    "literal": "when water arrives, the channel forms naturally",
+    "meaning": "things will naturally happen when conditions are right",
+    "contexts": ["timing", "natural development"]
+  },
+  "八仙过海，各显神通": {
+    "literal": "the Eight Immortals cross the sea, each showing their special powers",
+    "meaning": "everyone displays their unique talents",
+    "contexts": ["talent", "variety"]
+  },
+  "不入虎穴，不得虎子": {
+    "literal": "if you don't enter the tiger's den, you can't catch the tiger cub",
+    "meaning": "nothing ventured, nothing gained",
+    "contexts": ["risk", "reward"]
+  },
+  "杀鸡给猴看": {
+    "literal": "kill a chicken to scare the monkeys",
+    "meaning": "punish one to warn others",
+    "contexts": ["warning", "example"]
+  },
+  "抛砖引玉": {
+    "literal": "throw a brick to attract jade",
+    "meaning": "offer a modest opinion to elicit valuable input from others",
+    "contexts": ["discussion", "modesty"]
+  },
+  "盲人摸象": {
+    "literal": "blind men touching an elephant",
+    "meaning": "grasp only a part of the whole picture",
+    "contexts": ["perspective", "incomplete"]
+  },
+  "揠苗助长": {
+    "literal": "pull up seedlings to help them grow",
+    "meaning": "ruin something by excessive enthusiasm",
+    "contexts": ["patience", "growth"]
+  }
+} 

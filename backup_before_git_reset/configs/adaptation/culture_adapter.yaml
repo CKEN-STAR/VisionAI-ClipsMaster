@@ -1,0 +1,110 @@
+## 文化语境适配器配置文件
+## 用于控制中西方表达方式的转换规则和强度
+
+# 情感表达适配设置
+emotion_adaptation:
+  # 情感适配级别（0-1）
+  # 值越高，中文转英文时情感表达越直接
+  # 值越高，英文转中文时情感表达越含蓄
+  level: 0.7
+  
+  # 情感强化词汇
+  intensifiers:
+    zh_to_en:
+      - ["很好", "awesome"]
+      - ["不错", "excellent"]
+      - ["有点", "really"]
+    en_to_zh:
+      - ["amazing", "挺好的"]
+      - ["awesome", "不错"]
+      - ["terrible", "不太好"]
+
+# 文化参考替换设置
+cultural_references:
+  # 是否替换文化特定表达
+  enabled: true
+  
+  # 是否保留原始专有名词
+  preserve_names: true
+  
+  # 文化转换配置
+  localization:
+    # 社交媒体平台
+    social_media:
+      zh_to_en:
+        微信: WeChat
+        微博: Weibo
+        抖音: TikTok
+        快手: Kuaishou
+      en_to_zh:
+        Facebook: 脸书
+        Twitter: 推特
+        Instagram: 照片墙
+        YouTube: 油管
+    
+    # 节日与纪念日
+    holidays:
+      zh_to_en:
+        春节: Chinese New Year
+        中秋节: Mid-Autumn Festival
+        国庆节: National Day
+        元宵节: Lantern Festival
+      en_to_zh:
+        Christmas: 圣诞节
+        Halloween: 万圣节
+        Thanksgiving: 感恩节
+        Valentine's Day: 情人节
+
+# 表达习惯适配
+expression_habits:
+  # 句式长度调整
+  sentence_length:
+    enabled: true
+    # 英文偏好短句，中文偏好较长句
+    en_target_length: 15
+    zh_target_length: 25
+  
+  # 修饰词调整
+  modifiers:
+    enabled: true
+    # 中文常用修饰词（用于短句扩展）
+    zh_modifiers:
+      - 其实
+      - 确实
+      - 或许
+      - 大概
+      - 可能
+      - 基本上
+    # 英文常用强调词（用于增强表达）
+    en_modifiers:
+      - definitely
+      - absolutely
+      - certainly
+      - really
+      - totally
+      - completely
+
+# 成语/习语转换
+idioms:
+  # 是否启用成语转换
+  enabled: true
+  
+  # 是否保留无法准确转换的成语
+  preserve_untranslatable: true
+  
+  # 是否在特定场景下优先使用对应成语
+  context_aware: true
+
+# 相似表达映射路径设置
+expression_maps:
+  # 自定义表达映射文件路径
+  zh_to_en: "data/adaptation/zh_to_en_expressions.json"
+  en_to_zh: "data/adaptation/en_to_zh_expressions.json"
+
+# 调试设置
+debug:
+  # 是否启用详细日志
+  verbose: false
+  
+  # 是否在转换时保留原始文本（添加注释）
+  keep_original: false 

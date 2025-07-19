@@ -1,0 +1,11 @@
+ORIGINAL: The main character receives a phone call from an unknown number and decides to answer it.
+
+VIRAL: MIND-BLOWING! This phone call will change his life FOREVER! What the caller says next is ABSOLUTELY UNBELIEVABLE!
+
+METADATA:
+- Language: English
+- Genre: Drama
+- Difficulty: Medium
+- Quality Score: 0.85
+- Created: 2025-07-18
+- Source: High Quality Training

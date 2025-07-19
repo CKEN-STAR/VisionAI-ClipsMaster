@@ -1,0 +1,72 @@
+1
+00:00:00,000 --> 00:00:04,500
+This is a test drama scene showing outdoor activity.
+
+2
+00:00:05,000 --> 00:00:09,500
+The scene transitions to park, creating a tense and exciting atmosphere.
+
+3
+00:00:10,000 --> 00:00:14,500
+The scene transitions to restaurant, creating a tense and exciting atmosphere.
+
+4
+00:00:15,000 --> 00:00:19,500
+The scene transitions to office, creating a mysterious and eerie atmosphere.
+
+5
+00:00:20,000 --> 00:00:24,500
+The plot has developed to a critical moment where a crisis emerges.
+
+6
+00:00:25,000 --> 00:00:29,500
+The dialogue between characters reveals a secret about true identities.
+
+7
+00:00:30,000 --> 00:00:34,500
+This is a test drama scene showing work environment.
+
+8
+00:00:35,000 --> 00:00:39,500
+This is a test drama scene showing outdoor activity.
+
+9
+00:00:40,000 --> 00:00:44,500
+The main character is arguing, expressing anxiety.
+
+10
+00:00:45,000 --> 00:00:49,500
+The dialogue between characters reveals a secret about character relationships.
+
+11
+00:00:50,000 --> 00:00:54,500
+The dialogue between characters reveals a secret about hidden motives.
+
+12
+00:00:55,000 --> 00:00:59,500
+The scene transitions to countryside cottage, creating a warm and touching atmosphere.
+
+13
+00:01:00,000 --> 00:01:04,500
+The dialogue between characters reveals a secret about hidden motives.
+
+14
+00:01:05,000 --> 00:01:09,500
+The dialogue between characters reveals a secret about future plans.
+
+15
+00:01:10,000 --> 00:01:14,500
+The main character is talking, expressing calmness.
+
+16
+00:01:15,000 --> 00:01:19,500
+The scene transitions to park, creating a tense and exciting atmosphere.
+
+17
+00:01:20,000 --> 00:01:24,500
+The scene transitions to park, creating a relaxed and pleasant atmosphere.
+
+18
+00:01:25,000 --> 00:01:29,500
+The main character is waiting, expressing anger.
+

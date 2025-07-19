@@ -1,0 +1,10 @@
+{
+  "id": 1,
+  "original_files": [
+    "episode1.srt",
+    "episode2.srt"
+  ],
+  "viral_file": "viral_cut.srt",
+  "original_count": 21,
+  "viral_count": 10
+}

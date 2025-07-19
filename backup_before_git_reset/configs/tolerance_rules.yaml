@@ -1,0 +1,89 @@
+# 智能容差管理系统配置文件
+# 该文件定义了VisionAI-ClipsMaster用于评估视频质量和匹配精度的阈值
+
+# 视频质量容差参数
+video:
+  # 视频时长偏差容许度（秒）- 生成视频与目标长度差异最大值
+  duration_tolerance: 0.5
+  
+  # 关键帧PSNR最低要求 - 确保视频清晰度
+  psnr_threshold: 28
+  
+  # 分辨率容差 - 允许的分辨率差异百分比
+  resolution_tolerance: 5%
+  
+  # 色彩保真度 - 直方图相似度最低要求
+  color_fidelity: 85%
+  
+  # 音频质量要求
+  audio:
+    # 音频同步偏差最大值（毫秒）
+    sync_tolerance_ms: 50
+    # 音频质量最低分贝比
+    quality_db_min: -30
+    # 音量规格化目标值
+    target_lufs: -14
+
+# 字幕质量容差参数
+subtitle:
+  # 时间码允许误差（秒）
+  timecode_tolerance: 0.1
+  
+  # 文本相似度最低要求（百分比）
+  text_similarity: 90
+  
+  # 关键实体（人名/地点）覆盖率要求
+  entity_coverage: 100%
+  
+  # 情感表达保真度要求
+  emotion_fidelity: 85%
+  
+  # 语义连贯性最低分数
+  coherence_score: 75
+
+# 剧情完整性评估标准
+narrative:
+  # 关键情节点保留率
+  key_plot_retention: 95%
+  
+  # 角色弧线完整度要求
+  character_arc_completeness: 90%
+  
+  # 剧情时长比例（占原片百分比）
+  # - 最小值：防止剧情过短导致不连贯
+  # - 最大值：防止与原片差异过小
+  duration_ratio:
+    min: 25%
+    max: 75%
+    ideal: 40%
+  
+  # 叙事节奏评分阈值
+  pacing_score_min: 70
+
+# 质量评估加权系数
+quality_weights:
+  video_quality: 0.3
+  audio_quality: 0.2
+  subtitle_accuracy: 0.25
+  narrative_coherence: 0.25
+
+# 自适应容差控制
+adaptive_tolerance:
+  enabled: true
+  # 在低配置设备上是否自动调整标准
+  adjust_for_low_resources: true
+  # 最大容许度放宽系数（当设备资源受限时）
+  max_relaxation_factor: 1.2
+
+# 质量预警阈值
+alert_thresholds:
+  critical_failure: 60  # 总得分低于此值触发严重质量警告
+  warning_level: 75     # 总得分低于此值触发警告
+  notice_level: 85      # 总得分低于此值触发提示
+
+# 版权安全阈值
+copyright_safety:
+  # 原始视频水印识别最低置信度
+  watermark_detection_confidence: 0.85
+  # 音频指纹匹配阈值
+  audio_fingerprint_threshold: 0.9 

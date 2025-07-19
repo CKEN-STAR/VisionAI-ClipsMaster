@@ -1,0 +1,53 @@
+{
+    "version": "2.5.0",
+    "release_date": "2023-01-15",
+    "supported_features": [
+        "advanced_transitions",
+        "timeline_markers",
+        "intelligent_cropping",
+        "multi_track_export",
+        "high_quality_rendering",
+        "smart_trim"
+    ],
+    "feature_config": {
+        "advanced_transitions": {
+            "enabled": true,
+            "max_duration": 5.0,
+            "available_presets": [
+                "fade",
+                "dissolve",
+                "wipe",
+                "slide",
+                "push"
+            ]
+        },
+        "timeline_markers": {
+            "enabled": true,
+            "max_markers": 30,
+            "categories": [
+                "comment",
+                "chapter",
+                "error"
+            ]
+        },
+        "intelligent_cropping": {
+            "enabled": true,
+            "ai_models": ["face_detection"],
+            "max_tracked_objects": 3
+        },
+        "multi_track_export": {
+            "enabled": true,
+            "max_tracks": 8,
+            "formats": ["wav", "mp3"]
+        }
+    },
+    "compatibility": {
+        "min_compatible_version": "2.0.0",
+        "max_compatible_version": "3.0.0"
+    },
+    "deprecated_features": [],
+    "metadata": {
+        "description": "过渡版本，增加部分高级特性",
+        "created_by": "VisionAI团队"
+    }
+} 

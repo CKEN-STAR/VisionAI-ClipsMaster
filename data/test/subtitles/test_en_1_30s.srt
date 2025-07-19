@@ -1,0 +1,20 @@
+1
+00:00:00,000 --> 00:00:05,500
+The dialogue between characters reveals a secret about character relationships.
+
+2
+00:00:06,000 --> 00:00:11,500
+The dialogue between characters reveals a secret about character relationships.
+
+3
+00:00:12,000 --> 00:00:17,500
+The scene transitions to seaside, creating a relaxed and pleasant atmosphere.
+
+4
+00:00:18,000 --> 00:00:23,500
+The scene transitions to countryside cottage, creating a warm and touching atmosphere.
+
+5
+00:00:24,000 --> 00:00:29,500
+The plot has developed to a critical moment where an unexpected event occurs.
+

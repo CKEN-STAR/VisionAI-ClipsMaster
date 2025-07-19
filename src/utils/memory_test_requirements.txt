@@ -1,0 +1,16 @@
+psutil>=5.9.0
+numpy>=1.21.0
+matplotlib>=3.5.0  # 用于可视化报告
+pyyaml>=6.0  # 用于配置加载
+pandas>=1.3.0  # 用于数据分析
+argparse>=1.4.0  # 命令行参数解析
+loguru>=0.6.0  # 更好的日志记录
+zlib>=1.2.13  # 可选，用于内存压缩
+threading  # Python标准库
+gc  # Python标准库
+time  # Python标准库
+json  # Python标准库
+csv  # Python标准库
+datetime  # Python标准库
+os  # Python标准库
+sys  # Python标准库 

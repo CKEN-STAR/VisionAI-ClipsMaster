@@ -1,0 +1,7 @@
+path: zh/model.bin
+memory_required: 768
+device_requirements:
+  min_ram: 384
+  gpu_preferred: false
+type: TRANSFORMER
+checkpoint_path: zh/checkpoint 

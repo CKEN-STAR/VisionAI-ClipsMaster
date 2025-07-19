@@ -1,0 +1,69 @@
+format_version: 1.2
+model_info:
+  name: qwen2.5-7b-zh
+  version: 2.5
+  language: zh
+  description: "Qwen2.5-7B Chinese base model for short drama editing"
+
+quantization_levels:
+  - name: Q4_K_M
+    memory_usage: 3.9GB
+    compatible_devices: [CPU, GPU]
+    recommended: true
+    performance_profile:
+      inference_speed: "medium"
+      quality_impact: "minimal"
+    use_case: "default"
+
+  - name: Q2_K
+    memory_usage: 2.8GB
+    compatible_devices: [CPU]
+    recommended: false
+    performance_profile:
+      inference_speed: "fast"
+      quality_impact: "moderate"
+    use_case: "emergency"
+
+  - name: Q5_K
+    memory_usage: 4.8GB
+    compatible_devices: [CPU, GPU]
+    recommended: false
+    performance_profile:
+      inference_speed: "slow"
+      quality_impact: "none"
+    use_case: "high_quality"
+
+runtime_settings:
+  default_batch_size: 1
+  max_batch_size: 4
+  dynamic_batching: true
+  thread_count: "auto"
+  context_size: 2048
+  sliding_window: 1024
+
+memory_management:
+  min_free_memory: 1024  # MB
+  max_memory_usage: 4096 # MB
+  dynamic_unload: true
+  chunk_size: 512
+
+optimization:
+  cpu_optimization:
+    enabled: true
+    int8_optimization: true
+    threads_per_core: 2
+  gpu_optimization:
+    enabled: false
+    tensor_cores: false
+    cuda_graphs: false
+
+error_handling:
+  out_of_memory_strategy: "fallback_to_lower_quantization"
+  recovery_attempts: 3
+  fallback_order: ["Q4_K_M", "Q2_K"]
+
+monitoring:
+  log_performance: true
+  memory_tracking: true
+  inference_timing: true
+  metrics_collection: true 

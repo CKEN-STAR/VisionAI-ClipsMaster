@@ -1,0 +1,287 @@
+{
+  "test_start_time": "2025-07-19T13:54:37.597266",
+  "project_name": "VisionAI-ClipsMaster",
+  "test_version": "1.0.0",
+  "test_categories": {
+    "ui_interface": {
+      "ui_startup": {
+        "status": "PASS",
+        "timestamp": "2025-07-19T13:54:42.423218",
+        "details": "UI模块导入成功，耗时4.83秒",
+        "metrics": {
+          "startup_time": 4.825951814651489,
+          "has_pyqt6": true
+        }
+      },
+      "ui_components": {
+        "status": "PASS",
+        "timestamp": "2025-07-19T13:54:42.423218",
+        "details": "UI组件文件完整性良好: 5/5",
+        "metrics": {
+          "existing_files": [
+            "ui/main_window.py",
+            "ui/training_panel.py",
+            "ui/progress_dashboard.py",
+            "ui/components/realtime_charts.py",
+            "ui/components/alert_manager.py"
+          ],
+          "missing_files": []
+        }
+      },
+      "language_switching": {
+        "status": "PASS",
+        "timestamp": "2025-07-19T13:54:43.431976",
+        "details": "语言检测功能正常工作",
+        "metrics": {
+          "chinese_detection": "zh",
+          "english_detection": "en"
+        }
+      },
+      "theme_switching": {
+        "status": "PASS",
+        "timestamp": "2025-07-19T13:54:43.431976",
+        "details": "主题支持文件完整性良好: 2/2",
+        "metrics": {
+          "theme_files_found": 2,
+          "total_theme_files": 2
+        }
+      },
+      "ui_memory_usage": {
+        "status": "PASS",
+        "timestamp": "2025-07-19T13:54:44.442412",
+        "details": "UI内存使用正常: 340.3MB (限制: 400MB)",
+        "metrics": {
+          "current_memory_mb": 340.3359375,
+          "memory_increase_mb": 0.0
+        }
+      },
+      "startup_time": {
+        "status": "PASS",
+        "timestamp": "2025-07-19T13:54:44.442412",
+        "details": "启动时间正常: 0.00秒 (限制: 5秒)",
+        "metrics": {
+          "startup_time_s": 0.0
+        }
+      }
+    },
+    "core_functions": {
+      "language_detector": {
+        "status": "PASS",
+        "timestamp": "2025-07-19T13:54:44.442412",
+        "details": "语言检测准确率: 100.00% (阈值: 95.00%)",
+        "metrics": {
+          "accuracy": 1.0,
+          "correct": 5,
+          "total": 5
+        }
+      },
+      "model_switcher": {
+        "status": "PASS",
+        "timestamp": "2025-07-19T13:54:44.442412",
+        "details": "模型切换功能正常: 2/2",
+        "metrics": {
+          "successful_switches": 2,
+          "total_tests": 2
+        }
+      },
+      "screenplay_engine": {
+        "status": "PASS",
+        "timestamp": "2025-07-19T13:54:44.442412",
+        "details": "剧本重构引擎基础功能正常，模块完整性: 3/3",
+        "metrics": {
+          "available_modules": 3,
+          "srt_parsing": true
+        }
+      },
+      "video_processor": {
+        "status": "PASS",
+        "timestamp": "2025-07-19T13:54:44.617515",
+        "details": "视频处理模块基础完整，FFmpeg可用: True",
+        "metrics": {
+          "available_modules": 3,
+          "ffmpeg_available": true
+        }
+      },
+      "jianying_exporter": {
+        "status": "PASS",
+        "timestamp": "2025-07-19T13:54:44.617515",
+        "details": "剪映导出器功能完整: 3/3",
+        "metrics": {
+          "available_modules": 3,
+          "export_function": true
+        }
+      }
+    },
+    "training_system": {
+      "training_logic": {
+        "status": "PASS",
+        "timestamp": "2025-07-19T13:54:44.617515",
+        "details": "训练逻辑完整: 4/4 模块, 3/3 方法",
+        "metrics": {
+          "available_modules": 4,
+          "available_methods": 3
+        }
+      },
+      "bilingual_training": {
+        "status": "PASS",
+        "timestamp": "2025-07-19T13:54:44.632407",
+        "details": "双语言训练管道基本可用: 2/2 训练器, 3/3 文件",
+        "metrics": {
+          "working_trainers": 2,
+          "available_files": 3
+        }
+      },
+      "data_augmentation": {
+        "status": "PASS",
+        "timestamp": "2025-07-19T13:54:44.635705",
+        "details": "数据增强模块完整: 2/2",
+        "metrics": {
+          "available_modules": 2,
+          "working_modules": 2
+        }
+      },
+      "training_memory": {
+        "status": "PASS",
+        "timestamp": "2025-07-19T13:54:44.635705",
+        "details": "训练内存使用预估正常: 540.9MB (限制: 3800MB)",
+        "metrics": {
+          "estimated_memory_mb": 540.8515625,
+          "initial_memory_mb": 340.8515625
+        }
+      },
+      "training_time": {
+        "status": "PASS",
+        "timestamp": "2025-07-19T13:54:44.736566",
+        "details": "训练时间预估正常: 15分钟 (限制: 30分钟)",
+        "metrics": {
+          "estimated_time_min": 15
+        }
+      }
+    },
+    "workflow": {
+      "end_to_end": {
+        "status": "PASS",
+        "timestamp": "2025-07-19T13:54:44.738571",
+        "details": "端到端工作流程完整性良好: 8/8 (100.0%)",
+        "metrics": {
+          "completed_steps": 8,
+          "total_steps": 8,
+          "completeness": 1.0
+        }
+      },
+      "subtitle_sync": {
+        "status": "PASS",
+        "timestamp": "2025-07-19T13:54:44.738571",
+        "details": "字幕同步精度良好: 最大误差0.10秒, 平均误差0.10秒 (限制: 0.5秒)",
+        "metrics": {
+          "max_error_s": 0.1,
+          "avg_error_s": 0.10000000000000002,
+          "test_count": 3
+        }
+      },
+      "length_control": {
+        "status": "PASS",
+        "timestamp": "2025-07-19T13:54:44.738571",
+        "details": "长度控制精度良好: 平均误差10.0%",
+        "metrics": {
+          "avg_error": 0.10000000000000002,
+          "test_ratios": [
+            0.3,
+            0.5,
+            0.7
+          ]
+        }
+      },
+      "jianying_export": {
+        "status": "PASS",
+        "timestamp": "2025-07-19T13:54:44.740570",
+        "details": "剪映导出工作流程完整: 3/3, 模板有效: True",
+        "metrics": {
+          "available_files": 3,
+          "template_valid": true,
+          "completeness": 1.0
+        }
+      }
+    },
+    "performance": {
+      "memory_leak": {
+        "status": "PASS",
+        "timestamp": "2025-07-19T13:54:45.243555",
+        "details": "内存使用稳定: 增长0.0MB",
+        "metrics": {
+          "initial_memory": 340.8515625,
+          "final_memory": 340.8515625,
+          "growth": 0.0
+        }
+      },
+      "exception_recovery": {
+        "status": "PASS",
+        "timestamp": "2025-07-19T13:54:45.244670",
+        "details": "异常恢复机制完整: 3 模块, 100.0% 恢复率",
+        "metrics": {
+          "available_modules": 3,
+          "recovery_rate": 1.0
+        }
+      },
+      "4gb_compatibility": {
+        "status": "PASS",
+        "timestamp": "2025-07-19T13:54:45.244670",
+        "details": "4GB RAM兼容性良好: 预估使用540.9MB/4096MB, 量化配置可用",
+        "metrics": {
+          "estimated_usage_mb": 540.8515625,
+          "quantization_available": true
+        }
+      },
+      "response_time": {
+        "status": "PASS",
+        "timestamp": "2025-07-19T13:54:45.259953",
+        "details": "响应时间良好: 平均0.004秒, 最大0.010秒 (限制: 2秒)",
+        "metrics": {
+          "avg_response_time": 0.003544330596923828,
+          "max_response_time": 0.010414600372314453
+        }
+      }
+    },
+    "integration": {
+      "downloader_training": {
+        "status": "PASS",
+        "timestamp": "2025-07-19T13:54:45.261122",
+        "details": "下载器-训练系统集成良好: 下载器2/2, 训练3/3",
+        "metrics": {
+          "downloader_files": 2,
+          "training_files": 3,
+          "integration_score": 1.0
+        }
+      },
+      "module_signals": {
+        "status": "PASS",
+        "timestamp": "2025-07-19T13:54:45.263126",
+        "details": "模块信号连接完整: 3/3",
+        "metrics": {
+          "available_signals": 3,
+          "total_files": 3
+        }
+      },
+      "config_files": {
+        "status": "PASS",
+        "timestamp": "2025-07-19T13:54:45.266128",
+        "details": "配置文件完整: 4/4",
+        "metrics": {
+          "valid_configs": 4,
+          "total_configs": 4
+        }
+      }
+    }
+  },
+  "overall_status": "EXCELLENT",
+  "recommendations": [],
+  "test_summary": {
+    "total_tests": 27,
+    "passed_tests": 27,
+    "failed_tests": 0,
+    "warning_tests": 0,
+    "pass_rate": 1.0
+  },
+  "test_end_time": "2025-07-19T13:54:45.266128",
+  "total_duration": 7.668862342834473
+}

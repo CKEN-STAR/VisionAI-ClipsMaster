@@ -1,0 +1,56 @@
+{
+    "current_locale": "zh_CN",
+    "supported_locales": [
+        "en_US",
+        "ja_JP",
+        "zh_CN"
+    ],
+    "date_formats": {
+        "zh_CN": {
+            "default": "%Y年%m月%d日",
+            "short": "%m月%d日",
+            "long": "%Y年%m月%d日 %A",
+            "iso": "%Y-%m-%d"
+        },
+        "en_US": {
+            "default": "%m/%d/%Y",
+            "short": "%m/%d",
+            "long": "%A, %B %d, %Y",
+            "iso": "%Y-%m-%d"
+        },
+        "ja_JP": {
+            "default": "%Y年%m月%d日",
+            "short": "%m月%d日",
+            "long": "%Y年%m月%d日 %A",
+            "iso": "%Y-%m-%d"
+        }
+    },
+    "time_formats": {
+        "zh_CN": {
+            "default": "%H:%M:%S",
+            "short": "%H:%M",
+            "long": "%H时%M分%S秒"
+        },
+        "en_US": {
+            "default": "%I:%M:%S %p",
+            "short": "%I:%M %p",
+            "long": "%I:%M:%S %p %Z"
+        },
+        "ja_JP": {
+            "default": "%H時%M分%S秒",
+            "short": "%H時%M分",
+            "long": "%H時%M分%S秒 %Z"
+        }
+    },
+    "number_formats": {
+        "default": "{:.2f}",
+        "integer": "{:d}",
+        "percentage": "{:.1%}",
+        "currency": {
+            "zh_CN": "￥{:.2f}",
+            "en_US": "${:.2f}",
+            "ja_JP": "¥{:.0f}"
+        },
+        "scientific": "{:.2e}"
+    }
+}

@@ -1,0 +1,24 @@
+{
+  "dataset_dir": "D:\\zancun\\VisionAI-ClipsMaster\\data\\training\\en",
+  "valid_count": 1,
+  "invalid_count": 2,
+  "total_count": 3,
+  "valid_percent": 33.333333333333336,
+  "valid_files": [
+    {
+      "path": "D:\\zancun\\VisionAI-ClipsMaster\\data\\training\\en\\sample2.txt",
+      "license": "Apache-2.0"
+    }
+  ],
+  "invalid_files": [
+    {
+      "path": "D:\\zancun\\VisionAI-ClipsMaster\\data\\training\\en\\contaminated_sample.txt",
+      "license": null
+    },
+    {
+      "path": "D:\\zancun\\VisionAI-ClipsMaster\\data\\training\\en\\sample1.txt",
+      "license": null
+    }
+  ],
+  "timestamp": "2025-05-18T09:59:01.390784"
+}

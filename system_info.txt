@@ -1,0 +1,15 @@
+------ 系统信息 ------ 
+OS Name:                       Microsoft Windows 11 Home China
+OS Version:                    10.0.26100 N/A Build 26100
+OS Manufacturer:               Microsoft Corporation
+OS Configuration:              Standalone Workstation
+OS Build Type:                 Multiprocessor Free
+BIOS Version:                  HUAWEI 1.28, 2024/5/18
+
+Microsoft Windows [Version 10.0.26100.4061]
+ 
+------ Python信息 ------ 
+Python 3.11.11
+ 
+------ PyQt信息 ------ 
+ 

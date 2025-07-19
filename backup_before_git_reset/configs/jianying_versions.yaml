@@ -1,0 +1,194 @@
+# configs/jianying_versions.yaml
+# 剪映版本特征库
+# 包含各个版本的特性、要求和兼容性信息
+
+version_specs:
+  # 3.0版本 - 最新专业版
+  - version: "3.0.0"
+    schema: "jianying_v3.xsd"
+    max_resolution: 7680x4320  # 8K支持
+    required_nodes:
+      - "4K"     # 4K分辨率支持
+      - "HDR"    # HDR色彩支持
+    supported_features:
+      - name: "multi_track"
+        description: "多轨道支持"
+        required: true
+      - name: "effects_layer"
+        description: "效果层支持"
+        required: true
+      - name: "subtitle_track"
+        description: "字幕轨支持"
+        required: true
+      - name: "audio_effects"
+        description: "音频特效支持"
+        required: true
+      - name: "nested_sequences"
+        description: "嵌套序列支持"
+        required: true
+      - name: "advanced_effects"
+        description: "高级效果支持"
+        required: true
+      - name: "keyframe_animation"
+        description: "关键帧动画"
+        required: true
+      - name: "motion_tracking"
+        description: "运动跟踪"
+        required: false
+    supported_effects:
+      - "blur"         # 模糊效果
+      - "color"        # 颜色调整
+      - "transform"    # 变换效果
+      - "audio"        # 音频效果
+      - "transition"   # 转场效果
+      - "text"         # 文字效果
+      - "3d"           # 3D效果
+    compatibility:
+      - "2.9.5"
+      - "2.5.0"
+      - "2.0.0"
+    display_name: "专业版"
+    validation_level: "strict"
+    
+  # 2.9版本 - 移动版
+  - version: "2.9.5"
+    schema: "jianying_v2.xsd"
+    max_resolution: 1920x1080  # 1080p支持
+    deprecated_nodes:
+      - "LUT"  # 不再支持查找表
+    supported_features:
+      - name: "multi_track"
+        description: "多轨道支持"
+        required: true
+      - name: "effects_layer"
+        description: "效果层支持"
+        required: true
+      - name: "subtitle_track"
+        description: "字幕轨支持"
+        required: true
+      - name: "keyframe_animation"
+        description: "关键帧动画"
+        required: false
+    supported_effects:
+      - "transition"   # 仅支持转场效果
+    compatibility:
+      - "2.5.0"
+      - "2.0.0"
+    display_name: "移动版"
+    validation_level: "normal"
+    
+  # 2.5版本 - 标准版
+  - version: "2.5.0"
+    schema: "jianying_v2.xsd"
+    max_resolution: 1920x1080  # 1080p支持
+    supported_features:
+      - name: "multi_track"
+        description: "多轨道支持"
+        required: true
+      - name: "subtitle_track"
+        description: "字幕轨支持"
+        required: true
+    supported_effects: []  # 不支持特殊效果
+    compatibility:
+      - "2.0.0"
+    display_name: "标准版"
+    validation_level: "normal"
+    
+  # 2.0版本 - 基础版
+  - version: "2.0.0"
+    schema: "jianying_v1.xsd"
+    max_resolution: 1280x720  # 720p支持
+    supported_features:
+      - name: "single_track"
+        description: "单轨道支持"
+        required: true
+    supported_effects: []  # 不支持特殊效果
+    compatibility: []  # 最低版本，没有向下兼容
+    display_name: "基础版"
+    validation_level: "loose"
+
+# 版本转换映射
+version_conversions:
+  # 降级转换
+  downgrade:
+    # 从3.0降级到2.9
+    "3.0.0-to-2.9.5":
+      operations:
+        - type: "remove_feature"
+          target: "nested_sequences"
+          description: "移除嵌套序列"
+        - type: "remove_feature"
+          target: "audio_effects"
+          description: "移除音频特效"
+        - type: "remove_feature"
+          target: "advanced_effects"
+          description: "移除高级效果"
+        - type: "filter_effects"
+          keep: ["transition"]
+          description: "仅保留转场效果"
+        - type: "reduce_resolution"
+          max: "1920x1080"
+          description: "降低分辨率到1080p"
+          
+    # 从2.9降级到2.5
+    "2.9.5-to-2.5.0":
+      operations:
+        - type: "remove_feature"
+          target: "effects_layer"
+          description: "移除效果层"
+        - type: "remove_feature"
+          target: "keyframe_animation"
+          description: "移除关键帧动画"
+          
+    # 从2.5降级到2.0
+    "2.5.0-to-2.0.0":
+      operations:
+        - type: "convert_feature"
+          from: "multi_track"
+          to: "single_track"
+          description: "将多轨道转换为单轨道"
+        - type: "remove_feature"
+          target: "subtitle_track"
+          description: "移除字幕轨"
+        - type: "reduce_resolution"
+          max: "1280x720"
+          description: "降低分辨率到720p"
+          
+  # 升级转换
+  upgrade:
+    # 从2.0升级到2.5
+    "2.0.0-to-2.5.0":
+      operations:
+        - type: "convert_feature"
+          from: "single_track"
+          to: "multi_track"
+          description: "将单轨道转换为多轨道"
+        - type: "add_feature"
+          target: "subtitle_track"
+          description: "添加字幕轨"
+          
+    # 从2.5升级到2.9
+    "2.5.0-to-2.9.5":
+      operations:
+        - type: "add_feature"
+          target: "effects_layer"
+          description: "添加效果层"
+        - type: "add_feature"
+          target: "keyframe_animation"
+          description: "添加关键帧动画支持"
+          
+    # 从2.9升级到3.0
+    "2.9.5-to-3.0.0":
+      operations:
+        - type: "add_feature"
+          target: "nested_sequences"
+          description: "添加嵌套序列支持"
+        - type: "add_feature"
+          target: "audio_effects"
+          description: "添加音频特效支持"
+        - type: "add_feature"
+          target: "advanced_effects"
+          description: "添加高级效果支持"
+        - type: "add_effects"
+          effects: ["blur", "color", "transform", "audio", "text", "3d"]
+          description: "添加所有效果支持" 

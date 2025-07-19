@@ -1,0 +1,90 @@
+{
+  "simd_optimization": {
+    "enabled": true,
+    "auto_detect": true,
+    "preferred_type": "auto",
+    "fallback_to_numpy": true,
+    "matrix_threshold": 50,
+    "cache_results": false
+  },
+  "instruction_sets": {
+    "avx512": {
+      "priority": 1,
+      "threads": 8,
+      "batch_size": 4,
+      "block_size": 32,
+      "use_fma": true
+    },
+    "avx2": {
+      "priority": 2,
+      "threads": 4,
+      "batch_size": 2,
+      "block_size": 32,
+      "use_fma": true
+    },
+    "avx": {
+      "priority": 3,
+      "threads": 2,
+      "batch_size": 2,
+      "block_size": 32,
+      "use_fma": false
+    },
+    "sse4.2": {
+      "priority": 4,
+      "threads": 2,
+      "batch_size": 1,
+      "block_size": 16,
+      "use_fma": false
+    },
+    "neon": {
+      "priority": 2,
+      "threads": 4,
+      "batch_size": 2,
+      "block_size": 32,
+      "use_fma": true
+    },
+    "baseline": {
+      "priority": 5,
+      "threads": 1,
+      "batch_size": 1,
+      "block_size": 16,
+      "use_fma": false
+    }
+  },
+  "performance_tuning": {
+    "enable_block_matrix": true,
+    "min_block_size": 16,
+    "max_block_size": 64,
+    "optimize_memory_access": true,
+    "align_memory": true,
+    "enable_multithreading": true,
+    "max_threads": 0
+  },
+  "operations": {
+    "matrix_multiply": {
+      "enabled": true,
+      "min_size_for_simd": 4,
+      "algorithm": "block"
+    },
+    "matrix_element_multiply": {
+      "enabled": true,
+      "min_size_for_simd": 4,
+      "algorithm": "linear"
+    },
+    "matrix_add": {
+      "enabled": true,
+      "min_size_for_simd": 4,
+      "algorithm": "linear"
+    },
+    "vector_scale": {
+      "enabled": true,
+      "min_size_for_simd": 4,
+      "algorithm": "linear"
+    },
+    "fused_multiply_add": {
+      "enabled": true,
+      "min_size_for_simd": 4,
+      "algorithm": "fused"
+    }
+  }
+} 

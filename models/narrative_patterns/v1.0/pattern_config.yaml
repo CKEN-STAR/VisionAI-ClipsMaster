@@ -1,0 +1,118 @@
+# 叙事模式配置文件 (v1.0)
+# 此配置文件定义了用于爆款短视频的叙事模式参数和评估标准
+
+# 模式类型定义
+pattern_types:
+  - opening    # 开场模式
+  - climax     # 高潮模式
+  - transition # 转场/过渡模式
+  - conflict   # 冲突模式
+  - resolution # 解决模式
+  - ending     # 结尾模式
+
+# 评估权重配置
+evaluation_weights:
+  audience_retention: 0.25    # 观众留存率权重
+  viral_coefficient: 0.20     # 社交传播系数权重
+  recommendation_weight: 0.15 # 平台推荐权重
+  emotional_intensity: 0.25   # 情感强度权重
+  narrative_coherence: 0.15   # 叙事结构合理性权重
+
+# 评估阈值配置
+thresholds:
+  min_impact_score: 0.6      # 最小影响力分数，低于此值的模式将被视为不重要
+  min_confidence: 0.65       # 最小置信度，低于此值的模式将被标记为不确定
+
+# 特征重要性权重
+feature_importance:
+  frequency: 0.30      # 在热门视频中出现的频率
+  position: 0.15       # 在视频中的位置重要性
+  sentiment: 0.25      # 情感强度的重要性
+  duration: 0.10       # 持续时间的重要性
+  surprise_level: 0.20 # 惊喜/意外程度的重要性
+
+# 模式类型特定参数
+pattern_parameters:
+  opening:
+    ideal_position: [0.0, 0.15]  # 理想位置范围（视频开始部分）
+    ideal_duration: [2.0, 5.0]   # 理想持续时间范围（秒）
+    key_emotions: ["surprise", "curiosity", "excitement"]  # 关键情感类型
+  
+  climax:
+    ideal_position: [0.6, 0.8]   # 理想位置范围（视频中后段）
+    ideal_duration: [3.0, 8.0]   # 理想持续时间范围（秒）
+    key_emotions: ["surprise", "joy", "sadness", "fear"]
+  
+  transition:
+    ideal_position: [0.2, 0.6]   # 理想位置范围（视频中段）
+    ideal_duration: [1.0, 3.0]   # 理想持续时间范围（秒）
+    key_emotions: ["anticipation", "curiosity"]
+  
+  conflict:
+    ideal_position: [0.3, 0.5]   # 理想位置范围（视频中前段）
+    ideal_duration: [3.0, 7.0]   # 理想持续时间范围（秒）
+    key_emotions: ["anger", "fear", "tension"]
+  
+  resolution:
+    ideal_position: [0.7, 0.9]   # 理想位置范围（视频后段）
+    ideal_duration: [2.0, 6.0]   # 理想持续时间范围（秒）
+    key_emotions: ["relief", "joy", "satisfaction"]
+  
+  ending:
+    ideal_position: [0.85, 1.0]  # 理想位置范围（视频结尾）
+    ideal_duration: [1.5, 4.0]   # 理想持续时间范围（秒）
+    key_emotions: ["surprise", "joy", "nostalgia"]
+
+# 模式组合推荐
+recommended_combinations:
+  - name: "标准叙事结构"
+    patterns: ["opening", "conflict", "climax", "resolution", "ending"]
+    description: "经典的故事拱形结构，包含完整的情感曲线"
+  
+  - name: "悬疑结构"
+    patterns: ["opening", "transition", "climax", "ending"]
+    description: "以悬疑开场，通过过渡逐渐推向高潮，然后迅速结束"
+  
+  - name: "情感冲击波"
+    patterns: ["opening", "climax", "conflict", "resolution", "ending"]
+    description: "先给予观众情感高峰，再引入冲突，最后解决"
+  
+  - name: "循环递进式"
+    patterns: ["opening", "conflict", "transition", "climax", "ending"]
+    description: "以开场引入，通过冲突和过渡逐步推向高潮，然后有力收尾"
+
+# 平台特化参数
+platform_optimization:
+  douyin:
+    recommended_duration: [15, 60]  # 推荐视频总时长（秒）
+    key_positions: [0.0, 0.2, 0.8]  # 关键节点位置（视频百分比）
+    engagement_metrics:             # 互动指标权重
+      comments: 0.3
+      likes: 0.4
+      shares: 0.3
+  
+  kuaishou:
+    recommended_duration: [20, 90]
+    key_positions: [0.0, 0.3, 0.7]
+    engagement_metrics:
+      comments: 0.25
+      likes: 0.5
+      shares: 0.25
+  
+  youtube:
+    recommended_duration: [60, 600]
+    key_positions: [0.0, 0.25, 0.75]
+    engagement_metrics:
+      watch_time: 0.5
+      likes: 0.2
+      comments: 0.15
+      shares: 0.15
+
+# 跨平台兼容性
+cross_platform:
+  douyin_to_kuaishou: 0.85  # 抖音模式在快手上的兼容性
+  douyin_to_youtube: 0.6    # 抖音模式在YouTube上的兼容性
+  kuaishou_to_douyin: 0.8   # 快手模式在抖音上的兼容性
+  kuaishou_to_youtube: 0.65 # 快手模式在YouTube上的兼容性
+  youtube_to_douyin: 0.5    # YouTube模式在抖音上的兼容性
+  youtube_to_kuaishou: 0.55 # YouTube模式在快手上的兼容性 

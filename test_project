@@ -1,0 +1,188 @@
+{
+  "version": "3.0.0",
+  "type": "draft_content",
+  "platform": "windows",
+  "create_time": 1752636965400,
+  "update_time": 1752636965400,
+  "id": "7c44e74a-549a-479e-82e3-98ce4cc64887",
+  "canvas_config": {
+    "height": 1080,
+    "width": 1920,
+    "duration": 4000
+  },
+  "tracks": [
+    {
+      "id": "af750f98-fb2f-4436-b11f-fdbccaab0745",
+      "type": "video",
+      "segments": [
+        {
+          "id": "d191d946-f476-4c0a-aa3b-7901d9c5d6a5",
+          "type": "video",
+          "material_id": "video_0",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 1000,
+            "duration": 2000
+          },
+          "target_timerange": {
+            "start": 0,
+            "duration": 2000
+          },
+          "extra_material_refs": []
+        },
+        {
+          "id": "769c92f6-b8da-4af6-8533-35b6bb6600ee",
+          "type": "video",
+          "material_id": "video_1",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 4000,
+            "duration": 2000
+          },
+          "target_timerange": {
+            "start": 2000,
+            "duration": 2000
+          },
+          "extra_material_refs": []
+        }
+      ]
+    },
+    {
+      "id": "878b2681-513b-4e70-9af3-42a3642994ff",
+      "type": "audio",
+      "segments": [
+        {
+          "id": "685cd60e-97da-4db4-8d41-55da2b24fb98",
+          "type": "audio",
+          "material_id": "audio_0",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 1000,
+            "duration": 2000
+          },
+          "target_timerange": {
+            "start": 0,
+            "duration": 2000
+          }
+        },
+        {
+          "id": "590b809b-eff1-4eaf-bab4-ea2d2dd189d8",
+          "type": "audio",
+          "material_id": "audio_1",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 4000,
+            "duration": 2000
+          },
+          "target_timerange": {
+            "start": 2000,
+            "duration": 2000
+          }
+        }
+      ]
+    },
+    {
+      "id": "ada3f3d4-5a29-485c-a016-e464520c6055",
+      "type": "text",
+      "segments": [
+        {
+          "id": "f365ace3-1185-45db-a0bf-0ce4e7b7e884",
+          "type": "text",
+          "material_id": "text_0",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 0,
+            "duration": 2000
+          },
+          "target_timerange": {
+            "start": 0,
+            "duration": 2000
+          },
+          "extra_material_refs": []
+        },
+        {
+          "id": "19c3c5d9-4548-4f0c-aeeb-ff581ac6353b",
+          "type": "text",
+          "material_id": "text_1",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 0,
+            "duration": 2000
+          },
+          "target_timerange": {
+            "start": 2000,
+            "duration": 2000
+          },
+          "extra_material_refs": []
+        }
+      ]
+    }
+  ],
+  "materials": {
+    "videos": [
+      {
+        "id": "video_0",
+        "type": "video",
+        "path": "",
+        "duration": 2000,
+        "width": 1920,
+        "height": 1080,
+        "fps": 30
+      },
+      {
+        "id": "video_1",
+        "type": "video",
+        "path": "",
+        "duration": 2000,
+        "width": 1920,
+        "height": 1080,
+        "fps": 30
+      }
+    ],
+    "audios": [
+      {
+        "id": "audio_0",
+        "type": "audio",
+        "path": "",
+        "duration": 2000,
+        "sample_rate": 44100,
+        "channels": 2
+      },
+      {
+        "id": "audio_1",
+        "type": "audio",
+        "path": "",
+        "duration": 2000,
+        "sample_rate": 44100,
+        "channels": 2
+      }
+    ],
+    "texts": [
+      {
+        "id": "text_0",
+        "type": "text",
+        "content": "",
+        "font_size": 24,
+        "font_color": "#FFFFFF",
+        "background_color": "#000000",
+        "alignment": "center"
+      },
+      {
+        "id": "text_1",
+        "type": "text",
+        "content": "",
+        "font_size": 24,
+        "font_color": "#FFFFFF",
+        "background_color": "#000000",
+        "alignment": "center"
+      }
+    ],
+    "effects": []
+  },
+  "extra_info": {
+    "export_range": {
+      "start": 0,
+      "end": 4000
+    }
+  }
+}

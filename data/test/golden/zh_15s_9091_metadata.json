@@ -1,0 +1,14 @@
+{
+  "sample_id": "zh_15s_9091",
+  "language": "zh",
+  "duration": 15,
+  "video_path": "D:\\zancun\\VisionAI-ClipsMaster\\data\\test\\golden\\zh_15s_9091.mp4",
+  "original_srt": "D:\\zancun\\VisionAI-ClipsMaster\\data\\test\\golden\\zh_15s_9091_original.srt",
+  "expected_srt": "D:\\zancun\\VisionAI-ClipsMaster\\data\\test\\golden\\zh_15s_9091_expected.srt",
+  "important_timestamps": [
+    "00:00:00,000",
+    "00:00:05,000",
+    "00:00:10,000"
+  ],
+  "creation_time": 1747229239.8749814
+}

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="1.0">
+    <info>
+        <name>Golden Sample - {{scene_name}}</name>
+        <type>{{scene_type}}</type>
+        <duration>{{duration}}</duration>
+        <resolution>{{resolution}}</resolution>
+        <framerate>{{framerate}}</framerate>
+        <description>{{description}}</description>
+        <created_by>VisionAI-ClipsMaster</created_by>
+        <sample_id>{{sample_id}}</sample_id>
+    </info>
+    
+    <timeline>
+        <track type="video">
+            <clip start="0" end="{{duration}}" source="{{sample_id}}.mp4">
+                <effects>
+                    <effect type="color_grading" preset="standard"/>
+                </effects>
+            </clip>
+        </track>
+        
+        <track type="subtitle">
+            <clip start="0" end="{{duration}}" source="{{sample_id}}.srt">
+                <settings>
+                    <font>Arial</font>
+                    <size>42</size>
+                    <color>#FFFFFF</color>
+                    <background>#80000000</background>
+                    <position>bottom_center</position>
+                </settings>
+            </clip>
+        </track>
+    </timeline>
+    
+    <metadata>
+        <golden_standard>true</golden_standard>
+        <test_purpose>quality_comparison</test_purpose>
+        <category>{{scene_type}}</category>
+        <tags>{{tags}}</tags>
+    </metadata>
+</project>

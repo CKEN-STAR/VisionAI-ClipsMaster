@@ -1,0 +1,282 @@
+# VisionAI-ClipsMaster 硬件自适应配置
+# 根据不同硬件配置自动调整AI模型性能与资源使用的平衡
+
+# 硬件检测配置
+hardware_detection:
+  # 内存检测
+  memory:
+    min_required_gb: 3.5          # 最小内存要求
+    safety_margin_percent: 15     # 安全边距百分比
+    monitor_interval_seconds: 30  # 监控间隔
+    
+  # CPU检测
+  cpu:
+    min_cores: 2                  # 最小核心数
+    min_frequency_mhz: 1500       # 最小频率
+    performance_weight: 0.3       # 性能权重
+    
+  # GPU检测
+  gpu:
+    nvidia_priority: true         # NVIDIA GPU优先
+    min_vram_gb: 2               # 最小显存要求
+    fallback_to_cpu: true        # 回退到CPU
+
+# 性能等级定义
+performance_levels:
+  low:
+    memory_range: [3.5, 6.0]     # 内存范围 (GB)
+    cpu_score_range: [0, 30]     # CPU分数范围
+    gpu_score_range: [0, 10]     # GPU分数范围
+    description: "4GB RAM设备，无独显"
+    
+  medium:
+    memory_range: [6.0, 12.0]
+    cpu_score_range: [30, 50]
+    gpu_score_range: [10, 20]
+    description: "8GB RAM设备，集成显卡"
+    
+  high:
+    memory_range: [12.0, 24.0]
+    cpu_score_range: [50, 70]
+    gpu_score_range: [20, 30]
+    description: "16GB RAM设备，独立显卡"
+    
+  ultra:
+    memory_range: [24.0, 128.0]
+    cpu_score_range: [70, 100]
+    gpu_score_range: [30, 50]
+    description: "32GB+ RAM设备，高端显卡"
+
+# 模型配置策略
+model_configurations:
+  # 低配设备配置 (4GB RAM)
+  low_config:
+    quantization: "Q2_K"
+    max_model_memory_gb: 1.8
+    context_length: 2048
+    batch_size: 1
+    num_threads: 4
+    concurrent_models: false
+    dynamic_loading: true
+    expected_bleu_score: 0.70
+    max_startup_time_seconds: 10
+    max_switch_time_seconds: 3
+    
+    mistral:
+      model_path: "models/mistral/quantized/Q2_K"
+      use_gpu: false
+      gpu_layers: 0
+      
+    qwen:
+      model_path: "models/qwen/quantized/Q2_K"
+      use_gpu: false
+      gpu_layers: 0
+  
+  # 中配设备配置 (8GB RAM)
+  medium_config:
+    quantization: "Q4_K_M"
+    max_model_memory_gb: 2.8
+    context_length: 4096
+    batch_size: 2
+    num_threads: 6
+    concurrent_models: false
+    dynamic_loading: true
+    expected_bleu_score: 0.75
+    max_startup_time_seconds: 8
+    max_switch_time_seconds: 2
+    
+    mistral:
+      model_path: "models/mistral/quantized/Q4_K_M"
+      use_gpu: true
+      gpu_layers: 20
+      
+    qwen:
+      model_path: "models/qwen/quantized/Q4_K_M"
+      use_gpu: true
+      gpu_layers: 20
+  
+  # 高配设备配置 (16GB+ RAM)
+  high_config:
+    quantization: "Q5_K"
+    max_model_memory_gb: 4.0
+    context_length: 8192
+    batch_size: 4
+    num_threads: 8
+    concurrent_models: true
+    dynamic_loading: false
+    expected_bleu_score: 0.78
+    max_startup_time_seconds: 5
+    max_switch_time_seconds: 1
+    
+    mistral:
+      model_path: "models/mistral/quantized/Q5_K"
+      use_gpu: true
+      gpu_layers: 35
+      
+    qwen:
+      model_path: "models/qwen/quantized/Q5_K"
+      use_gpu: true
+      gpu_layers: 35
+  
+  # 超高配设备配置 (32GB+ RAM)
+  ultra_config:
+    quantization: "FP16"
+    max_model_memory_gb: 6.0
+    context_length: 8192
+    batch_size: 4
+    num_threads: 12
+    concurrent_models: true
+    dynamic_loading: false
+    expected_bleu_score: 0.82
+    max_startup_time_seconds: 3
+    max_switch_time_seconds: 1
+    
+    mistral:
+      model_path: "models/mistral/base/FP16"
+      use_gpu: true
+      gpu_layers: 40
+      
+    qwen:
+      model_path: "models/qwen/base/FP16"
+      use_gpu: true
+      gpu_layers: 40
+
+# 运行模式配置
+runtime_modes:
+  auto:
+    description: "根据硬件自动选择最佳配置"
+    adaptive: true
+    fallback_enabled: true
+    
+  performance:
+    description: "性能优先，使用最高质量配置"
+    force_quantization: "Q5_K"
+    force_gpu: true
+    memory_threshold: 0.70
+    
+  memory:
+    description: "内存优先，使用最节省内存的配置"
+    force_quantization: "Q2_K"
+    force_gpu: false
+    memory_threshold: 0.90
+    
+  custom:
+    description: "用户自定义配置"
+    config_file: "configs/custom_model_config.yaml"
+
+# 监控与调整配置
+monitoring:
+  # 内存监控
+  memory_monitoring:
+    enabled: true
+    check_interval_seconds: 30
+    warning_threshold: 0.70      # 70%内存使用率警告
+    critical_threshold: 0.85     # 85%内存使用率紧急处理
+    emergency_threshold: 0.90    # 90%内存使用率强制降级
+    
+  # 性能监控
+  performance_monitoring:
+    enabled: true
+    track_startup_time: true
+    track_inference_time: true
+    track_memory_usage: true
+    track_bleu_scores: true
+    
+  # 自动调整
+  auto_adjustment:
+    enabled: true
+    gradual_downgrade: true      # 渐进式降级
+    emergency_downgrade: true    # 紧急降级
+    auto_cleanup: true           # 自动清理
+    fallback_on_failure: true    # 失败时回退
+
+# 降级策略
+downgrade_strategies:
+  gradual:
+    - action: "disable_concurrent_models"
+      trigger: "memory_usage > 0.80"
+      description: "禁用并发模型加载"
+      
+    - action: "reduce_context_length"
+      trigger: "memory_usage > 0.85"
+      description: "减少上下文长度"
+      
+    - action: "switch_to_lower_quantization"
+      trigger: "memory_usage > 0.88"
+      description: "切换到更低的量化等级"
+      
+  emergency:
+    - action: "force_memory_mode"
+      trigger: "memory_usage > 0.90"
+      description: "强制切换到内存优先模式"
+      
+    - action: "emergency_cleanup"
+      trigger: "memory_usage > 0.95"
+      description: "紧急内存清理"
+
+# 质量保证配置
+quality_assurance:
+  # 功能完整性要求
+  functionality:
+    srt_parsing_success_rate: 0.98
+    language_detection_accuracy: 0.95
+    timeline_matching_precision: 0.5  # 秒
+    viral_conversion_effectiveness: 0.85
+    
+  # 性能要求
+  performance:
+    max_startup_time_seconds: 10
+    max_model_switch_time_seconds: 3
+    max_memory_usage_percent: 90
+    min_bleu_score: 0.65
+    
+  # 回退机制
+  fallback:
+    enabled: true
+    max_retries: 3
+    fallback_config: "low_config"
+    preserve_functionality: true
+
+# 用户界面配置
+ui_integration:
+  # 性能模式选择器
+  mode_selector:
+    show_in_settings: true
+    allow_runtime_change: true
+    show_performance_preview: true
+    
+  # 资源监控显示
+  resource_monitor:
+    show_memory_usage: true
+    show_cpu_usage: true
+    show_gpu_usage: true
+    update_interval_seconds: 5
+    
+  # 高级设置
+  advanced_settings:
+    show_quantization_options: true
+    show_memory_limits: true
+    show_thread_settings: true
+    expert_mode: false
+
+# 日志配置
+logging:
+  level: "INFO"
+  log_hardware_detection: true
+  log_config_changes: true
+  log_performance_metrics: true
+  log_memory_warnings: true
+  
+# 验证配置
+validation:
+  # 启动时验证
+  startup_validation:
+    check_hardware_compatibility: true
+    validate_model_paths: true
+    test_memory_allocation: true
+    
+  # 运行时验证
+  runtime_validation:
+    monitor_memory_leaks: true
+    validate_model_outputs: true
+    check_performance_degradation: true

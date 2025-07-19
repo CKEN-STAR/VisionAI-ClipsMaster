@@ -1,0 +1,52 @@
+{
+  "version": "v1.0",
+  "created_at": "2024-05-01T10:00:00.000Z",
+  "description": "初始版本的叙事模式库，包含基础模式和评估标准",
+  "author": "系统",
+  "models": {
+    "fp-growth.model": {
+      "description": "频繁模式挖掘模型",
+      "algorithm": "FP-Growth",
+      "trained_on": "初始数据集",
+      "parameters": {
+        "min_support": 0.1,
+        "max_patterns": 100
+      }
+    }
+  },
+  "compatible_app_versions": [">=1.0.0"],
+  "data_size": "1.2TB",
+  "coverage": {
+    "zh": 0.89,
+    "en": 0.76
+  },
+  "changelog": [
+    {
+      "date": "2024-05-01",
+      "changes": [
+        "初始版本发布",
+        "添加6种基本模式类型",
+        "针对抖音、快手和YouTube平台的优化参数"
+      ]
+    }
+  ],
+  "performance_metrics": {
+    "accuracy": 0.85,
+    "precision": 0.83,
+    "recall": 0.87,
+    "f1_score": 0.85
+  },
+  "validation": {
+    "method": "交叉验证",
+    "splits": 5,
+    "results": {
+      "viral_prediction_accuracy": 0.78,
+      "engagement_prediction_error": 0.15
+    }
+  },
+  "dependencies": {
+    "python": ">=3.8",
+    "numpy": ">=1.19.0",
+    "pandas": ">=1.1.0"
+  }
+} 

@@ -1,0 +1,50 @@
+{
+  "max_cache_size_mb": 200,
+  "default_ttl": 7200,
+  "edge_nodes": [
+    {
+      "id": "cn-east",
+      "location": {"lat": 31.2304, "lng": 121.4737},
+      "region": "华东",
+      "endpoint": "https://east-cdn.example.com"
+    },
+    {
+      "id": "cn-north",
+      "location": {"lat": 39.9042, "lng": 116.4074},
+      "region": "华北",
+      "endpoint": "https://north-cdn.example.com"
+    },
+    {
+      "id": "cn-south",
+      "location": {"lat": 22.5431, "lng": 114.0579},
+      "region": "华南",
+      "endpoint": "https://south-cdn.example.com"
+    },
+    {
+      "id": "cn-southwest",
+      "location": {"lat": 30.5728, "lng": 104.0668},
+      "region": "西南",
+      "endpoint": "https://southwest-cdn.example.com"
+    },
+    {
+      "id": "cn-northwest",
+      "location": {"lat": 34.3416, "lng": 108.9398},
+      "region": "西北",
+      "endpoint": "https://northwest-cdn.example.com"
+    }
+  ],
+  "connect_timeout": 2.0,
+  "retry_count": 3,
+  "path_mapping": {
+    "models": "/models",
+    "data": "/data/cache",
+    "temp": "/tmp/cache"
+  },
+  "optimization": {
+    "auto_compression": true,
+    "prefer_websocket": true,
+    "buffer_sizes": [1024, 2048, 4096, 8192],
+    "max_connections": 10,
+    "connection_timeout": 30
+  }
+} 

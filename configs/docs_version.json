@@ -1,0 +1,46 @@
+{
+  "current_version": "v1.2",
+  "languages": ["zh_CN", "en_US"],
+  "published_versions": [
+    {
+      "version": "v1.2",
+      "release_date": "2025-04-20",
+      "code_name": "稳定版",
+      "path": "/v1.2/",
+      "description": "最新稳定版本，包含完整的API性能监控功能和多语言支持",
+      "documentation_complete": true,
+      "supported": true
+    },
+    {
+      "version": "v1.1",
+      "release_date": "2025-02-15",
+      "code_name": "基础版",
+      "path": "/v1.1/",
+      "description": "基础功能版本，包含核心剧本重构功能",
+      "documentation_complete": true,
+      "supported": true
+    }
+  ],
+  "dev_version": {
+    "version": "v1.3-dev",
+    "path": "/latest/",
+    "description": "开发版本，包含最新特性（可能不稳定）",
+    "documentation_complete": false
+  },
+  "versioning_scheme": {
+    "major": "重大功能更新或不兼容变更",
+    "minor": "新功能添加但保持兼容性",
+    "patch": "bug修复和小改进"
+  },
+  "archive_policy": {
+    "keep_versions": 5,
+    "archive_older_than_days": 365,
+    "exclude_from_archive": ["v1.0", "v1.1"]
+  },
+  "url_format": "https://docs.clipsmaster.com/zh_CN/v{version}/",
+  "version_aliases": {
+    "latest": "v1.2",
+    "stable": "v1.2",
+    "lts": "v1.1"
+  }
+} 

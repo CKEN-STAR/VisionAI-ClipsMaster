@@ -1,0 +1,142 @@
+name: Quality Gate
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+  push:
+    branches: [ main, develop ]
+
+jobs:
+  quality_gate:
+    name: Quality Gate Check
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # 获取完整的历史记录以进行覆盖率比较
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install -r tests/requirements-test.txt
+          pip install coverage pytest pytest-cov
+
+      - name: Run unit tests with coverage
+        id: coverage
+        run: |
+          python -m pytest --cov=visionai_clips tests/unit/ --cov-report=xml --cov-report=term
+          echo "coverage=$(python -c 'import xml.etree.ElementTree as ET; print(float(ET.parse("coverage.xml").getroot().get("line-rate")) * 100)')" >> $GITHUB_OUTPUT
+      
+      - name: Check Unit Test Coverage
+        if: ${{ steps.coverage.outputs.coverage < 90 }}
+        run: |
+          echo "❌ 单元测试覆盖率检查失败"
+          echo "当前覆盖率: ${{ steps.coverage.outputs.coverage }}%"
+          echo "最低要求: 90%"
+          exit 1
+
+      - name: Run performance tests
+        id: performance
+        run: |
+          mkdir -p tests/results/performance
+          python tests/run_performance_benchmark.py --output tests/results/performance/benchmark_results.json
+          # 提取性能指标
+          max_latency=$(python -c "import json; data=json.load(open('tests/results/performance/benchmark_results.json')); print(data.get('max_response_time_ms', 0))")
+          max_memory=$(python -c "import json; data=json.load(open('tests/results/performance/benchmark_results.json')); print(data.get('max_memory_mb', 0))")
+          echo "max_latency=$max_latency" >> $GITHUB_OUTPUT
+          echo "max_memory=$max_memory" >> $GITHUB_OUTPUT
+
+      - name: Check Performance Thresholds
+        if: ${{ steps.performance.outputs.max_latency > 8000 || steps.performance.outputs.max_memory > 4096 }}
+        run: |
+          echo "❌ 性能检查失败"
+          echo "当前最大延迟: ${{ steps.performance.outputs.max_latency }}ms (最大允许: 8000ms)"
+          echo "当前最大内存: ${{ steps.performance.outputs.max_memory }}MB (最大允许: 4096MB)"
+          exit 1
+
+      - name: Check License Compliance
+        id: compliance
+        run: |
+          python -c '
+          import os
+          import json
+          
+          def check_license_compliance():
+              # 检查项目使用的第三方库的许可证
+              required_licenses = ["MIT", "Apache-2.0"]
+              pip_licenses = {}
+              
+              # 获取已安装的包的许可证信息
+              os.system("pip install pip-licenses")
+              os.system("pip-licenses --format=json --output-file=licenses.json")
+              
+              with open("licenses.json", "r") as f:
+                  licenses_data = json.load(f)
+              
+              non_compliant = []
+              for package in licenses_data:
+                  license_name = package.get("License")
+                  package_name = package.get("Name")
+                  
+                  # 检查是否是允许的许可证
+                  license_compliant = False
+                  for allowed in required_licenses:
+                      if allowed.lower() in license_name.lower():
+                          license_compliant = True
+                          break
+                  
+                  if not license_compliant:
+                      non_compliant.append(f"{package_name} (License: {license_name})")
+              
+              if non_compliant:
+                  print("许可证合规性检查失败!")
+                  print("以下包使用了不符合要求的许可证:")
+                  for pkg in non_compliant:
+                      print(f"- {pkg}")
+                  print(f"允许的许可证: {", ".join(required_licenses)}")
+                  return False
+              
+              print("许可证合规性检查通过!")
+              return True
+          
+          exit(0 if check_license_compliance() else 1)
+          '
+
+      - name: Run Quality Gate Check
+        run: |
+          python -m tests.quality_gate.run_quality_check --ci-mode --html-report
+      
+      - name: Archive Quality Reports
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: quality-reports
+          path: |
+            reports/quality/
+            coverage.xml
+            tests/results/performance/benchmark_results.json
+      
+      - name: Publish Quality Status
+        if: always()
+        run: |
+          if [ ${{ job.status }} == 'success' ]; then
+            echo "## ✅ 质量门禁检查通过" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## ❌ 质量门禁检查失败" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "### 测试覆盖率" >> $GITHUB_STEP_SUMMARY
+          echo "- 当前覆盖率: ${{ steps.coverage.outputs.coverage }}% (最低要求: 90%)" >> $GITHUB_STEP_SUMMARY
+          
+          echo "### 性能指标" >> $GITHUB_STEP_SUMMARY
+          echo "- 最大延迟: ${{ steps.performance.outputs.max_latency }}ms (最大允许: 8000ms)" >> $GITHUB_STEP_SUMMARY
+          echo "- 最大内存: ${{ steps.performance.outputs.max_memory }}MB (最大允许: 4096MB)" >> $GITHUB_STEP_SUMMARY 

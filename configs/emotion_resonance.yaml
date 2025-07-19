@@ -1,0 +1,336 @@
+# 多模态情感共振配置文件
+# 控制不同情感类型的视觉和听觉效果参数
+
+# 情感类型及对应效果映射
+emotion_effects:
+  # 悲伤情感效果
+  悲伤:
+    video:
+      # 色彩校正 - 偏冷色调，降低饱和度
+      color_grading:
+        temperature: -15    # 色温调整（负值表示冷色调）
+        saturation: -20     # 饱和度调整
+        contrast: 5         # 对比度调整
+        brightness: -5      # 亮度调整
+      
+      # 转场效果
+      transition: "fade"    # 淡入淡出转场
+      
+      # 速度调整
+      speed: 0.85           # 速度因子（<1表示减速）
+      
+      # 特殊效果
+      special:
+        blur: 0.3           # 轻微模糊
+        vignette: 0.5       # 晕影效果
+    
+    audio:
+      # 背景音乐类型
+      bgm_type: "sad_piano" # 悲伤钢琴风格
+      
+      # 音量调整
+      volume_adjust: -5     # 降低音量
+      
+      # 是否添加混响
+      reverb: true
+      
+      # 均衡器设置
+      eq:
+        low: 0              # 低频调整
+        mid: -3             # 中频调整
+        high: -6            # 高频调整
+
+  # 喜悦情感效果
+  喜悦:
+    video:
+      # 色彩校正 - 偏暖色调，增加饱和度
+      color_grading:
+        temperature: 10     # 色温调整（正值表示暖色调）
+        saturation: 15      # 饱和度调整
+        contrast: 10        # 对比度调整
+        brightness: 5       # 亮度调整
+      
+      # 转场效果
+      transition: "wipe"    # 擦除转场
+      
+      # 速度调整
+      speed: 1.1            # 速度因子（>1表示加速）
+      
+      # 特殊效果
+      special:
+        glow: 0.3           # 发光效果
+        vibrance: 0.4       # 自然饱和度增强
+    
+    audio:
+      # 背景音乐类型
+      bgm_type: "upbeat"    # 欢快节奏
+      
+      # 音量调整
+      volume_adjust: 0      # 保持原音量
+      
+      # 是否添加混响
+      reverb: false
+      
+      # 均衡器设置
+      eq:
+        low: 2              # 低频调整
+        mid: 2              # 中频调整
+        high: 3             # 高频调整
+
+  # 紧张情感效果
+  紧张:
+    video:
+      # 色彩校正 - 保持色温，略微降低饱和度
+      color_grading:
+        temperature: 0      # 色温不变
+        saturation: -10     # 轻微降低饱和度
+        contrast: 15        # 增强对比度
+        brightness: -5      # 稍微降低亮度
+      
+      # 转场效果
+      transition: "quick_cut" # 快速切换
+      
+      # 速度调整
+      speed: 1.25           # 速度因子（明显加速）
+      
+      # 特殊效果
+      special:
+        shake: 0.15          # 轻微抖动
+        pulse: 0.3           # 脉冲效果
+    
+    audio:
+      # 背景音乐类型
+      bgm_type: "suspense"  # 悬疑音乐
+      
+      # 音量调整
+      volume_adjust: 3      # 增加音量
+      
+      # 是否添加混响
+      reverb: true
+      
+      # 均衡器设置
+      eq:
+        low: 4              # 低频增强
+        mid: 0              # 中频保持
+        high: 2             # 高频适度增强
+
+  # 恐惧情感效果
+  恐惧:
+    video:
+      # 色彩校正 - 强烈冷色调，大幅降低饱和度
+      color_grading:
+        temperature: -20    # 显著冷色调
+        saturation: -30     # 大幅降低饱和度
+        contrast: 20        # 高对比度
+        brightness: -10     # 降低亮度
+      
+      # 转场效果
+      transition: "flash"   # 闪烁转场
+      
+      # 速度调整
+      speed: 0.9            # 轻微减速
+      
+      # 特殊效果
+      special:
+        noise: 0.2          # 添加噪点
+        distortion: 0.15    # 轻微变形
+        flicker: 0.3        # 画面闪烁
+    
+    audio:
+      # 背景音乐类型
+      bgm_type: "horror"    # 恐怖音效
+      
+      # 音量调整
+      volume_adjust: 4      # 增加音量
+      
+      # 是否添加混响
+      reverb: true
+      
+      # 均衡器设置
+      eq:
+        low: 5              # 低频显著增强
+        mid: -2             # 中频降低
+        high: 0             # 高频保持
+
+  # 愤怒情感效果
+  愤怒:
+    video:
+      # 色彩校正 - 暖色调偏红，适度增加饱和度
+      color_grading:
+        temperature: 15     # 暖色调
+        saturation: 5       # 轻微增加饱和度
+        contrast: 15        # 增强对比度
+        brightness: 0       # 保持原亮度
+      
+      # 转场效果
+      transition: "hard_cut" # 硬切转场
+      
+      # 速度调整
+      speed: 1.15           # 适度加速
+      
+      # 特殊效果
+      special:
+        sharpen: 0.4        # 锐化效果
+        red_emphasis: 0.3   # 红色通道增强
+    
+    audio:
+      # 背景音乐类型
+      bgm_type: "intense"   # 强烈节奏
+      
+      # 音量调整
+      volume_adjust: 6      # 明显增加音量
+      
+      # 是否添加混响
+      reverb: false
+      
+      # 均衡器设置
+      eq:
+        low: 5              # 低频显著增强
+        mid: 3              # 中频增强
+        high: 4             # 高频增强
+
+  # 惊讶情感效果
+  惊讶:
+    video:
+      # 色彩校正 - 轻微暖色调，增加饱和度
+      color_grading:
+        temperature: 5      # 轻微暖色调
+        saturation: 10      # 增加饱和度
+        contrast: 5         # 轻微增强对比度
+        brightness: 5       # 增加亮度
+      
+      # 转场效果
+      transition: "zoom"    # 缩放转场
+      
+      # 速度调整
+      speed: 1.05           # 轻微加速
+      
+      # 特殊效果
+      special:
+        flash: 0.2          # 闪光效果
+        zoom_burst: 0.3     # 瞬间放大效果
+    
+    audio:
+      # 背景音乐类型
+      bgm_type: "surprise"  # 惊奇音效
+      
+      # 音量调整
+      volume_adjust: 2      # 适度增加音量
+      
+      # 是否添加混响
+      reverb: true
+      
+      # 均衡器设置
+      eq:
+        low: 1              # 轻微增强低频
+        mid: 3              # 增强中频
+        high: 5             # 显著增强高频
+
+# 节奏同步配置
+rhythm_sync:
+  # 高能量情感（紧张、愤怒、惊讶）
+  high_energy:
+    # 视频效果强调
+    video_emphasis:
+      flash_intensity: 0.7        # 闪光强度
+      zoom_intensity: 0.5         # 放大效果强度
+      shake_intensity: 0.4        # 抖动强度
+    
+    # 音频效果强调
+    audio_emphasis:
+      accent_volume: 1.5          # 重音音量因子
+      bass_boost: 4               # 低音增强
+      peak_compression: 0.3       # 峰值压缩
+  
+  # 情绪性情感（悲伤、喜悦）
+  emotional:
+    # 过渡平滑度
+    transition_smoothness:
+      sad: 0.8                    # 悲伤场景过渡平滑度
+      happy: 0.6                  # 喜悦场景过渡平滑度
+    
+    # 效果持久性
+    effect_persistence:
+      sad: 0.7                    # 悲伤效果持久性
+      happy: 0.5                  # 喜悦效果持久性
+    
+    # 情感流动设置
+    flow_settings:
+      beat_alignment: true        # 是否与节拍对齐
+      use_crossfade: true         # 使用交叉淡化
+
+# 音频资源路径
+audio_resources:
+  # 悲伤音乐
+  sad_piano:
+    - "sad_piano.mp3"
+    - "melancholy_melody.mp3"
+    - "gentle_sadness.mp3"
+  
+  # 欢快音乐
+  upbeat:
+    - "happy_rhythm.mp3"
+    - "joyful_beats.mp3"
+    - "celebration.mp3"
+  
+  # 悬疑音乐
+  suspense:
+    - "tension_build.mp3"
+    - "suspense_track.mp3"
+    - "anticipation.mp3"
+  
+  # 恐怖音效
+  horror:
+    - "eerie_sounds.mp3"
+    - "dark_atmosphere.mp3"
+    - "creepy_tones.mp3"
+  
+  # 强烈节奏
+  intense:
+    - "powerful_drums.mp3"
+    - "aggressive_beats.mp3"
+    - "fighting_spirit.mp3"
+  
+  # 惊奇音效
+  surprise:
+    - "revelation.mp3"
+    - "unexpected_turn.mp3"
+    - "discovery.mp3"
+
+# 情感转场配置
+emotion_transitions:
+  # 对比强烈的情感转场
+  contrast:
+    video_effect: "flash_transition"   # 闪烁转场
+    audio_effect: "impact_sound"       # 冲击音效
+    duration_factor: 0.7               # 持续时间因子
+  
+  # 渐进式情感转场
+  gradual:
+    video_effect: "cross_dissolve"     # 交叉溶解
+    audio_effect: "crossfade"          # 音频交叉淡化
+    duration_factor: 1.2               # 持续时间因子
+
+# 情感流程分析配置
+emotion_flow_analysis:
+  # 高峰检测参数
+  peak_detection:
+    min_intensity: 0.6                 # 最低强度阈值
+    min_prominence: 0.2                # 最小突出度
+  
+  # 情感变化率参数
+  change_rate:
+    significant_threshold: 0.15        # 显著变化阈值
+    rapid_threshold: 0.25              # 快速变化阈值
+  
+  # 情感模式识别
+  pattern_recognition:
+    ascending_threshold: 0.1           # 上升趋势阈值
+    descending_threshold: -0.1         # 下降趋势阈值
+
+# 调试设置
+debug:
+  save_enhanced_scenes: false          # 是否保存增强后的场景数据
+  log_applied_effects: true            # 是否记录应用的效果
+  verbose_output: false                # 是否输出详细信息
+  effects_visualization: false         # 是否可视化应用的效果 

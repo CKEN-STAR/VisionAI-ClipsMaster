@@ -1,0 +1,155 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+    -   id: trailing-whitespace
+    -   id: end-of-file-fixer
+    -   id: check-yaml
+    -   id: check-added-large-files
+        args: ['--maxkb=5120']  # 5MB
+    -   id: debug-statements
+    -   id: check-case-conflict
+    -   id: check-docstring-first
+    -   id: check-json
+    -   id: check-merge-conflict
+    -   id: detect-private-key
+    -   id: check-ast
+    -   id: check-symlinks
+    -   id: check-toml
+    -   id: mixed-line-ending
+        args: ['--fix=lf']
+    -   id: name-tests-test
+        args: ['--pytest-test-first']
+    -   id: requirements-txt-fixer
+
+-   repo: https://github.com/PyCQA/bandit
+    rev: 1.7.7
+    hooks:
+    -   id: bandit
+        args: ['-c', 'pyproject.toml']
+        additional_dependencies: ['bandit[toml]']
+        files: ^src/
+        exclude: ^tests/
+
+-   repo: https://github.com/psf/black
+    rev: 24.2.0
+    hooks:
+    -   id: black
+        language_version: python3.10
+        args: ['--line-length=100']
+        files: ^(src|tests)/
+        exclude: ^(build|dist|docs)/
+
+-   repo: https://github.com/PyCQA/isort
+    rev: 5.13.2
+    hooks:
+    -   id: isort
+        args: ['--profile', 'black', '--line-length=100']
+        files: ^(src|tests)/
+        exclude: ^(build|dist|docs)/
+
+-   repo: https://github.com/PyCQA/flake8
+    rev: 7.0.0
+    hooks:
+    -   id: flake8
+        additional_dependencies:
+            - flake8-annotations
+            - flake8-eradicate
+            - flake8-print
+            - flake8-quotes
+            - flake8-string-format
+        args: [
+            "--max-line-length=100",
+            "--docstring-convention=google",
+            "--max-cognitive-complexity=15"
+        ]
+        files: ^src/
+        exclude: ^(tests|build|dist|docs)/
+
+-   repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0
+    hooks:
+    -   id: mypy
+        additional_dependencies:
+            - types-pillow
+            - types-opencv-python
+            - types-python-magic
+        args: [
+            "--ignore-missing-imports",
+            "--disallow-untyped-defs",
+            "--disallow-incomplete-defs",
+            "--check-untyped-defs",
+            "--disallow-untyped-decorators",
+            "--no-implicit-optional",
+            "--warn-redundant-casts",
+            "--warn-unused-ignores",
+            "--warn-return-any",
+            "--strict-optional",
+            "--strict-equality"
+        ]
+        files: ^src/
+        exclude: ^(tests|build|dist|docs)/
+
+-   repo: https://github.com/asottile/pyupgrade
+    rev: v3.15.1
+    hooks:
+    -   id: pyupgrade
+        args: [--py38-plus]
+        files: ^(src|tests)/
+        exclude: ^(build|dist|docs)/
+
+-   repo: https://github.com/PyCQA/pylint
+    rev: v3.1.0
+    hooks:
+    -   id: pylint
+        args: [
+            "--rcfile=pyproject.toml",
+            "--disable=C0111",  # missing-docstring
+            "--disable=C0103",  # invalid-name
+            "--max-line-length=100",
+            "--good-names=i,j,k,ex,Run,_,fp,id,ip",
+            "--ignore-imports=yes"
+        ]
+        files: ^src/
+        exclude: ^(tests|build|dist|docs)/
+
+-   repo: https://github.com/python-poetry/poetry
+    rev: 1.7.1
+    hooks:
+    -   id: poetry-check
+    -   id: poetry-lock
+    -   id: poetry-export
+        args: [
+            "-f", "requirements.txt",
+            "-o", "requirements.txt",
+            "--without-hashes"
+        ]
+
+-   repo: local
+    hooks:
+    -   id: pytest-check
+        name: pytest-check
+        entry: pytest
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [commit]
+        args: [
+            "tests/",
+            "-v",
+            "--cov=src",
+            "--cov-fail-under=80"
+        ]
+
+    -   id: check-media-files
+        name: Check Media Files
+        entry: python scripts/check_media_files.py
+        language: python
+        types: [file]
+        files: \.(jpg|jpeg|png|gif|mp4|mov|avi)$
+        additional_dependencies:
+            - pillow
+            - opencv-python
+            - numpy
+            - python-magic
+        exclude: ^(docs/) 

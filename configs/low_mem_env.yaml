@@ -1,0 +1,38 @@
+# configs/low_mem_env.yaml
+simulation_profiles:
+  - name: "4GB连线"
+    total_mem: 4096    # MB
+    swap_size: 1024    # 交换空间限制
+    cgroups:
+      memory.limit_in_bytes: "3.8G"  # 实际可用内存上限
+
+  - name: "极限2GB模式"
+    total_mem: 2048
+    swap_size: 0       # 禁用交换
+    cgroups:
+      memory.limit_in_bytes: "1.96G"
+      
+  - name: "手机模拟"
+    total_mem: 3072    # 3GB RAM
+    swap_size: 512
+    cgroups:
+      memory.limit_in_bytes: "2.8G"
+      
+  - name: "老旧设备"
+    total_mem: 2560    # 2.5GB RAM
+    swap_size: 512
+    cgroups:
+      memory.limit_in_bytes: "2.2G"
+
+# Docker容器运行命令示例
+# docker run --memory="3800m" --memory-swap="3800m" test_container
+
+# 测试环境使用说明
+# 1. 使用Docker容器可精确模拟不同内存环境
+# 2. 容器内执行内存压力测试以验证模型在低内存设备上的表现
+# 3. 配合内存监控工具使用可获得更准确的性能数据
+
+# 环境模拟参数说明
+# - total_mem: 模拟的总内存大小(MB)
+# - swap_size: 交换空间大小(MB)，设为0表示禁用交换
+# - cgroups.memory.limit_in_bytes: 实际可用内存上限，考虑系统占用 

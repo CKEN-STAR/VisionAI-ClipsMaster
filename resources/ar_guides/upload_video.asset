@@ -1,0 +1,22 @@
+{
+  "type": "overlay",
+  "name": "upload_video_guide",
+  "description": "Guides the user through the video upload process",
+  "visual": {
+    "type": "svg",
+    "content": "<svg width=\"200\" height=\"200\" xmlns=\"http://www.w3.org/2000/svg\"><rect x=\"10\" y=\"10\" width=\"180\" height=\"180\" fill=\"none\" stroke=\"#00ff00\" stroke-width=\"3\" stroke-dasharray=\"5,5\" rx=\"10\" ry=\"10\"/><text x=\"100\" y=\"100\" font-family=\"Arial\" font-size=\"16\" fill=\"#00ff00\" text-anchor=\"middle\">拖放文件到此处</text><path d=\"M100,50 L100,150 M50,100 L150,100\" stroke=\"#00ff00\" stroke-width=\"2\"/></svg>"
+  },
+  "animation": {
+    "type": "pulse",
+    "duration": 2000,
+    "repeat": true
+  },
+  "position": {
+    "type": "relative",
+    "anchor": "center"
+  },
+  "interaction": {
+    "dismissible": true,
+    "next_step": "processing_options"
+  }
+}

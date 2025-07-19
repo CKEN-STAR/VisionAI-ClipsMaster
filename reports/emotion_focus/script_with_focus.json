@@ -1,0 +1,117 @@
+[
+  {
+    "id": "scene_1",
+    "start": "00:00:00,000",
+    "end": "00:00:16,000",
+    "text": "陈冰独自一人在学校，迷茫地等待着什么。",
+    "characters": [
+      "陈冰"
+    ],
+    "location": "学校",
+    "emotion": {
+      "type": "neutral",
+      "description": "思考",
+      "score": 0.27285621386144127
+    },
+    "emotion_focus": {
+      "ranges": [],
+      "count": 0,
+      "highest_score": 0
+    }
+  },
+  {
+    "id": "scene_2",
+    "start": "00:00:30,000",
+    "end": "00:00:52,000",
+    "text": "黄强在学校里满足地向陈晓误会。",
+    "characters": [
+      "黄强",
+      "陈晓",
+      "陈冰"
+    ],
+    "location": "学校",
+    "emotion": {
+      "type": "positive",
+      "description": "放松",
+      "score": 0.9236857522450784
+    },
+    "emotion_focus": {
+      "ranges": [],
+      "count": 0,
+      "highest_score": 0
+    }
+  },
+  {
+    "id": "scene_3",
+    "start": "00:01:00,000",
+    "end": "00:01:21,000",
+    "text": "刘洋在车站里观察地思考着。",
+    "characters": [
+      "刘洋",
+      "黄强"
+    ],
+    "location": "车站",
+    "emotion": {
+      "type": "neutral",
+      "description": "沉思",
+      "score": 0.1
+    },
+    "emotion_focus": {
+      "ranges": [],
+      "count": 0,
+      "highest_score": 0
+    }
+  },
+  {
+    "id": "scene_4",
+    "start": "00:01:30,000",
+    "end": "00:01:53,000",
+    "text": "黄强在医院里平静地思考着。",
+    "characters": [
+      "黄强",
+      "陈晓"
+    ],
+    "location": "医院",
+    "emotion": {
+      "type": "neutral",
+      "description": "克制",
+      "score": 0.1
+    },
+    "emotion_focus": {
+      "ranges": [],
+      "count": 0,
+      "highest_score": 0
+    }
+  },
+  {
+    "id": "scene_5",
+    "start": "00:02:00,000",
+    "end": "00:02:17,000",
+    "text": "黄强在办公室烦躁地离开，留下其他人面面相觑。 \"黄强对陈冰说：我感到非常烦躁，你怎么能这样？\"",
+    "characters": [
+      "黄强",
+      "陈冰"
+    ],
+    "location": "办公室",
+    "emotion": {
+      "type": "negative",
+      "description": "悲伤",
+      "score": 0.835629538309389
+    },
+    "emotion_focus": {
+      "ranges": [
+        {
+          "start": 0,
+          "end": 46,
+          "focus_text": "黄强在办公室烦躁地离开，留下其他人面面相觑。 \"黄强对陈冰说：我感到非常烦躁，你怎么能这样？",
+          "context_text": "黄强在办公室烦躁地离开，留下其他人面面相觑。 \"黄强对陈冰说：我感到非常烦躁，你怎么能这样？\"",
+          "context_start": 0,
+          "context_end": 47,
+          "emotion_score": 0.91
+        }
+      ],
+      "count": 1,
+      "highest_score": 0.91
+    }
+  }
+]

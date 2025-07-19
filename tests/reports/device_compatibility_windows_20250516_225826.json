@@ -1,0 +1,122 @@
+{
+  "timestamp": "2025-05-16T22:58:26.571490",
+  "system_info": {
+    "os": "Windows 10 10 24H2 (Build 26100)",
+    "cpu": "12th Gen Intel(R) Core(TM) i5-12500H",
+    "cores": 12,
+    "ram_gb": 15.73,
+    "gpu": "Intel(R) Iris(R) Xe Graphics",
+    "storage_available_gb": 28.71
+  },
+  "compatibility": {
+    "device_tier": "mid",
+    "os_compatible": true,
+    "gpu_acceleration": false,
+    "supported_features": [
+      "basic_processing",
+      "4k_processing",
+      "batch_processing",
+      "multi_language"
+    ],
+    "limited_features": [],
+    "unsupported_features": [
+      "real_time_enhancement"
+    ],
+    "upgrade_recommendations": []
+  },
+  "performance_predictions": {
+    "recommended_settings": {
+      "workload": "light",
+      "resolution": "2K",
+      "video_duration_minutes": 10.0,
+      "concurrent_videos": 1,
+      "estimated_memory_usage_gb": 2.25,
+      "memory_sufficient": true,
+      "estimated_processing_time_minutes": 7.2,
+      "processing_speed_ratio": 1.39,
+      "estimated_fps": 41.7,
+      "estimated_gpu_usage_percent": 13.5,
+      "storage_needed_gb": 1.5,
+      "storage_sufficient": true,
+      "feasible": true,
+      "device_tier": "mid",
+      "bottleneck": "none",
+      "balance_score": 1.6673332000533065,
+      "optimization_suggestions": [
+        "系统配置符合当前工作负载需求。如果需要进一步提高性能，可以考虑使用SSD存储、关闭不必要的后台程序或优化软件设置。"
+      ]
+    },
+    "workload_predictions": {
+      "light": {
+        "feasible": true,
+        "resolution": "1080p",
+        "concurrent_videos": 1,
+        "processing_speed_ratio": 2.5,
+        "estimated_processing_time_minutes": 4.0,
+        "bottleneck": "none"
+      },
+      "medium": {
+        "feasible": true,
+        "resolution": "2K",
+        "concurrent_videos": 1,
+        "processing_speed_ratio": 0.56,
+        "estimated_processing_time_minutes": 18.0,
+        "bottleneck": "none"
+      },
+      "heavy": {
+        "feasible": false,
+        "resolution": "4K",
+        "concurrent_videos": 1,
+        "processing_speed_ratio": 0.14,
+        "estimated_processing_time_minutes": 70.0,
+        "bottleneck": "memory"
+      },
+      "batch": {
+        "feasible": false,
+        "resolution": "1080p",
+        "concurrent_videos": 4,
+        "processing_speed_ratio": 0.31,
+        "estimated_processing_time_minutes": 32.53,
+        "bottleneck": "memory"
+      }
+    }
+  },
+  "detailed_device_info": {
+    "os": {
+      "system": "Windows",
+      "name": "Windows 10",
+      "version": "10 24H2 (Build 26100)",
+      "release": "10",
+      "is_64bit": true
+    },
+    "cpu": {
+      "model": "12th Gen Intel(R) Core(TM) i5-12500H",
+      "cores": 12,
+      "architecture": "AMD64",
+      "vendor": "Unknown",
+      "threads": 16
+    },
+    "ram": {
+      "total_gb": 15.73,
+      "available_gb": 2.47,
+      "used_percent": 84
+    },
+    "gpu": {
+      "detected": true,
+      "model": "Intel(R) Iris(R) Xe Graphics",
+      "vendor": "Intel",
+      "vram_gb": 1.0,
+      "api_support": [
+        "DirectX"
+      ]
+    },
+    "storage": {
+      "total_gb": 300.1,
+      "available_gb": 28.71,
+      "used_percent": 90.43,
+      "drive": "D:",
+      "used_gb": 271.39
+    },
+    "detection_time": "2025-05-16 22:58:26"
+  }
+}

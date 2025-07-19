@@ -1,0 +1,182 @@
+{
+  "sample_001": {
+    "title": "经典喜剧场景重组",
+    "path": "samples/comedy_remix_001.mp4",
+    "duration": 120.5,
+    "category": "comedy",
+    "tags": ["funny", "classic", "dialogue_driven"],
+    "metrics": {
+      "ssim_baseline": 0.95,
+      "psnr_baseline": 42.3,
+      "motion_consistency_baseline": 0.92,
+      "audio_quality_baseline": 0.88
+    },
+    "metadata": {
+      "resolution": "1080p",
+      "fps": 30,
+      "audio_sample_rate": 44100
+    }
+  },
+  "sample_002": {
+    "title": "动作片精彩片段",
+    "path": "samples/action_highlights_002.mp4",
+    "duration": 95.2,
+    "category": "action",
+    "tags": ["fast_paced", "dramatic", "visual_effects"],
+    "metrics": {
+      "ssim_baseline": 0.93,
+      "psnr_baseline": 40.5,
+      "motion_consistency_baseline": 0.89,
+      "audio_quality_baseline": 0.91
+    },
+    "metadata": {
+      "resolution": "1080p",
+      "fps": 30,
+      "audio_sample_rate": 48000
+    }
+  },
+  "sample_003": {
+    "title": "情感戏剧高潮部分",
+    "path": "samples/drama_climax_003.mp4",
+    "duration": 150.8,
+    "category": "drama",
+    "tags": ["emotional", "character_focused", "dialogue_driven"],
+    "metrics": {
+      "ssim_baseline": 0.96,
+      "psnr_baseline": 43.1,
+      "motion_consistency_baseline": 0.94,
+      "audio_quality_baseline": 0.92
+    },
+    "metadata": {
+      "resolution": "1080p",
+      "fps": 24,
+      "audio_sample_rate": 48000
+    }
+  },
+  "sample_004": {
+    "title": "浪漫爱情戏言情片段",
+    "path": "samples/romance_moments_004.mp4",
+    "duration": 130.6,
+    "category": "romance",
+    "tags": ["emotional", "slow_paced", "character_focused"],
+    "metrics": {
+      "ssim_baseline": 0.94,
+      "psnr_baseline": 41.8,
+      "motion_consistency_baseline": 0.93,
+      "audio_quality_baseline": 0.90
+    },
+    "metadata": {
+      "resolution": "1080p",
+      "fps": 24,
+      "audio_sample_rate": 44100
+    }
+  },
+  "sample_005": {
+    "title": "惊悚悬疑关键情节",
+    "path": "samples/thriller_suspense_005.mp4",
+    "duration": 85.3,
+    "category": "thriller",
+    "tags": ["suspenseful", "dark", "tension"],
+    "metrics": {
+      "ssim_baseline": 0.91,
+      "psnr_baseline": 39.7,
+      "motion_consistency_baseline": 0.88,
+      "audio_quality_baseline": 0.93
+    },
+    "metadata": {
+      "resolution": "1080p",
+      "fps": 24,
+      "audio_sample_rate": 48000
+    }
+  },
+  "sample_006": {
+    "title": "科幻场景特效展示",
+    "path": "samples/scifi_effects_006.mp4",
+    "duration": 110.4,
+    "category": "sci-fi",
+    "tags": ["visual_effects", "futuristic", "high_tech"],
+    "metrics": {
+      "ssim_baseline": 0.92,
+      "psnr_baseline": 40.1,
+      "motion_consistency_baseline": 0.90,
+      "audio_quality_baseline": 0.89
+    },
+    "metadata": {
+      "resolution": "1080p",
+      "fps": 30,
+      "audio_sample_rate": 48000
+    }
+  },
+  "sample_007": {
+    "title": "历史剧史诗场面",
+    "path": "samples/historical_epic_007.mp4",
+    "duration": 175.2,
+    "category": "historical",
+    "tags": ["epic", "large_scale", "period_piece"],
+    "metrics": {
+      "ssim_baseline": 0.93,
+      "psnr_baseline": 41.3,
+      "motion_consistency_baseline": 0.91,
+      "audio_quality_baseline": 0.92
+    },
+    "metadata": {
+      "resolution": "1080p",
+      "fps": 24,
+      "audio_sample_rate": 48000
+    }
+  },
+  "sample_008": {
+    "title": "青春校园回忆片段",
+    "path": "samples/youth_campus_008.mp4",
+    "duration": 115.7,
+    "category": "youth",
+    "tags": ["nostalgic", "friendship", "coming_of_age"],
+    "metrics": {
+      "ssim_baseline": 0.95,
+      "psnr_baseline": 42.5,
+      "motion_consistency_baseline": 0.93,
+      "audio_quality_baseline": 0.91
+    },
+    "metadata": {
+      "resolution": "1080p",
+      "fps": 30,
+      "audio_sample_rate": 44100
+    }
+  },
+  "sample_009": {
+    "title": "家庭温情互动场景",
+    "path": "samples/family_warmth_009.mp4",
+    "duration": 140.3,
+    "category": "family",
+    "tags": ["warm", "emotional", "slice_of_life"],
+    "metrics": {
+      "ssim_baseline": 0.96,
+      "psnr_baseline": 43.4,
+      "motion_consistency_baseline": 0.95,
+      "audio_quality_baseline": 0.93
+    },
+    "metadata": {
+      "resolution": "1080p",
+      "fps": 24,
+      "audio_sample_rate": 44100
+    }
+  },
+  "sample_010": {
+    "title": "古装武侠动作场景",
+    "path": "samples/wuxia_action_010.mp4",
+    "duration": 125.8,
+    "category": "wuxia",
+    "tags": ["martial_arts", "traditional", "action"],
+    "metrics": {
+      "ssim_baseline": 0.92,
+      "psnr_baseline": 40.8,
+      "motion_consistency_baseline": 0.87,
+      "audio_quality_baseline": 0.90
+    },
+    "metadata": {
+      "resolution": "1080p",
+      "fps": 30,
+      "audio_sample_rate": 48000
+    }
+  }
+} 

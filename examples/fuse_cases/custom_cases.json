@@ -1,0 +1,72 @@
+[
+  {
+    "symptoms": "处理超长视频时内存持续增长，最终导致系统崩溃",
+    "pattern": "steady_increase",
+    "root_cause": "字幕索引缓存未设置上限",
+    "solution": "为字幕索引缓存设置最大容量限制，超出时采用LRU策略淘汰",
+    "severity": "high",
+    "impact": ["长视频处理失败", "系统可能崩溃"],
+    "detection": "处理时长超过2小时的视频时内存使用率持续增长不下降",
+    "case_type": "CLIP"
+  },
+  {
+    "symptoms": "同时处理多个视频时内存占用激增",
+    "pattern": "spike",
+    "root_cause": "视频解码缓冲区未共享",
+    "solution": "实现视频解码缓冲区池化机制，限制并发解码数量",
+    "severity": "medium",
+    "impact": ["多视频并行处理效率下降", "可能导致内存不足"],
+    "detection": "同时处理3个以上视频时内存使用率超过85%",
+    "case_type": "CLIP"
+  },
+  {
+    "symptoms": "经过多次视频拼接操作后系统变慢",
+    "pattern": "fragmentation",
+    "root_cause": "临时视频片段文件未及时清理",
+    "solution": "实现临时文件跟踪和自动清理机制",
+    "severity": "low",
+    "impact": ["磁盘占用增加", "系统性能下降"],
+    "detection": "磁盘临时文件夹中存在大量.tmp文件且总大小超过2GB",
+    "case_type": "CLIP"
+  },
+  {
+    "symptoms": "处理4K及以上分辨率视频时内存占用过高",
+    "pattern": "immediate_high",
+    "root_cause": "视频帧缓冲区大小未根据分辨率动态调整",
+    "solution": "实现基于视频分辨率的自适应缓冲区大小计算",
+    "severity": "medium",
+    "impact": ["高清视频处理失败", "内存不足"],
+    "detection": "处理4K以上视频时内存使用率直接超过80%",
+    "case_type": "CLIP"
+  },
+  {
+    "symptoms": "复杂字幕提取处理时CPU和内存使用率都很高",
+    "pattern": "fluctuation",
+    "root_cause": "OCR处理线程数过多导致资源争用",
+    "solution": "优化OCR处理线程池，根据系统资源动态调整线程数",
+    "severity": "medium",
+    "impact": ["处理速度不稳定", "系统响应变慢"],
+    "detection": "OCR处理阶段CPU使用率超过90%且内存使用率频繁波动",
+    "case_type": "CLIP"
+  },
+  {
+    "symptoms": "使用LLM分析字幕时GPU内存泄漏",
+    "pattern": "steady_increase",
+    "root_cause": "模型上下文未完全清理",
+    "solution": "每次推理后强制执行cuda.empty_cache()并重置模型状态",
+    "severity": "high",
+    "impact": ["GPU内存耗尽", "后续处理任务失败"],
+    "detection": "连续处理10个以上视频后GPU内存占用不释放",
+    "case_type": "CLIP"
+  },
+  {
+    "symptoms": "长时间运行后有关键帧的视频裁剪失败",
+    "pattern": "gradual_increase",
+    "root_cause": "关键帧索引缓存内存泄漏",
+    "solution": "优化关键帧索引缓存的生命周期管理",
+    "severity": "medium",
+    "impact": ["视频裁剪质量下降", "需要定期重启"],
+    "detection": "系统运行超过48小时后关键帧缓存占用内存超过预期值的50%",
+    "case_type": "CLIP"
+  }
+] 

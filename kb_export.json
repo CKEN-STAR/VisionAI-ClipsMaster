@@ -1,0 +1,119 @@
+{
+  "OOM_001": {
+    "symptoms": "内存5分钟内从60%升至98%",
+    "pattern": "rapid_increase",
+    "root_cause": "模型分片泄漏",
+    "solution": "升级分片加载器v2.3+",
+    "severity": "critical",
+    "impact": [
+      "视频处理中断",
+      "可能导致系统崩溃"
+    ],
+    "detection": "检测到内存使用率在短时间内快速增长超过35%"
+  },
+  "OOM_002": {
+    "symptoms": "内存缓慢增长不释放，最终达到95%以上",
+    "pattern": "steady_increase",
+    "root_cause": "视频缓冲区未释放",
+    "solution": "在视频切换时强制调用gc并手动清理缓冲区",
+    "severity": "high",
+    "impact": [
+      "系统变慢",
+      "最终导致内存不足"
+    ],
+    "detection": "监测到GC后内存占用无明显下降"
+  },
+  "OOM_003": {
+    "symptoms": "处理大型视频时内存瞬间飙升至90%以上",
+    "pattern": "spike",
+    "root_cause": "视频解码缓冲区过大",
+    "solution": "使用流式解码方式，限制最大缓冲区大小",
+    "severity": "high",
+    "impact": [
+      "大型视频处理失败"
+    ],
+    "detection": "监测到内存使用率瞬间增加超过40%"
+  },
+  "FRAG_001": {
+    "symptoms": "内存使用率中等但分配新内存时失败",
+    "pattern": "fragmentation",
+    "root_cause": "长时间运行导致内存碎片化",
+    "solution": "定期完全重启服务或使用压缩内存分配器",
+    "severity": "medium",
+    "impact": [
+      "大型视频处理失败",
+      "系统不稳定"
+    ],
+    "detection": "已使用内存低于70%但内存分配仍然失败"
+  },
+  "FRAG_002": {
+    "symptoms": "系统长时间运行后逐渐变慢，内存使用不高",
+    "pattern": "fragmentation",
+    "root_cause": "字幕处理导致的内存碎片",
+    "solution": "优化字幕缓存管理，定期整理内存",
+    "severity": "low",
+    "impact": [
+      "系统性能下降"
+    ],
+    "detection": "系统运行超过72小时且处理速度下降30%以上"
+  },
+  "LEAK_001": {
+    "symptoms": "内存使用率稳定增长，重启后恢复",
+    "pattern": "steady_increase",
+    "root_cause": "字幕解析器资源未释放",
+    "solution": "修复字幕解析器的资源管理机制",
+    "severity": "medium",
+    "impact": [
+      "需要频繁重启",
+      "长视频处理失败"
+    ],
+    "detection": "每处理100个字幕内存增加约5MB且不释放"
+  },
+  "LEAK_002": {
+    "symptoms": "GPU内存缓慢增长直至耗尽",
+    "pattern": "steady_increase",
+    "root_cause": "CUDA张量缓存未正确释放",
+    "solution": "在模型推理后显式清理CUDA缓存",
+    "severity": "high",
+    "impact": [
+      "GPU加速失效",
+      "系统自动切换到CPU模式变慢"
+    ],
+    "detection": "GPU内存监控显示使用量持续增长不释放"
+  },
+  "CONT_001": {
+    "symptoms": "并行处理时内存使用忽高忽低",
+    "pattern": "fluctuation",
+    "root_cause": "多任务资源争用",
+    "solution": "实现更智能的任务调度和资源分配机制",
+    "severity": "medium",
+    "impact": [
+      "处理效率下降",
+      "任务完成时间不稳定"
+    ],
+    "detection": "内存使用率波动超过25%且CPU使用率达到90%以上"
+  },
+  "CONF_001": {
+    "symptoms": "启动即达到高内存占用",
+    "pattern": "immediate_high",
+    "root_cause": "视频缓冲区初始配置过大",
+    "solution": "调整配置文件中的max_buffer_size参数",
+    "severity": "medium",
+    "impact": [
+      "无法处理多个视频",
+      "系统启动慢"
+    ],
+    "detection": "启动5分钟内内存使用率即超过60%"
+  },
+  "CONF_002": {
+    "symptoms": "特定类型视频处理时内存溢出",
+    "pattern": "specific_trigger",
+    "root_cause": "高分辨率视频的缓冲策略不当",
+    "solution": "为高分辨率视频实现自适应缓冲策略",
+    "severity": "medium",
+    "impact": [
+      "高清视频处理失败"
+    ],
+    "detection": "处理分辨率高于4K的视频时内存使用率超过85%"
+  }
+}

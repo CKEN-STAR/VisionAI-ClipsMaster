@@ -1,0 +1,27 @@
+1
+00:00:00,000 --> 00:00:03,000
+The male protagonist enters the coffee shop, looking confused.
+
+2
+00:00:03,000 --> 00:00:06,000
+The female protagonist is quietly reading in the corner.
+
+3
+00:00:06,000 --> 00:00:09,000
+Their eyes meet in the air, time seems to stand still.
+
+4
+00:00:09,000 --> 00:00:12,000
+The male protagonist gathers courage to walk to her table.
+
+5
+00:00:12,000 --> 00:00:15,000
+"Excuse me, is this seat taken?" he asks nervously.
+
+6
+00:00:15,000 --> 00:00:18,000
+The female protagonist looks up and smiles, shaking her head.
+
+7
+00:00:18,000 --> 00:00:21,000
+This is the beginning of their love story.

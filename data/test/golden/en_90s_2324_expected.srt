@@ -1,0 +1,20 @@
+1
+00:00:00,000 --> 00:00:04,500
+This is a test drama scene showing outdoor activity.
+
+2
+00:00:30,000 --> 00:00:34,500
+This is a test drama scene showing work environment.
+
+3
+00:00:45,000 --> 00:00:49,500
+The dialogue between characters reveals a secret about character relationships.
+
+4
+00:01:00,000 --> 00:01:04,500
+The dialogue between characters reveals a secret about hidden motives.
+
+5
+00:01:25,000 --> 00:01:29,500
+The main character is waiting, expressing anger.
+

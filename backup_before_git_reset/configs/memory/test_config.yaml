@@ -1,0 +1,5 @@
+low_memory_mode: true
+max_parallel_threads: 4
+min_ram: 4096
+swap_enabled: true
+target_vram: 0

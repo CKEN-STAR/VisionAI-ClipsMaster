@@ -1,0 +1,63 @@
+{
+    "version": "2.9.5",
+    "release_date": "2023-07-20",
+    "supported_features": [
+        "advanced_transitions",
+        "timeline_markers",
+        "intelligent_cropping",
+        "3d_text",
+        "multi_track_export",
+        "high_quality_rendering",
+        "advanced_effects",
+        "smart_trim"
+    ],
+    "feature_config": {
+        "advanced_transitions": {
+            "enabled": true,
+            "max_duration": 8.0,
+            "available_presets": [
+                "fade",
+                "dissolve",
+                "wipe",
+                "slide",
+                "push",
+                "zoom",
+                "advanced_3d"
+            ]
+        },
+        "timeline_markers": {
+            "enabled": true,
+            "max_markers": 50,
+            "categories": [
+                "comment",
+                "chapter",
+                "error",
+                "highlight"
+            ]
+        },
+        "intelligent_cropping": {
+            "enabled": true,
+            "ai_models": ["face_detection", "object_tracking"],
+            "max_tracked_objects": 5
+        },
+        "3d_text": {
+            "enabled": true,
+            "max_complexity": "medium",
+            "materials": ["metal", "glass", "plastic"]
+        },
+        "multi_track_export": {
+            "enabled": true,
+            "max_tracks": 16,
+            "formats": ["wav", "mp3", "aac"]
+        }
+    },
+    "compatibility": {
+        "min_compatible_version": "2.5.0",
+        "max_compatible_version": "3.0.0"
+    },
+    "deprecated_features": [],
+    "metadata": {
+        "description": "稳定版本，支持大多数高级特性",
+        "created_by": "VisionAI团队"
+    }
+} 

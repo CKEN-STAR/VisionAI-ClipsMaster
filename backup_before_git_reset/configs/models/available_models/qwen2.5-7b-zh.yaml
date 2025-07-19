@@ -1,0 +1,117 @@
+# Qwen2.5-7B Chinese Model Configuration
+# VisionAI-ClipsMaster 中文模型配置文件
+
+model:
+  name: "qwen2.5-7b-zh"
+  display_name: "Qwen2.5-7B 中文剧本重构模型"
+  language: "zh"
+  type: "pretrained"
+  version: "2.5"
+  model_format: "gguf"
+
+# 模型路径配置
+paths:
+  base: "models/qwen/base"
+  quantized: "models/qwen/quantized"
+  finetuned: "models/qwen/finetuned"
+  checkpoint: "models/qwen/base/qwen2.5-7b-instruct.gguf"
+
+# 量化配置
+quantization:
+  default_level: "Q4_K_M"
+  emergency_level: "Q2_K"
+  performance_level: "Q5_K"
+
+  level_configs:
+    Q2_K:
+      memory_required: 2800  # MB
+      quality_score: 74.1
+      use_case: "4GB设备紧急模式"
+      file_suffix: "Q2_K.gguf"
+    Q4_K_M:
+      memory_required: 4100  # MB
+      quality_score: 87.2
+      use_case: "标准使用模式"
+      file_suffix: "Q4_K_M.gguf"
+    Q5_K:
+      memory_required: 6300  # MB
+      quality_score: 92.8
+      use_case: "高配设备高质量模式"
+      file_suffix: "Q5_K.gguf"
+
+# 模型参数
+parameters:
+  max_length: 2048
+  context_length: 4096
+  temperature: 0.7
+  top_p: 0.9
+  top_k: 40
+  repetition_penalty: 1.1
+
+# 内存优化配置
+memory_optimization:
+  max_memory_gb: 4.0
+  chunk_size: 512
+  dynamic_unload: true
+  min_free_memory: 1024  # MB
+  adaptive_quantization: true
+
+# 设备要求
+device_requirements:
+  min_memory_mb: 2800
+  preferred_memory_mb: 4100
+  gpu_optional: true
+  cpu_threads: 4
+  supports_cpu: true
+
+# 专用功能配置
+capabilities:
+  screenplay_reconstruction: true
+  narrative_analysis: true
+  emotion_detection: true
+  dialogue_optimization: true
+  viral_transformation: true
+  chinese_processing: true
+  traditional_chinese: true
+
+# 性能配置
+performance:
+  inference_timeout: 30  # 秒
+  warmup_time: 5        # 秒
+  max_concurrent: 1
+  memory_cleanup: true
+  model_switching_time: 1.5  # 秒
+
+# 训练配置
+training:
+  enabled: true
+  batch_size: 4
+  gradient_accumulation: 2
+  supports_finetuning: true
+  training_data_path: "data/training/zh"
+  checkpoint_interval: 1000
+  max_epochs: 10
+
+# 导出配置
+export:
+  supported_formats: ["srt", "json", "txt"]
+  encoding: "utf-8"
+
+# 错误处理
+error_handling:
+  max_retries: 3
+  fallback_model: null
+  graceful_degradation: true
+
+# 日志配置
+logging:
+  level: "INFO"
+  log_inference: true
+  log_performance: true
+
+# 中文特定配置
+chinese_specific:
+  tokenizer: "qwen"
+  supports_traditional: true
+  supports_simplified: true
+  dialect_support: ["mandarin", "cantonese"]

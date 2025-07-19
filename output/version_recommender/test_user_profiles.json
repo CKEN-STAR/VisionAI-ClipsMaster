@@ -1,0 +1,42 @@
+[
+  {
+    "name": "通勤时观看的用户",
+    "preferred_genre": "comedy",
+    "attention_span": 25,
+    "emotional_preference": 0.2,
+    "device_type": "mobile",
+    "time_of_day": "morning"
+  },
+  {
+    "name": "家庭影院用户",
+    "preferred_genre": "action",
+    "attention_span": 75,
+    "emotional_preference": 0.7,
+    "device_type": "tv",
+    "time_of_day": "evening"
+  },
+  {
+    "name": "休闲时间用户",
+    "preferred_genre": "drama",
+    "attention_span": 60,
+    "emotional_preference": -0.1,
+    "device_type": "tablet",
+    "time_of_day": "afternoon"
+  },
+  {
+    "name": "深夜PC用户",
+    "preferred_genre": "documentary",
+    "attention_span": 80,
+    "emotional_preference": -0.4,
+    "device_type": "desktop",
+    "time_of_day": "night"
+  },
+  {
+    "name": "青少年用户",
+    "preferred_genre": "horror",
+    "attention_span": 40,
+    "emotional_preference": 0.6,
+    "device_type": "tablet",
+    "time_of_day": "night"
+  }
+]

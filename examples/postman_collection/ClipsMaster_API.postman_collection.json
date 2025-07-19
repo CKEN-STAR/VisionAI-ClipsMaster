@@ -1,0 +1,33 @@
+{
+  "info": {
+    "_postman_id": "clipsmaster-api-collection",
+    "name": "ClipsMaster API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Generate Clip",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"video_path\": \"test_data/test.mp4\",\n  \"srt_path\": \"test_data/test.srt\",\n  \"quant_level\": \"Q4_K_M\",\n  \"lang\": \"zh\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8000/api/v1/generate",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8000",
+          "path": ["api", "v1", "generate"]
+        }
+      },
+      "response": []
+    }
+  ]
+} 

@@ -1,0 +1,66 @@
+{
+    "app_name": "VisionAI-ClipsMaster",
+    "version": "1.0.0",
+    "common_resources": [
+        "ui/main_logo",
+        "ui/toolbar/new",
+        "ui/toolbar/open",
+        "ui/toolbar/save",
+        "ui/toolbar/settings"
+    ],
+    "preload_resources": [
+        "ui/splash_screen",
+        "ui/loading_animation"
+    ],
+    "lazy_load_resources": [
+        "effects/blur",
+        "effects/sharpen",
+        "effects/enhance",
+        "filters/vintage",
+        "filters/noir"
+    ],
+    "resource_groups": {
+        "startup": [
+            "ui/main_logo",
+            "ui/splash_screen"
+        ],
+        "toolbar": [
+            "ui/toolbar/new",
+            "ui/toolbar/open",
+            "ui/toolbar/save",
+            "ui/toolbar/settings",
+            "ui/toolbar/export",
+            "ui/toolbar/import"
+        ],
+        "effects": [
+            "effects/blur",
+            "effects/sharpen",
+            "effects/enhance",
+            "effects/denoise",
+            "effects/stabilize"
+        ]
+    },
+    "resource_priorities": {
+        "high": [
+            "ui/main_logo",
+            "ui/splash_screen",
+            "ui/loading_animation"
+        ],
+        "medium": [
+            "ui/toolbar/new",
+            "ui/toolbar/open",
+            "ui/toolbar/save"
+        ],
+        "low": [
+            "effects/blur",
+            "effects/sharpen",
+            "filters/vintage",
+            "filters/noir"
+        ]
+    },
+    "cache_settings": {
+        "max_cache_size": 100,
+        "cache_timeout": 30,
+        "preload_on_startup": true
+    }
+}

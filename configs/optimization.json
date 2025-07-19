@@ -1,0 +1,63 @@
+{
+  "optimization_path": "avx2",
+  "cpu_features": {
+    "sse": true,
+    "sse2": true,
+    "ssse3": true,
+    "sse4_1": true,
+    "sse4_2": true,
+    "avx": true,
+    "avx2": true,
+    "fma": true,
+    "f16c": true,
+    "aes": true
+  },
+  "details": {
+    "name": "AVX2",
+    "description": "平衡优化 (4线程)",
+    "parallel_threads": 4,
+    "simd_width": 256,
+    "performance_rating": 80,
+    "simd_type": "avx2",
+    "active": true
+  },
+  "model_parameters": {
+    "qwen2.5-7b-zh": {
+      "threads": 4,
+      "batch_size": 2,
+      "use_flash_attn": true,
+      "compile_model": true
+    },
+    "mistral-7b-en": {
+      "threads": 4,
+      "batch_size": 2,
+      "use_flash_attn": true,
+      "compile_model": true
+    }
+  },
+  "has_simd": true,
+  "has_assembly": true,
+  "simd_performance": {
+    "simd_type": "avx2",
+    "simd_lib_loaded": false,
+    "simd_lib_path": null,
+    "matrix_size": 1000,
+    "numpy_time": 0.01619410514831543,
+    "simd_time": 294.0575773715973,
+    "speedup": 5.5071205078490866e-05,
+    "is_correct": true
+  },
+  "assembly_info": {
+    "available": false,
+    "platform": {
+      "system": "Windows",
+      "machine": "AMD64",
+      "processor": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel",
+      "python_version": "3.11.11 | packaged by Anaconda, Inc. | (main, Dec 11 2024, 16:34:19) [MSC v.1929 64 bit (AMD64)]",
+      "python_bits": 64
+    },
+    "optimization_level": 0,
+    "version": null,
+    "platform_id": null
+  }
+}

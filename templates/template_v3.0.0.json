@@ -1,0 +1,75 @@
+{
+  "jianying_project": {
+    "version": "3.0.0",
+    "info": {
+      "metadata": {
+        "jy_type": "project",
+        "project_id": "project_001",
+        "title": "示例项目"
+      },
+      "project_settings": {
+        "resolution": {
+          "width": 1920,
+          "height": 1080
+        },
+        "frame_rate": 30
+      }
+    },
+    "resources": {
+      "assets": []
+    },
+    "timeline": {
+      "id": "timeline_001",
+      "duration": "00:01:00.000",
+      "tracks": [
+        {
+          "id": "video_track_1",
+          "type": "video",
+          "clips": []
+        },
+        {
+          "id": "video_track_2",
+          "type": "video",
+          "clips": []
+        },
+        {
+          "id": "audio_track_1",
+          "type": "audio",
+          "clips": []
+        },
+        {
+          "id": "audio_track_2",
+          "type": "audio",
+          "clips": []
+        }
+      ],
+      "subtitle_tracks": [
+        {
+          "id": "subtitle_track_1",
+          "language": "zh-CN",
+          "subtitles": []
+        }
+      ],
+      "effects_tracks": [
+        {
+          "id": "effects_track_1",
+          "effects": []
+        }
+      ]
+    },
+    "nested_sequences": [
+      {
+        "id": "nested_001",
+        "name": "场景1",
+        "duration": "00:00:30.000",
+        "tracks": [
+          {
+            "id": "nested_track_1",
+            "type": "video",
+            "clips": []
+          }
+        ]
+      }
+    ]
+  }
+}

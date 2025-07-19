@@ -1,0 +1,356 @@
+{
+  "script_type": "detective",
+  "mode": "full",
+  "original_script": [
+    {
+      "scene_id": "scene001",
+      "text": "夜晚，空旷的停车场。侦探李明下车，走向一栋废弃大楼。",
+      "character": "李明",
+      "duration": 5.2,
+      "tags": [
+        "开场",
+        "夜晚",
+        "悬念线索"
+      ]
+    },
+    {
+      "scene_id": "scene002",
+      "text": "李明走进大楼，手电筒照着四周。地上有些杂乱的脚印。",
+      "character": "李明",
+      "prop": "手电筒",
+      "duration": 4.8,
+      "tags": [
+        "线索"
+      ]
+    },
+    {
+      "scene_id": "scene003",
+      "text": "「李明：看来有人比我先到一步。」李明仔细观察着地上的脚印。",
+      "character": "李明",
+      "duration": 3.5
+    },
+    {
+      "scene_id": "scene004",
+      "text": "办公室内，王秘书正在整理文件。电话突然响起。",
+      "character": "王秘书",
+      "duration": 4.0,
+      "tags": [
+        "新场景",
+        "悬念线索"
+      ]
+    },
+    {
+      "scene_id": "scene005",
+      "text": "「王秘书：喂，您好。」「神秘声音：文件准备好了吗？」「王秘书：（紧张）都按您说的做了。」",
+      "characters": [
+        "王秘书",
+        "神秘声音"
+      ],
+      "duration": 6.5
+    },
+    {
+      "scene_id": "scene006",
+      "text": "李明在大楼二层发现一个打开的保险箱，里面空空如也。",
+      "character": "李明",
+      "prop": "保险箱",
+      "duration": 5.0,
+      "tags": [
+        "关键道具"
+      ]
+    },
+    {
+      "scene_id": "scene007",
+      "text": "「李明：晚了一步。」李明拿出手机，拨通一个号码。",
+      "character": "李明",
+      "prop": "手机",
+      "duration": 3.2
+    },
+    {
+      "scene_id": "scene008",
+      "text": "「李明：张局长，保险箱已经被人清空了。」「张局长：什么？！那个U盘对我们至关重要！」",
+      "characters": [
+        "李明",
+        "张局长"
+      ],
+      "duration": 7.0,
+      "tags": [
+        "重要信息"
+      ]
+    },
+    {
+      "scene_id": "scene009",
+      "text": "王秘书驾车离开办公大楼，不安地看了看后视镜。",
+      "character": "王秘书",
+      "duration": 4.3
+    },
+    {
+      "scene_id": "scene010",
+      "text": "李明回到车上，发现一个信封放在挡风玻璃下。",
+      "character": "李明",
+      "prop": "信封",
+      "duration": 3.8,
+      "tags": [
+        "转折点"
+      ]
+    },
+    {
+      "scene_id": "scene011",
+      "text": "李明打开信封，里面是一张照片，照片上是王秘书和一个陌生男子的交易画面。",
+      "character": "李明",
+      "prop": "照片",
+      "duration": 6.5,
+      "tags": [
+        "关键信息"
+      ]
+    },
+    {
+      "scene_id": "scene012",
+      "text": "「李明：（自言自语）原来如此...」李明若有所思地看着照片。",
+      "character": "李明",
+      "duration": 4.0
+    },
+    {
+      "scene_id": "scene013",
+      "text": "王秘书到达一个隐蔽的仓库，四下张望后匆忙进入。",
+      "character": "王秘书",
+      "duration": 5.5
+    },
+    {
+      "scene_id": "scene014",
+      "text": "仓库内，王秘书将一个U盘交给陌生男子。「王秘书：这是你要的东西。现在我可以走了吗？」",
+      "characters": [
+        "王秘书",
+        "陌生男子"
+      ],
+      "prop": "U盘",
+      "duration": 7.2,
+      "tags": [
+        "高潮"
+      ]
+    },
+    {
+      "scene_id": "scene015",
+      "text": "「陌生男子：（冷笑）当然，不过...」话音未落，仓库大门被撞开。",
+      "character": "陌生男子",
+      "duration": 5.0
+    },
+    {
+      "scene_id": "scene016",
+      "text": "李明带着警察冲进仓库。「李明：警察！不许动！」",
+      "characters": [
+        "李明",
+        "警察"
+      ],
+      "duration": 4.8,
+      "tags": [
+        "高潮",
+        "冲突"
+      ]
+    },
+    {
+      "scene_id": "scene017",
+      "text": "混乱中，陌生男子试图逃跑，但被警察制服。U盘掉在地上。",
+      "characters": [
+        "陌生男子",
+        "警察"
+      ],
+      "prop": "U盘",
+      "duration": 6.0
+    },
+    {
+      "scene_id": "scene018",
+      "text": "李明捡起U盘，看向惊慌失措的王秘书。「李明：游戏结束了。」",
+      "characters": [
+        "李明",
+        "王秘书"
+      ],
+      "prop": "U盘",
+      "duration": 5.5,
+      "tags": [
+        "结局"
+      ]
+    }
+  ],
+  "modified_script": [
+    {
+      "scene_id": "scene001",
+      "text": "夜晚，空旷的停车场。侦探李明下车，走向一栋废弃大楼。\n镜头短暂停留在保险箱上",
+      "character": "李明",
+      "duration": 5.2,
+      "tags": [
+        "开场",
+        "夜晚",
+        "悬念线索"
+      ]
+    },
+    {
+      "scene_id": "scene002",
+      "text": "李明走进大楼，手电筒照着四周。地上有些杂乱的脚印。",
+      "character": "李明",
+      "prop": "手电筒",
+      "duration": 4.8,
+      "tags": [
+        "线索"
+      ]
+    },
+    {
+      "scene_id": "scene003",
+      "text": "「李明：看来有人比我先到一步。」李明仔细观察着地上的脚印。",
+      "character": "李明",
+      "duration": 3.5
+    },
+    {
+      "scene_id": "scene004",
+      "text": "办公室内，王秘书正在整理文件。电话突然响起。\n「王秘书看似随意地提到：一切并不像表面看起来那样」",
+      "character": "王秘书",
+      "duration": 4.0,
+      "tags": [
+        "新场景",
+        "悬念线索"
+      ]
+    },
+    {
+      "scene_id": "scene005",
+      "text": "「王秘书：喂，您好。」「神秘声音：文件准备好了吗？」「王秘书：（紧张）都按您说的做了。」",
+      "characters": [
+        "王秘书",
+        "神秘声音"
+      ],
+      "duration": 6.5
+    },
+    {
+      "scene_id": "scene006",
+      "text": "李明在大楼二层发现一个打开的保险箱，里面空空如也。",
+      "character": "李明",
+      "prop": "保险箱",
+      "duration": 5.0,
+      "tags": [
+        "关键道具"
+      ]
+    },
+    {
+      "scene_id": "scene007",
+      "text": "「李明：晚了一步。」李明拿出手机，拨通一个号码。\n李明过分关注口红，引起误会",
+      "character": "李明",
+      "prop": "手机",
+      "duration": 3.2,
+      "tags": [
+        "悬念线索"
+      ]
+    },
+    {
+      "scene_id": "scene008",
+      "text": "「李明：张局长，保险箱已经被人清空了。」「张局长：什么？！那个U盘对我们至关重要！」",
+      "characters": [
+        "李明",
+        "张局长"
+      ],
+      "duration": 7.0,
+      "tags": [
+        "重要信息"
+      ]
+    },
+    {
+      "scene_id": "scene009",
+      "text": "王秘书驾车离开办公大楼，不安地看了看后视镜。\n看似关键的刀具被强调，实际是误导",
+      "character": "王秘书",
+      "duration": 4.3,
+      "tags": [
+        "悬念线索"
+      ]
+    },
+    {
+      "scene_id": "scene010",
+      "text": "李明回到车上，发现一个信封放在挡风玻璃下。",
+      "character": "李明",
+      "prop": "信封",
+      "duration": 3.8,
+      "tags": [
+        "转折点"
+      ]
+    },
+    {
+      "scene_id": "scene011",
+      "text": "李明打开信封，里面是一张照片，照片上是王秘书和一个陌生男子的交易画面。",
+      "character": "李明",
+      "prop": "照片",
+      "duration": 6.5,
+      "tags": [
+        "关键信息"
+      ]
+    },
+    {
+      "scene_id": "scene012",
+      "text": "「李明：（自言自语）原来如此...」李明若有所思地看着照片。",
+      "character": "李明",
+      "duration": 4.0
+    },
+    {
+      "scene_id": "scene013",
+      "text": "王秘书到达一个隐蔽的仓库，四下张望后匆忙进入。",
+      "character": "王秘书",
+      "duration": 5.5
+    },
+    {
+      "scene_id": "scene014",
+      "text": "仓库内，王秘书将一个U盘交给陌生男子。「王秘书：这是你要的东西。现在我可以走了吗？」",
+      "characters": [
+        "王秘书",
+        "陌生男子"
+      ],
+      "prop": "U盘",
+      "duration": 7.2,
+      "tags": [
+        "高潮"
+      ]
+    },
+    {
+      "scene_id": "scene015",
+      "text": "「陌生男子：（冷笑）当然，不过...」话音未落，仓库大门被撞开。",
+      "character": "陌生男子",
+      "duration": 5.0
+    },
+    {
+      "scene_id": "scene016",
+      "text": "李明带着警察冲进仓库。「李明：警察！不许动！」",
+      "characters": [
+        "李明",
+        "警察"
+      ],
+      "duration": 4.8,
+      "tags": [
+        "高潮",
+        "冲突"
+      ]
+    },
+    {
+      "scene_id": "scene017",
+      "text": "混乱中，陌生男子试图逃跑，但被警察制服。U盘掉在地上。",
+      "characters": [
+        "陌生男子",
+        "警察"
+      ],
+      "prop": "U盘",
+      "duration": 6.0
+    },
+    {
+      "scene_id": "scene018",
+      "text": "李明捡起U盘，看向惊慌失措的王秘书。「李明：游戏结束了。」",
+      "characters": [
+        "李明",
+        "王秘书"
+      ],
+      "prop": "U盘",
+      "duration": 5.5,
+      "tags": [
+        "结局"
+      ]
+    }
+  ],
+  "stats": {
+    "early_clues": 3,
+    "mid_clues": 1,
+    "late_clues": 0,
+    "total_clues": 4
+  }
+}

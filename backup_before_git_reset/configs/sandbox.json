@@ -1,0 +1,86 @@
+{
+  "isolation": {
+    "default_strategy": "auto",
+    "allow_docker": true,
+    "allow_subprocess": true,
+    "preferred_strategy": "docker"
+  },
+  "resources": {
+    "memory_limit": "512m",
+    "cpu_limit": "0.5",
+    "process_limit": 50,
+    "execution_timeout": 30,
+    "idle_timeout": 300
+  },
+  "security": {
+    "network_access": false,
+    "filesystem_access": false,
+    "system_calls": false,
+    "privileged_mode": false,
+    "sanitize_code": true
+  },
+  "docker": {
+    "default_image": "python-sandbox",
+    "create_if_missing": true,
+    "max_containers": 10,
+    "container_pool": {
+      "enabled": true,
+      "min_idle": 1,
+      "max_idle": 5
+    },
+    "run_options": {
+      "read_only": true,
+      "disable_syscalls": true,
+      "drop_capabilities": "ALL"
+    }
+  },
+  "subprocess": {
+    "max_subprocesses": 5,
+    "python_path": "",
+    "python_options": ["-I"],
+    "use_virtualenv": false
+  },
+  "limits": {
+    "max_output_size": 1048576,
+    "max_error_size": 10240,
+    "max_code_size": 65536
+  },
+  "logging": {
+    "level": "INFO",
+    "log_execution": true,
+    "log_performance": true,
+    "include_code": false
+  },
+  "caching": {
+    "enable_cache": true,
+    "max_cache_size": 100,
+    "ttl_seconds": 3600
+  },
+  "allowed_modules": [
+    "math",
+    "random",
+    "datetime",
+    "json",
+    "re",
+    "collections",
+    "itertools",
+    "functools",
+    "operator",
+    "string",
+    "numpy",
+    "pandas",
+    "matplotlib",
+    "scikit-learn",
+    "scipy"
+  ],
+  "forbidden_functions": [
+    "eval",
+    "exec",
+    "compile",
+    "__import__",
+    "globals",
+    "locals",
+    "open",
+    "file"
+  ]
+} 

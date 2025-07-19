@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>剧本分析可视化报告</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/plotly.js-dist@2.14.0/plotly.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --accent-color: #e74c3c;
+            --text-color: #2c3e50;
+            --background-color: #f8f9fa;
+            --card-color: #ffffff;
+            --border-color: #e0e0e0;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: var(--card-color);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: var(--primary-color);
+        }
+        
+        .header p {
+            margin: 10px 0 0;
+            color: #666;
+        }
+        
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+        
+        .tag {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 12px;
+        }
+        
+        .card {
+            background-color: var(--card-color);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .card h2 {
+            margin-top: 0;
+            font-size: 18px;
+            color: var(--primary-color);
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .flex-container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-container {
+            height: 400px;
+            width: 100%;
+        }
+        
+        .timeline-container {
+            height: 250px;
+            width: 100%;
+            overflow-x: auto;
+        }
+        
+        .timeline-segment {
+            padding: 8px;
+            border-radius: 4px;
+            margin: 2px;
+            font-size: 12px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .info-box {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 6px;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: var(--text-color);
+        }
+        
+        .info-value {
+            font-weight: normal;
+        }
+        
+        #character-network svg {
+            width: 100%;
+            height: 300px;
+        }
+        
+        @media (max-width: 768px) {
+            .flex-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>剧本分析可视化报告</h1>
+            <p>2025-04-30 20:53:03</p>
+            <div class="tag-container">
+                
+                <span class="tag" style="background-color: #3498db">conflict_resolution</span>
+                
+                <span class="tag" style="background-color: #3498db">emotional_rollercoaster</span>
+                
+                <span class="tag" style="background-color: #3498db">李明</span>
+                
+                <span class="tag" style="background-color: #3498db">张红</span>
+                
+                <span class="tag" style="background-color: #3498db">王芳</span>
+                
+            </div>
+        </div>
+        
+        <div class="flex-container">
+            <div class="card" style="flex: 2">
+                <h2>剧情特征数据</h2>
+                <div class="chart-container" id="emotion-curve-chart"></div>
+            </div>
+            
+            <div class="card info-box" style="flex: 1">
+                <h2>基本信息</h2>
+                
+                <div class="info-item">
+                    <span class="info-label">时长</span>
+                    <span class="info-value">120.0秒</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">语言</span>
+                    <span class="info-value">zh</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">场景数</span>
+                    <span class="info-value">5</span>
+                </div>
+                
+                <div class="info-item">
+                    <span class="info-label">情感基调</span>
+                    <span class="info-value">中性</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>时间线分析</h2>
+            <div class="timeline-container" id="timeline-container"></div>
+        </div>
+        
+        <div class="card">
+            <h2>角色关系网络</h2>
+            <div class="chart-container" id="character-network"></div>
+        </div>
+    </div>
+    
+    <script>
+        // 情感曲线
+        function renderEmotionCurve() {
+            const emotionData = {
+                x: [0, 5.80953350033529, 10.650283715409252, 17.686256958356374, 20.27526031758906, 27.285807029125152, 35.86507653594831, 42.823220646926124, 50.7002439872021, 55.88298353713775, 65.11620173187009, 67.26782451326147, 72.3899033133804, 74.87196630865674, 81.85412904223402, 91.25792095251943, 93.39852097513874, 98.54836295182888, 107.44789163356225, 115.20287106573632],
+                y: [-0.6586225843984961, -0.5915393028219674, -0.4623355490263954, -0.027624852647171783, -0.23489739050961644, -0.534964545816073, 0.21382066400645997, -0.6311772333985259, 0.18209587502435312, 0.5569603221726761, 0.01270489961883825, 0.08674098891938309, 0.1652109145354551, 0.2945064877674345, -0.21625938546615778, 0.18557541910201802, 0.7654969758772066, 0.3652605418961907, -0.2754878528283221, 0.5292006750167446]
+            };
+            
+            const layout = {
+                title: '情感曲线分析',
+                xaxis: {
+                    title: '时间 (秒)',
+                },
+                yaxis: {
+                    title: '情感得分',
+                    range: [-1, 1]
+                },
+                margin: {
+                    l: 50,
+                    r: 50,
+                    b: 50,
+                    t: 50,
+                },
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                paper_bgcolor: 'rgba(0,0,0,0)',
+            };
+            
+            const config = {
+                responsive: true,
+                displayModeBar: false
+            };
+            
+            Plotly.newPlot('emotion-curve-chart', [{
+                x: emotionData.x,
+                y: emotionData.y,
+                mode: 'lines+markers',
+                line: {
+                    color: '#3498db',
+                    width: 2
+                },
+                marker: {
+                    size: 6,
+                    color: '#3498db'
+                },
+                fill: 'tozeroy',
+                fillcolor: 'rgba(52, 152, 219, 0.2)'
+            }], layout, config);
+        }
+        
+        // 角色关系网络
+        function renderCharacterNetwork() {
+            const data = {"edges": [{"color": "#95a5a6", "source": "\u674e\u660e", "target": "\u5f20\u7ea2", "weight": 1}, {"color": "#95a5a6", "source": "\u5f20\u7ea2", "target": "\u738b\u82b3", "weight": 1}, {"color": "#95a5a6", "source": "\u738b\u82b3", "target": "\u674e\u660e", "weight": 0.5}], "nodes": [{"color": "#3498db", "id": "\u674e\u660e", "name": "\u674e\u660e", "size": 30, "type": "character"}, {"color": "#3498db", "id": "\u5f20\u7ea2", "name": "\u5f20\u7ea2", "size": 30, "type": "character"}, {"color": "#3498db", "id": "\u738b\u82b3", "name": "\u738b\u82b3", "size": 30, "type": "character"}]};
+            
+            if (!data.nodes || data.nodes.length === 0) {
+                document.getElementById('character-network').innerHTML = 
+                    '<div style="text-align: center; padding: 50px;">没有足够的角色数据来生成关系网络</div>';
+                return;
+            }
+            
+            const width = document.getElementById('character-network').clientWidth;
+            const height = 300;
+            
+            // 创建SVG
+            const svg = d3.select("#character-network")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height);
+            
+            // 创建力导向图
+            const simulation = d3.forceSimulation(data.nodes)
+                .force("link", d3.forceLink(data.edges).id(d => d.id).distance(100))
+                .force("charge", d3.forceManyBody().strength(-200))
+                .force("center", d3.forceCenter(width / 2, height / 2));
+            
+            // 绘制连线
+            const link = svg.append("g")
+                .selectAll("line")
+                .data(data.edges)
+                .enter()
+                .append("line")
+                .attr("stroke", d => d.color || "#999")
+                .attr("stroke-opacity", 0.6)
+                .attr("stroke-width", d => Math.sqrt(d.weight || 1) * 2);
+            
+            // 绘制节点
+            const node = svg.append("g")
+                .selectAll("circle")
+                .data(data.nodes)
+                .enter()
+                .append("circle")
+                .attr("r", d => d.size || 20)
+                .attr("fill", d => d.color || "#69b3a2")
+                .call(d3.drag()
+                    .on("start", dragstarted)
+                    .on("drag", dragged)
+                    .on("end", dragended));
+            
+            // 添加标签
+            const text = svg.append("g")
+                .selectAll("text")
+                .data(data.nodes)
+                .enter()
+                .append("text")
+                .text(d => d.name)
+                .attr("font-size", "12px")
+                .attr("dx", 15)
+                .attr("dy", 4)
+                .attr("font-family", "sans-serif");
+            
+            simulation.on("tick", () => {
+                link
+                    .attr("x1", d => d.source.x)
+                    .attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x)
+                    .attr("y2", d => d.target.y);
+                
+                node
+                    .attr("cx", d => d.x = Math.max(20, Math.min(width - 20, d.x)))
+                    .attr("cy", d => d.y = Math.max(20, Math.min(height - 20, d.y)));
+                
+                text
+                    .attr("x", d => d.x)
+                    .attr("y", d => d.y);
+            });
+            
+            function dragstarted(event, d) {
+                if (!event.active) simulation.alphaTarget(0.3).restart();
+                d.fx = d.x;
+                d.fy = d.y;
+            }
+            
+            function dragged(event, d) {
+                d.fx = event.x;
+                d.fy = event.y;
+            }
+            
+            function dragended(event, d) {
+                if (!event.active) simulation.alphaTarget(0);
+                d.fx = null;
+                d.fy = null;
+            }
+        }
+        
+        // 时间线渲染
+        function renderTimeline() {
+            const timelineData = {"segments": [{"color": "#e74c3c", "content": "\u738b\u82b3\uff1a\u8fd9\u662f\u4e00\u6bb5\u6d4b\u8bd5\u5bf9\u8bdd\u5185\u5bb9\uff0c\u7528\u4e8e\u6f14\u793a\u5267\u672c\u5206\u6790\u53ef\u89c6\u5316\u529f\u80fd0", "duration": 5.80953350033529, "end": 5.80953350033529, "id": 0, "opacity": 0.7610358090789472, "sentiment": "NEGATIVE", "start": 0}, {"color": "#e74c3c", "content": "\u8fd9\u662f\u4e00\u6bb5\u65c1\u767d\u63cf\u8ff0\u5185\u5bb9\uff0c\u7528\u4e8e\u6f14\u793a\u5267\u672c\u5206\u6790\u53ef\u89c6\u5316\u529f\u80fd1", "duration": 4.840750215073962, "end": 10.650283715409252, "id": 1, "opacity": 0.7140775119753772, "sentiment": "NEGATIVE", "start": 5.80953350033529}, {"color": "#e74c3c", "content": "\u8fd9\u662f\u4e00\u6bb5\u65c1\u767d\u63cf\u8ff0\u5185\u5bb9\uff0c\u7528\u4e8e\u6f14\u793a\u5267\u672c\u5206\u6790\u53ef\u89c6\u5316\u529f\u80fd2", "duration": 7.035973242947122, "end": 17.686256958356374, "id": 2, "opacity": 0.6236348843184767, "sentiment": "NEGATIVE", "start": 10.650283715409252}, {"color": "#95a5a6", "content": "\u8fd9\u662f\u4e00\u6bb5\u65c1\u767d\u63cf\u8ff0\u5185\u5bb9\uff0c\u7528\u4e8e\u6f14\u793a\u5267\u672c\u5206\u6790\u53ef\u89c6\u5316\u529f\u80fd3", "duration": 2.5890033592326844, "end": 20.27526031758906, "id": 3, "opacity": 0.31933739685302026, "sentiment": "NEUTRAL", "start": 17.686256958356374}, {"color": "#e74c3c", "content": "\u8fd9\u662f\u4e00\u6bb5\u65c1\u767d\u63cf\u8ff0\u5185\u5bb9\uff0c\u7528\u4e8e\u6f14\u793a\u5267\u672c\u5206\u6790\u53ef\u89c6\u5316\u529f\u80fd4", "duration": 7.010546711536094, "end": 27.285807029125152, "id": 4, "opacity": 0.4644281733567315, "sentiment": "NEGATIVE", "start": 20.27526031758906}, {"color": "#e74c3c", "content": "\u8fd9\u662f\u4e00\u6bb5\u65c1\u767d\u63cf\u8ff0\u5185\u5bb9\uff0c\u7528\u4e8e\u6f14\u793a\u5267\u672c\u5206\u6790\u53ef\u89c6\u5316\u529f\u80fd5", "duration": 8.57926950682316, "end": 35.86507653594831, "id": 5, "opacity": 0.6744751820712511, "sentiment": "NEGATIVE", "start": 27.285807029125152}, {"color": "#95a5a6", "content": "\u8fd9\u662f\u4e00\u6bb5\u65c1\u767d\u63cf\u8ff0\u5185\u5bb9\uff0c\u7528\u4e8e\u6f14\u793a\u5267\u672c\u5206\u6790\u53ef\u89c6\u5316\u529f\u80fd6", "duration": 6.958144110977813, "end": 42.823220646926124, "id": 6, "opacity": 0.44967446480452195, "sentiment": "NEUTRAL", "start": 35.86507653594831}, {"color": "#e74c3c", "content": "\u8fd9\u662f\u4e00\u6bb5\u65c1\u767d\u63cf\u8ff0\u5185\u5bb9\uff0c\u7528\u4e8e\u6f14\u793a\u5267\u672c\u5206\u6790\u53ef\u89c6\u5316\u529f\u80fd7", "duration": 7.877023340275976, "end": 50.7002439872021, "id": 7, "opacity": 0.7418240633789681, "sentiment": "NEGATIVE", "start": 42.823220646926124}, {"color": "#95a5a6", "content": "\u8d75\u521a\uff1a\u8fd9\u662f\u4e00\u6bb5\u6d4b\u8bd5\u5bf9\u8bdd\u5185\u5bb9\uff0c\u7528\u4e8e\u6f14\u793a\u5267\u672c\u5206\u6790\u53ef\u89c6\u5316\u529f\u80fd8", "duration": 5.182739549935647, "end": 55.88298353713775, "id": 8, "opacity": 0.42746711251704717, "sentiment": "NEUTRAL", "start": 50.7002439872021}, {"color": "#2ecc71", "content": "\u8fd9\u662f\u4e00\u6bb5\u65c1\u767d\u63cf\u8ff0\u5185\u5bb9\uff0c\u7528\u4e8e\u6f14\u793a\u5267\u672c\u5206\u6790\u53ef\u89c6\u5316\u529f\u80fd9", "duration": 9.233218194732345, "end": 65.11620173187009, "id": 9, "opacity": 0.6898722255208732, "sentiment": "POSITIVE", "start": 55.88298353713775}, {"color": "#95a5a6", "content": "\u8fd9\u662f\u4e00\u6bb5\u65c1\u767d\u63cf\u8ff0\u5185\u5bb9\uff0c\u7528\u4e8e\u6f14\u793a\u5267\u672c\u5206\u6790\u53ef\u89c6\u5316\u529f\u80fd10", "duration": 2.1516227813913815, "end": 67.26782451326147, "id": 10, "opacity": 0.3088934297331868, "sentiment": "NEUTRAL", "start": 65.11620173187009}, {"color": "#95a5a6", "content": "\u738b\u82b3\uff1a\u8fd9\u662f\u4e00\u6bb5\u6d4b\u8bd5\u5bf9\u8bdd\u5185\u5bb9\uff0c\u7528\u4e8e\u6f14\u793a\u5267\u672c\u5206\u6790\u53ef\u89c6\u5316\u529f\u80fd11", "duration": 5.122078800118928, "end": 72.3899033133804, "id": 11, "opacity": 0.3607186922435681, "sentiment": "NEUTRAL", "start": 67.26782451326147}, {"color": "#2ecc71", "content": "\u8fd9\u662f\u4e00\u6bb5\u65c1\u767d\u63cf\u8ff0\u5185\u5bb9\uff0c\u7528\u4e8e\u6f14\u793a\u5267\u672c\u5206\u6790\u53ef\u89c6\u5316\u529f\u80fd12", "duration": 2.482062995276337, "end": 74.87196630865674, "id": 12, "opacity": 0.4156476401748186, "sentiment": "POSITIVE", "start": 72.3899033133804}, {"color": "#2ecc71", "content": "\u8fd9\u662f\u4e00\u6bb5\u65c1\u767d\u63cf\u8ff0\u5185\u5bb9\uff0c\u7528\u4e8e\u6f14\u793a\u5267\u672c\u5206\u6790\u53ef\u89c6\u5316\u529f\u80fd13", "duration": 6.982162733577283, "end": 81.85412904223402, "id": 13, "opacity": 0.5061545414372042, "sentiment": "POSITIVE", "start": 74.87196630865674}, {"color": "#95a5a6", "content": "\u9648\u9759\uff1a\u8fd9\u662f\u4e00\u6bb5\u6d4b\u8bd5\u5bf9\u8bdd\u5185\u5bb9\uff0c\u7528\u4e8e\u6f14\u793a\u5267\u672c\u5206\u6790\u53ef\u89c6\u5316\u529f\u80fd14", "duration": 9.403791910285406, "end": 91.25792095251943, "id": 14, "opacity": 0.4513815698263104, "sentiment": "NEUTRAL", "start": 81.85412904223402}, {"color": "#2ecc71", "content": "\u8fd9\u662f\u4e00\u6bb5\u65c1\u767d\u63cf\u8ff0\u5185\u5bb9\uff0c\u7528\u4e8e\u6f14\u793a\u5267\u672c\u5206\u6790\u53ef\u89c6\u5316\u529f\u80fd15", "duration": 2.14060002261931, "end": 93.39852097513874, "id": 15, "opacity": 0.4299027933714126, "sentiment": "POSITIVE", "start": 91.25792095251943}, {"color": "#2ecc71", "content": "\u8fd9\u662f\u4e00\u6bb5\u65c1\u767d\u63cf\u8ff0\u5185\u5bb9\uff0c\u7528\u4e8e\u6f14\u793a\u5267\u672c\u5206\u6790\u53ef\u89c6\u5316\u529f\u80fd16", "duration": 5.149841976690141, "end": 98.54836295182888, "id": 16, "opacity": 0.8358478831140446, "sentiment": "POSITIVE", "start": 93.39852097513874}, {"color": "#2ecc71", "content": "\u8fd9\u662f\u4e00\u6bb5\u65c1\u767d\u63cf\u8ff0\u5185\u5bb9\uff0c\u7528\u4e8e\u6f14\u793a\u5267\u672c\u5206\u6790\u53ef\u89c6\u5316\u529f\u80fd17", "duration": 8.899528681733372, "end": 107.44789163356225, "id": 17, "opacity": 0.5556823793273336, "sentiment": "POSITIVE", "start": 98.54836295182888}, {"color": "#e74c3c", "content": "\u8fd9\u662f\u4e00\u6bb5\u65c1\u767d\u63cf\u8ff0\u5185\u5bb9\uff0c\u7528\u4e8e\u6f14\u793a\u5267\u672c\u5206\u6790\u53ef\u89c6\u5316\u529f\u80fd18", "duration": 7.754979432174068, "end": 115.20287106573632, "id": 18, "opacity": 0.4928414969798255, "sentiment": "NEGATIVE", "start": 107.44789163356225}, {"color": "#2ecc71", "content": "\u8d75\u521a\uff1a\u8fd9\u662f\u4e00\u6bb5\u6d4b\u8bd5\u5bf9\u8bdd\u5185\u5bb9\uff0c\u7528\u4e8e\u6f14\u793a\u5267\u672c\u5206\u6790\u53ef\u89c6\u5316\u529f\u80fd19", "duration": 4.790447187497151, "end": 119.99331825323347, "id": 19, "opacity": 0.6704404725117212, "sentiment": "POSITIVE", "start": 115.20287106573632}]};
+            const container = document.getElementById('timeline-container');
+            container.innerHTML = '';
+            
+            if (!timelineData || !timelineData.segments || timelineData.segments.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 20px;">没有时间线数据</div>';
+                return;
+            }
+            
+            const timelineEl = document.createElement('div');
+            timelineEl.style.display = 'flex';
+            timelineEl.style.height = '100%';
+            timelineEl.style.width = 'fit-content';
+            timelineEl.style.minWidth = '100%';
+            
+            timelineData.segments.forEach(segment => {
+                const duration = segment.end - segment.start;
+                const segmentEl = document.createElement('div');
+                segmentEl.className = 'timeline-segment';
+                segmentEl.style.backgroundColor = segment.color;
+                segmentEl.style.opacity = segment.opacity || 0.8;
+                segmentEl.style.width = `${Math.max(100, duration * 20)}px`;
+                segmentEl.textContent = segment.content;
+                segmentEl.title = `${segment.content} (${segment.start.toFixed(1)}s - ${segment.end.toFixed(1)}s)`;
+                timelineEl.appendChild(segmentEl);
+            });
+            
+            container.appendChild(timelineEl);
+        }
+        
+        // 加载所有图表
+        document.addEventListener('DOMContentLoaded', function() {
+            renderEmotionCurve();
+            renderCharacterNetwork();
+            renderTimeline();
+        });
+    </script>
+</body>
+</html> 

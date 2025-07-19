@@ -1,0 +1,54 @@
+{
+  "welcome": {
+    "title": "欢迎使用 VisionAI-ClipsMaster",
+    "content": "这是一个AI驱动的短剧混剪工具，让我们开始您的创作之旅！",
+    "steps": [
+      "1. 选择您的语言模式（中文/英文）",
+      "2. 上传原始视频和字幕文件",
+      "3. 让AI分析并重构剧本",
+      "4. 导出到剪映进行后期制作"
+    ]
+  },
+  "tooltips": {
+    "file_upload": "支持MP4、AVI、MOV等视频格式，以及SRT字幕文件",
+    "language_detection": "系统会自动检测字幕语言，也可手动选择",
+    "ai_processing": "AI将分析剧情结构，生成更具吸引力的短剧版本",
+    "export_options": "可导出为剪映项目文件，支持进一步编辑"
+  },
+  "shortcuts": {
+    "Ctrl+O": "打开文件",
+    "Ctrl+S": "保存项目",
+    "Ctrl+E": "导出项目",
+    "F1": "显示帮助",
+    "F5": "刷新界面"
+  },
+  "quick_start": {
+    "title": "快速开始指南",
+    "steps": [
+      {
+        "step": 1,
+        "title": "准备素材",
+        "description": "准备您的原始视频文件和对应的SRT字幕文件",
+        "tips": "确保字幕文件与视频内容匹配，时间轴准确"
+      },
+      {
+        "step": 2,
+        "title": "导入文件",
+        "description": "点击'选择视频'和'选择字幕'按钮导入文件",
+        "tips": "系统会自动检测语言，也可手动选择"
+      },
+      {
+        "step": 3,
+        "title": "AI处理",
+        "description": "点击'开始处理'让AI分析并重构剧本",
+        "tips": "处理时间取决于视频长度，请耐心等待"
+      },
+      {
+        "step": 4,
+        "title": "导出结果",
+        "description": "处理完成后，导出剪映项目文件",
+        "tips": "可以在剪映中进一步编辑和完善"
+      }
+    ]
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "sample_id": "en_90s_2324",
+  "language": "en",
+  "duration": 90,
+  "video_path": "D:\\zancun\\VisionAI-ClipsMaster\\data\\test\\golden\\en_90s_2324.mp4",
+  "original_srt": "D:\\zancun\\VisionAI-ClipsMaster\\data\\test\\golden\\en_90s_2324_original.srt",
+  "expected_srt": "D:\\zancun\\VisionAI-ClipsMaster\\data\\test\\golden\\en_90s_2324_expected.srt",
+  "important_timestamps": [
+    "00:00:00,000",
+    "00:00:30,000",
+    "00:00:45,000",
+    "00:01:00,000",
+    "00:01:25,000"
+  ],
+  "creation_time": 1747270951.6888218
+}

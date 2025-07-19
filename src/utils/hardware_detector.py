@@ -1,0 +1,275 @@
+"""
+硬件能力检测模块 - VisionAI-ClipsMaster
+用于检测设备硬件能力并推荐最佳模型配置
+"""
+
+import os
+import sys
+import platform
+import psutil
+import cpuinfo
+import logging
+from typing import Dict, List, Optional, Tuple, Union
+
+logger = logging.getLogger(__name__)
+
+class HardwareDetector:
+    """硬件检测器，用于评估设备运行AI模型的能力"""
+    
+    def __init__(self):
+        self.cpu_info = self._get_cpu_info()
+        self.memory_info = self._get_memory_info()
+        self.gpu_info = self._get_gpu_info()
+        self.system_info = self._get_system_info()
+        
+    def _get_cpu_info(self) -> Dict:
+        """获取CPU详细信息"""
+        try:
+            info = cpuinfo.get_cpu_info()
+            
+            # 检测CPU指令集支持
+            instruction_sets = {
+                'avx': 'avx' in info.get('flags', []),
+                'avx2': 'avx2' in info.get('flags', []),
+                'avx512': any('avx512' in flag for flag in info.get('flags', [])),
+                'sse4_2': 'sse4_2' in info.get('flags', []),
+                'neon': 'neon' in info.get('flags', []),  # ARM平台
+                'f16c': 'f16c' in info.get('flags', []),  # 半精度浮点支持
+            }
+            
+            return {
+                'brand': info.get('brand_raw', 'Unknown CPU'),
+                'cores_physical': psutil.cpu_count(logical=False),
+                'cores_logical': psutil.cpu_count(logical=True),
+                'frequency': info.get('hz_advertised_friendly', 'Unknown'),
+                'architecture': info.get('arch', platform.machine()),
+                'instruction_sets': instruction_sets
+            }
+        except Exception as e:
+            logger.error(f"获取CPU信息失败: {str(e)}")
+            return {'error': str(e)}
+    
+    def _get_memory_info(self) -> Dict:
+        """获取内存详细信息"""
+        try:
+            mem = psutil.virtual_memory()
+            return {
+                'total': mem.total,
+                'total_gb': round(mem.total / (1024**3), 2),
+                'available': mem.available,
+                'available_gb': round(mem.available / (1024**3), 2),
+                'percent_used': mem.percent
+            }
+        except Exception as e:
+            logger.error(f"获取内存信息失败: {str(e)}")
+            return {'error': str(e)}
+    
+    def _get_gpu_info(self) -> Dict:
+        """获取GPU信息（如存在）"""
+        gpu_info = {'available': False, 'devices': []}
+        
+        # 尝试检测CUDA GPU
+        try:
+            import torch
+            if torch.cuda.is_available():
+                gpu_info['available'] = True
+                gpu_info['type'] = 'CUDA'
+                gpu_info['cuda_version'] = torch.version.cuda
+                gpu_info['device_count'] = torch.cuda.device_count()
+                
+                for i in range(torch.cuda.device_count()):
+                    gpu_info['devices'].append({
+                        'name': torch.cuda.get_device_name(i),
+                        'memory_total': torch.cuda.get_device_properties(i).total_memory,
+                        'memory_total_gb': round(torch.cuda.get_device_properties(i).total_memory / (1024**3), 2)
+                    })
+                return gpu_info
+        except (ImportError, Exception) as e:
+            pass
+            
+        # 尝试检测AMD GPU (ROCm)
+        try:
+            if os.system("rocm-smi --showproductname") == 0:
+                gpu_info['available'] = True
+                gpu_info['type'] = 'ROCm'
+                # 这里可以添加更多详细的ROCm GPU信息
+                return gpu_info
+        except Exception:
+            pass
+            
+        # 尝试检测Intel集成显卡
+        try:
+            if platform.system() == 'Windows':
+                import subprocess
+                result = subprocess.check_output("wmic path win32_VideoController get name", shell=True).decode()
+                if 'Intel' in result and ('UHD' in result or 'HD Graphics' in result or 'Iris' in result):
+                    gpu_info['available'] = True
+                    gpu_info['type'] = 'Intel Integrated'
+                    gpu_info['name'] = [line for line in result.split('\n') if 'Intel' in line][0].strip()
+                    return gpu_info
+            elif platform.system() == 'Linux':
+                # Linux检测Intel GPU
+                pass
+        except Exception:
+            pass
+            
+        return gpu_info
+    
+    def _get_system_info(self) -> Dict:
+        """获取操作系统信息"""
+        return {
+            'os': platform.system(),
+            'os_version': platform.version(),
+            'os_release': platform.release(),
+            'python_version': platform.python_version()
+        }
+    
+    def recommend_model_config(self) -> Dict:
+        """根据硬件能力推荐最佳模型配置"""
+        config = {}
+        
+        # 确定量化等级
+        memory_gb = self.memory_info.get('total_gb', 0)
+        if memory_gb < 4:
+            config['quantization'] = 'Q2_K'  # 极低内存设备
+            config['model_size'] = 'nano'  # 使用最小模型
+            config['warning'] = '设备内存不足4GB，将使用最低配置，性能可能受限'
+        elif memory_gb < 8:
+            config['quantization'] = 'Q4_K_M'  # 低内存设备
+            config['model_size'] = 'base'
+        else:
+            config['quantization'] = 'Q5_K_M'  # 内存充足
+            config['model_size'] = 'base'
+            
+        # GPU加速设置
+        if self.gpu_info.get('available', False):
+            config['use_gpu'] = True
+            config['gpu_type'] = self.gpu_info.get('type', 'Unknown')
+            if self.gpu_info.get('type') == 'CUDA':
+                config['gpu_memory'] = self.gpu_info.get('devices', [{}])[0].get('memory_total_gb', 0)
+            else:
+                config['gpu_memory'] = 'Unknown'
+        else:
+            config['use_gpu'] = False
+            
+            # CPU优化设置
+            cpu_sets = self.cpu_info.get('instruction_sets', {})
+            if cpu_sets.get('avx512', False):
+                config['cpu_optimization'] = 'avx512'
+            elif cpu_sets.get('avx2', False):
+                config['cpu_optimization'] = 'avx2'
+            elif cpu_sets.get('avx', False):
+                config['cpu_optimization'] = 'avx'
+            elif cpu_sets.get('sse4_2', False):
+                config['cpu_optimization'] = 'sse4.2'
+            elif cpu_sets.get('neon', False):
+                config['cpu_optimization'] = 'neon'  # ARM架构
+            else:
+                config['cpu_optimization'] = 'basic'
+                config['warning'] = '未检测到高级CPU指令集，性能可能受限'
+                
+        # 设置批处理大小
+        if memory_gb < 4:
+            config['batch_size'] = 1
+        elif memory_gb < 8:
+            config['batch_size'] = 2
+        else:
+            config['batch_size'] = 4
+            
+        # 模型加载策略
+        if memory_gb < 6:
+            config['loading_strategy'] = 'disk_offload'  # 磁盘分片加载
+        else:
+            config['loading_strategy'] = 'normal'
+            
+        return config
+    
+    def is_compatible(self) -> Tuple[bool, str]:
+        """检查设备是否满足最低要求"""
+        compatible = True
+        reason = ""
+        
+        # 检查内存
+        if self.memory_info.get('total_gb', 0) < 4:
+            compatible = False
+            reason = f"内存不足: 需要至少4GB, 当前{self.memory_info.get('total_gb', 0)}GB"
+            
+        # 检查CPU
+        cpu_sets = self.cpu_info.get('instruction_sets', {})
+        if not (cpu_sets.get('avx', False) or cpu_sets.get('sse4_2', False) or cpu_sets.get('neon', False)):
+            compatible = False
+            reason += "\n不支持必要的CPU指令集(AVX/SSE4.2/NEON)"
+            
+        return compatible, reason
+    
+    def generate_report(self) -> str:
+        """生成人类可读的硬件报告"""
+        config = self.recommend_model_config()
+        compatible, reason = self.is_compatible()
+        
+        report = [
+            "=== VisionAI-ClipsMaster 硬件兼容性报告 ===",
+            f"CPU: {self.cpu_info.get('brand', 'Unknown')}",
+            f"物理核心: {self.cpu_info.get('cores_physical', 'Unknown')}",
+            f"逻辑核心: {self.cpu_info.get('cores_logical', 'Unknown')}",
+            f"支持指令集: {', '.join([k for k, v in self.cpu_info.get('instruction_sets', {}).items() if v])}",
+            f"内存: 总计 {self.memory_info.get('total_gb', 0)}GB, 可用 {self.memory_info.get('available_gb', 0)}GB",
+            f"GPU: {'可用' if self.gpu_info.get('available', False) else '不可用'}"
+        ]
+        
+        if self.gpu_info.get('available', False):
+            report.append(f"GPU类型: {self.gpu_info.get('type', 'Unknown')}")
+            if self.gpu_info.get('devices'):
+                report.append(f"GPU名称: {self.gpu_info.get('devices', [{}])[0].get('name', 'Unknown')}")
+                report.append(f"GPU内存: {self.gpu_info.get('devices', [{}])[0].get('memory_total_gb', 0)}GB")
+        
+        report.extend([
+            "",
+            "=== 推荐配置 ===",
+            f"量化等级: {config.get('quantization', 'Unknown')}",
+            f"模型大小: {config.get('model_size', 'Unknown')}",
+            f"批处理大小: {config.get('batch_size', 'Unknown')}",
+            f"加载策略: {config.get('loading_strategy', 'Unknown')}",
+            f"使用GPU: {'是' if config.get('use_gpu', False) else '否'}",
+            f"CPU优化: {config.get('cpu_optimization', 'Unknown')}"
+        ])
+        
+        if 'warning' in config:
+            report.extend(["", f"警告: {config.get('warning')}", ""])
+            
+        report.extend([
+            "",
+            "=== 兼容性检查 ===",
+            f"兼容: {'是' if compatible else '否'}"
+        ])
+        
+        if not compatible:
+            report.append(f"原因: {reason}")
+            
+        return "\n".join(report)
+    
+    def to_dict(self) -> Dict:
+        """将所有信息转换为字典"""
+        return {
+            'cpu': self.cpu_info,
+            'memory': self.memory_info,
+            'gpu': self.gpu_info,
+            'system': self.system_info,
+            'recommendation': self.recommend_model_config(),
+            'compatibility': self.is_compatible()[0]
+        }
+
+def main():
+    """作为独立脚本运行时的主函数"""
+    detector = HardwareDetector()
+    print(detector.generate_report())
+    
+    # 生成推荐配置并写入文件
+    recommendation = detector.recommend_model_config()
+    import json
+    with open('hardware_recommendation.json', 'w', encoding='utf-8') as f:
+        json.dump(recommendation, f, indent=2, ensure_ascii=False)
+    print(f"\n推荐配置已写入 hardware_recommendation.json")
+
+if __name__ == "__main__":
+    main() 

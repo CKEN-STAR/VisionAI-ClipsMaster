@@ -1,0 +1,130 @@
+version: "1.0.0"
+description: "模型分片缓存策略配置"
+
+# 全局缓存策略设置
+cache_settings:
+  default_strategy: "lru"      # 默认缓存策略
+  auto_adjust: true           # 根据系统资源自动调整策略
+  stats_tracking: true        # 追踪缓存统计信息
+  stats_interval: 300         # 统计信息收集间隔(秒)
+  cache_warm_up: true         # 启用缓存预热
+  
+# 缓存策略定义
+strategies:
+  - name: "lru"               # 最近最少使用
+    description: "基于最近使用时间的缓存策略"
+    implementation: "LRUPolicy"
+    default_max_items: 5      # 默认最大项目数
+    parameters: {}            # 无额外参数
+    suitable_for: "通用场景，均衡的访问模式"
+    priority: 100             # 优先级，值越高越优先考虑
+    
+  - name: "lfu"               # 最不常用
+    description: "基于访问频率的缓存策略"
+    implementation: "LFUPolicy"
+    default_max_items: 5
+    parameters: {}
+    suitable_for: "重复访问模式，特定分片频繁使用"
+    priority: 90
+    
+  - name: "fifo"              # 先进先出
+    description: "按顺序淘汰最早加载的分片"
+    implementation: "FIFOPolicy"
+    default_max_items: 5
+    parameters: {}
+    suitable_for: "顺序访问模式，例如线性扫描模型层"
+    priority: 80
+    
+  - name: "weight_aware"      # 权重感知
+    description: "考虑分片大小和重要性的综合策略"
+    implementation: "WeightAwarePolicy"
+    default_max_items: 5
+    parameters:
+      size_weight: 0.4        # 分片大小的权重因子
+      importance_weight: 0.6  # 重要性的权重因子
+    suitable_for: "不同大小和重要性的分片混合场景"
+    priority: 85
+    
+  - name: "freq_aware"        # 频率感知
+    description: "考虑分片热度和冷却时间的策略"
+    implementation: "FreqAwarePolicy"
+    default_max_items: 5
+    parameters:
+      hot_threshold: 10       # 热点阈值(访问次数)
+      cold_time: 300          # 冷却时间(秒)
+    suitable_for: "动态变化的访问模式，有明显冷热区分"
+    priority: 95
+
+# 设备类型特定配置
+device_specific:
+  low_memory:                 # 4GB RAM 设备
+    default_strategy: "lru"
+    max_items: 3              # 最大缓存项数
+    warm_up_items: ["embedding", "attention_1"]
+    parameters:
+      freq_aware:
+        hot_threshold: 5      # 降低热点阈值
+        cold_time: 120        # 减少冷却时间
+      weight_aware:
+        size_weight: 0.7      # 更注重分片大小
+        importance_weight: 0.3
+        
+  medium_memory:              # 8GB RAM 设备
+    default_strategy: "freq_aware"
+    max_items: 5
+    warm_up_items: ["embedding", "attention_1", "ffn_1"]
+    parameters:
+      freq_aware:
+        hot_threshold: 8
+        cold_time: 240
+      weight_aware:
+        size_weight: 0.5
+        importance_weight: 0.5
+        
+  high_memory:                # 16GB+ RAM 设备
+    default_strategy: "weight_aware"
+    max_items: 10
+    warm_up_items: ["embedding", "attention_1", "ffn_1", "attention_2"]
+    parameters:
+      freq_aware:
+        hot_threshold: 15
+        cold_time: 600
+      weight_aware:
+        size_weight: 0.3
+        importance_weight: 0.7
+
+# 模型特定配置
+model_specific:
+  "qwen2.5-7b-zh":
+    default_strategy: "freq_aware"
+    max_items: 5
+    warm_up_items: ["embedding", "attention_1"]
+    parameters:
+      freq_aware:
+        hot_threshold: 8
+        cold_time: 180
+      
+  "mistral-7b-en":
+    default_strategy: "weight_aware"
+    max_items: 4
+    warm_up_items: ["embedding"]
+    parameters:
+      weight_aware:
+        size_weight: 0.6
+        importance_weight: 0.4
+
+# 自动选择策略的内存阈值（单位: MB）
+auto_select_thresholds:
+  critical: 4096     # 当系统内存低于4GB时，使用LRU策略
+  low: 6144          # 当系统内存低于6GB时，使用FIFO策略
+  normal: 12288      # 当系统内存低于12GB时，使用Freq-Aware策略
+  high: null         # 当系统内存充足时，使用Weight-Aware策略
+
+# 高级设置
+advanced:
+  enable_hybrid_strategy: false    # 启用混合策略（组合多种策略）
+  adaptive_threshold: true         # 自适应调整阈值
+  prefetch_on_pattern: true        # 基于访问模式预加载
+  min_cache_efficiency: 0.6        # 最小缓存效率阈值
+  strategy_switch_cooldown: 60     # 策略切换冷却时间(秒)
+  detailed_telemetry: true         # 详细遥测数据收集 

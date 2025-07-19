@@ -1,0 +1,166 @@
+# VisionAI-ClipsMaster 混沌工程配置文件
+# 用于配置混沌测试的全局参数和行为
+
+# 全局启用状态
+enabled: true
+
+# 日志配置
+logging:
+  level: INFO  # 日志级别: DEBUG, INFO, WARNING, ERROR
+  file: logs/chaos_engineering.log
+  max_size_mb: 10
+  backup_count: 3
+
+# 监控集成
+monitoring:
+  enabled: true
+  metrics_collection_interval_s: 5
+  # 连接到多维度监控系统
+  use_multi_dimension_monitor: true
+
+# 混沌猴子配置
+monkeys:
+  memory_chaos_monkey:
+    enabled: true
+    probability: 0.3
+    scenarios:
+      latency:
+        enabled: true
+        min_ms: 200
+        max_ms: 1000
+      failure:
+        enabled: true
+        min_rate: 0.1
+        max_rate: 0.4
+      corruption:
+        enabled: false  # 默认禁用，潜在危险
+      fragmentation:
+        enabled: true
+        max_duration_s: 30
+      leak:
+        enabled: true
+        max_rate_mb_per_min: 10
+        max_duration_s: 60
+
+  latency_chaos_monkey:
+    enabled: true
+    probability: 0.3
+    scenarios:
+      disk_io:
+        enabled: true
+        min_ms: 100
+        max_ms: 500
+      network:
+        enabled: true
+        min_ms: 200
+        max_ms: 1000
+      inference:
+        enabled: true
+        min_ms: 500
+        max_ms: 2000
+      thread:
+        enabled: true
+        min_ms: 50
+        max_ms: 200
+
+  network_chaos_monkey:
+    enabled: true
+    probability: 0.2
+    scenarios:
+      connection_loss:
+        enabled: true
+        max_duration_s: 15
+      packet_loss:
+        enabled: true
+        min_rate: 0.1
+        max_rate: 0.5
+      bandwidth_limit:
+        enabled: true
+        min_kbps: 32
+        max_kbps: 256
+      http_error:
+        enabled: true
+        status_codes: [403, 429, 500, 503]
+        min_rate: 0.1
+        max_rate: 0.5
+
+  cpu_chaos_monkey:
+    enabled: true
+    probability: 0.2
+    scenarios:
+      cpu_stress:
+        enabled: true
+        min_percent: 30
+        max_percent: 80
+        max_duration_s: 30
+      clock_skew:
+        enabled: true
+        min_ms: 10
+        max_ms: 200
+      priority_inversion:
+        enabled: true
+        max_duration_s: 20
+      thread_contention:
+        enabled: true
+        min_threads: 2
+        max_threads: 8
+
+# 预定义场景配置
+scenarios:
+  light_chaos:
+    monkeys: [memory_chaos_monkey, latency_chaos_monkey]
+    duration_minutes: 5
+    interval_seconds: 60
+    
+  moderate_chaos:
+    monkeys: [memory_chaos_monkey, latency_chaos_monkey, network_chaos_monkey]
+    duration_minutes: 10
+    interval_seconds: 30
+    
+  severe_chaos:
+    monkeys: [memory_chaos_monkey, latency_chaos_monkey, network_chaos_monkey, cpu_chaos_monkey]
+    duration_minutes: 15
+    interval_seconds: 15
+    
+  # 特定场景
+  memory_chaos:
+    monkeys: [memory_chaos_monkey]
+    duration_minutes: 10
+    interval_seconds: 20
+    
+  network_chaos:
+    monkeys: [network_chaos_monkey]
+    duration_minutes: 10
+    interval_seconds: 20
+    
+  cpu_chaos:
+    monkeys: [cpu_chaos_monkey]
+    duration_minutes: 8
+    interval_seconds: 25
+
+  model_inference_chaos:
+    monkeys: [memory_chaos_monkey, cpu_chaos_monkey, latency_chaos_monkey]
+    duration_minutes: 12
+    interval_seconds: 30
+
+# 安全限制 - 防止混沌测试导致严重问题
+safety:
+  memory_usage_limit_percent: 90  # 当内存使用超过此值时停止测试
+  cpu_usage_limit_percent: 95     # 当CPU使用超过此值时停止测试
+  max_test_duration_minutes: 30   # 最长测试时间
+  check_interval_seconds: 5       # 安全检查间隔
+  auto_cleanup: true              # 测试后自动清理资源
+  emergency_stop: true            # 出现紧急情况时立即停止所有测试
+
+# 报告配置
+reporting:
+  save_results: true
+  results_dir: tests/chaos_results
+  generate_html: true
+  send_email: false
+  email:
+    recipients: []
+    server: ""
+    port: 587
+    username: ""
+    password: "" 

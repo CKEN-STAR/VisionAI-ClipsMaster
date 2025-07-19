@@ -1,0 +1,17 @@
+{
+  "timestamp": "2025-05-15T19:05:58.321713",
+  "passed": true,
+  "languages": {
+    "zh": {
+      "total_files": 2,
+      "contaminated_files": 0,
+      "average_contamination": 0.0
+    },
+    "en": {
+      "total_files": 2,
+      "contaminated_files": 0,
+      "average_contamination": 0.0
+    }
+  },
+  "contaminated_files": []
+}

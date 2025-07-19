@@ -1,0 +1,75 @@
+# VisionAI-ClipsMaster 分层压缩策略配置
+# 此文件定义不同资源类型的压缩算法和参数，用于优化内存使用
+
+compression_policy:
+  # 模型权重压缩策略
+  model_weights:
+    algorithm: "zstd"        # Zstandard算法平衡速度与压缩率
+    level: 3                 # 平衡模式
+    chunk_size: 1MB          # 分块压缩
+    auto_compress: false     # 不自动压缩，手动控制
+    threshold_mb: 50         # 大于50MB才压缩
+    priority: low            # 低优先级，避免影响性能
+  
+  # 字幕数据压缩策略
+  subtitle:
+    algorithm: "lz4"         # LZ4提供极快的压缩/解压速度
+    level: 0                 # 速度优先
+    chunk_size: 512KB        # 更小的分块大小
+    auto_compress: true      # 自动压缩
+    threshold_mb: 1          # 大于1MB即压缩
+    priority: high           # 高优先级
+  
+  # 中间缓存压缩策略
+  intermediate_cache:
+    algorithm: "lz4"         # 快速压缩
+    level: 1                 # 轻微压缩
+    chunk_size: 4MB          # 较大块
+    auto_compress: true      # 自动压缩
+    threshold_mb: 5          # 大于5MB即压缩
+    priority: medium         # 中等优先级
+  
+  # 注意力缓存压缩策略
+  attention_cache:
+    algorithm: "zstd"        # 平衡算法
+    level: 1                 # 轻微压缩
+    chunk_size: 2MB          # 适中块大小
+    auto_compress: true      # 自动压缩
+    threshold_mb: 10         # 大于10MB即压缩
+    priority: medium         # 中等优先级
+  
+  # 文件缓存压缩策略
+  file_cache:
+    algorithm: "zstd"        # 平衡算法
+    level: 3                 # 平衡模式
+    chunk_size: 8MB          # 较大块
+    auto_compress: true      # 自动压缩
+    threshold_mb: 20         # 大于20MB即压缩
+    priority: low            # 低优先级
+  
+  # 临时缓冲区压缩策略
+  temp_buffers:
+    algorithm: "lz4"         # 快速压缩
+    level: 0                 # 速度优先 
+    chunk_size: 1MB          # 适中块大小
+    auto_compress: true      # 自动压缩
+    threshold_mb: 5          # 大于5MB即压缩
+    priority: high           # 高优先级
+  
+  # 日志数据压缩策略
+  log_data:
+    algorithm: "gzip"        # 广泛兼容的压缩算法
+    level: 6                 # 较高压缩率
+    chunk_size: 10MB         # 较大块
+    auto_compress: true      # 自动压缩
+    threshold_mb: 2          # 大于2MB即压缩
+    priority: low            # 低优先级
+  
+  # 默认压缩策略(其他类型资源)
+  default:
+    algorithm: "gzip"        # 通用压缩算法
+    level: 6                 # 默认压缩级别
+    chunk_size: 4MB          # 默认分块大小
+    auto_compress: false     # 默认不自动压缩
+    threshold_mb: 10         # 默认阈值
+    priority: low            # 默认低优先级 

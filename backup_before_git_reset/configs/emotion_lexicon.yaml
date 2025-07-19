@@ -1,0 +1,166 @@
+# 情感词汇强化器配置
+
+# 基本配置
+lexicon_enhancer:
+  # 强化/减弱因子
+  intensify_factor: 1.3      # 情感强化因子
+  reduce_factor: 0.7         # 情感减弱因子
+  
+  # 替换控制
+  smart_replacement: true    # 智能替换
+  context_aware: true        # 上下文感知
+  use_synonyms: true         # 使用同义词
+  max_replacements: 3        # 每句最大替换次数
+  min_confidence: 0.7        # 最小替换置信度
+  
+  # 语言配置
+  default_language: "zh"     # 默认语言
+  
+  # 同义词表路径
+  synonyms_path: ""          # 留空使用内置同义词表
+  
+  # 自定义替换配置
+  replacements:
+    # 高兴/喜悦相关
+    "高兴":
+      - {word: "开心", intensity: 0.8}
+      - {word: "兴奋", intensity: 0.9}
+      - {word: "喜悦", intensity: 0.85}
+      - {word: "狂喜", intensity: 0.95}
+    
+    "开心": 
+      - {word: "欣喜若狂", intensity: 0.95}
+      - {word: "喜不自胜", intensity: 0.9}
+      - {word: "乐不可支", intensity: 0.92}
+      - {word: "兴高采烈", intensity: 0.85}
+      
+    "愉快":
+      - {word: "心花怒放", intensity: 0.9}
+      - {word: "心旷神怡", intensity: 0.85}
+      - {word: "陶醉", intensity: 0.8}
+      - {word: "飘飘然", intensity: 0.85}
+      
+    # 生气/愤怒相关
+    "生气":
+      - {word: "愤怒", intensity: 0.9}
+      - {word: "恼火", intensity: 0.8}
+      - {word: "暴怒", intensity: 0.95}
+      - {word: "大发雷霆", intensity: 0.97}
+      
+    "愤怒":
+      - {word: "勃然大怒", intensity: 0.95}
+      - {word: "怒不可遏", intensity: 0.93}
+      - {word: "气急败坏", intensity: 0.9}
+      - {word: "火冒三丈", intensity: 0.9}
+      
+    # 伤心/悲伤相关
+    "伤心":
+      - {word: "心如刀割", intensity: 0.95}
+      - {word: "悲痛欲绝", intensity: 0.97}
+      - {word: "痛彻心扉", intensity: 0.93}
+      - {word: "黯然神伤", intensity: 0.8}
+      
+    "难过":
+      - {word: "悲伤", intensity: 0.8}
+      - {word: "悲痛", intensity: 0.9}
+      - {word: "心碎", intensity: 0.95}
+      - {word: "苦闷", intensity: 0.75}
+      
+    # 惊讶相关
+    "惊讶":
+      - {word: "震惊", intensity: 0.9}
+      - {word: "目瞪口呆", intensity: 0.9}
+      - {word: "瞠目结舌", intensity: 0.85}
+      - {word: "大吃一惊", intensity: 0.8}
+      
+    # 喜欢/爱相关
+    "喜欢":
+      - {word: "爱", intensity: 0.9}
+      - {word: "热爱", intensity: 0.85}
+      - {word: "痴迷", intensity: 0.95}
+      - {word: "钟爱", intensity: 0.87}
+      
+    "爱":
+      - {word: "深爱", intensity: 0.9}
+      - {word: "挚爱", intensity: 0.95}
+      - {word: "疼爱", intensity: 0.85}
+      - {word: "宠爱", intensity: 0.8}
+      
+    # 通用描述增强
+    "好":
+      - {word: "棒", intensity: 0.75}
+      - {word: "优秀", intensity: 0.85}
+      - {word: "出色", intensity: 0.9}
+      - {word: "卓越", intensity: 0.95}
+      
+    "漂亮":
+      - {word: "美丽", intensity: 0.8}
+      - {word: "动人", intensity: 0.85}
+      - {word: "惊艳", intensity: 0.9}
+      - {word: "倾国倾城", intensity: 0.95}
+      
+    # 恐惧相关
+    "害怕":
+      - {word: "恐惧", intensity: 0.85}
+      - {word: "畏惧", intensity: 0.8}
+      - {word: "惊恐", intensity: 0.9}
+      - {word: "胆战心惊", intensity: 0.95}
+      
+    # 情感减弱替换
+    "激动":
+      - {word: "兴奋", intensity: 0.7}
+      - {word: "高兴", intensity: 0.5}
+      - {word: "开心", intensity: 0.4}
+      
+    "痛苦":
+      - {word: "难受", intensity: 0.7}
+      - {word: "不舒服", intensity: 0.5}
+      - {word: "不适", intensity: 0.3}
+
+# 增强模式配置
+enhancement_modes:
+  # 情感高潮增强
+  climax:
+    intensify_factor: 1.5
+    max_replacements: 5
+    min_confidence: 0.6
+    
+  # 情感低谷增强
+  valley:
+    intensify_factor: 1.4
+    max_replacements: 4
+    min_confidence: 0.65
+    
+  # 温和增强
+  mild:
+    intensify_factor: 1.2
+    max_replacements: 2
+    min_confidence: 0.75
+    
+  # 夸张增强
+  exaggerated:
+    intensify_factor: 1.7
+    max_replacements: 6
+    min_confidence: 0.5
+
+# 衰减模式配置
+reduction_modes:
+  # 轻度衰减
+  light:
+    reduce_factor: 0.8
+    max_replacements: 2
+    
+  # 中度衰减
+  medium:
+    reduce_factor: 0.6
+    max_replacements: 3
+    
+  # 强烈衰减
+  strong:
+    reduce_factor: 0.4
+    max_replacements: 4
+    
+  # 几乎中性
+  neutral:
+    reduce_factor: 0.3
+    max_replacements: 5 

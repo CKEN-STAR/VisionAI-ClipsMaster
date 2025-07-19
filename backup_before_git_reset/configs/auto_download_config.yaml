@@ -1,0 +1,26 @@
+# VisionAI-ClipsMaster 自动下载配置
+# 此文件用于控制模型自动下载行为
+
+auto_download:
+  enabled: true  # 设置为true启用自动下载
+  show_download_prompts: true  # 设置为true启用下载提示对话框
+  use_mock_ai_when_missing: false  # 设置为false在模型缺失时不使用Mock AI
+
+# Mock AI 配置
+mock_ai:
+  enabled: true
+  show_mock_warnings: true  # 显示Mock AI模式警告
+  
+# 模型路径配置
+models:
+  qwen:
+    base_path: "models/models/qwen/base"
+    quantized_path: "models/models/qwen/quantized"
+  mistral:
+    base_path: "models/mistral/base"
+    quantized_path: "models/mistral/quantized"
+
+# 日志配置
+logging:
+  log_model_status: true
+  log_mock_ai_usage: true

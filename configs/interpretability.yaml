@@ -1,0 +1,111 @@
+# 解释性分析模块配置文件
+# 包含解释性分析所需的所有参数设置
+
+# 模型配置
+models:
+  # 使用哪个模型作为解释器
+  explainer_model: "zh"  # 可选值: "zh" (中文模型), "en" (英文模型), "auto" (自动选择)
+  # 是否使用轻量级模型 (低资源环境)
+  use_lightweight: true
+  # 最大输出长度
+  max_output_length: 200
+  # 解释器温度参数
+  temperature: 0.1
+  # 规则引擎权重比例 (vs 模型输出)
+  rule_weight: 0.6
+
+# 解释器设置
+explainer:
+  # 解释详细程度
+  detail_level: "medium"  # 可选值: "simple", "medium", "detailed"
+  # 是否添加数据分析
+  include_data_analysis: true
+  # 多少指标差异需要解释
+  metric_delta_threshold: 0.15
+  # 解释时是否引用历史数据
+  reference_historical: true
+  # 解释模板格式
+  template_format: "default"  # 可选值: "default", "professional", "casual"
+  # 缓存设置
+  cache_explanations: true
+  cache_ttl: 3600  # 秒
+
+# 解释提示模板
+prompts:
+  # 基础解释提示
+  basic: "解释为什么该模式{pattern}能提升用户留存率和传播率"
+  # 针对不同模式类型的特定提示
+  pattern_types:
+    opening: "解释为什么这种开场模式{pattern}能吸引用户注意"
+    climax: "解释为什么这种高潮模式{pattern}能引起情感共鸣"
+    transition: "解释为什么这种转场模式{pattern}能维持用户兴趣"
+    conflict: "解释为什么这种冲突模式{pattern}能增加叙事张力"
+    resolution: "解释为什么这种解决模式{pattern}能提供情感满足"
+    ending: "解释为什么这种结尾模式{pattern}能留下深刻印象"
+  # 针对不同指标的解释提示
+  metrics:
+    audience_retention: "解释该模式如何提高观众留存率"
+    viral_coefficient: "解释该模式如何提高社交传播系数"
+    recommendation_weight: "解释该模式如何影响推荐系统权重"
+    emotional_intensity: "解释该模式如何强化情感体验"
+    narrative_coherence: "解释该模式如何增强叙事连贯性"
+
+# 可视化设置
+visualization:
+  # 是否启用可视化解释
+  enabled: true
+  # 图表类型
+  chart_type: "radar"  # 可选值: "radar", "bar", "bubble"
+  # 高亮特征
+  highlight_top_features: true
+  # 颜色设置
+  colors:
+    positive: "#4CAF50"
+    neutral: "#2196F3"
+    negative: "#F44336"
+    highlight: "#FFC107"
+
+# 与其他模块集成
+integration:
+  # 与用户界面集成
+  ui:
+    show_explanations: true
+    interactive_mode: true
+    explanation_position: "sidebar"  # 可选值: "sidebar", "tooltip", "modal"
+  
+  # 与评估模块集成
+  evaluation:
+    auto_explain_top_patterns: true
+    explain_threshold: 0.7  # 只解释超过此影响力分数的模式
+  
+  # 与剧本工程师集成
+  screenplay_engineer:
+    explain_chosen_patterns: true
+
+# 备用规则引擎配置
+fallback_rules:
+  # 针对不同类型模式的规则
+  pattern_types:
+    opening:
+      - "位于视频开头能迅速吸引观众注意力"
+      - "强烈的情感刺激能在开场阶段建立观众兴趣"
+    climax:
+      - "在黄金位置(视频60-80%)出现的高潮模式效果最佳"
+      - "情感强度高的高潮场景能引发观众共鸣与分享"
+    transition:
+      - "良好的转场模式能维持观众注意力，减少跳出率"
+    conflict:
+      - "冲突场景能增加叙事紧张感，提高观众期待"
+    ending:
+      - "强烈的结尾能留下深刻印象，提高再观看率"
+
+  # 针对高影响力特征的规则
+  features:
+    high_frequency:
+      - "出现频率高的模式通常在爆款视频中被反复验证有效"
+    high_sentiment:
+      - "强烈情感能引发观众情绪共鸣，提高分享率"
+    high_surprise:
+      - "惊喜元素能增加作品记忆点，提高传播率"
+    strong_conflict:
+      - "冲突能形成叙事张力，维持观众注意力" 

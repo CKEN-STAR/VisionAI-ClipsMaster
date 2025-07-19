@@ -1,0 +1,38 @@
+{
+    "memory_pressure_model_load": {
+        "pattern": ["memory_pressure", "model_loading"],
+        "time_window": 300,
+        "confidence": 0.8,
+        "description": "模型加载前后的内存压力变化"
+    },
+    "cache_miss_model_inference": {
+        "pattern": ["cache_miss", "model_inference", "memory_allocation"],
+        "time_window": 60,
+        "confidence": 0.7,
+        "description": "缓存失效导致的模型推理和内存分配"
+    },
+    "system_freeze_memory_pressure": {
+        "pattern": ["memory_pressure", "system_freeze", "hardware_interrupt"],
+        "time_window": 180,
+        "confidence": 0.9,
+        "description": "内存压力导致的系统冻结和硬件中断"
+    },
+    "model_load_unload_sequence": {
+        "pattern": ["model_loading", "model_inference", "model_unloading"],
+        "time_window": 600,
+        "confidence": 0.75,
+        "description": "模型加载、推理和卸载的完整序列"
+    },
+    "cache_eviction_chain": {
+        "pattern": ["cache_eviction", "cache_miss", "memory_allocation"],
+        "time_window": 120,
+        "confidence": 0.65,
+        "description": "缓存淘汰引起的缓存未命中和内存分配链"
+    },
+    "temperature_memory_chain": {
+        "pattern": ["temperature_high", "memory_pressure", "system_freeze"],
+        "time_window": 300,
+        "confidence": 0.85,
+        "description": "高温引起的内存压力和系统冻结序列"
+    }
+} 

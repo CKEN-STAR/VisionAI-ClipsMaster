@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jianying_project version="3.0.0">
+  <nested_sequence id="nested_001" name="场景1" duration="00:00:30.000">
+    <track id="nested_track_1" type="video"/>
+  </nested_sequence>
+  <info>
+    <metadata>
+      <jy_type>project</jy_type>
+      <project_id>project_001</project_id>
+      <title>示例项目</title>
+    </metadata>
+    <project_settings>
+      <resolution width="1920" height="1080"/>
+      <frame_rate>30</frame_rate>
+    </project_settings>
+  </info>
+  <resources/>
+  <timeline id="timeline_001" duration="00:01:00.000">
+    <track id="video_track_1" type="video"/>
+    <track id="video_track_2" type="video"/>
+    <track id="audio_track_1" type="audio"/>
+    <track id="audio_track_2" type="audio"/>
+    <subtitle_track id="subtitle_track_1" language="zh-CN"/>
+    <effects_track id="effects_track_1"/>
+  </timeline>
+</jianying_project>

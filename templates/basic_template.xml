@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+  <info>
+    <metadata>
+      <title>基础项目模板</title>
+      <creator>VisionAI-ClipsMaster</creator>
+      <description>兼容性最好的基础项目模板</description>
+    </metadata>
+    <project_settings>
+      <resolution width="1280" height="720"/>
+      <frame_rate>30</frame_rate>
+    </project_settings>
+  </info>
+  <resources/>
+  <timeline id="main_timeline" duration="00:00:00.000"/>
+</project> 

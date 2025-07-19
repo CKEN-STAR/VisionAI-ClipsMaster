@@ -1,0 +1,155 @@
+{
+  "3.0.0": {
+    "required_nodes": [
+      "info/metadata",
+      "info/metadata/title",
+      "info/metadata/creator",
+      "info/project_settings",
+      "info/project_settings/resolution",
+      "info/project_settings/frame_rate",
+      "resources",
+      "timeline"
+    ],
+    "default_values": {
+      "info/metadata/title": "未命名项目",
+      "info/metadata/creator": "VisionAI-ClipsMaster",
+      "info/project_settings/resolution": {
+        "width": "3840",
+        "height": "2160"
+      },
+      "info/project_settings/frame_rate": "30"
+    },
+    "required_attributes": {
+      "timeline": {
+        "id": "main_timeline",
+        "duration": "00:00:00.000"
+      },
+      "info/project_settings/resolution": {
+        "width": "3840",
+        "height": "2160"
+      }
+    },
+    "supported_features": [
+      "4k_resolution",
+      "hdr",
+      "nested_sequences",
+      "effects_layers",
+      "keyframes",
+      "3d_effects",
+      "color_grading",
+      "audio_effects",
+      "multi_track"
+    ]
+  },
+  "2.9.5": {
+    "required_nodes": [
+      "info/metadata",
+      "info/metadata/title",
+      "info/project_settings",
+      "info/project_settings/resolution",
+      "info/project_settings/frame_rate",
+      "resources",
+      "timeline"
+    ],
+    "default_values": {
+      "info/metadata/title": "未命名项目",
+      "info/project_settings/resolution": {
+        "width": "1920",
+        "height": "1080"
+      },
+      "info/project_settings/frame_rate": "30"
+    },
+    "required_attributes": {
+      "timeline": {
+        "id": "main_timeline",
+        "duration": "00:00:00.000"
+      },
+      "info/project_settings/resolution": {
+        "width": "1920",
+        "height": "1080"
+      }
+    },
+    "unsupported_nodes": [
+      ".//nested_sequence",
+      ".//4K",
+      ".//color_space[@hdr='true']"
+    ],
+    "supported_features": [
+      "hd_resolution",
+      "effects_layers",
+      "keyframes",
+      "transition_effects",
+      "multi_track"
+    ]
+  },
+  "2.5.0": {
+    "required_nodes": [
+      "info/metadata",
+      "info/metadata/title",
+      "info/project_settings",
+      "info/project_settings/resolution",
+      "resources",
+      "timeline"
+    ],
+    "default_values": {
+      "info/metadata/title": "未命名项目",
+      "info/project_settings/resolution": {
+        "width": "1920",
+        "height": "1080"
+      },
+      "info/project_settings/frame_rate": "30"
+    },
+    "required_attributes": {
+      "timeline": {
+        "id": "main_timeline",
+        "duration": "00:00:00.000"
+      }
+    },
+    "unsupported_nodes": [
+      ".//nested_sequence",
+      ".//4K",
+      ".//effects_track",
+      ".//color_space[@hdr='true']"
+    ],
+    "supported_features": [
+      "hd_resolution",
+      "multi_track",
+      "basic_effects"
+    ]
+  },
+  "2.0.0": {
+    "required_nodes": [
+      "info/metadata",
+      "info/metadata/title",
+      "info/project_settings",
+      "info/project_settings/resolution",
+      "resources",
+      "timeline"
+    ],
+    "default_values": {
+      "info/metadata/title": "未命名项目",
+      "info/project_settings/resolution": {
+        "width": "1280",
+        "height": "720"
+      }
+    },
+    "required_attributes": {
+      "timeline": {
+        "id": "main_timeline",
+        "duration": "00:00:00.000"
+      }
+    },
+    "unsupported_nodes": [
+      ".//nested_sequence",
+      ".//4K",
+      ".//effects_track",
+      ".//keyframe",
+      ".//color_space[@hdr='true']",
+      ".//audio_effect"
+    ],
+    "supported_features": [
+      "sd_resolution",
+      "basic_tracks"
+    ]
+  }
+} 

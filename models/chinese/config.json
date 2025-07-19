@@ -1,0 +1,39 @@
+{
+  "model_name": "Qwen2.5-7B-Chat",
+  "model_type": "qwen",
+  "version": "2.5",
+  "size": "7B",
+  "is_chat_model": true,
+  "language": "zh",
+  "quantization": "4bit",
+  "context_length": 8192,
+  "parameters": {
+    "temperature": 0.7,
+    "top_p": 0.9,
+    "repetition_penalty": 1.1,
+    "max_tokens": 4096
+  },
+  "paths": {
+    "base_model": "models/qwen/base",
+    "quantized_model": "models/qwen/quantized",
+    "tokenizer": "models/qwen/tokenizer"
+  },
+  "hardware_requirements": {
+    "min_ram": "4GB",
+    "recommended_ram": "8GB",
+    "gpu_required": false,
+    "min_vram": null,
+    "recommended_vram": "4GB"
+  },
+  "performance": {
+    "tokens_per_second_cpu": 5.2,
+    "tokens_per_second_gpu": 25.7,
+    "loading_time_seconds": 12.5
+  },
+  "meta": {
+    "description": "Qwen2.5-7B-Chat 是阿里云开源的中文LLM，适用于生成生动脚本。",
+    "license": "Tongyi Qianwen License",
+    "compatible_with": ["GGUF"],
+    "last_updated": "2024-05-18"
+  }
+} 

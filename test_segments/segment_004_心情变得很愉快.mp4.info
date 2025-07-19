@@ -1,0 +1,15 @@
+# VisionAI-ClipsMaster 视频片段
+# 这是一个占位符文件，实际项目中将包含真实的视频内容
+
+片段信息:
+- 片段ID: 4
+- 文件名: segment_004_心情变得很愉快.mp4
+- 开始时间: 0秒
+- 结束时间: 0秒
+- 时长: 0秒
+- 字幕内容: 心情变得很愉快
+- 分辨率: 1920x1080
+- 编码: H.264
+
+# 实际实现中的FFmpeg命令示例:
+# ffmpeg -i input_video.mp4 -ss 0 -t 0 -c copy "test_segments\segment_004_心情变得很愉快.mp4"

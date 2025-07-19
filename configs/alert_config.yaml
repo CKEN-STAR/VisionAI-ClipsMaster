@@ -1,0 +1,110 @@
+# VisionAI-ClipsMaster 预警系统配置
+
+# 各资源的预警阈值配置
+thresholds:
+  # 内存相关阈值（百分比）
+  memory:
+    warning: 80    # 内存使用率80%触发警告
+    error: 90      # 内存使用率90%触发错误
+    critical: 95   # 内存使用率95%触发严重错误
+  
+  # CPU相关阈值（百分比）
+  cpu:
+    warning: 85    # CPU使用率85%触发警告
+    error: 95      # CPU使用率95%触发错误
+    critical: 98   # CPU使用率98%触发严重错误
+  
+  # 模型响应延迟阈值（毫秒）
+  model_latency:
+    warning: 2000  # 2秒
+    error: 5000    # 5秒
+    critical: 10000 # 10秒
+  
+  # 视频处理延迟阈值（毫秒）
+  video_processing:
+    warning: 5000  # 5秒
+    error: 15000   # 15秒
+    critical: 30000 # 30秒
+  
+  # 缓存命中率下限（百分比）
+  cache_hit_rate:
+    warning: 50    # 低于50%触发警告
+    error: 30      # 低于30%触发错误
+    critical: 10   # 低于10%触发严重错误
+  
+  # SRT解析错误计数阈值
+  srt_errors:
+    warning: 3     # 3个错误触发警告
+    error: 10      # 10个错误触发错误
+    critical: 20   # 20个错误触发严重错误
+
+# 各级别预警的处理动作
+actions:
+  warning:   # 警告级别
+    - log                # 记录日志
+    - ui_notify          # UI通知
+  
+  error:     # 错误级别
+    - log                # 记录日志
+    - ui_notify          # UI通知
+    - user_alert         # 用户通知
+  
+  critical:  # 严重级别
+    - log                # 记录日志
+    - ui_notify          # UI通知
+    - user_alert         # 用户通知
+    - emergency_save     # 紧急保存
+    - resource_release   # 释放资源
+
+# UI通知相关配置
+ui_notification:
+  enabled: true
+  duration:              # 通知显示时间（秒）
+    warning: 5
+    error: 10
+    critical: 30
+  position: "bottom-right" # 通知显示位置
+
+# 日志相关配置
+log_options:
+  enabled: true
+  max_log_size: 10       # MB
+  rotation_count: 5      # 最多保留5个日志文件
+
+# 预警升级机制配置
+escalation:
+  enabled: true          # 是否启用预警升级机制
+  max_consecutive_warnings: 5  # 连续警告次数超过此值升级为错误
+  max_consecutive_errors: 3    # 连续错误次数超过此值升级为严重错误
+
+# 预警冷却期配置（秒）
+cooldown_periods:
+  info: 60               # 信息级别冷却期
+  warning: 300           # 警告级别冷却期
+  error: 600             # 错误级别冷却期
+  critical: 60           # 严重级别冷却期
+
+# 自动性能优化策略
+auto_optimization:
+  enabled: true
+  memory_reduction_strategies:  # 内存减少策略
+    - unload_inactive_models    # 卸载非活动模型
+    - clear_cache               # 清理缓存
+    - reduce_quantization_level # 降低量化级别
+  
+  cpu_reduction_strategies:     # CPU减少策略
+    - stop_background_tasks     # 停止后台任务
+    - reduce_thread_count       # 减少线程数
+    - lower_priority            # 降低进程优先级
+
+# 特定于中文模型的预警配置
+qwen_model:
+  max_latency_ms: 12000         # 最大允许延迟（毫秒）
+  min_tokens_per_second: 5      # 最小生成速度（每秒token数）
+  max_memory_usage_gb: 3.5      # 最大内存使用（GB）
+
+# 特定于英文模型的预警配置（保留配置但暂不使用）
+mistral_model:
+  max_latency_ms: 10000         # 最大允许延迟（毫秒）
+  min_tokens_per_second: 6      # 最小生成速度（每秒token数）
+  max_memory_usage_gb: 3.5      # 最大内存使用（GB） 

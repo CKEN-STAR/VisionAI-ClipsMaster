@@ -1,0 +1,67 @@
+{
+    "version": "3.0.0",
+    "release_date": "2023-10-15",
+    "supported_features": [
+        "advanced_transitions",
+        "timeline_markers",
+        "intelligent_cropping",
+        "3d_text",
+        "multi_track_export",
+        "high_quality_rendering",
+        "advanced_effects",
+        "smart_trim",
+        "audio_enhancement",
+        "background_removal"
+    ],
+    "feature_config": {
+        "advanced_transitions": {
+            "enabled": true,
+            "max_duration": 10.0,
+            "available_presets": [
+                "fade",
+                "dissolve",
+                "wipe",
+                "slide",
+                "push",
+                "zoom",
+                "advanced_3d",
+                "custom_motion"
+            ]
+        },
+        "timeline_markers": {
+            "enabled": true,
+            "max_markers": 100,
+            "categories": [
+                "comment",
+                "chapter",
+                "error",
+                "highlight",
+                "custom"
+            ]
+        },
+        "intelligent_cropping": {
+            "enabled": true,
+            "ai_models": ["face_detection", "object_tracking", "scene_detection"],
+            "max_tracked_objects": 10
+        },
+        "3d_text": {
+            "enabled": true,
+            "max_complexity": "high",
+            "materials": ["metal", "glass", "plastic", "fabric", "custom"]
+        },
+        "multi_track_export": {
+            "enabled": true,
+            "max_tracks": 32,
+            "formats": ["wav", "mp3", "aac", "flac"]
+        }
+    },
+    "compatibility": {
+        "min_compatible_version": "2.5.0",
+        "max_compatible_version": "3.5.0"
+    },
+    "deprecated_features": [],
+    "metadata": {
+        "description": "全功能版本，支持所有高级特性",
+        "created_by": "VisionAI团队"
+    }
+} 

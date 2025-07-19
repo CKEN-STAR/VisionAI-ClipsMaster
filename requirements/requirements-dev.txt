@@ -1,0 +1,195 @@
+# VisionAI-ClipsMaster 开发依赖
+# 包含所有开发、测试、文档生成所需的依赖
+
+# 基础依赖
+-r requirements.txt
+
+# 测试框架
+pytest>=7.4.0
+pytest-cov>=4.1.0
+pytest-mock>=3.11.0
+pytest-xdist>=3.3.0
+pytest-asyncio>=0.21.0
+pytest-benchmark>=4.0.0
+pytest-html>=3.2.0
+pytest-json-report>=1.5.0
+
+# 代码质量工具
+flake8>=6.0.0
+black>=23.0.0
+isort>=5.12.0
+mypy>=1.5.0
+pylint>=2.17.0
+bandit>=1.7.5
+safety>=2.3.0
+
+# 代码格式化
+autopep8>=2.0.0
+yapf>=0.40.0
+
+# 类型检查
+mypy>=1.5.0
+types-PyYAML>=6.0.0
+types-requests>=2.31.0
+types-setuptools>=68.0.0
+
+# 文档生成
+sphinx>=7.0.0
+sphinx-rtd-theme>=1.3.0
+sphinx-autodoc-typehints>=1.24.0
+myst-parser>=2.0.0
+sphinx-copybutton>=0.5.2
+
+# 性能分析
+memory-profiler>=0.61.0
+line-profiler>=4.0.0
+py-spy>=0.3.14
+pympler>=0.9
+objgraph>=3.6.0
+
+# 调试工具
+ipdb>=0.13.13
+pdb-clone>=3.0.0
+pudb>=2022.1.3
+
+# 开发工具
+pre-commit>=3.3.0
+commitizen>=3.6.0
+bumpversion>=0.6.0
+twine>=4.0.0
+
+# 依赖管理
+pip-tools>=7.0.0
+pipdeptree>=2.13.0
+pip-audit>=2.6.0
+
+# 环境管理
+virtualenv>=20.24.0
+pipenv>=2023.7.0
+poetry>=1.5.0
+
+# 构建工具
+build>=0.10.0
+setuptools>=68.0.0
+wheel>=0.41.0
+
+# 打包工具
+pyinstaller>=5.13.0
+cx-freeze>=6.15.0
+nuitka>=1.7.0
+
+# 配置管理
+python-dotenv>=1.0.0
+dynaconf>=3.2.0
+
+# 数据生成（测试用）
+faker>=19.0.0
+factory-boy>=3.3.0
+
+# HTTP测试
+responses>=0.23.0
+httpx>=0.24.0
+aiohttp>=3.8.0
+
+# 模拟和存根
+mock>=5.1.0
+pytest-mock>=3.11.0
+freezegun>=1.2.0
+
+# 并发测试
+pytest-xdist>=3.3.0
+pytest-parallel>=0.1.1
+
+# 覆盖率报告
+coverage>=7.2.0
+pytest-cov>=4.1.0
+codecov>=2.1.13
+
+# 基准测试
+pytest-benchmark>=4.0.0
+asv>=0.6.0
+
+# 静态分析
+vulture>=2.9.0
+radon>=6.0.0
+xenon>=0.9.0
+
+# 安全检查
+bandit>=1.7.5
+safety>=2.3.0
+semgrep>=1.34.0
+
+# 依赖检查
+pip-audit>=2.6.0
+cyclonedx-bom>=4.0.0
+
+# 许可证检查
+licensecheck>=2023.1.1
+
+# Git钩子
+pre-commit>=3.3.0
+gitpython>=3.1.32
+
+# 项目模板
+cookiecutter>=2.2.0
+
+# 数据库（如果需要）
+sqlite3>=2.6.0
+
+# 序列化
+pickle>=4.0
+dill>=0.3.7
+
+# 时间和日期
+freezegun>=1.2.0
+python-dateutil>=2.8.0
+
+# 网络测试
+responses>=0.23.0
+betamax>=0.8.1
+
+# 文件系统测试
+pyfakefs>=5.2.0
+
+# 环境变量测试
+pytest-env>=0.8.2
+
+# 临时文件
+pytest-tmp-path>=0.1.0
+
+# 日志测试
+pytest-logging>=2016.11.4
+
+# 并行处理测试
+pytest-xdist>=3.3.0
+
+# 内存泄漏检测
+pympler>=0.9
+tracemalloc>=1.0
+
+# 代码复杂度
+mccabe>=0.7.0
+cognitive-complexity>=1.3.0
+
+# 导入排序
+isort>=5.12.0
+reorder-python-imports>=3.10.0
+
+# 文档字符串
+pydocstyle>=6.3.0
+darglint>=1.8.1
+
+# 注释检查
+eradicate>=2.3.0
+
+# 死代码检测
+vulture>=2.9.0
+unimport>=0.16.0
+
+# 配置文件验证
+yamllint>=1.32.0
+jsonschema>=4.19.0
+
+# 开发服务器
+watchdog>=3.0.0
+livereload>=2.6.3

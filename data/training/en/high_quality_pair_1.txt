@@ -1,0 +1,11 @@
+ORIGINAL: The detective examines the crime scene carefully and finds a small clue that everyone else missed.
+
+VIRAL: SHOCKING! This tiny clue will BLOW YOUR MIND! You won't believe how it changes EVERYTHING! The most INCREDIBLE plot twist ever!
+
+METADATA:
+- Language: English
+- Genre: Mystery
+- Difficulty: Easy
+- Quality Score: 0.90
+- Created: 2025-07-18
+- Source: High Quality Training

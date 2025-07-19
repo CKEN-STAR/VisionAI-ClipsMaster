@@ -1,0 +1,11 @@
+ORIGINAL: The protagonist enters the room and has a normal conversation with another character.
+
+VIRAL: SHOCKING! You won't believe what happens next! This conversation will change EVERYTHING!
+
+METADATA:
+- Language: English
+- Genre: Drama
+- Difficulty: Easy
+- Quality Score: 0.80
+- Created: 2025-07-18
+- Source: Training Sample

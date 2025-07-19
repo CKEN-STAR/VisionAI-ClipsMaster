@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<project version="1.0">
+  <video_settings width="1920" height="1080" fps="29.97" />
+  <audio_settings sample_rate="48000" bit_depth="24" channels="2" />
+  <timecode format="NDF" frames="0">00:00:00:00</timecode>
+  <invalid_settings width="-100" duration="abc" />
+</project>

@@ -1,0 +1,86 @@
+{
+    "version": "1.0",
+    "description": "API性能监控配置",
+    "settings": {
+        "enabled": true,
+        "retention_days": 30,
+        "prometheus_enabled": true,
+        "sample_interval_ms": 100,
+        "high_latency_threshold_ms": 1000,
+        "critical_latency_threshold_ms": 3000,
+        "memory_warning_threshold_percent": 75,
+        "memory_critical_threshold_percent": 90,
+        "cpu_warning_threshold_percent": 75,
+        "cpu_critical_threshold_percent": 90,
+        "error_rate_warning_threshold": 0.05,
+        "error_rate_critical_threshold": 0.10
+    },
+    "alerts": {
+        "enabled": true,
+        "channels": [
+            {
+                "type": "log",
+                "enabled": true
+            },
+            {
+                "type": "email",
+                "enabled": false,
+                "recipients": ["admin@example.com"],
+                "subject_prefix": "[VisionAI-ClipsMaster警报]"
+            }
+        ],
+        "rules": [
+            {
+                "name": "high_latency",
+                "description": "API响应时间过长",
+                "condition": "latency > settings.high_latency_threshold_ms",
+                "severity": "warning"
+            },
+            {
+                "name": "critical_latency",
+                "description": "API响应时间严重延迟",
+                "condition": "latency > settings.critical_latency_threshold_ms",
+                "severity": "critical"
+            },
+            {
+                "name": "high_error_rate",
+                "description": "API错误率过高",
+                "condition": "error_rate > settings.error_rate_warning_threshold",
+                "severity": "warning"
+            },
+            {
+                "name": "memory_high",
+                "description": "内存使用率过高",
+                "condition": "memory_percent > settings.memory_warning_threshold_percent",
+                "severity": "warning"
+            },
+            {
+                "name": "memory_critical",
+                "description": "内存使用率严重",
+                "condition": "memory_percent > settings.memory_critical_threshold_percent",
+                "severity": "critical"
+            }
+        ]
+    },
+    "influxdb": {
+        "enabled": false,
+        "url": "http://localhost:8086",
+        "token": "your-influxdb-token",
+        "org": "visionai",
+        "bucket": "api_metrics",
+        "batch_size": 50,
+        "flush_interval_seconds": 10
+    },
+    "grafana_dashboard": {
+        "url": "http://localhost:3000/d/api-performance/api-performance-dashboard",
+        "enabled": false,
+        "auto_provision": false
+    },
+    "export": {
+        "auto_export_enabled": true,
+        "interval_hours": 24,
+        "format": "json",
+        "retention_count": 30,
+        "path": "logs/exports/daily"
+    }
+} 

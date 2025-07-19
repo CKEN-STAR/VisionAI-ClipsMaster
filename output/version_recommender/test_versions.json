@@ -1,0 +1,296 @@
+[
+  {
+    "version_id": "v1",
+    "title": "情感强烈版",
+    "scenes": [
+      {
+        "scene_id": "s1",
+        "text": "版本1的场景1",
+        "start_time": 0,
+        "emotion_score": 0.0
+      },
+      {
+        "scene_id": "s2",
+        "text": "版本1的场景2",
+        "start_time": 5,
+        "emotion_score": 0.45254833995939053
+      },
+      {
+        "scene_id": "s3",
+        "text": "版本1的场景3",
+        "start_time": 10,
+        "emotion_score": 0.6400000000000001
+      },
+      {
+        "scene_id": "s4",
+        "text": "版本1的场景4",
+        "start_time": 15,
+        "emotion_score": 0.45254833995939053
+      },
+      {
+        "scene_id": "s5",
+        "text": "版本1的场景5",
+        "start_time": 20,
+        "emotion_score": 7.837739514543062e-17
+      },
+      {
+        "scene_id": "s6",
+        "text": "版本1的场景6",
+        "start_time": 25,
+        "emotion_score": -0.4525483399593904
+      },
+      {
+        "scene_id": "s7",
+        "text": "版本1的场景7",
+        "start_time": 30,
+        "emotion_score": -0.6400000000000001
+      },
+      {
+        "scene_id": "s8",
+        "text": "版本1的场景8",
+        "start_time": 35,
+        "emotion_score": -0.45254833995939014
+      },
+      {
+        "scene_id": "s9",
+        "text": "版本1的场景9",
+        "start_time": 40,
+        "emotion_score": -1.5675479029086123e-16
+      },
+      {
+        "scene_id": "s10",
+        "text": "版本1的场景10",
+        "start_time": 45,
+        "emotion_score": 0.45254833995939037
+      },
+      {
+        "scene_id": "s11",
+        "text": "版本1的场景11",
+        "start_time": 50,
+        "emotion_score": 0.6400000000000001
+      },
+      {
+        "scene_id": "s12",
+        "text": "版本1的场景12",
+        "start_time": 55,
+        "emotion_score": 0.452548339959391
+      }
+    ],
+    "name": "情感强烈版",
+    "genre_score": 0.3,
+    "length_score": 0.7,
+    "emotion_intensity": 0.8,
+    "device_optimization": 0.8,
+    "viewing_time_optimization": 0.6
+  },
+  {
+    "version_id": "v2",
+    "title": "简洁精华版",
+    "scenes": [
+      {
+        "scene_id": "s1",
+        "text": "版本2的场景1",
+        "start_time": 0,
+        "emotion_score": -0.2
+      },
+      {
+        "scene_id": "s2",
+        "text": "版本2的场景2",
+        "start_time": 5,
+        "emotion_score": -0.125
+      },
+      {
+        "scene_id": "s3",
+        "text": "版本2的场景3",
+        "start_time": 10,
+        "emotion_score": -0.04999999999999999
+      },
+      {
+        "scene_id": "s4",
+        "text": "版本2的场景4",
+        "start_time": 15,
+        "emotion_score": 0.025000000000000022
+      },
+      {
+        "scene_id": "s5",
+        "text": "版本2的场景5",
+        "start_time": 20,
+        "emotion_score": 0.10000000000000003
+      },
+      {
+        "scene_id": "s6",
+        "text": "版本2的场景6",
+        "start_time": 25,
+        "emotion_score": 0.175
+      },
+      {
+        "scene_id": "s7",
+        "text": "版本2的场景7",
+        "start_time": 30,
+        "emotion_score": 0.25000000000000006
+      },
+      {
+        "scene_id": "s8",
+        "text": "版本2的场景8",
+        "start_time": 35,
+        "emotion_score": 0.325
+      }
+    ],
+    "name": "简洁精华版",
+    "genre_score": 0.5,
+    "length_score": 0.3,
+    "emotion_intensity": 0.4,
+    "device_optimization": 0.2,
+    "viewing_time_optimization": 0.4
+  },
+  {
+    "version_id": "v3",
+    "title": "标准平衡版",
+    "scenes": [
+      {
+        "scene_id": "s1",
+        "text": "版本3的场景1",
+        "start_time": 0,
+        "emotion_score": 0.0
+      },
+      {
+        "scene_id": "s2",
+        "text": "版本3的场景2",
+        "start_time": 5,
+        "emotion_score": 0.14694631307311828
+      },
+      {
+        "scene_id": "s3",
+        "text": "版本3的场景3",
+        "start_time": 10,
+        "emotion_score": 0.23776412907378838
+      },
+      {
+        "scene_id": "s4",
+        "text": "版本3的场景4",
+        "start_time": 15,
+        "emotion_score": 0.2377641290737884
+      },
+      {
+        "scene_id": "s5",
+        "text": "版本3的场景5",
+        "start_time": 20,
+        "emotion_score": 0.1469463130731183
+      },
+      {
+        "scene_id": "s6",
+        "text": "版本3的场景6",
+        "start_time": 25,
+        "emotion_score": 3.061616997868383e-17
+      },
+      {
+        "scene_id": "s7",
+        "text": "版本3的场景7",
+        "start_time": 30,
+        "emotion_score": -0.14694631307311826
+      },
+      {
+        "scene_id": "s8",
+        "text": "版本3的场景8",
+        "start_time": 35,
+        "emotion_score": -0.23776412907378838
+      },
+      {
+        "scene_id": "s9",
+        "text": "版本3的场景9",
+        "start_time": 40,
+        "emotion_score": -0.2377641290737884
+      },
+      {
+        "scene_id": "s10",
+        "text": "版本3的场景10",
+        "start_time": 45,
+        "emotion_score": -0.14694631307311834
+      }
+    ],
+    "name": "标准平衡版",
+    "genre_score": 0.5,
+    "length_score": 0.5,
+    "emotion_intensity": 0.5,
+    "device_optimization": 0.5,
+    "viewing_time_optimization": 0.5
+  },
+  {
+    "version_id": "v4",
+    "title": "叙事深度版",
+    "scenes": [
+      {
+        "scene_id": "s1",
+        "text": "版本4的场景1",
+        "start_time": 0,
+        "emotion_score": -0.3
+      },
+      {
+        "scene_id": "s2",
+        "text": "版本4的场景2",
+        "start_time": 5,
+        "emotion_score": -0.2955371900826446
+      },
+      {
+        "scene_id": "s3",
+        "text": "版本4的场景3",
+        "start_time": 10,
+        "emotion_score": -0.2821487603305785
+      },
+      {
+        "scene_id": "s4",
+        "text": "版本4的场景4",
+        "start_time": 15,
+        "emotion_score": -0.25983471074380166
+      },
+      {
+        "scene_id": "s5",
+        "text": "版本4的场景5",
+        "start_time": 20,
+        "emotion_score": -0.22859504132231404
+      },
+      {
+        "scene_id": "s6",
+        "text": "版本4的场景6",
+        "start_time": 25,
+        "emotion_score": -0.18842975206611573
+      },
+      {
+        "scene_id": "s7",
+        "text": "版本4的场景7",
+        "start_time": 30,
+        "emotion_score": -0.13933884297520663
+      },
+      {
+        "scene_id": "s8",
+        "text": "版本4的场景8",
+        "start_time": 35,
+        "emotion_score": -0.08132231404958676
+      },
+      {
+        "scene_id": "s9",
+        "text": "版本4的场景9",
+        "start_time": 40,
+        "emotion_score": -0.014380165289256175
+      },
+      {
+        "scene_id": "s10",
+        "text": "版本4的场景10",
+        "start_time": 45,
+        "emotion_score": 0.06148760330578518
+      },
+      {
+        "scene_id": "s11",
+        "text": "版本4的场景11",
+        "start_time": 50,
+        "emotion_score": 0.1462809917355371
+      }
+    ],
+    "name": "叙事深度版",
+    "genre_score": 0.7,
+    "length_score": 0.6,
+    "emotion_intensity": 0.3,
+    "device_optimization": 0.7,
+    "viewing_time_optimization": 0.7
+  }
+]

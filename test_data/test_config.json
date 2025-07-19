@@ -1,0 +1,13 @@
+{
+  "test_files": {
+    "chinese_srt": "test_data/chinese_test.srt",
+    "english_srt": "test_data/english_test.srt",
+    "viral_chinese_srt": "test_data/viral_chinese_test.srt"
+  },
+  "expected_results": {
+    "chinese_subtitle_count": 7,
+    "english_subtitle_count": 7,
+    "viral_chinese_subtitle_count": 6,
+    "total_duration_seconds": 21.0
+  }
+}
