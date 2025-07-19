@@ -234,6 +234,15 @@ tests/large_files/
 tests/golden_samples/*.mp4
 tests/golden_samples/*.avi
 
+# Specific large files that exceed GitHub limits
+test_data.bin
+data/test_data/test_model_params.pkl
+tests/golden_samples/zh/5.mp4
+tests/golden_samples/zh/7.mp4
+tests/golden_samples/zh/8.mp4
+tests/golden_samples/zh/9.mp4
+tools/ffmpeg/bin/ffplay.exe
+
 # Jupyter notebooks checkpoints
 .ipynb_checkpoints/
 
