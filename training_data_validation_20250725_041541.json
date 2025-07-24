@@ -1,0 +1,178 @@
+{
+  "timestamp": "2025-07-25T04:15:41.009115",
+  "validation_results": {
+    "english_data": {
+      "valid_pairs": 0,
+      "invalid_pairs": 7,
+      "total_files": 7,
+      "file_details": [
+        {
+          "file_name": "contaminated_sample.txt",
+          "language": "en",
+          "is_valid": false,
+          "pair_count": 0,
+          "issues": [
+            "字幕格式无效"
+          ]
+        },
+        {
+          "file_name": "high_quality_pair_1.txt",
+          "language": "en",
+          "is_valid": false,
+          "pair_count": 0,
+          "issues": [
+            "字幕格式无效"
+          ]
+        },
+        {
+          "file_name": "high_quality_pair_2.txt",
+          "language": "en",
+          "is_valid": false,
+          "pair_count": 0,
+          "issues": [
+            "字幕格式无效"
+          ]
+        },
+        {
+          "file_name": "high_quality_pair_3.txt",
+          "language": "en",
+          "is_valid": false,
+          "pair_count": 0,
+          "issues": [
+            "字幕格式无效"
+          ]
+        },
+        {
+          "file_name": "sample1.txt",
+          "language": "en",
+          "is_valid": false,
+          "pair_count": 0,
+          "issues": [
+            "字幕格式无效"
+          ]
+        },
+        {
+          "file_name": "sample2.txt",
+          "language": "en",
+          "is_valid": false,
+          "pair_count": 0,
+          "issues": [
+            "字幕格式无效"
+          ]
+        },
+        {
+          "file_name": "sample_training_pair.txt",
+          "language": "en",
+          "is_valid": false,
+          "pair_count": 0,
+          "issues": [
+            "字幕格式无效"
+          ]
+        }
+      ]
+    },
+    "chinese_data": {
+      "valid_pairs": 0,
+      "invalid_pairs": 9,
+      "total_files": 9,
+      "file_details": [
+        {
+          "file_name": "high_quality_pair_1.json",
+          "language": "zh",
+          "is_valid": false,
+          "pair_count": 0,
+          "issues": [
+            "JSON格式不符合训练数据要求"
+          ]
+        },
+        {
+          "file_name": "high_quality_pair_2.json",
+          "language": "zh",
+          "is_valid": false,
+          "pair_count": 0,
+          "issues": [
+            "JSON格式不符合训练数据要求"
+          ]
+        },
+        {
+          "file_name": "high_quality_pair_3.json",
+          "language": "zh",
+          "is_valid": false,
+          "pair_count": 0,
+          "issues": [
+            "JSON格式不符合训练数据要求"
+          ]
+        },
+        {
+          "file_name": "pair_1752312125_2679.json",
+          "language": "zh",
+          "is_valid": false,
+          "pair_count": 0,
+          "issues": [
+            "JSON格式不符合训练数据要求"
+          ]
+        },
+        {
+          "file_name": "sample_training_pair.json",
+          "language": "zh",
+          "is_valid": false,
+          "pair_count": 0,
+          "issues": [
+            "JSON格式不符合训练数据要求"
+          ]
+        },
+        {
+          "file_name": "training_data_20250708_092433.json",
+          "language": "zh",
+          "is_valid": false,
+          "pair_count": 0,
+          "issues": [
+            "JSON格式不符合训练数据要求"
+          ]
+        },
+        {
+          "file_name": "contaminated_sample.txt",
+          "language": "zh",
+          "is_valid": false,
+          "pair_count": 0,
+          "issues": [
+            "字幕格式无效"
+          ]
+        },
+        {
+          "file_name": "sample1.txt",
+          "language": "zh",
+          "is_valid": false,
+          "pair_count": 0,
+          "issues": [
+            "字幕格式无效"
+          ]
+        },
+        {
+          "file_name": "sample2.txt",
+          "language": "zh",
+          "is_valid": false,
+          "pair_count": 0,
+          "issues": [
+            "字幕格式无效"
+          ]
+        }
+      ]
+    },
+    "detailed_results": [],
+    "quality_metrics": {
+      "total_training_pairs": 16,
+      "valid_pairs": 0,
+      "invalid_pairs": 16,
+      "validity_rate": 0.0,
+      "data_quality_score": 30.0
+    }
+  },
+  "data_quality_metrics": {},
+  "recommendations": [
+    "数据有效性不足，建议检查和修复无效的训练数据对",
+    "整体数据质量偏低，建议增加高质量训练样本",
+    "缺少英文训练数据，建议添加英文原片→爆款字幕对",
+    "缺少中文训练数据，建议添加中文原片→爆款字幕对"
+  ]
+}

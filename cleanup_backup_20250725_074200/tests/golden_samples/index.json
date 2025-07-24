@@ -1,0 +1,116 @@
+{
+  "last_updated": "2025-05-08T20:33:29.853187",
+  "versions": {
+    "index_test_1.0.0": {
+      "path": "tests\\golden_samples\\output\\index_test_1.0.0",
+      "samples": [
+        "golden_sample_action_index_test_1_0_0",
+        "golden_sample_comedy_index_test_1_0_0",
+        "golden_sample_drama_index_test_1_0_0",
+        "golden_sample_family_index_test_1_0_0",
+        "golden_sample_historical_index_test_1_0_0",
+        "golden_sample_romance_index_test_1_0_0",
+        "golden_sample_sci-fi_index_test_1_0_0",
+        "golden_sample_thriller_index_test_1_0_0",
+        "golden_sample_wuxia_index_test_1_0_0",
+        "golden_sample_youth_index_test_1_0_0"
+      ],
+      "hashes": {
+        "video": "FILE_NOT_FOUND",
+        "xml": "FILE_NOT_FOUND"
+      }
+    }
+  },
+  "samples": {
+    "golden_sample_action_index_test_1_0_0": {
+      "id": "golden_sample_action_index_test_1_0_0",
+      "type": "action",
+      "files": {
+        "video": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_action_index_test_1_0_0.mp4",
+        "xml": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_action_index_test_1_0_0.mp4.xml",
+        "srt": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_action_index_test_1_0_0.srt"
+      }
+    },
+    "golden_sample_comedy_index_test_1_0_0": {
+      "id": "golden_sample_comedy_index_test_1_0_0",
+      "type": "comedy",
+      "files": {
+        "video": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_comedy_index_test_1_0_0.mp4",
+        "xml": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_comedy_index_test_1_0_0.mp4.xml",
+        "srt": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_comedy_index_test_1_0_0.srt"
+      }
+    },
+    "golden_sample_drama_index_test_1_0_0": {
+      "id": "golden_sample_drama_index_test_1_0_0",
+      "type": "drama",
+      "files": {
+        "video": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_drama_index_test_1_0_0.mp4",
+        "xml": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_drama_index_test_1_0_0.mp4.xml",
+        "srt": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_drama_index_test_1_0_0.srt"
+      }
+    },
+    "golden_sample_family_index_test_1_0_0": {
+      "id": "golden_sample_family_index_test_1_0_0",
+      "type": "family",
+      "files": {
+        "video": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_family_index_test_1_0_0.mp4",
+        "xml": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_family_index_test_1_0_0.mp4.xml",
+        "srt": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_family_index_test_1_0_0.srt"
+      }
+    },
+    "golden_sample_historical_index_test_1_0_0": {
+      "id": "golden_sample_historical_index_test_1_0_0",
+      "type": "historical",
+      "files": {
+        "video": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_historical_index_test_1_0_0.mp4",
+        "xml": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_historical_index_test_1_0_0.mp4.xml",
+        "srt": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_historical_index_test_1_0_0.srt"
+      }
+    },
+    "golden_sample_romance_index_test_1_0_0": {
+      "id": "golden_sample_romance_index_test_1_0_0",
+      "type": "romance",
+      "files": {
+        "video": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_romance_index_test_1_0_0.mp4",
+        "xml": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_romance_index_test_1_0_0.mp4.xml",
+        "srt": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_romance_index_test_1_0_0.srt"
+      }
+    },
+    "golden_sample_sci-fi_index_test_1_0_0": {
+      "id": "golden_sample_sci-fi_index_test_1_0_0",
+      "type": "sci-fi",
+      "files": {
+        "video": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_sci-fi_index_test_1_0_0.mp4",
+        "xml": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_sci-fi_index_test_1_0_0.mp4.xml",
+        "srt": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_sci-fi_index_test_1_0_0.srt"
+      }
+    },
+    "golden_sample_thriller_index_test_1_0_0": {
+      "id": "golden_sample_thriller_index_test_1_0_0",
+      "type": "thriller",
+      "files": {
+        "video": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_thriller_index_test_1_0_0.mp4",
+        "xml": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_thriller_index_test_1_0_0.mp4.xml",
+        "srt": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_thriller_index_test_1_0_0.srt"
+      }
+    },
+    "golden_sample_wuxia_index_test_1_0_0": {
+      "id": "golden_sample_wuxia_index_test_1_0_0",
+      "type": "wuxia",
+      "files": {
+        "video": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_wuxia_index_test_1_0_0.mp4",
+        "xml": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_wuxia_index_test_1_0_0.mp4.xml",
+        "srt": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_wuxia_index_test_1_0_0.srt"
+      }
+    },
+    "golden_sample_youth_index_test_1_0_0": {
+      "id": "golden_sample_youth_index_test_1_0_0",
+      "type": "youth",
+      "files": {
+        "video": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_youth_index_test_1_0_0.mp4",
+        "xml": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_youth_index_test_1_0_0.mp4.xml",
+        "srt": "tests\\golden_samples\\output\\index_test_1.0.0\\golden_sample_youth_index_test_1_0_0.srt"
+      }
+    }
+  }
+}

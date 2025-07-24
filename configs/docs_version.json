@@ -4,10 +4,10 @@
   "published_versions": [
     {
       "version": "v1.0.1",
-      "release_date": "2025-07-23",
-      "code_name": "修复版",
+      "release_date": "2025-07-24",
+      "code_name": "稳定优化版",
       "path": "/v1.0.1/",
-      "description": "修复版本，完善了核心功能模块，提升了系统稳定性和兼容性",
+      "description": "稳定优化版本，增强了性能监控、错误处理和用户体验，完善了文档系统",
       "documentation_complete": true,
       "supported": true
     },

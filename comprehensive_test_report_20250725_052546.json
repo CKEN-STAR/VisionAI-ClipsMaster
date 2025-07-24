@@ -1,0 +1,265 @@
+{
+  "test_start_time": "2025-07-25T05:25:46.070582",
+  "tests": {
+    "srt_video_clipping": {
+      "test_name": "爆款SRT视频剪辑功能测试",
+      "start_time": "2025-07-25T05:25:46.085561",
+      "status": "passed",
+      "sub_tests": {
+        "srt_parsing": {
+          "test_name": "SRT文件解析测试",
+          "status": "passed",
+          "details": {
+            "original_subtitles_count": 8,
+            "viral_subtitles_count": 4,
+            "parse_time_original": 0.0014467239379882812,
+            "parse_time_viral": 0.0,
+            "time_format_valid": true
+          }
+        },
+        "segment_extraction": {
+          "test_name": "视频片段提取测试",
+          "status": "passed",
+          "details": {
+            "segments_extracted": 4,
+            "total_duration": 13.0,
+            "segments": [
+              {
+                "segment_id": 1,
+                "start_time": 1.0,
+                "end_time": 3.0,
+                "duration": 2.0,
+                "text": "今天天气很好"
+              },
+              {
+                "segment_id": 2,
+                "start_time": 8.0,
+                "end_time": 12.0,
+                "duration": 4.0,
+                "text": "路上遇到了很多有趣的人"
+              },
+              {
+                "segment_id": 3,
+                "start_time": 17.0,
+                "end_time": 20.0,
+                "duration": 3.0,
+                "text": "还有小朋友在玩耍"
+              },
+              {
+                "segment_id": 4,
+                "start_time": 31.0,
+                "end_time": 35.0,
+                "duration": 4.0,
+                "text": "这真是美好的一天"
+              }
+            ],
+            "time_gaps": [
+              5.0,
+              5.0,
+              11.0
+            ],
+            "has_time_gaps": true
+          }
+        },
+        "video_concatenation": {
+          "test_name": "视频拼接测试",
+          "status": "passed",
+          "details": {
+            "concat_params": {
+              "input_segments": 4,
+              "output_format": "mp4",
+              "video_codec": "h264",
+              "audio_codec": "aac",
+              "resolution": "1920x1080",
+              "fps": 30
+            },
+            "concat_time": 0.0,
+            "output_file_exists": true,
+            "output_path": "C:\\Users\\13075\\AppData\\Local\\Temp\\visionai_test_dkwg2at7\\test_output\\concatenated_video.mp4"
+          }
+        },
+        "boundary_cases": {
+          "test_name": "边界情况测试",
+          "status": "passed",
+          "details": {
+            "boundary_tests": [
+              {
+                "test_case": "时间轴不连续",
+                "status": "passed",
+                "details": "解析到3个字幕段"
+              },
+              {
+                "test_case": "跨集剪辑",
+                "status": "passed",
+                "details": "模拟跨2集剪辑"
+              },
+              {
+                "test_case": "极短片段处理",
+                "status": "passed",
+                "details": "处理2个极短片段"
+              }
+            ]
+          }
+        }
+      },
+      "performance": {
+        "initialization_time": 0.0
+      },
+      "issues": [],
+      "end_time": "2025-07-25T05:25:46.103127"
+    },
+    "jianying_project_generation": {
+      "test_name": "剪映工程文件生成功能测试",
+      "start_time": "2025-07-25T05:25:46.104127",
+      "status": "failed",
+      "sub_tests": {
+        "project_format": {
+          "test_name": "工程文件格式测试",
+          "status": "passed",
+          "details": {
+            "generation_time": 0.0,
+            "format_valid": true,
+            "missing_fields": [],
+            "project_data_keys": [
+              "project_name",
+              "segments",
+              "output_path",
+              "project_id",
+              "timeline",
+              "materials",
+              "tracks",
+              "export_settings"
+            ],
+            "segments_count": 2
+          }
+        },
+        "file_integrity": {
+          "test_name": "文件完整性测试",
+          "status": "failed",
+          "details": {
+            "file_exists": true,
+            "json_valid": true,
+            "metadata_complete": false,
+            "video_paths_valid": true,
+            "file_size": 4315
+          }
+        },
+        "compatibility": {
+          "test_name": "剪映兼容性测试",
+          "status": "passed",
+          "details": {
+            "version_tests": [
+              {
+                "version": "2.9",
+                "status": "passed",
+                "compatibility_score": 85,
+                "issues": []
+              },
+              {
+                "version": "3.0",
+                "status": "passed",
+                "compatibility_score": 95,
+                "issues": []
+              },
+              {
+                "version": "3.1",
+                "status": "passed",
+                "compatibility_score": 98,
+                "issues": []
+              }
+            ],
+            "compatibility_rate": 1.0
+          }
+        }
+      },
+      "performance": {
+        "initialization_time": 0.0
+      },
+      "issues": [],
+      "end_time": "2025-07-25T05:25:46.123169"
+    },
+    "jianying_import_functionality": {
+      "test_name": "剪映导入功能实际验证测试",
+      "start_time": "2025-07-25T05:25:46.124169",
+      "status": "failed",
+      "sub_tests": {
+        "import_success": {
+          "test_name": "导入成功率测试",
+          "status": "error",
+          "details": {},
+          "error": "'bool' object has no attribute 'get'"
+        },
+        "material_association": {
+          "test_name": "素材关联测试",
+          "status": "error",
+          "details": {},
+          "error": "'str' object has no attribute 'get'"
+        },
+        "editability": {
+          "test_name": "项目可编辑性测试",
+          "status": "warning",
+          "details": {
+            "editability_checks": [
+              {
+                "check": "轨道结构完整性",
+                "passed": true,
+                "details": "视频轨道: True, 音频轨道: True"
+              },
+              {
+                "check": "时间轴可调整性",
+                "passed": false,
+                "details": "时间轴标记: False, 时长信息: False"
+              },
+              {
+                "check": "效果支持",
+                "passed": true,
+                "details": "转场支持: False, 滤镜支持: False"
+              }
+            ],
+            "editability_score": 0.6666666666666666
+          }
+        }
+      },
+      "performance": {},
+      "issues": [],
+      "end_time": "2025-07-25T05:25:46.161229"
+    }
+  },
+  "summary": {
+    "total_tests": 3,
+    "passed_tests": 1,
+    "failed_tests": 2,
+    "error_tests": 0,
+    "success_rate": 0.3333333333333333,
+    "test_duration": 0.090647
+  },
+  "performance_metrics": {
+    "srt_video_clipping": {
+      "initialization_time": 0.0
+    },
+    "jianying_project_generation": {
+      "initialization_time": 0.0
+    },
+    "jianying_import_functionality": {},
+    "overall": {
+      "average_init_time": 0.0,
+      "max_init_time": 0.0,
+      "min_init_time": 0.0
+    }
+  },
+  "issues_found": [],
+  "recommendations": [
+    {
+      "priority": "high",
+      "category": "functionality",
+      "description": "剪映工程文件生成功能测试存在问题，需要修复",
+      "suggested_action": "检查相关模块实现并修复失败的子测试"
+    },
+    {
+      "priority": "high",
+      "category": "functionality",
+      "description": "剪映导入功能实际验证测试存在问题，需要修复",
+      "suggested_action": "检查相关模块实现并修复失败的子测试"
+    }
+  ]
+}

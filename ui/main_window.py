@@ -8,14 +8,32 @@ VisionAI-ClipsMaster 主窗口组件
 import sys
 import os
 from pathlib import Path
-from PyQt6.QtWidgets import (
-    QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-    QTabWidget, QLabel, QPushButton, QTextEdit,
-    QProgressBar, QSplitter, QFrame, QApplication,
-    QMenuBar, QStatusBar, QToolBar, QMessageBox
-)
-from PyQt6.QtCore import Qt, pyqtSignal, QTimer, QThread
-from PyQt6.QtGui import QIcon, QFont, QPixmap, QAction
+
+# 检查PyQt6可用性
+try:
+    from PyQt6.QtWidgets import (
+        QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
+        QTabWidget, QLabel, QPushButton, QTextEdit,
+        QProgressBar, QSplitter, QFrame, QApplication,
+        QMenuBar, QStatusBar, QToolBar, QMessageBox
+    )
+    from PyQt6.QtCore import Qt, pyqtSignal, QTimer, QThread
+    from PyQt6.QtGui import QIcon, QFont, QPixmap, QAction
+    PYQT6_AVAILABLE = True
+except ImportError:
+    PYQT6_AVAILABLE = False
+    print("[ERROR] PyQt6 is required for MainWindow")
+    # 创建虚拟类以避免导入错误
+    class QMainWindow:
+        def __init__(self, *args, **kwargs):
+            raise ImportError("PyQt6 is required for MainWindow")
+
+    class QWidget:
+        pass
+
+    class pyqtSignal:
+        def __init__(self, *args):
+            pass
 
 # 导入优化模块
 try:
@@ -43,6 +61,9 @@ class MainWindow(QMainWindow):
     
     def __init__(self):
         """初始化主窗口"""
+        if not PYQT6_AVAILABLE:
+            raise ImportError("PyQt6 is required for MainWindow")
+
         super().__init__()
         
         # 窗口基本设置
@@ -74,6 +95,25 @@ class MainWindow(QMainWindow):
         self._start_memory_monitoring()
 
         print("[OK] 主窗口初始化完成")
+
+    def setup_ui(self):
+        """设置UI界面 - 公共接口方法"""
+        # 这个方法在__init__中已经通过_init_ui调用了
+        # 为了兼容性提供公共接口
+        if hasattr(self, '_ui_initialized') and self._ui_initialized:
+            print("[INFO] UI已经初始化，跳过重复设置")
+            return
+
+        self._init_ui()
+        self._ui_initialized = True
+        print("[OK] UI设置完成")
+
+    def show(self):
+        """显示主窗口 - 重写QMainWindow的show方法"""
+        super().show()
+        self.raise_()  # 将窗口提到前台
+        self.activateWindow()  # 激活窗口
+        print("[OK] 主窗口已显示")
 
     def _init_optimization(self):
         """初始化性能优化"""

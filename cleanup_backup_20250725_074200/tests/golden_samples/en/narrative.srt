@@ -1,0 +1,40 @@
+1
+00:00:00,000 --> 00:00:03,500
+In the beginning, there was darkness.
+
+2
+00:00:03,500 --> 00:00:07,000
+Mankind has always been fascinated by the unknown.
+
+3
+00:00:07,000 --> 00:00:10,500
+The journey began centuries ago, when explorers first looked to the stars.
+
+4
+00:00:10,500 --> 00:00:14,000
+Through triumph and tragedy, we persevered.
+
+5
+00:00:14,000 --> 00:00:17,500
+Science became our guiding light in an endless void.
+
+6
+00:00:17,500 --> 00:00:21,000
+Each discovery brought new questions, new mysteries to solve.
+
+7
+00:00:21,000 --> 00:00:24,500
+In the face of impossibility, human ingenuity prevailed.
+
+8
+00:00:24,500 --> 00:00:28,000
+What once seemed like fantasy slowly became reality.
+
+9
+00:00:28,000 --> 00:00:31,500
+And yet, the greatest discoveries still await us.
+
+10
+00:00:31,500 --> 00:00:35,000
+Beyond our atmosphere, beyond our solar system.
+

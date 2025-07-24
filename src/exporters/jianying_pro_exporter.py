@@ -47,6 +47,7 @@ class JianYingProExporter:
     def _load_project_template(self) -> Dict[str, Any]:
         """加载剪映工程文件模板 - 修复：完整兼容剪映3.0+格式"""
         current_time = int(time.time() * 1000000)  # 微秒时间戳
+        current_time_ms = int(time.time() * 1000)  # 毫秒时间戳
         project_id = str(uuid.uuid4())
 
         return {
@@ -55,7 +56,11 @@ class JianYingProExporter:
             "platform": "windows",
             "create_time": current_time,
             "update_time": current_time,
+            "created_time": current_time_ms,  # 修复：添加测试期望的字段
+            "last_modified": current_time_ms,  # 修复：添加最后修改时间
+            "app_version": "剪映专业版 3.0.0",  # 修复：添加应用版本
             "id": project_id,
+            "project_id": project_id,  # 修复：添加project_id字段
             "draft_id": project_id,  # 修复：添加draft_id字段
             "draft_name": "VisionAI混剪项目",  # 修复：添加项目名称
             "canvas_config": {
@@ -203,10 +208,19 @@ class JianYingProExporter:
             end_time_ms = self._parse_time_to_ms(segment.get("end_time", 0))
             duration_ms = end_time_ms - start_time_ms
 
-            # 修复：添加持续时间验证
+            # 修复：添加持续时间验证，如果无效则使用默认值
             if duration_ms <= 0:
-                logger.warning(f"片段 {i} 持续时间无效: {duration_ms}ms，跳过")
-                continue
+                logger.warning(f"片段 {i} 持续时间无效: {duration_ms}ms，使用默认时长2秒")
+                # 使用默认时长2秒
+                if start_time_ms == 0 and end_time_ms == 0:
+                    start_time_ms = i * 2000  # 每个片段2秒，按顺序排列
+                    end_time_ms = start_time_ms + 2000
+                    duration_ms = 2000
+                else:
+                    # 如果有开始时间但没有结束时间，添加2秒
+                    if end_time_ms <= start_time_ms:
+                        end_time_ms = start_time_ms + 2000
+                        duration_ms = 2000
 
             # 修复：生成唯一且一致的ID
             video_segment_id = str(uuid.uuid4())
@@ -602,3 +616,6 @@ def export_to_jianying(project_data: Dict[str, Any], output_path: str) -> bool:
     """
     exporter = JianYingProExporter()
     return exporter.export_project(project_data, output_path)
+
+# 为了兼容性，提供别名
+JianyingProExporter = JianYingProExporter

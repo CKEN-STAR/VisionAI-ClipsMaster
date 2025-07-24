@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VisionAI-ClipsMaster 设备兼容性报告</title>
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1, h2, h3 {
+            color: #0066cc;
+        }
+        .header {
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .section {
+            margin-bottom: 25px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        .info-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .info-label {
+            width: 200px;
+            font-weight: bold;
+        }
+        .info-value {
+            flex: 1;
+        }
+        .compatible {
+            color: green;
+            font-weight: bold;
+        }
+        .incompatible {
+            color: red;
+            font-weight: bold;
+        }
+        .limited {
+            color: orange;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        .recommendation {
+            background-color: #e7f3fe;
+            border-left: 3px solid #0066cc;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        .status-ok {
+            padding: 3px 8px;
+            background-color: #d4edda;
+            color: #155724;
+            border-radius: 3px;
+        }
+        .status-warning {
+            padding: 3px 8px;
+            background-color: #fff3cd;
+            color: #856404;
+            border-radius: 3px;
+        }
+        .status-error {
+            padding: 3px 8px;
+            background-color: #f8d7da;
+            color: #721c24;
+            border-radius: 3px;
+        }
+        .bottleneck-none {
+            color: green;
+        }
+        .bottleneck-warning {
+            color: orange;
+        }
+        .bottleneck-critical {
+            color: red;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        .fingerprint-section {
+            background-color: #f0f7ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 25px;
+        }
+        .fingerprint-value {
+            font-family: monospace;
+            background-color: #f1f1f1;
+            padding: 5px 10px;
+            border-radius: 3px;
+            word-break: break-all;
+        }
+    </style>
+    
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>VisionAI-ClipsMaster 设备兼容性报告</h1>
+            <p>生成时间: 2025-05-16T23:06:23.086526</p>
+        </div>
+        
+        
+    <div class="section">
+        <h2>系统信息</h2>
+        <div class="info-row">
+            <div class="info-label">操作系统:</div>
+            <div class="info-value">Windows 10 10 24H2 (Build 26100)</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">处理器:</div>
+            <div class="info-value">12th Gen Intel(R) Core(TM) i5-12500H</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">核心数:</div>
+            <div class="info-value">12</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">内存:</div>
+            <div class="info-value">15.73 GB</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">图形处理器:</div>
+            <div class="info-value">Intel(R) Iris(R) Xe Graphics</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">可用存储空间:</div>
+            <div class="info-value">28.71 GB</div>
+        </div>
+    </div>
+    
+        
+        
+        <div class="section fingerprint-section">
+            <h2>硬件指纹</h2>
+            <div class="info-row">
+                <div class="info-label">硬件ID:</div>
+                <div class="info-value fingerprint-value">afb19f2b73e87a94bf58a784f5fb468128e9bc2ac2b4f58f91cfdad873a8b285</div>
+            </div>
+            <div class="info-row">
+                <div class="info-label">简化版硬件ID:</div>
+                <div class="info-value fingerprint-value">77c17d90156079d31b9dde1b157395e22f23b6093f0e1cbacdf1b9c37681c801</div>
+            </div>
+            
+            
+            <h3>组件指纹</h3>
+            <table>
+                <tr>
+                    <th>组件</th>
+                    <th>指纹值</th>
+                </tr>
+                <tr><td>system</td><td class='fingerprint-value'>0f87975a7aebfac86b14dc0f9bef977f</td></tr>
+<tr><td>cpu</td><td class='fingerprint-value'>cfaeebda5c87df51960c3201e8db4591</td></tr>
+<tr><td>disk</td><td class='fingerprint-value'>04e1fb5ff49ea06432471bbd19231b85</td></tr>
+<tr><td>network</td><td class='fingerprint-value'>49e2f4291fb957d7d4eab9e0cbf107ca</td></tr>
+<tr><td>motherboard</td><td class='fingerprint-value'>37783a21ffc0f0bc6fd20f5b9a7fcd2a</td></tr>
+            </table>
+            
+        </div>
+        
+        
+        
+    <div class="section">
+        <h2>兼容性状态</h2>
+        <div class="info-row">
+            <div class="info-label">设备等级:</div>
+            <div class="info-value">⭐⭐ Mid</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">操作系统兼容性:</div>
+            <div class="info-value compatible">兼容</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">GPU加速:</div>
+            <div class="info-value limited">不可用</div>
+        </div>
+        
+        <h3>功能支持</h3>
+        <h4>支持的功能:</h4>
+        <ul>
+            <li>basic_processing</li>
+<li>4k_processing</li>
+<li>batch_processing</li>
+<li>multi_language</li>
+        </ul>
+        
+        
+        
+        <h4>不支持的功能:</h4><ul><li class='incompatible'>real_time_enhancement</li></ul>
+        
+        
+    </div>
+    
+        
+        
+    <div class="section">
+        <h2>性能预测</h2>
+        
+        <h3>推荐设置</h3>
+        <div class="info-row">
+            <div class="info-label">工作负载:</div>
+            <div class="info-value">light</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">分辨率:</div>
+            <div class="info-value">2K</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">并发视频:</div>
+            <div class="info-value">1</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">处理速率:</div>
+            <div class="info-value">1.39x</div>
+        </div>
+        <div class="info-row">
+            <div class="info-label">预计处理时间:</div>
+            <div class="info-value">7.20分钟 (10分钟视频)</div>
+        </div>
+        
+        <h3>各工作负载性能预测</h3>
+        <table>
+            <tr>
+                <th>工作负载</th>
+                <th>分辨率</th>
+                <th>并发视频</th>
+                <th>处理速率</th>
+                <th>处理时间</th>
+                <th>瓶颈</th>
+                <th>状态</th>
+            </tr>
+            
+        <tr>
+            <td>light</td>
+            <td>1080p</td>
+            <td>1</td>
+            <td>2.50x</td>
+            <td>4.00分钟</td>
+            <td class="bottleneck-none">无</td>
+            <td><span class="status-ok">可行</span></td>
+        </tr>
+        
+        <tr>
+            <td>medium</td>
+            <td>2K</td>
+            <td>1</td>
+            <td>0.56x</td>
+            <td>18.00分钟</td>
+            <td class="bottleneck-none">无</td>
+            <td><span class="status-ok">可行</span></td>
+        </tr>
+        
+        <tr>
+            <td>heavy</td>
+            <td>4K</td>
+            <td>1</td>
+            <td>0.14x</td>
+            <td>70.00分钟</td>
+            <td class="bottleneck-warning">内存不足</td>
+            <td><span class="status-error">不可行</span></td>
+        </tr>
+        
+        <tr>
+            <td>batch</td>
+            <td>1080p</td>
+            <td>4</td>
+            <td>0.31x</td>
+            <td>32.53分钟</td>
+            <td class="bottleneck-warning">内存不足</td>
+            <td><span class="status-error">不可行</span></td>
+        </tr>
+        
+        </table>
+    </div>
+    
+        
+        <div class="footer">
+            <p>此报告由VisionAI-ClipsMaster设备兼容性测试工具自动生成</p>
+        </div>
+    </div>
+</body>
+</html>
+    

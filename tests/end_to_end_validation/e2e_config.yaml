@@ -1,0 +1,355 @@
+# VisionAI-ClipsMaster 端到端测试配置文件
+# 爆款SRT剪辑功能完整工作流程测试配置
+
+# 测试环境配置
+test_environment:
+  name: "E2E_Viral_SRT_Editing"
+  version: "1.0.0"
+  log_level: "INFO"
+  temp_dir: "tests/temp/e2e"
+  output_dir: "tests/reports/e2e_validation"
+  cleanup_after_test: false
+  parallel_execution: false
+  timeout_seconds: 3600
+
+# 测试数据配置
+test_data:
+  # 原片视频配置
+  original_videos:
+    formats: ["mp4", "mov", "avi"]
+    resolutions: ["1920x1080", "1280x720"]
+    durations: [300, 600, 1800]  # 5分钟, 10分钟, 30分钟
+    codecs: ["h264", "h265"]
+    audio_codecs: ["aac", "mp3"]
+    frame_rates: [24, 25, 30]
+  
+  # 爆款SRT字幕配置
+  viral_srt:
+    encoding: "utf-8"
+    segment_count_range: [5, 20]
+    segment_duration_range: [10, 120]  # 10秒到2分钟
+    time_gap_range: [0, 300]  # 片段间隔0-5分钟
+    overlap_tolerance: 0.1  # 允许0.1秒重叠
+  
+  # 测试场景配置
+  test_scenarios:
+    basic:
+      description: "基础连续片段场景"
+      segment_count: 8
+      continuous_segments: true
+      time_gaps: false
+    
+    complex:
+      description: "复杂非连续片段场景"
+      segment_count: 15
+      continuous_segments: false
+      time_gaps: true
+      random_order: false
+    
+    boundary:
+      description: "边界条件场景"
+      segment_count: 3
+      min_segment_duration: 5
+      max_segment_duration: 300
+      edge_cases: true
+    
+    stress:
+      description: "压力测试场景"
+      segment_count: 50
+      rapid_cuts: true
+      micro_segments: true
+
+# 测试阶段配置
+test_stages:
+  srt_parsing:
+    enabled: true
+    timeout: 30
+    tests:
+      - "format_validation"
+      - "timecode_parsing"
+      - "segment_extraction"
+      - "encoding_detection"
+      - "error_handling"
+  
+  video_editing:
+    enabled: true
+    timeout: 600
+    tests:
+      - "segment_cutting"
+      - "precision_validation"
+      - "quality_preservation"
+      - "audio_sync"
+      - "concatenation"
+  
+  jianying_integration:
+    enabled: true
+    timeout: 120
+    tests:
+      - "draftinfo_generation"
+      - "json_structure_validation"
+      - "file_path_resolution"
+      - "metadata_completeness"
+      - "version_compatibility"
+  
+  import_validation:
+    enabled: true
+    timeout: 180
+    tests:
+      - "import_simulation"
+      - "timeline_structure"
+      - "segment_mapping"
+      - "editing_capabilities"
+      - "error_recovery"
+
+# 质量标准配置
+quality_standards:
+  # 功能性标准
+  functional:
+    srt_parsing_success_rate: 1.0
+    timecode_precision_seconds: 0.1
+    segment_extraction_accuracy: 1.0
+    draftinfo_generation_success_rate: 1.0
+    jianying_import_success_rate: 1.0
+  
+  # 性能标准
+  performance:
+    srt_parsing_max_time: 1.0
+    segment_extraction_speed_multiplier: 2.0  # 2x实时速度
+    draftinfo_generation_max_time: 5.0
+    memory_usage_max_gb: 2.0
+    disk_efficiency_min: 0.9
+  
+  # 质量标准
+  quality:
+    video_quality_loss_max: 0.0
+    audio_sync_precision_seconds: 0.05
+    timeline_precision_seconds: 0.1
+    editing_functionality_completeness: 1.0
+
+# 剪映集成配置
+jianying_integration:
+  # 支持的剪映版本
+  supported_versions: ["3.0", "3.1", "3.2", "4.0"]
+  
+  # draftinfo文件配置
+  draftinfo:
+    version: "13.0.0"
+    platform: "pc"
+    format_version: "3.0.0"
+    
+    # 必需字段
+    required_fields:
+      - "version"
+      - "tracks"
+      - "materials"
+      - "canvas_config"
+      - "duration"
+    
+    # 轨道配置
+    track_config:
+      video_track_count: 1
+      audio_track_count: 1
+      subtitle_track_count: 0
+      effect_track_count: 0
+    
+    # 素材配置
+    material_config:
+      video_material_type: "video"
+      audio_material_type: "audio"
+      path_format: "absolute"
+      file_validation: true
+
+# 错误处理配置
+error_handling:
+  # 重试配置
+  retry:
+    max_attempts: 3
+    delay_seconds: 1
+    exponential_backoff: true
+  
+  # 错误分类
+  error_categories:
+    critical:
+      - "file_not_found"
+      - "invalid_format"
+      - "memory_error"
+    
+    recoverable:
+      - "network_timeout"
+      - "temporary_file_lock"
+      - "insufficient_disk_space"
+    
+    warning:
+      - "quality_degradation"
+      - "minor_sync_issue"
+      - "metadata_incomplete"
+  
+  # 错误处理策略
+  handling_strategies:
+    critical: "abort_test"
+    recoverable: "retry_with_fallback"
+    warning: "log_and_continue"
+
+# 性能监控配置
+performance_monitoring:
+  # 监控指标
+  metrics:
+    - "cpu_usage"
+    - "memory_usage"
+    - "disk_io"
+    - "processing_time"
+    - "throughput"
+  
+  # 采样配置
+  sampling:
+    interval_seconds: 1
+    duration_seconds: 3600
+    buffer_size: 1000
+  
+  # 阈值配置
+  thresholds:
+    cpu_usage_max: 80
+    memory_usage_max_gb: 2.0
+    disk_io_max_mbps: 100
+    processing_time_max_multiplier: 5.0
+
+# 报告配置
+reporting:
+  # 输出格式
+  formats: ["html", "json", "pdf"]
+  
+  # 报告内容
+  content:
+    include_screenshots: true
+    include_performance_charts: true
+    include_error_details: true
+    include_recommendations: true
+    include_raw_data: false
+  
+  # 可视化配置
+  visualization:
+    timeline_chart: true
+    performance_graph: true
+    quality_metrics: true
+    error_distribution: true
+  
+  # 报告模板
+  templates:
+    html_template: "templates/e2e_report.html"
+    pdf_template: "templates/e2e_report_pdf.html"
+    summary_template: "templates/e2e_summary.html"
+
+# 文件路径配置
+file_paths:
+  # 输入路径
+  input:
+    test_videos_dir: "tests/test_data/e2e/videos"
+    viral_srt_dir: "tests/test_data/e2e/viral_srt"
+    reference_outputs_dir: "tests/test_data/e2e/expected"
+  
+  # 输出路径
+  output:
+    processed_videos_dir: "tests/temp/e2e/processed_videos"
+    draftinfo_files_dir: "tests/temp/e2e/draftinfo"
+    logs_dir: "tests/logs/e2e"
+    reports_dir: "tests/reports/e2e_validation"
+  
+  # 临时路径
+  temp:
+    working_dir: "tests/temp/e2e/working"
+    cache_dir: "tests/temp/e2e/cache"
+    backup_dir: "tests/temp/e2e/backup"
+
+# 外部工具配置
+external_tools:
+  # FFmpeg配置
+  ffmpeg:
+    path: "ffmpeg"
+    timeout: 300
+    quality_preset: "medium"
+    audio_codec: "aac"
+    video_codec: "libx264"
+  
+  # 剪映模拟器配置
+  jianying_simulator:
+    enabled: true
+    validation_mode: "strict"
+    compatibility_check: true
+    import_timeout: 60
+
+# 调试配置
+debugging:
+  # 调试模式
+  debug_mode: false
+  verbose_logging: false
+  save_intermediate_files: true
+  
+  # 断点配置
+  breakpoints:
+    after_srt_parsing: false
+    after_video_cutting: false
+    after_draftinfo_generation: false
+    before_jianying_import: false
+  
+  # 调试输出
+  debug_output:
+    save_parsed_srt: true
+    save_cut_segments: true
+    save_draftinfo_json: true
+    save_import_logs: true
+
+# 安全配置
+security:
+  # 文件访问限制
+  file_access:
+    allowed_extensions: [".mp4", ".mov", ".avi", ".srt", ".draftinfo", ".json"]
+    max_file_size_gb: 10
+    scan_for_malware: false
+  
+  # 路径安全
+  path_security:
+    allow_absolute_paths: true
+    allow_network_paths: false
+    sandbox_mode: false
+  
+  # 执行安全
+  execution_security:
+    allow_external_commands: true
+    command_whitelist: ["ffmpeg", "mediainfo"]
+    timeout_enforcement: true
+
+# 兼容性配置
+compatibility:
+  # 操作系统
+  operating_systems: ["windows", "macos", "linux"]
+  
+  # Python版本
+  python_versions: ["3.8", "3.9", "3.10", "3.11"]
+  
+  # 依赖版本
+  dependencies:
+    ffmpeg_min_version: "4.0"
+    opencv_min_version: "4.5"
+    numpy_min_version: "1.20"
+
+# 测试数据生成配置
+data_generation:
+  # 自动生成
+  auto_generate: true
+  generation_seed: 42
+  
+  # 生成参数
+  generation_params:
+    video_count: 10
+    srt_count_per_video: 3
+    scenario_distribution:
+      basic: 0.4
+      complex: 0.3
+      boundary: 0.2
+      stress: 0.1
+  
+  # 质量控制
+  quality_control:
+    validate_generated_data: true
+    manual_review_required: false
+    auto_cleanup_invalid: true

@@ -376,3 +376,6 @@ class CurriculumLearning:
         if self.current_stage < self.total_stages - 1:
             self.current_stage += 1
         return self.get_current_stage()
+
+# 为了兼容性，提供别名
+Curriculum = CurriculumLearning

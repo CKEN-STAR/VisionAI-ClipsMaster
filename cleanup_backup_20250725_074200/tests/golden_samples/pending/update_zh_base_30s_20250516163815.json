@@ -1,0 +1,30 @@
+{
+  "id": "update_zh_base_30s_20250516163815",
+  "sample_id": "zh/base_30s",
+  "reason": "更新新版混剪算法标准",
+  "submitter": "admin",
+  "status": "pending",
+  "created_at": "2025-05-16T16:38:15.435224",
+  "approvals": [],
+  "rejection": null,
+  "test_results": {
+    "started_at": "2025-05-16T16:38:15.450142",
+    "status": "completed",
+    "tests": [
+      {
+        "name": "视频完整性测试",
+        "status": "passed"
+      },
+      {
+        "name": "字幕匹配度测试",
+        "status": "passed"
+      },
+      {
+        "name": "算法稳定性测试",
+        "status": "passed"
+      }
+    ],
+    "completed_at": "2025-05-16T16:38:15.450142",
+    "passed": true
+  }
+}

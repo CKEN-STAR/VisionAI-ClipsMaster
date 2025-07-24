@@ -1,0 +1,29 @@
+{
+  "memory_tests": {
+    "memory_limit_test": {
+      "peak_memory_mb": 22.45703125,
+      "limit_mb": 3800,
+      "compliant": true,
+      "margin_mb": 3777.54296875
+    },
+    "memory_leak_test": {
+      "initial_memory_mb": 22.48125,
+      "final_memory_mb": 22.52734375,
+      "memory_growth_mb": 0.04609375000000071,
+      "iterations": 60,
+      "has_potential_leak": false
+    }
+  },
+  "stability_tests": {
+    "stability_test": {
+      "planned_duration_seconds": 120,
+      "actual_duration_seconds": 122.04205346107483,
+      "operations_completed": 1094,
+      "errors_encountered": 0,
+      "success_rate": 1.0,
+      "operations_per_second": 8.964123177007425,
+      "peak_memory_mb": 22.52734375,
+      "average_cpu_percent": 0.13114754098360654
+    }
+  }
+}

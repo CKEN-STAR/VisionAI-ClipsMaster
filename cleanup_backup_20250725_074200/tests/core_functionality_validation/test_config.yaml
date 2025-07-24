@@ -1,0 +1,224 @@
+# VisionAI-ClipsMaster 核心功能验证测试配置
+# 此配置文件定义了测试环境、模型参数、阈值标准和测试数据规格
+
+# 测试环境配置
+test_environment:
+  memory_limit: "4GB"                    # 内存限制
+  cpu_cores: 4                          # CPU核心数
+  gpu_enabled: false                    # 是否启用GPU
+  test_timeout: 3600                    # 测试超时时间（秒）
+  parallel_tests: 2                     # 并行测试数量
+  log_level: "INFO"                     # 日志级别
+  temp_dir: "tests/temp"                # 临时文件目录
+
+# 模型配置
+models:
+  chinese_model:
+    name: "qwen2.5-7b-zh"
+    path: "models/qwen/quantized"
+    quantization: "Q4_K_M"
+    max_memory: "2GB"
+    context_length: 4096
+    temperature: 0.7
+    top_p: 0.9
+  
+  english_model:
+    name: "mistral-7b-en"
+    path: "models/mistral/quantized"
+    quantization: "Q5_K_M"
+    max_memory: "2GB"
+    context_length: 4096
+    temperature: 0.7
+    top_p: 0.9
+
+# 测试阈值标准
+test_thresholds:
+  # 视频-字幕映射精度
+  timeline_accuracy: 0.5               # 时间轴精度阈值（秒）
+  mapping_success_rate: 0.95           # 映射成功率阈值
+  sync_tolerance: 0.3                  # 同步容忍度（秒）
+  
+  # AI剧本重构功能
+  plot_understanding: 0.85             # 剧情理解准确率阈值
+  narrative_coherence: 0.8             # 叙事连贯性评分阈值
+  compression_ratio_min: 0.3           # 最小压缩比
+  compression_ratio_max: 0.7           # 最大压缩比
+  viral_features_match: 0.75           # 爆款特征匹配度阈值
+  
+  # 双语言模型系统
+  language_detection: 0.95             # 语言检测准确率阈值
+  model_switch_delay: 1.5              # 模型切换延迟阈值（秒）
+  processing_quality_variance: 0.1     # 处理质量差异阈值
+  
+  # 内存稳定性
+  memory_peak: "3.8GB"                 # 内存峰值阈值
+  memory_leak_rate: 0.01               # 内存泄漏率阈值（每小时）
+  stability_uptime: 86400              # 稳定性运行时间（秒，24小时）
+
+# 测试数据配置
+test_data:
+  sample_count: 50                     # 测试样本数量
+  languages: ["zh", "en", "mixed"]     # 支持的语言类型
+  video_durations: [300, 600, 1200]    # 视频时长（秒）
+  subtitle_complexity:                 # 字幕复杂度级别
+    - "simple"                         # 简单：单一角色对话
+    - "medium"                         # 中等：多角色对话
+    - "complex"                        # 复杂：快速对话+旁白
+  
+  # 数据生成参数
+  generation:
+    video_formats: ["mp4", "avi"]      # 支持的视频格式
+    subtitle_formats: ["srt"]          # 支持的字幕格式
+    encoding: "utf-8"                  # 字幕编码
+    frame_rate: 25                     # 视频帧率
+    resolution: "1920x1080"            # 视频分辨率
+
+# 测试场景配置
+test_scenarios:
+  # 基础功能测试
+  basic_functionality:
+    enabled: true
+    test_cases:
+      - "single_language_chinese"
+      - "single_language_english"
+      - "mixed_language_content"
+      - "long_duration_video"
+      - "short_duration_video"
+  
+  # 边界条件测试
+  boundary_conditions:
+    enabled: true
+    test_cases:
+      - "empty_subtitle_file"
+      - "corrupted_video_file"
+      - "invalid_timestamp_format"
+      - "extremely_long_subtitle"
+      - "rapid_dialogue_sequence"
+  
+  # 性能压力测试
+  stress_testing:
+    enabled: true
+    test_cases:
+      - "concurrent_processing"
+      - "memory_pressure"
+      - "cpu_intensive_load"
+      - "extended_runtime"
+  
+  # 错误恢复测试
+  error_recovery:
+    enabled: true
+    test_cases:
+      - "model_loading_failure"
+      - "insufficient_memory"
+      - "network_interruption"
+      - "file_access_error"
+
+# 评估指标配置
+evaluation_metrics:
+  # 时间轴精度评估
+  timeline_metrics:
+    - "mean_absolute_error"            # 平均绝对误差
+    - "root_mean_square_error"         # 均方根误差
+    - "percentage_within_threshold"    # 阈值内百分比
+    - "maximum_error"                  # 最大误差
+  
+  # 剧情理解评估
+  plot_understanding_metrics:
+    - "character_recognition_accuracy" # 角色识别准确率
+    - "plot_point_extraction"         # 情节点提取
+    - "emotional_arc_preservation"     # 情感弧线保持
+    - "narrative_structure_score"      # 叙事结构评分
+  
+  # 内容质量评估
+  content_quality_metrics:
+    - "coherence_score"                # 连贯性评分
+    - "compression_efficiency"         # 压缩效率
+    - "information_retention"          # 信息保留度
+    - "viral_potential_score"          # 爆款潜力评分
+  
+  # 系统性能评估
+  performance_metrics:
+    - "processing_speed"               # 处理速度
+    - "memory_usage_efficiency"       # 内存使用效率
+    - "cpu_utilization"                # CPU利用率
+    - "error_recovery_rate"            # 错误恢复率
+
+# 报告配置
+reporting:
+  output_formats: ["html", "json", "pdf"]  # 输出格式
+  include_visualizations: true             # 包含可视化图表
+  detailed_logs: true                      # 详细日志
+  performance_charts: true                 # 性能图表
+  comparison_tables: true                  # 对比表格
+  
+  # 报告模板
+  templates:
+    summary_template: "templates/summary_report.html"
+    detailed_template: "templates/detailed_report.html"
+    performance_template: "templates/performance_report.html"
+  
+  # 输出目录
+  output_directory: "tests/reports/core_functionality"
+  archive_reports: true                    # 归档历史报告
+  max_archived_reports: 10                 # 最大归档数量
+
+# 调试配置
+debugging:
+  enable_debug_mode: false                 # 启用调试模式
+  save_intermediate_results: true          # 保存中间结果
+  verbose_logging: false                   # 详细日志
+  profiling_enabled: false                 # 性能分析
+  memory_tracking: true                    # 内存跟踪
+  
+  # 调试输出
+  debug_output_dir: "tests/debug"
+  save_model_outputs: true                 # 保存模型输出
+  save_processing_steps: true              # 保存处理步骤
+  capture_screenshots: false               # 捕获截图（UI测试）
+
+# 安全配置
+security:
+  sandbox_mode: true                       # 沙盒模式
+  file_access_restrictions: true           # 文件访问限制
+  network_access_disabled: true            # 禁用网络访问
+  resource_limits_enforced: true           # 强制资源限制
+  
+  # 允许的文件路径
+  allowed_paths:
+    - "tests/"
+    - "test_data/"
+    - "models/"
+    - "configs/"
+    - "logs/"
+
+# 集成配置
+integration:
+  # 外部工具集成
+  external_tools:
+    ffmpeg_path: "tools/ffmpeg/ffmpeg.exe"
+    mediainfo_path: "tools/mediainfo/mediainfo.exe"
+  
+  # API集成
+  api_endpoints:
+    model_service: "http://localhost:8080"
+    evaluation_service: "http://localhost:8081"
+  
+  # 数据库配置
+  database:
+    enabled: false
+    connection_string: "sqlite:///tests/test_results.db"
+    table_prefix: "core_functionality_"
+
+# 通知配置
+notifications:
+  enabled: false                           # 启用通知
+  email_notifications: false               # 邮件通知
+  slack_notifications: false               # Slack通知
+  webhook_url: ""                          # Webhook URL
+  
+  # 通知条件
+  notify_on:
+    - "test_completion"
+    - "test_failure"
+    - "performance_degradation"
+    - "memory_threshold_exceeded"

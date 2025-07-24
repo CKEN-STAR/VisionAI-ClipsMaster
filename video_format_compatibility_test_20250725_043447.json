@@ -1,0 +1,194 @@
+{
+  "timestamp": "2025-07-25T04:34:47.818469",
+  "format_tests": {
+    "supported_formats": [
+      "mp4",
+      "avi",
+      "flv",
+      "mov",
+      "mkv",
+      "webm"
+    ],
+    "unsupported_formats": [
+      "wmv"
+    ],
+    "format_details": {
+      "mp4": {
+        "codec": "H.264",
+        "container": "MP4",
+        "read_support": true,
+        "write_support": true,
+        "srt_compatibility": true,
+        "performance_score": 95
+      },
+      "avi": {
+        "codec": "XVID",
+        "container": "AVI",
+        "read_support": true,
+        "write_support": true,
+        "srt_compatibility": true,
+        "performance_score": 85
+      },
+      "flv": {
+        "codec": "H.264",
+        "container": "FLV",
+        "read_support": true,
+        "write_support": false,
+        "srt_compatibility": true,
+        "performance_score": 75
+      },
+      "mov": {
+        "codec": "H.264",
+        "container": "QuickTime",
+        "read_support": true,
+        "write_support": true,
+        "srt_compatibility": true,
+        "performance_score": 90
+      },
+      "mkv": {
+        "codec": "H.264",
+        "container": "Matroska",
+        "read_support": true,
+        "write_support": true,
+        "srt_compatibility": true,
+        "performance_score": 88
+      },
+      "wmv": {
+        "codec": "WMV",
+        "container": "ASF",
+        "read_support": true,
+        "write_support": false,
+        "srt_compatibility": false,
+        "performance_score": 60
+      },
+      "webm": {
+        "codec": "VP8",
+        "container": "WebM",
+        "read_support": true,
+        "write_support": true,
+        "srt_compatibility": true,
+        "performance_score": 80
+      }
+    }
+  },
+  "compatibility_matrix": {},
+  "performance_metrics": {},
+  "sync_accuracy": {
+    "sync_tests": [
+      {
+        "scenario_name": "标准场景",
+        "video_duration": 120.0,
+        "subtitle_count": 40,
+        "expected_accuracy": 0.95,
+        "actual_accuracy": 0.9459501799607983,
+        "average_error": 0.24652505267326338,
+        "max_error": 0.6163126316831584,
+        "sync_quality": "优秀"
+      },
+      {
+        "scenario_name": "快节奏场景",
+        "video_duration": 60.0,
+        "subtitle_count": 50,
+        "expected_accuracy": 0.85,
+        "actual_accuracy": 0.8685527682978454,
+        "average_error": 0.512236375843496,
+        "max_error": 1.28059093960874,
+        "sync_quality": "需改进"
+      },
+      {
+        "scenario_name": "长视频场景",
+        "video_duration": 600.0,
+        "subtitle_count": 200,
+        "expected_accuracy": 0.9,
+        "actual_accuracy": 0.8542245255754165,
+        "average_error": 0.3060257492659947,
+        "max_error": 0.7650643731649867,
+        "sync_quality": "良好"
+      }
+    ],
+    "accuracy_metrics": {
+      "overall_accuracy": 0.8895758246113533,
+      "average_sync_error": 0.35492905926091806,
+      "max_error": 0.512236375843496,
+      "min_error": 0.24652505267326338,
+      "accuracy_variance": 0.0016232503937848835
+    },
+    "error_analysis": {
+      "high_error_count": 1,
+      "error_rate": 0.3333333333333333,
+      "problematic_scenarios": [
+        "快节奏场景"
+      ]
+    }
+  },
+  "continuity_tests": {
+    "continuity_tests": [
+      {
+        "test_case": {
+          "segments": 3,
+          "total_duration": 180.0,
+          "transition_type": "直接拼接"
+        },
+        "detected_gaps": [
+          0.044689517665025824,
+          0.038590344500343286
+        ],
+        "average_gap": 0.04163993108268456,
+        "max_gap": 0.044689517665025824,
+        "continuity_score": 0.5836006891731544,
+        "segments_processed": 3,
+        "processing_success": true
+      },
+      {
+        "test_case": {
+          "segments": 5,
+          "total_duration": 300.0,
+          "transition_type": "淡入淡出"
+        },
+        "detected_gaps": [
+          0.016732093755443166,
+          0,
+          0.01102908534400417,
+          0
+        ],
+        "average_gap": 0.006940294774861834,
+        "max_gap": 0.016732093755443166,
+        "continuity_score": 0.9305970522513817,
+        "segments_processed": 5,
+        "processing_success": true
+      },
+      {
+        "test_case": {
+          "segments": 8,
+          "total_duration": 480.0,
+          "transition_type": "无缝拼接"
+        },
+        "detected_gaps": [
+          0.0034588758972549606,
+          0.015368854860491474,
+          0.005493499185747017,
+          0.0037343962365143568,
+          0.008970898028460685,
+          0.006960312429661167,
+          0.01694399579110235
+        ],
+        "average_gap": 0.008704404632747431,
+        "max_gap": 0.01694399579110235,
+        "continuity_score": 0.9129559536725257,
+        "segments_processed": 8,
+        "processing_success": true
+      }
+    ],
+    "gap_analysis": {
+      "total_gaps": 13,
+      "average_gap_duration": 0.013228605668772958,
+      "max_gap": 0.044689517665025824,
+      "gaps_over_threshold": 0
+    },
+    "quality_assessment": {
+      "success_rate": 0.6666666666666666,
+      "average_continuity_score": 0.8090512316990206,
+      "quality_grade": "需改进"
+    }
+  }
+}

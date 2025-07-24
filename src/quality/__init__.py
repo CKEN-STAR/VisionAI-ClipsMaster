@@ -33,9 +33,9 @@ from .scoring_model import QualityScorer, score_video_quality
 from .legal_scanner import CopyrightValidator, WatermarkDatabase, extract_key_frames
 from .engagement_predictor import WatchTimePredictor, InteractionPredictor
 from .hardware_lab import DeviceCompatibilityTester, DeviceEmulator
-from .stress_test import ChaosMonkey, ResourceLimiter, StressTestRunner
-from .human_eval import CrowdRatingSystem, EvaluationCampaign, HumanEvaluator
-from .provenance_tracer import QualityGenealogy
+# from .stress_test import ChaosMonkey, ResourceLimiter, StressTestRunner  # 模块不存在，暂时注释
+# from .human_eval import CrowdRatingSystem, EvaluationCampaign, HumanEvaluator  # 模块不存在，暂时注释
+# from .provenance_tracer import QualityGenealogy  # 模块不存在，暂时注释
 
 __all__ = [
     'GoldenComparator',
@@ -64,11 +64,11 @@ __all__ = [
     'InteractionPredictor',
     'DeviceCompatibilityTester',
     'DeviceEmulator',
-    'ChaosMonkey',
-    'ResourceLimiter',
-    'StressTestRunner',
-    'CrowdRatingSystem',
-    'EvaluationCampaign',
-    'HumanEvaluator',
-    'QualityGenealogy'
+    # 'ChaosMonkey',  # 模块不存在，暂时注释
+    # 'ResourceLimiter',  # 模块不存在，暂时注释
+    # 'StressTestRunner',  # 模块不存在，暂时注释
+    # 'CrowdRatingSystem',  # 模块不存在，暂时注释
+    # 'EvaluationCampaign',  # 模块不存在，暂时注释
+    # 'HumanEvaluator',  # 模块不存在，暂时注释
+    # 'QualityGenealogy'  # 模块不存在，暂时注释
 ] 

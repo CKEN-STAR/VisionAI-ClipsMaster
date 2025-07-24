@@ -9,8 +9,8 @@ __version__ = "1.0.1"
 __version_info__ = (1, 0, 1)
 
 # 发布信息
-__release_date__ = "2025-07-23"
-__release_name__ = "修复版"
+__release_date__ = "2025-07-24"
+__release_name__ = "稳定优化版"
 __build_type__ = "stable"
 
 # 兼容性信息

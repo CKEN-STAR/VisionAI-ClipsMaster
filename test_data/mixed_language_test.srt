@@ -1,0 +1,58 @@
+1
+00:00:01,000 --> 00:00:03,500
+Hello everyone, 大家好！
+
+2
+00:00:03,500 --> 00:00:06,000
+Welcome to VisionAI-ClipsMaster
+欢迎使用VisionAI-ClipsMaster
+
+3
+00:00:06,000 --> 00:00:08,500
+This is a mixed language subtitle test
+这是一个混合语言字幕测试
+
+4
+00:00:08,500 --> 00:00:11,000
+English and Chinese 中英文混合
+Perfect for testing language detection
+
+5
+00:00:11,000 --> 00:00:13,500
+AI can understand both languages
+AI可以理解两种语言
+
+6
+00:00:13,500 --> 00:00:16,000
+Machine learning 机器学习
+Deep learning 深度学习
+
+7
+00:00:16,000 --> 00:00:18,500
+Natural language processing
+自然语言处理技术
+
+8
+00:00:18,500 --> 00:00:21,000
+Video editing with AI
+使用AI进行视频剪辑
+
+9
+00:00:21,000 --> 00:00:23,500
+Short drama clips 短剧混剪
+Viral content creation 爆款内容创作
+
+10
+00:00:23,500 --> 00:00:26,000
+Thank you for watching!
+感谢观看！
+
+11
+00:00:26,000 --> 00:00:28,500
+Subscribe and like 订阅点赞
+See you next time 下次见！
+
+12
+00:00:28,500 --> 00:00:31,000
+Goodbye! 再见！
+Have a nice day! 祝您愉快！

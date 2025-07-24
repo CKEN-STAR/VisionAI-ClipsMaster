@@ -1,0 +1,159 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VisionAI-ClipsMaster 视频处理模块测试报告</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { background-color: #f0f0f0; padding: 20px; border-radius: 5px; }
+        .summary { margin: 20px 0; }
+        .test-category { margin: 20px 0; }
+        .test-item { margin: 10px 0; padding: 10px; border-left: 4px solid #ddd; }
+        .passed { border-left-color: #4CAF50; background-color: #f9fff9; }
+        .failed { border-left-color: #f44336; background-color: #fff9f9; }
+        .skipped { border-left-color: #ff9800; background-color: #fffaf0; }
+        .status { font-weight: bold; }
+        .details { margin-top: 5px; color: #666; }
+        .error { color: #d32f2f; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>VisionAI-ClipsMaster 视频处理模块测试报告</h1>
+        <p><strong>测试时间:</strong> 2025-07-25T00:14:56.225466</p>
+        <p><strong>测试版本:</strong> v1.0.1</p>
+        <p><strong>测试时长:</strong> 4.71 秒</p>
+    </div>
+
+    <div class="summary">
+        <h2>测试总结</h2>
+        <p><strong>总测试数:</strong> 20</p>
+        <p><strong>通过:</strong> <span style="color: #4CAF50;">4</span></p>
+        <p><strong>失败:</strong> <span style="color: #f44336;">14</span></p>
+        <p><strong>跳过:</strong> <span style="color: #ff9800;">2</span></p>
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 环境设置 - 测试环境创建</div>
+        <div class="details">临时测试目录: C:\Users\13075\AppData\Local\Temp\visionai_test_4949iqsf</div>
+        
+    </div>
+
+    <div class="test-item failed">
+        <div class="status">[FAILED] 输入处理 - 文件格式验证</div>
+        <div class="details">FileChecker模块导入失败</div>
+        <div class="error">错误: cannot import name 'FileChecker' from 'src.utils.file_checker' (D:\zancun\VisionAI-ClipsMaster\src\utils\file_checker.py)</div>
+    </div>
+
+    <div class="test-item failed">
+        <div class="status">[FAILED] 输入处理 - 文件完整性校验</div>
+        <div class="details"></div>
+        <div class="error">错误: cannot import name 'FileChecker' from 'src.utils.file_checker' (D:\zancun\VisionAI-ClipsMaster\src\utils\file_checker.py)</div>
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 输入处理 - 中文语言检测</div>
+        <div class="details">检测结果: zh</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 输入处理 - 英文语言检测</div>
+        <div class="details">检测结果: en</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 输入处理 - 测试SRT文件创建</div>
+        <div class="details">创建测试字幕: C:\Users\13075\AppData\Local\Temp\visionai_test_4949iqsf\input/subtitles/test_subtitle.srt</div>
+        
+    </div>
+
+    <div class="test-item failed">
+        <div class="status">[FAILED] 剧本重构 - 原片字幕解析</div>
+        <div class="details"></div>
+        <div class="error">错误: 'SRTParser' object has no attribute 'parse_srt_file'</div>
+    </div>
+
+    <div class="test-item failed">
+        <div class="status">[FAILED] 剧本重构 - 剧本重构功能</div>
+        <div class="details">模块导入失败</div>
+        <div class="error">错误: cannot import name 'NarrativeAnalyzer' from 'src.core.narrative_analyzer' (D:\zancun\VisionAI-ClipsMaster\src\core\narrative_analyzer.py)</div>
+    </div>
+
+    <div class="test-item failed">
+        <div class="status">[FAILED] 剧本重构 - 字幕长度控制</div>
+        <div class="details"></div>
+        <div class="error">错误: 'ScreenplayEngineer' object has no attribute 'ensure_minimum_length'</div>
+    </div>
+
+    <div class="test-item failed">
+        <div class="status">[FAILED] 视频拼接 - 时间轴对齐</div>
+        <div class="details"></div>
+        <div class="error">错误: 'PrecisionAlignmentEngineer' object has no attribute 'align_subtitles_to_video'</div>
+    </div>
+
+    <div class="test-item failed">
+        <div class="status">[FAILED] 输入处理 - 测试视频文件创建</div>
+        <div class="details"></div>
+        <div class="error">错误: [WinError 2] 系统找不到指定的文件。</div>
+    </div>
+
+    <div class="test-item skipped">
+        <div class="status">[SKIPPED] 视频拼接 - 片段提取</div>
+        <div class="details">测试视频创建失败</div>
+        
+    </div>
+
+    <div class="test-item failed">
+        <div class="status">[FAILED] 输入处理 - 测试视频文件创建</div>
+        <div class="details"></div>
+        <div class="error">错误: [WinError 2] 系统找不到指定的文件。</div>
+    </div>
+
+    <div class="test-item skipped">
+        <div class="status">[SKIPPED] 视频拼接 - 视频拼接</div>
+        <div class="details">测试视频创建失败</div>
+        
+    </div>
+
+    <div class="test-item failed">
+        <div class="status">[FAILED] 性能稳定性 - 内存占用控制</div>
+        <div class="details"></div>
+        <div class="error">错误: 'ModelLoader' object has no attribute 'load_quantized_model'</div>
+    </div>
+
+    <div class="test-item failed">
+        <div class="status">[FAILED] 性能稳定性 - 模型切换</div>
+        <div class="details"></div>
+        <div class="error">错误: 'ModelSwitcher' object has no attribute 'switch_to_chinese_model'</div>
+    </div>
+
+    <div class="test-item failed">
+        <div class="status">[FAILED] 性能稳定性 - 异常恢复</div>
+        <div class="details"></div>
+        <div class="error">错误: 'RecoveryManager' object has no attribute 'save_checkpoint'</div>
+    </div>
+
+    <div class="test-item failed">
+        <div class="status">[FAILED] 输出质量 - 剧情连贯性检查</div>
+        <div class="details">QualityValidator模块导入失败</div>
+        <div class="error">错误: cannot import name 'QualityValidator' from 'src.eval.quality_validator' (D:\zancun\VisionAI-ClipsMaster\src\eval\quality_validator.py)</div>
+    </div>
+
+    <div class="test-item failed">
+        <div class="status">[FAILED] 输出质量 - 剪映工程导出</div>
+        <div class="details">导出文件格式不正确</div>
+        
+    </div>
+
+    <div class="test-item failed">
+        <div class="status">[FAILED] 输出质量 - 输出文件完整性</div>
+        <div class="details"></div>
+        <div class="error">错误: cannot import name 'FileChecker' from 'src.utils.file_checker' (D:\zancun\VisionAI-ClipsMaster\src\utils\file_checker.py)</div>
+    </div>
+
+</body>
+</html>

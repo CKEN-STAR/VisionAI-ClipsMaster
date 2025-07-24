@@ -1,0 +1,97 @@
+{
+  "version": "1.0.1",
+  "test_type": "核心功能模块测试",
+  "timestamp": "20250724_233640",
+  "test_results": {
+    "srt_parsing": {
+      "passed": true,
+      "details": "成功解析3条字幕，耗时: 0.010秒",
+      "error_msg": "",
+      "timestamp": "2025-07-24T23:36:36.485147"
+    },
+    "language_detection": {
+      "passed": true,
+      "details": "语言检测准确率: 100.0%",
+      "error_msg": "",
+      "timestamp": "2025-07-24T23:36:39.574652"
+    },
+    "model_config_exists": {
+      "passed": true,
+      "details": "模型配置文件存在",
+      "error_msg": "",
+      "timestamp": "2025-07-24T23:36:39.590516"
+    },
+    "models_directory": {
+      "passed": true,
+      "details": "模型目录存在，包含11个子目录",
+      "error_msg": "",
+      "timestamp": "2025-07-24T23:36:39.591000"
+    },
+    "model_switcher_import": {
+      "passed": true,
+      "details": "模型切换器导入成功",
+      "error_msg": "",
+      "timestamp": "2025-07-24T23:36:39.591000"
+    },
+    "available_models": {
+      "passed": true,
+      "details": "发现2个可用模型",
+      "error_msg": "",
+      "timestamp": "2025-07-24T23:36:39.591000"
+    },
+    "ffmpeg_exists": {
+      "passed": true,
+      "details": "FFmpeg工具存在",
+      "error_msg": "",
+      "timestamp": "2025-07-24T23:36:39.591000"
+    },
+    "clip_generator_import": {
+      "passed": true,
+      "details": "视频片段生成器导入成功",
+      "error_msg": "",
+      "timestamp": "2025-07-24T23:36:39.594253"
+    },
+    "clip_generation_method": {
+      "passed": true,
+      "details": "视频片段生成方法可用",
+      "error_msg": "",
+      "timestamp": "2025-07-24T23:36:39.594253"
+    },
+    "srt_generation_method": {
+      "passed": false,
+      "details": "SRT生成方法不可用",
+      "error_msg": "",
+      "timestamp": "2025-07-24T23:36:39.594253"
+    },
+    "export_config_exists": {
+      "passed": true,
+      "details": "导出配置文件存在",
+      "error_msg": "",
+      "timestamp": "2025-07-24T23:36:39.594944"
+    },
+    "jianying_exporter_import": {
+      "passed": true,
+      "details": "剪映导出器模块未找到，跳过测试",
+      "error_msg": "",
+      "timestamp": "2025-07-24T23:36:40.625551"
+    }
+  },
+  "performance_data": {
+    "srt_parse_time": {
+      "value": 0.010412931442260742,
+      "unit": "seconds",
+      "timestamp": "2025-07-24T23:36:36.485147"
+    },
+    "language_detection_accuracy": {
+      "value": 100.0,
+      "unit": "%",
+      "timestamp": "2025-07-24T23:36:39.574652"
+    }
+  },
+  "errors": [],
+  "summary": {
+    "total_tests": 12,
+    "passed_tests": 11,
+    "success_rate": 91.66666666666666
+  }
+}

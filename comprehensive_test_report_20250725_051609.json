@@ -1,0 +1,225 @@
+{
+  "test_start_time": "2025-07-25T05:16:09.852599",
+  "tests": {
+    "srt_video_clipping": {
+      "test_name": "爆款SRT视频剪辑功能测试",
+      "start_time": "2025-07-25T05:16:09.863364",
+      "status": "passed",
+      "sub_tests": {
+        "srt_parsing": {
+          "test_name": "SRT文件解析测试",
+          "status": "passed",
+          "details": {
+            "original_subtitles_count": 8,
+            "viral_subtitles_count": 4,
+            "parse_time_original": 0.011648893356323242,
+            "parse_time_viral": 0.0,
+            "time_format_valid": true
+          }
+        },
+        "segment_extraction": {
+          "test_name": "视频片段提取测试",
+          "status": "passed",
+          "details": {
+            "segments_extracted": 4,
+            "total_duration": 13.0,
+            "segments": [
+              {
+                "segment_id": 1,
+                "start_time": 1.0,
+                "end_time": 3.0,
+                "duration": 2.0,
+                "text": "今天天气很好"
+              },
+              {
+                "segment_id": 2,
+                "start_time": 8.0,
+                "end_time": 12.0,
+                "duration": 4.0,
+                "text": "路上遇到了很多有趣的人"
+              },
+              {
+                "segment_id": 3,
+                "start_time": 17.0,
+                "end_time": 20.0,
+                "duration": 3.0,
+                "text": "还有小朋友在玩耍"
+              },
+              {
+                "segment_id": 4,
+                "start_time": 31.0,
+                "end_time": 35.0,
+                "duration": 4.0,
+                "text": "这真是美好的一天"
+              }
+            ],
+            "time_gaps": [
+              5.0,
+              5.0,
+              11.0
+            ],
+            "has_time_gaps": true
+          }
+        },
+        "video_concatenation": {
+          "test_name": "视频拼接测试",
+          "status": "passed",
+          "details": {
+            "concat_params": {
+              "input_segments": 4,
+              "output_format": "mp4",
+              "video_codec": "h264",
+              "audio_codec": "aac",
+              "resolution": "1920x1080",
+              "fps": 30
+            },
+            "concat_time": 0.0017571449279785156,
+            "output_file_exists": true,
+            "output_path": "C:\\Users\\13075\\AppData\\Local\\Temp\\visionai_test_ho0s01c4\\test_output\\concatenated_video.mp4"
+          }
+        },
+        "boundary_cases": {
+          "test_name": "边界情况测试",
+          "status": "passed",
+          "details": {
+            "boundary_tests": [
+              {
+                "test_case": "时间轴不连续",
+                "status": "passed",
+                "details": "解析到3个字幕段"
+              },
+              {
+                "test_case": "跨集剪辑",
+                "status": "passed",
+                "details": "模拟跨2集剪辑"
+              },
+              {
+                "test_case": "极短片段处理",
+                "status": "passed",
+                "details": "处理2个极短片段"
+              }
+            ]
+          }
+        }
+      },
+      "performance": {
+        "initialization_time": 0.0
+      },
+      "issues": [],
+      "end_time": "2025-07-25T05:16:09.914045"
+    },
+    "jianying_project_generation": {
+      "test_name": "剪映工程文件生成功能测试",
+      "start_time": "2025-07-25T05:16:09.914045",
+      "status": "failed",
+      "sub_tests": {
+        "project_format": {
+          "test_name": "工程文件格式测试",
+          "status": "error",
+          "details": {},
+          "error": "'JianYingProExporter' object has no attribute 'create_project'"
+        },
+        "file_integrity": {
+          "test_name": "文件完整性测试",
+          "status": "error",
+          "details": {},
+          "error": "JianYingProExporter.export_project() got an unexpected keyword argument 'project_name'"
+        },
+        "compatibility": {
+          "test_name": "剪映兼容性测试",
+          "status": "warning",
+          "details": {
+            "version_tests": [
+              {
+                "version": "2.9",
+                "status": "error",
+                "error": "'JianyingCompatibilityValidator' object has no attribute 'validate_version_compatibility'"
+              },
+              {
+                "version": "3.0",
+                "status": "error",
+                "error": "'JianyingCompatibilityValidator' object has no attribute 'validate_version_compatibility'"
+              },
+              {
+                "version": "3.1",
+                "status": "error",
+                "error": "'JianyingCompatibilityValidator' object has no attribute 'validate_version_compatibility'"
+              }
+            ],
+            "compatibility_rate": 0.0
+          }
+        }
+      },
+      "performance": {
+        "initialization_time": 0.0
+      },
+      "issues": [],
+      "end_time": "2025-07-25T05:16:09.918637"
+    },
+    "jianying_import_functionality": {
+      "test_name": "剪映导入功能实际验证测试",
+      "start_time": "2025-07-25T05:16:09.919644",
+      "status": "failed",
+      "sub_tests": {
+        "import_success": {
+          "test_name": "导入成功率测试",
+          "status": "error",
+          "details": {},
+          "error": "JianYingProExporter.export_project() got an unexpected keyword argument 'project_name'"
+        },
+        "material_association": {
+          "test_name": "素材关联测试",
+          "status": "error",
+          "details": {},
+          "error": "JianYingProExporter.export_project() got an unexpected keyword argument 'project_name'"
+        },
+        "editability": {
+          "test_name": "项目可编辑性测试",
+          "status": "error",
+          "details": {},
+          "error": "JianYingProExporter.export_project() got an unexpected keyword argument 'project_name'"
+        }
+      },
+      "performance": {},
+      "issues": [],
+      "end_time": "2025-07-25T05:16:09.920409"
+    }
+  },
+  "summary": {
+    "total_tests": 3,
+    "passed_tests": 1,
+    "failed_tests": 2,
+    "error_tests": 0,
+    "success_rate": 0.3333333333333333,
+    "test_duration": 0.06781
+  },
+  "performance_metrics": {
+    "srt_video_clipping": {
+      "initialization_time": 0.0
+    },
+    "jianying_project_generation": {
+      "initialization_time": 0.0
+    },
+    "jianying_import_functionality": {},
+    "overall": {
+      "average_init_time": 0.0,
+      "max_init_time": 0.0,
+      "min_init_time": 0.0
+    }
+  },
+  "issues_found": [],
+  "recommendations": [
+    {
+      "priority": "high",
+      "category": "functionality",
+      "description": "剪映工程文件生成功能测试存在问题，需要修复",
+      "suggested_action": "检查相关模块实现并修复失败的子测试"
+    },
+    {
+      "priority": "high",
+      "category": "functionality",
+      "description": "剪映导入功能实际验证测试存在问题，需要修复",
+      "suggested_action": "检查相关模块实现并修复失败的子测试"
+    }
+  ]
+}

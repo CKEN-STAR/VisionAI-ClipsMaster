@@ -1379,3 +1379,6 @@ def align_subtitles_with_precision(original_subtitles: List[Dict[str, Any]],
     """执行高精度字幕对齐的便捷函数"""
     engineer = create_precision_alignment_engineer(precision_level)
     return engineer.align_subtitle_to_video(original_subtitles, reconstructed_subtitles, video_duration)
+
+# 为了兼容性，提供别名
+AlignmentEngineer = PrecisionAlignmentEngineer

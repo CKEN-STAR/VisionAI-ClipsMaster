@@ -1,0 +1,158 @@
+{
+  "training_dir_training_root": {
+    "status": "PASS",
+    "details": "目录存在，包含 1 个文件",
+    "error": "",
+    "timestamp": "2025-07-24T23:40:57.599949"
+  },
+  "training_dir_chinese_data": {
+    "status": "PASS",
+    "details": "目录存在，包含 10 个文件",
+    "error": "",
+    "timestamp": "2025-07-24T23:40:57.599949"
+  },
+  "training_dir_english_data": {
+    "status": "PASS",
+    "details": "目录存在，包含 8 个文件",
+    "error": "",
+    "timestamp": "2025-07-24T23:40:57.599949"
+  },
+  "training_dir_hit_subtitles_zh": {
+    "status": "PASS",
+    "details": "目录存在，包含 1 个文件",
+    "error": "",
+    "timestamp": "2025-07-24T23:40:57.599949"
+  },
+  "training_dir_hit_subtitles_en": {
+    "status": "PASS",
+    "details": "目录存在，包含 1 个文件",
+    "error": "",
+    "timestamp": "2025-07-24T23:40:57.599949"
+  },
+  "training_dir_raw_pairs_zh": {
+    "status": "PASS",
+    "details": "目录存在，包含 1 个文件",
+    "error": "",
+    "timestamp": "2025-07-24T23:40:57.599949"
+  },
+  "training_dir_raw_pairs_en": {
+    "status": "PASS",
+    "details": "目录存在，包含 1 个文件",
+    "error": "",
+    "timestamp": "2025-07-24T23:40:57.599949"
+  },
+  "zh_trainer_init": {
+    "status": "PASS",
+    "details": "中文训练器初始化成功",
+    "error": "",
+    "timestamp": "2025-07-24T23:40:59.159207"
+  },
+  "zh_trainer_methods": {
+    "status": "PASS",
+    "details": "可用方法: 1/3",
+    "error": "",
+    "timestamp": "2025-07-24T23:40:59.159207"
+  },
+  "en_trainer_init": {
+    "status": "PASS",
+    "details": "英文训练器初始化成功",
+    "error": "",
+    "timestamp": "2025-07-24T23:40:59.175021"
+  },
+  "en_trainer_methods": {
+    "status": "PASS",
+    "details": "可用方法: 1/3",
+    "error": "",
+    "timestamp": "2025-07-24T23:40:59.175021"
+  },
+  "data_augment_init": {
+    "status": "PASS",
+    "details": "数据增强器初始化成功",
+    "error": "",
+    "timestamp": "2025-07-24T23:40:59.177167"
+  },
+  "text_augmentation": {
+    "status": "PASS",
+    "details": "文本增强成功，生成 15 个变体",
+    "error": "",
+    "timestamp": "2025-07-24T23:40:59.177167"
+  },
+  "plot_augment_init": {
+    "status": "PASS",
+    "details": "剧情增强器初始化成功",
+    "error": "",
+    "timestamp": "2025-07-24T23:40:59.178921"
+  },
+  "curriculum_init": {
+    "status": "FAIL",
+    "details": "",
+    "error": "cannot import name 'Curriculum' from 'src.training.curriculum' (D:\\zancun\\VisionAI-ClipsMaster\\src\\training\\curriculum.py)",
+    "timestamp": "2025-07-24T23:40:59.180001"
+  },
+  "training_pipeline_init": {
+    "status": "PASS",
+    "details": "训练流水线初始化成功",
+    "error": "",
+    "timestamp": "2025-07-24T23:41:01.121624"
+  },
+  "pipeline_methods": {
+    "status": "PASS",
+    "details": "可用方法: 0/3",
+    "error": "",
+    "timestamp": "2025-07-24T23:41:01.121624"
+  },
+  "training_feeder_init": {
+    "status": "PASS",
+    "details": "投喂训练器初始化成功",
+    "error": "",
+    "timestamp": "2025-07-24T23:41:01.154115"
+  },
+  "feed_method": {
+    "status": "WARN",
+    "details": "投喂方法不可用",
+    "error": "",
+    "timestamp": "2025-07-24T23:41:01.154115"
+  },
+  "viral_processing": {
+    "status": "WARN",
+    "details": "爆款数据处理方法不可用",
+    "error": "",
+    "timestamp": "2025-07-24T23:41:01.154115"
+  },
+  "fine_tuner_init": {
+    "status": "PASS",
+    "details": "模型微调器初始化成功",
+    "error": "",
+    "timestamp": "2025-07-24T23:41:03.287192"
+  },
+  "fine_tuning_methods": {
+    "status": "PASS",
+    "details": "可用方法: 0/3",
+    "error": "",
+    "timestamp": "2025-07-24T23:41:03.287192"
+  },
+  "training_config": {
+    "status": "PASS",
+    "details": "训练配置加载成功，包含 17 项",
+    "error": "",
+    "timestamp": "2025-07-24T23:41:03.306711"
+  },
+  "training_config_items": {
+    "status": "PASS",
+    "details": "关键配置项: 3/3",
+    "error": "",
+    "timestamp": "2025-07-24T23:41:03.306711"
+  },
+  "memory_baseline": {
+    "status": "PASS",
+    "details": "当前内存使用: 74.0%",
+    "error": "",
+    "timestamp": "2025-07-24T23:41:03.308719"
+  },
+  "training_memory_optimization": {
+    "status": "WARN",
+    "details": "训练内存优化不可用",
+    "error": "",
+    "timestamp": "2025-07-24T23:41:03.308719"
+  }
+}

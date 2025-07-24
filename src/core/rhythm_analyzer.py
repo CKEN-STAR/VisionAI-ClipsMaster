@@ -20,7 +20,7 @@ class RhythmAnalyzer:
         self.min_segment_length = 1.0      # 最小片段长度（秒）
         self.max_segment_length = 8.0      # 最大片段长度（秒）
 
-        logger.info("🎵 节奏分析器初始化完成")
+        logger.info("[MUSIC] 节奏分析器初始化完成")
 
     def analyze_optimal_length(self, subtitles: List[Dict]) -> Dict[str, Any]:
         """
@@ -52,7 +52,7 @@ class RhythmAnalyzer:
                 "compression_ratio": suggested_length / total_duration if total_duration > 0 else 0
             }
 
-            logger.info(f"🎵 节奏分析完成，建议长度: {suggested_length:.2f}秒")
+            logger.info(f"[MUSIC] 节奏分析完成，建议长度: {suggested_length:.2f}秒")
             return result
 
         except Exception as e:
@@ -72,7 +72,7 @@ class RhythmAnalyzer:
             List[Dict]: 优化后的字幕列表
         """
         try:
-            logger.info(f"🎵 开始长度优化，目标范围: {min_length}-{max_length}秒")
+            logger.info(f"[MUSIC] 开始长度优化，目标范围: {min_length}-{max_length}秒")
 
             current_duration = sum(self._get_duration(sub) for sub in subtitles)
             target_duration = (min_length + max_length) / 2
@@ -92,7 +92,7 @@ class RhythmAnalyzer:
                 optimized = subtitles
 
             final_duration = sum(self._get_duration(sub) for sub in optimized)
-            logger.info(f"🎵 长度优化完成: {current_duration:.2f}s → {final_duration:.2f}s")
+            logger.info(f"[MUSIC] 长度优化完成: {current_duration:.2f}s → {final_duration:.2f}s")
 
             return optimized
 

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="1.0">
+    <info>
+        <name>Golden Sample - Wuxia</name>
+        <type>wuxia</type>
+        <duration>120.0</duration>
+        <resolution>1920x1080</resolution>
+        <framerate>30</framerate>
+        <description>This is a golden standard sample for wuxia scene type.</description>
+        <created_by>VisionAI-ClipsMaster</created_by>
+    </info>
+    
+    <timeline>
+        <track type="video">
+            <clip start="0" end="120" source="golden_wuxia_source.mp4">
+                <effects>
+                    <effect type="color_grading" preset="standard"/>
+                    <effect type="stabilization" amount="0.3"/>
+                </effects>
+            </clip>
+        </track>
+        
+        <track type="audio">
+            <clip start="0" end="120" source="golden_wuxia_audio.wav">
+                <effects>
+                    <effect type="normalization" target_db="-14"/>
+                    <effect type="noise_reduction" amount="0.2"/>
+                </effects>
+            </clip>
+        </track>
+        
+        <track type="subtitle">
+            <clip start="0" end="120" source="golden_wuxia.srt">
+                <settings>
+                    <font>Arial</font>
+                    <size>42</size>
+                    <color>#FFFFFF</color>
+                    <background>#80000000</background>
+                    <position>bottom_center</position>
+                </settings>
+            </clip>
+        </track>
+    </timeline>
+    
+    <metadata>
+        <golden_standard>true</golden_standard>
+        <test_purpose>quality_comparison</test_purpose>
+        <category>wuxia</category>
+        <tags>golden_sample, wuxia, test, benchmark</tags>
+        <content_rating>general</content_rating>
+    </metadata>
+    
+    <test_parameters>
+        <ssim_baseline>0.95</ssim_baseline>
+        <psnr_baseline>40.0</psnr_baseline>
+        <motion_consistency_baseline>0.92</motion_consistency_baseline>
+        <audio_quality_baseline>0.90</audio_quality_baseline>
+    </test_parameters>
+</project>

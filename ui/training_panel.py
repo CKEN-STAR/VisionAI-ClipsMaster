@@ -137,7 +137,24 @@ class TrainingPanel(QWidget):
         
         self.init_ui()
         self.setup_connections()
-    
+
+    def setup_ui(self):
+        """设置UI界面 - 公共接口方法"""
+        # 为了兼容性提供公共接口
+        if hasattr(self, '_ui_initialized') and self._ui_initialized:
+            print("[INFO] TrainingPanel UI已经初始化，跳过重复设置")
+            return
+
+        self.init_ui()
+        self._ui_initialized = True
+        print("[OK] TrainingPanel UI设置完成")
+
+    def show(self):
+        """显示训练面板"""
+        super().show()
+        self.raise_()
+        print("[OK] TrainingPanel已显示")
+
     def init_ui(self):
         """初始化UI"""
         layout = QVBoxLayout(self)

@@ -1,0 +1,52 @@
+1
+00:00:00,000 --> 00:00:03,000
+DAVID: Has anyone seen the report I left on the table?
+
+2
+00:00:03,000 --> 00:00:06,000
+SARAH: Which report? The quarterly analysis?
+
+3
+00:00:06,000 --> 00:00:09,000
+MICHAEL: I put it in your inbox this morning.
+
+4
+00:00:09,000 --> 00:00:12,000
+DAVID: No, I'm talking about the client proposal.
+
+5
+00:00:12,000 --> 00:00:15,000
+EMMA: Oh, I think Jennifer took it for review.
+
+6
+00:00:15,000 --> 00:00:18,000
+JENNIFER: Yes, I have it. Give me 10 minutes to finish reading it.
+
+7
+00:00:18,000 --> 00:00:21,000
+DAVID: Great, we need to discuss it before the meeting.
+
+8
+00:00:21,000 --> 00:00:24,000
+MICHAEL: What time is the client coming in?
+
+9
+00:00:24,000 --> 00:00:27,000
+SARAH: They'll be here at 2:30. Conference room A.
+
+10
+00:00:27,000 --> 00:00:30,000
+EMMA: Should I order lunch for everyone?
+
+11
+00:00:30,000 --> 00:00:33,000
+DAVID: Yes, please. Something light.
+
+12
+00:00:33,000 --> 00:00:36,000
+JENNIFER: No seafood for me, remember?
+
+13
+00:00:36,000 --> 00:00:39,000
+MICHAEL: And I'm vegetarian this month.
+

@@ -1,0 +1,249 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VisionAI-ClipsMaster 视频处理模块测试报告</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { background-color: #f0f0f0; padding: 20px; border-radius: 5px; }
+        .summary { margin: 20px 0; }
+        .test-category { margin: 20px 0; }
+        .test-item { margin: 10px 0; padding: 10px; border-left: 4px solid #ddd; }
+        .passed { border-left-color: #4CAF50; background-color: #f9fff9; }
+        .failed { border-left-color: #f44336; background-color: #fff9f9; }
+        .skipped { border-left-color: #ff9800; background-color: #fffaf0; }
+        .status { font-weight: bold; }
+        .details { margin-top: 5px; color: #666; }
+        .error { color: #d32f2f; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>VisionAI-ClipsMaster 视频处理模块测试报告</h1>
+        <p><strong>测试时间:</strong> 2025-07-25T00:40:27.617719</p>
+        <p><strong>测试版本:</strong> v1.0.1</p>
+        <p><strong>测试时长:</strong> 6.04 秒</p>
+    </div>
+
+    <div class="summary">
+        <h2>测试总结</h2>
+        <p><strong>总测试数:</strong> 35</p>
+        <p><strong>通过:</strong> <span style="color: #4CAF50;">34</span></p>
+        <p><strong>失败:</strong> <span style="color: #f44336;">1</span></p>
+        <p><strong>跳过:</strong> <span style="color: #ff9800;">0</span></p>
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 环境设置 - 测试环境创建</div>
+        <div class="details">临时测试目录: C:\Users\13075\AppData\Local\Temp\visionai_test_rtgbysx9</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 输入处理 - 测试SRT文件创建</div>
+        <div class="details">创建测试字幕: C:\Users\13075\AppData\Local\Temp\visionai_test_rtgbysx9\input/subtitles/test_subtitle.srt</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 输入处理 - 字幕格式验证</div>
+        <div class="details">字幕格式检查结果: True</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 输入处理 - 文件安全性检查</div>
+        <div class="details">文件安全性检查结果: True</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 输入处理 - 测试SRT文件创建</div>
+        <div class="details">创建测试字幕: C:\Users\13075\AppData\Local\Temp\visionai_test_rtgbysx9\input/subtitles/test_subtitle.srt</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 输入处理 - 文件完整性校验</div>
+        <div class="details">文件哈希计算成功: a6074f9f46d2f5c0...</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 输入处理 - 文件完整性验证</div>
+        <div class="details">文件完整性验证结果: True</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 输入处理 - 中文语言检测</div>
+        <div class="details">检测结果: zh</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 输入处理 - 英文语言检测</div>
+        <div class="details">检测结果: en</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 输入处理 - 测试SRT文件创建</div>
+        <div class="details">创建测试字幕: C:\Users\13075\AppData\Local\Temp\visionai_test_rtgbysx9\input/subtitles/test_subtitle.srt</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 剧本重构 - 字幕文件解析</div>
+        <div class="details">成功解析 5 条字幕</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 剧本重构 - 剧情结构分析</div>
+        <div class="details">剧情分析完成，分析结果: <class 'dict'></div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 剧本重构 - 字幕数据加载</div>
+        <div class="details">成功加载 5 条字幕</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 剧本重构 - 爆款风格重构</div>
+        <div class="details">重构完成，结果类型: <class 'dict'></div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 剧本重构 - 剧情结构分析</div>
+        <div class="details">剧情分析完成，结果: <class 'dict'></div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 剧本重构 - 字幕时长优化</div>
+        <div class="details">时长优化完成，结果: <class 'dict'></div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 剧本重构 - 原始字幕时长计算</div>
+        <div class="details">原始字幕总时长: 40.0秒</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 剧本重构 - 重构后长度控制</div>
+        <div class="details">重构完成，长度控制正常</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 视频拼接 - 时间轴对齐</div>
+        <div class="details">对齐引擎初始化成功</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 输入处理 - FFmpeg可用性检查</div>
+        <div class="details">FFmpeg可用，路径: D:\zancun\VisionAI-ClipsMaster\tools\ffmpeg\bin\ffmpeg.exe</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 输入处理 - 测试视频文件创建</div>
+        <div class="details">创建测试视频: C:\Users\13075\AppData\Local\Temp\visionai_test_rtgbysx9\input/videos/test_video.mp4</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 视频拼接 - 片段验证</div>
+        <div class="details">片段验证完成，有效片段: 2</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 输入处理 - FFmpeg可用性检查</div>
+        <div class="details">FFmpeg可用，路径: D:\zancun\VisionAI-ClipsMaster\tools\ffmpeg\bin\ffmpeg.exe</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 输入处理 - 测试视频文件创建</div>
+        <div class="details">创建测试视频: C:\Users\13075\AppData\Local\Temp\visionai_test_rtgbysx9\input/videos/test_video.mp4</div>
+        
+    </div>
+
+    <div class="test-item failed">
+        <div class="status">[FAILED] 视频拼接 - 视频拼接</div>
+        <div class="details"></div>
+        <div class="error">错误: 'ClipGenerator' object has no attribute 'concatenate_segments'</div>
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 性能稳定性 - 内存占用控制</div>
+        <div class="details">当前内存: 339.7MB, 增加: 0.0MB</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 性能稳定性 - 模型切换器初始化</div>
+        <div class="details">ModelSwitcher初始化成功</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 性能稳定性 - 模型可用性检查</div>
+        <div class="details">模型可用性检查完成: {'zh': True, 'en': True}</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 性能稳定性 - 模型选择</div>
+        <div class="details">模型选择完成，耗时: 0.00秒</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 性能稳定性 - 检查点保存</div>
+        <div class="details">检查点保存测试</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 性能稳定性 - 断点恢复</div>
+        <div class="details">恢复成功，位置: 00:00:04,000</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 输出质量 - 剧情连贯性检查</div>
+        <div class="details">连贯性评分: 0.820</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 输出质量 - 剪映工程导出</div>
+        <div class="details">导出成功，包含 6 个片段</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 输出质量 - 输出文件完整性</div>
+        <div class="details">文件验证通过，哈希: 277ad87f83e05f0c...</div>
+        
+    </div>
+
+    <div class="test-item passed">
+        <div class="status">[PASSED] 输出质量 - 文件内容完整性</div>
+        <div class="details">内容完整性验证: True</div>
+        
+    </div>
+
+</body>
+</html>

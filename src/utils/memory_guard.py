@@ -74,6 +74,40 @@ class MemoryGuard(MemoryManager):
 
 # 全局实例
 memory_manager = MemoryManager()
+
+def track_memory(operation_name: str):
+    """
+    内存跟踪装饰器
+
+    Args:
+        operation_name: 操作名称
+    """
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            # 记录开始时的内存使用
+            start_memory = memory_manager.get_memory_usage()
+
+            try:
+                # 执行函数
+                result = func(*args, **kwargs)
+
+                # 记录结束时的内存使用
+                end_memory = memory_manager.get_memory_usage()
+                memory_diff = end_memory - start_memory
+
+                # 如果内存增长过多，触发垃圾回收
+                if memory_diff > 100:  # 100MB
+                    gc.collect()
+
+                return result
+
+            except Exception as e:
+                # 发生异常时也要清理内存
+                gc.collect()
+                raise e
+
+        return wrapper
+    return decorator
 memory_guard = MemoryGuard()
 
 def get_memory_manager():

@@ -1,0 +1,155 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VisionAI-ClipsMaster 功能测试报告</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f5f5f5; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .header { text-align: center; margin-bottom: 30px; }
+        .summary { background: #e8f4fd; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+        .test-category { margin-bottom: 25px; }
+        .test-category h3 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 5px; }
+        .test-item { margin: 10px 0; padding: 10px; border-left: 4px solid #ddd; background: #f9f9f9; }
+        .status-pass { border-left-color: #27ae60; }
+        .status-fail { border-left-color: #e74c3c; }
+        .status-partial { border-left-color: #f39c12; }
+        .status-error { border-left-color: #8e44ad; }
+        .status-badge { display: inline-block; padding: 2px 8px; border-radius: 3px; color: white; font-size: 12px; margin-right: 10px; }
+        .badge-pass { background-color: #27ae60; }
+        .badge-fail { background-color: #e74c3c; }
+        .badge-partial { background-color: #f39c12; }
+        .badge-error { background-color: #8e44ad; }
+        .details { margin-top: 5px; font-size: 12px; color: #666; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎬 VisionAI-ClipsMaster 功能测试报告</h1>
+            <p>测试时间: 2025-07-24T10:22:44.548765</p>
+        </div>
+
+        <div class="summary">
+            <h2>📊 测试摘要</h2>
+            <p><strong>总测试数:</strong> 18</p>
+            <p><strong>通过:</strong> 18 | <strong>失败:</strong> 0 | <strong>部分通过:</strong> 0 | <strong>错误:</strong> 0</p>
+            <p><strong>成功率:</strong> 100.0%</p>
+            <p><strong>测试时长:</strong> 4.3秒</p>
+        </div>
+
+        <div class="test-category"><h3>🖥️ UI界面测试</h3>
+                    <div class="test-item status-pass">
+                        <span class="status-badge badge-pass">PASS</span>
+                        <strong>main_ui_startup</strong>
+                        <div class="details">UI文件结构完整，大小: 384577 bytes</div>
+                    </div>
+                    
+                    <div class="test-item status-pass">
+                        <span class="status-badge badge-pass">PASS</span>
+                        <strong>ui_components_interaction</strong>
+                        <div class="details">所有关键UI组件文件存在</div>
+                    </div>
+                    
+                    <div class="test-item status-pass">
+                        <span class="status-badge badge-pass">PASS</span>
+                        <strong>training_monitoring_panel</strong>
+                        <div class="details">训练监控面板文件存在且包含必要功能</div>
+                    </div>
+                    
+                    <div class="test-item status-pass">
+                        <span class="status-badge badge-pass">PASS</span>
+                        <strong>progress_dashboard</strong>
+                        <div class="details">进度看板文件存在</div>
+                    </div>
+                    
+                    <div class="test-item status-pass">
+                        <span class="status-badge badge-pass">PASS</span>
+                        <strong>theme_switching</strong>
+                        <div class="details">样式文件存在且包含主题样式</div>
+                    </div>
+                    </div><div class="test-category"><h3>⚙️ 核心功能模块测试</h3>
+                    <div class="test-item status-pass">
+                        <span class="status-badge badge-pass">PASS</span>
+                        <strong>language_detection</strong>
+                        <div class="details">语言检测模块导入成功，包含检测功能</div>
+                    </div>
+                    
+                    <div class="test-item status-pass">
+                        <span class="status-badge badge-pass">PASS</span>
+                        <strong>script_reconstruction</strong>
+                        <div class="details">剧本重构模块存在且包含必要功能</div>
+                    </div>
+                    
+                    <div class="test-item status-pass">
+                        <span class="status-badge badge-pass">PASS</span>
+                        <strong>video_splicing</strong>
+                        <div class="details">视频拼接模块文件存在</div>
+                    </div>
+                    
+                    <div class="test-item status-pass">
+                        <span class="status-badge badge-pass">PASS</span>
+                        <strong>jianying_export</strong>
+                        <div class="details">剪映导出模块存在，找到66个导出器</div>
+                    </div>
+                    </div><div class="test-category"><h3>🔄 工作流程完整性测试</h3>
+                    <div class="test-item status-pass">
+                        <span class="status-badge badge-pass">PASS</span>
+                        <strong>end_to_end_workflow</strong>
+                        <div class="details">端到端工作流程组件完整，找到9个测试字幕文件</div>
+                    </div>
+                    
+                    <div class="test-item status-pass">
+                        <span class="status-badge badge-pass">PASS</span>
+                        <strong>training_workflow</strong>
+                        <div class="details">投喂训练工作流程组件完整</div>
+                    </div>
+                    
+                    <div class="test-item status-pass">
+                        <span class="status-badge badge-pass">PASS</span>
+                        <strong>exception_recovery</strong>
+                        <div class="details">异常恢复功能模块完整</div>
+                    </div>
+                    </div><div class="test-category"><h3>⚡ 性能与稳定性测试</h3>
+                    <div class="test-item status-pass">
+                        <span class="status-badge badge-pass">PASS</span>
+                        <strong>memory_management</strong>
+                        <div class="details">内存管理模块存在，当前内存使用: 236.0MB</div>
+                    </div>
+                    
+                    <div class="test-item status-pass">
+                        <span class="status-badge badge-pass">PASS</span>
+                        <strong>long_term_stability</strong>
+                        <div class="details">长时稳定性测试通过，内存增长: 0.0MB</div>
+                    </div>
+                    
+                    <div class="test-item status-pass">
+                        <span class="status-badge badge-pass">PASS</span>
+                        <strong>video_quality</strong>
+                        <div class="details">视频质量检测模块存在，找到1个测试视频</div>
+                    </div>
+                    </div><div class="test-category"><h3>🔍 边界条件测试</h3>
+                    <div class="test-item status-pass">
+                        <span class="status-badge badge-pass">PASS</span>
+                        <strong>video_length_boundary</strong>
+                        <div class="details">视频长度边界控制模块完整</div>
+                    </div>
+                    
+                    <div class="test-item status-pass">
+                        <span class="status-badge badge-pass">PASS</span>
+                        <strong>mixed_language_processing</strong>
+                        <div class="details">混合语言处理功能完整，找到1个混合语言测试文件</div>
+                    </div>
+                    
+                    <div class="test-item status-pass">
+                        <span class="status-badge badge-pass">PASS</span>
+                        <strong>format_compatibility</strong>
+                        <div class="details">视频格式兼容性良好，支持格式: ['mp4', 'avi', 'flv', 'mov', 'mkv']</div>
+                    </div>
+                    </div>
+    </div>
+</body>
+</html>
+        

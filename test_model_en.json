@@ -1,0 +1,18 @@
+{
+  "model_type": "english_mistral_7b",
+  "training_time": 1753373078.399008,
+  "model_version": "1.0.0",
+  "language": "en",
+  "framework": "transformers",
+  "quantization": "Q5_K",
+  "training_config": {
+    "model_name": "Mistral-7B",
+    "language": "en",
+    "max_seq_length": 2048,
+    "batch_size": 3,
+    "learning_rate": 2e-05,
+    "epochs": 4,
+    "quantization": "Q5_K",
+    "memory_limit": 3.8
+  }
+}

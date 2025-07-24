@@ -1,0 +1,62 @@
+[
+  {
+    "id": "scene_1",
+    "start_time": 0.0,
+    "end_time": 10.0,
+    "duration": 10.0,
+    "importance": 0.9,
+    "tags": ["开场", "关键", "人物介绍"],
+    "emotion_score": 0.7,
+    "description": "开场介绍主要人物"
+  },
+  {
+    "id": "scene_2",
+    "start_time": 10.0,
+    "end_time": 25.0,
+    "duration": 15.0,
+    "importance": 0.5,
+    "tags": ["过渡"],
+    "emotion_score": 0.3,
+    "description": "人物走向下一个场景的过渡"
+  },
+  {
+    "id": "scene_3",
+    "start_time": 25.0,
+    "end_time": 45.0,
+    "duration": 20.0,
+    "importance": 0.85,
+    "tags": ["高潮", "关键"],
+    "emotion_score": 0.9,
+    "description": "故事高潮，情感强烈"
+  },
+  {
+    "id": "scene_4",
+    "start_time": 45.0,
+    "end_time": 60.0,
+    "duration": 15.0,
+    "importance": 0.4,
+    "tags": ["过渡"],
+    "emotion_score": 0.2,
+    "description": "平静的过渡场景"
+  },
+  {
+    "id": "scene_5",
+    "start_time": 60.0,
+    "end_time": 75.0,
+    "duration": 15.0,
+    "importance": 0.75,
+    "tags": ["转折"],
+    "emotion_score": 0.65,
+    "description": "故事出现转折"
+  },
+  {
+    "id": "scene_6",
+    "start_time": 75.0,
+    "end_time": 90.0,
+    "duration": 15.0,
+    "importance": 0.95,
+    "tags": ["结局", "关键"],
+    "emotion_score": 0.85,
+    "description": "故事结局，人物情感变化"
+  }
+] 

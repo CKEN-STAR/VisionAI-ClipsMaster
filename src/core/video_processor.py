@@ -47,11 +47,45 @@ except ImportError:
 _is_first_run = True
 
 class VideoProcessor:
-    """视频处理器
-    
-    负责视频分析、关键帧提取、字幕处理和片段裁剪功能。
     """
-    
+    视频处理器类
+
+    负责视频分析、关键帧提取、字幕处理和片段裁剪功能。
+
+    支持的视频格式：
+    - MP4 (H.264/H.265)
+    - AVI (多种编码)
+    - FLV (Flash Video)
+    - MOV (QuickTime)
+    - MKV (Matroska)
+    - WMV (Windows Media)
+    - WEBM (VP8/VP9)
+    """
+
+    # 支持的视频格式
+    SUPPORTED_VIDEO_FORMATS = {
+        '.mp4': {'codec': 'libx264', 'container': 'mp4'},
+        '.avi': {'codec': 'libx264', 'container': 'avi'},
+        '.flv': {'codec': 'libx264', 'container': 'flv'},
+        '.mov': {'codec': 'libx264', 'container': 'mov'},
+        '.mkv': {'codec': 'libx264', 'container': 'matroska'},
+        '.wmv': {'codec': 'libx264', 'container': 'asf'},
+        '.webm': {'codec': 'libvpx-vp9', 'container': 'webm'},
+        '.m4v': {'codec': 'libx264', 'container': 'mp4'},
+        '.3gp': {'codec': 'libx264', 'container': '3gp'}
+    }
+
+    # 格式特定的编码参数
+    FORMAT_SPECIFIC_PARAMS = {
+        '.mp4': ['-movflags', '+faststart'],
+        '.webm': ['-c:a', 'libvorbis'],
+        '.flv': ['-ar', '44100'],
+        '.avi': ['-c:a', 'aac'],
+        '.mkv': ['-c:a', 'aac'],
+        '.mov': ['-c:a', 'aac'],
+        '.wmv': ['-c:a', 'aac']
+    }
+
     def __init__(self):
         """初始化视频处理器"""
         global _is_first_run
@@ -87,7 +121,10 @@ class VideoProcessor:
         
         # 加载模型
         self.model_loader = get_model_loader()
-        
+
+        # 初始化FFmpeg路径
+        self.ffmpeg_path = self._find_ffmpeg()
+
         logger.info("视频处理器初始化完成")
 
     def _init_gpu_support(self):
@@ -214,11 +251,11 @@ class VideoProcessor:
     
     def extract_subtitles(self, video_path: str, output_path: str) -> Dict[str, Any]:
         """提取视频字幕
-        
+
         Args:
             video_path: 视频文件路径
             output_path: 字幕输出路径
-            
+
         Returns:
             Dict[str, Any]: 字幕信息
         """
@@ -228,6 +265,206 @@ class VideoProcessor:
             "line_count": 15,
             "duration": 10.5
         }
+
+    def concatenate_videos(self, video_list: List[str], output_path: str,
+                          subtitle_segments: List[Dict] = None) -> Dict[str, Any]:
+        """根据字幕时间轴拼接视频片段
+
+        Args:
+            video_list: 视频文件路径列表
+            output_path: 输出视频路径
+            subtitle_segments: 字幕片段信息，包含时间轴
+
+        Returns:
+            Dict[str, Any]: 拼接结果
+        """
+        try:
+            start_time = time.time()
+            logger.info(f"开始拼接 {len(video_list)} 个视频片段")
+
+            if not self.ffmpeg_path:
+                return {'success': False, 'error': 'FFmpeg不可用'}
+
+            # 创建临时文件列表
+            temp_list_file = get_temp_path("video_processor") / "concat_list.txt"
+            ensure_dir(temp_list_file.parent)
+
+            with open(temp_list_file, 'w', encoding='utf-8') as f:
+                for video_path in video_list:
+                    f.write(f"file '{os.path.abspath(video_path)}'\n")
+
+            # 构建FFmpeg拼接命令
+            cmd = [
+                self.ffmpeg_path,
+                '-f', 'concat',
+                '-safe', '0',
+                '-i', str(temp_list_file),
+                '-c', 'copy',  # 无损拼接
+                '-y',  # 覆盖输出文件
+                output_path
+            ]
+
+            # 执行拼接
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
+
+            # 清理临时文件
+            if temp_list_file.exists():
+                temp_list_file.unlink()
+
+            process_time = time.time() - start_time
+
+            if result.returncode == 0:
+                logger.info(f"视频拼接成功，耗时: {process_time:.2f}秒")
+                return {
+                    'success': True,
+                    'output_path': output_path,
+                    'process_time': process_time,
+                    'video_count': len(video_list),
+                    'method': 'ffmpeg_concat'
+                }
+            else:
+                logger.error(f"视频拼接失败: {result.stderr}")
+                return {
+                    'success': False,
+                    'error': result.stderr,
+                    'process_time': process_time
+                }
+
+        except Exception as e:
+            logger.error(f"视频拼接异常: {str(e)}")
+            return {'success': False, 'error': str(e)}
+
+    def extract_video_segment(self, input_path: str, output_path: str,
+                             start_time: float, end_time: float) -> Dict[str, Any]:
+        """提取视频片段
+
+        Args:
+            input_path: 输入视频路径
+            output_path: 输出视频路径
+            start_time: 开始时间（秒）
+            end_time: 结束时间（秒）
+
+        Returns:
+            Dict[str, Any]: 提取结果
+        """
+        try:
+            if not self.ffmpeg_path:
+                return {'success': False, 'error': 'FFmpeg不可用'}
+
+            duration = end_time - start_time
+            if duration <= 0:
+                return {'success': False, 'error': '无效的时间范围'}
+
+            # 构建FFmpeg命令
+            cmd = [
+                self.ffmpeg_path,
+                '-i', input_path,
+                '-ss', str(start_time),
+                '-t', str(duration),
+                '-c', 'copy',  # 无损切割
+                '-avoid_negative_ts', 'make_zero',
+                '-y',
+                output_path
+            ]
+
+            start_process_time = time.time()
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
+            process_time = time.time() - start_process_time
+
+            if result.returncode == 0:
+                logger.info(f"视频片段提取成功: {start_time}s-{end_time}s")
+                return {
+                    'success': True,
+                    'output_path': output_path,
+                    'start_time': start_time,
+                    'end_time': end_time,
+                    'duration': duration,
+                    'process_time': process_time
+                }
+            else:
+                logger.error(f"视频片段提取失败: {result.stderr}")
+                return {
+                    'success': False,
+                    'error': result.stderr,
+                    'process_time': process_time
+                }
+
+        except Exception as e:
+            logger.error(f"视频片段提取异常: {str(e)}")
+            return {'success': False, 'error': str(e)}
+
+    def validate_video_file(self, video_path: str) -> Dict[str, Any]:
+        """验证视频文件的完整性和可用性
+
+        Args:
+            video_path: 视频文件路径
+
+        Returns:
+            Dict[str, Any]: 验证结果
+        """
+        try:
+            if not os.path.exists(video_path):
+                return {'valid': False, 'error': '文件不存在'}
+
+            if not self.is_supported_format(video_path):
+                return {'valid': False, 'error': '不支持的视频格式'}
+
+            # 使用FFmpeg验证文件
+            if self.ffmpeg_path:
+                cmd = [
+                    self.ffmpeg_path,
+                    '-v', 'error',
+                    '-i', video_path,
+                    '-f', 'null', '-'
+                ]
+
+                result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+
+                if result.returncode == 0:
+                    return {
+                        'valid': True,
+                        'file_size': os.path.getsize(video_path),
+                        'format_info': self.detect_video_format(video_path)
+                    }
+                else:
+                    return {
+                        'valid': False,
+                        'error': f'文件损坏或格式错误: {result.stderr}'
+                    }
+            else:
+                # 基本文件检查
+                file_size = os.path.getsize(video_path)
+                return {
+                    'valid': file_size > 0,
+                    'file_size': file_size,
+                    'error': '无法深度验证（FFmpeg不可用）' if file_size == 0 else None
+                }
+
+        except Exception as e:
+            return {'valid': False, 'error': f'验证异常: {str(e)}'}
+
+    def _find_ffmpeg(self):
+        """查找FFmpeg可执行文件"""
+        import shutil
+
+        # 尝试在系统PATH中查找
+        ffmpeg_path = shutil.which('ffmpeg')
+        if ffmpeg_path:
+            return ffmpeg_path
+
+        # 尝试在项目目录中查找
+        project_root = Path(__file__).parent.parent.parent
+        possible_paths = [
+            project_root / 'tools' / 'ffmpeg' / 'ffmpeg.exe',
+            project_root / 'ffmpeg.exe',
+            project_root / 'bin' / 'ffmpeg.exe'
+        ]
+
+        for path in possible_paths:
+            if path.exists():
+                return str(path)
+
+        return None
 
     def encode_video_gpu(self, input_path: str, output_path: str,
                         width: int = None, height: int = None,
@@ -424,6 +661,84 @@ class VideoProcessor:
             'device': 'cpu'
         }
 
+    def detect_video_info(self, file_path):
+        """检测视频格式和编码信息"""
+        if not self.ffmpeg_path:
+            return {'error': 'FFmpeg不可用'}
+
+        try:
+            cmd = [
+                self.ffmpeg_path, '-i', file_path,
+                '-f', 'null', '-'
+            ]
+
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=30
+            )
+
+            # FFmpeg将信息输出到stderr
+            output = result.stderr
+
+            # 解析视频信息
+            info = {
+                'duration': self._extract_duration(output),
+                'resolution': self._extract_resolution(output),
+                'fps': self._extract_fps(output),
+                'codec': self._extract_codec(output),
+                'bitrate': self._extract_bitrate(output)
+            }
+
+            return info
+
+        except subprocess.TimeoutExpired:
+            return {'error': '检测超时'}
+        except Exception as e:
+            return {'error': f'检测失败: {str(e)}'}
+
+    def _extract_duration(self, output):
+        """从FFmpeg输出中提取时长"""
+        import re
+        match = re.search(r'Duration: (\d{2}):(\d{2}):(\d{2}\.\d{2})', output)
+        if match:
+            hours, minutes, seconds = match.groups()
+            return float(hours) * 3600 + float(minutes) * 60 + float(seconds)
+        return None
+
+    def _extract_resolution(self, output):
+        """从FFmpeg输出中提取分辨率"""
+        import re
+        match = re.search(r'(\d{3,4})x(\d{3,4})', output)
+        if match:
+            return f"{match.group(1)}x{match.group(2)}"
+        return None
+
+    def _extract_fps(self, output):
+        """从FFmpeg输出中提取帧率"""
+        import re
+        match = re.search(r'(\d+\.?\d*) fps', output)
+        if match:
+            return float(match.group(1))
+        return None
+
+    def _extract_codec(self, output):
+        """从FFmpeg输出中提取编码格式"""
+        import re
+        match = re.search(r'Video: (\w+)', output)
+        if match:
+            return match.group(1)
+        return None
+
+    def _extract_bitrate(self, output):
+        """从FFmpeg输出中提取比特率"""
+        import re
+        match = re.search(r'bitrate: (\d+) kb/s', output)
+        if match:
+            return int(match.group(1))
+        return None
+
 # 单例模式
 _video_processor = None
 
@@ -437,5 +752,5 @@ def get_video_processor() -> VideoProcessor:
     
     if _video_processor is None:
         _video_processor = VideoProcessor()
-    
-    return _video_processor 
+
+    return _video_processor

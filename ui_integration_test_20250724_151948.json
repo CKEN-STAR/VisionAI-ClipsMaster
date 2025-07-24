@@ -1,0 +1,147 @@
+{
+  "test_type": "UI Integration Tests",
+  "version": "v1.0.1",
+  "timestamp": "2025-07-24T15:19:44.759124",
+  "summary": {
+    "total_tests": 14,
+    "passed_tests": 12,
+    "failed_tests": 2,
+    "success_rate": 85.71428571428571
+  },
+  "test_results": {
+    "ui_import_ui_main_window": {
+      "passed": true,
+      "details": "MainWindow导入成功",
+      "metrics": {
+        "import_time_ms": 3526.0488986968994
+      },
+      "timestamp": "2025-07-24T15:19:48.285173"
+    },
+    "ui_import_ui_training_panel": {
+      "passed": true,
+      "details": "TrainingPanel导入成功",
+      "metrics": {
+        "import_time_ms": 0.0
+      },
+      "timestamp": "2025-07-24T15:19:48.285173"
+    },
+    "ui_import_ui_progress_dashboard": {
+      "passed": true,
+      "details": "ProgressDashboard导入成功",
+      "metrics": {
+        "import_time_ms": 0.0
+      },
+      "timestamp": "2025-07-24T15:19:48.285173"
+    },
+    "ui_import_ui_components_realtime_charts": {
+      "passed": true,
+      "details": "RealtimeCharts导入成功",
+      "metrics": {
+        "import_time_ms": 0.0
+      },
+      "timestamp": "2025-07-24T15:19:48.285173"
+    },
+    "ui_import_ui_components_alert_manager": {
+      "passed": true,
+      "details": "AlertManager导入成功",
+      "metrics": {
+        "import_time_ms": 0.0
+      },
+      "timestamp": "2025-07-24T15:19:48.285173"
+    },
+    "ui_imports_overall": {
+      "passed": true,
+      "details": "UI模块导入成功率: 100.0%",
+      "metrics": {
+        "success_rate": 100.0,
+        "avg_import_time_ms": 705.2097797393799,
+        "successful_imports": 5,
+        "total_modules": 5
+      },
+      "timestamp": "2025-07-24T15:19:48.286958"
+    },
+    "main_window_initialization": {
+      "passed": false,
+      "details": "主窗口类检查完成，可用方法: 1/3",
+      "metrics": {
+        "init_time_ms": 0.0,
+        "available_methods": [
+          "__init__"
+        ],
+        "required_methods": [
+          "__init__",
+          "setup_ui",
+          "show"
+        ]
+      },
+      "timestamp": "2025-07-24T15:19:48.286958"
+    },
+    "training_panel_functionality": {
+      "passed": true,
+      "details": "训练面板功能检查，可用方法: 1/3",
+      "metrics": {
+        "available_methods": [
+          "__init__"
+        ],
+        "functionality_score": 0.3333333333333333
+      },
+      "timestamp": "2025-07-24T15:19:48.286958"
+    },
+    "progress_dashboard_functionality": {
+      "passed": true,
+      "details": "进度看板功能检查，可用方法: 1/3",
+      "metrics": {
+        "available_methods": [
+          "__init__"
+        ],
+        "functionality_score": 0.3333333333333333
+      },
+      "timestamp": "2025-07-24T15:19:48.286958"
+    },
+    "realtime_charts_responsiveness": {
+      "passed": false,
+      "details": "实时图表响应性检查，可用更新方法: 0",
+      "metrics": {
+        "response_time_ms": 0.0,
+        "available_update_methods": [],
+        "responsiveness_score": 0.0
+      },
+      "timestamp": "2025-07-24T15:19:48.286958"
+    },
+    "alert_manager_responsiveness": {
+      "passed": true,
+      "details": "警报管理器响应性检查，可用方法: 1",
+      "metrics": {
+        "response_time_ms": 0.0,
+        "available_alert_methods": [
+          "show_alert"
+        ],
+        "alert_functionality_score": 0.25
+      },
+      "timestamp": "2025-07-24T15:19:48.288629"
+    },
+    "error_handling_ui_components_alert_manager": {
+      "passed": true,
+      "details": "错误处理模块可用: ui.components.alert_manager",
+      "metrics": {},
+      "timestamp": "2025-07-24T15:19:48.288629"
+    },
+    "error_handling_src_utils_error_handler": {
+      "passed": true,
+      "details": "错误处理模块可用: src.utils.error_handler",
+      "metrics": {},
+      "timestamp": "2025-07-24T15:19:48.296484"
+    },
+    "ui_error_handling_overall": {
+      "passed": true,
+      "details": "UI错误处理能力: 100.0%",
+      "metrics": {
+        "error_handling_score": 100.0,
+        "available_modules": 2,
+        "total_modules": 2
+      },
+      "timestamp": "2025-07-24T15:19:48.296484"
+    }
+  },
+  "ui_metrics": {}
+}

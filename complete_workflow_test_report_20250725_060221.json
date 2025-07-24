@@ -1,0 +1,342 @@
+{
+  "test_start_time": "2025-07-25T06:02:20.328400",
+  "workflow_tests": {
+    "ui_startup": {
+      "test_name": "UI界面启动测试",
+      "start_time": "2025-07-25T06:02:20.345173",
+      "status": "passed",
+      "details": {
+        "ui_script_exists": true,
+        "module_import_success": true,
+        "has_main_window_class": false,
+        "qt_imports_available": true,
+        "qt_available": true,
+        "startup_time": 0.49410462379455566,
+        "memory_usage_mb": 41.6171875,
+        "memory_before_mb": 287.95703125,
+        "memory_after_mb": 329.57421875,
+        "startup_score": 0.8333333333333334
+      },
+      "end_time": "2025-07-25T06:02:20.839278"
+    },
+    "file_upload_parsing": {
+      "test_name": "文件上传和解析测试",
+      "start_time": "2025-07-25T06:02:20.840293",
+      "status": "passed",
+      "details": {
+        "srt_file_exists": true,
+        "srt_parsing_success": true,
+        "srt_content_count": 15,
+        "video_file_exists": true,
+        "video_info_success": true,
+        "video_info_data": {
+          "filename": "original_drama_full.mp4",
+          "duration": 75.0,
+          "resolution": "1920x1080",
+          "fps": 30,
+          "codec": "h264",
+          "size_mb": 185.5,
+          "bitrate": "2000kbps"
+        },
+        "format_validation_success": true,
+        "format_validation_tests": [
+          {
+            "file": "C:\\Users\\13075\\AppData\\Local\\Temp\\visionai_complete_test_u_fehfqn\\test_data\\original_drama.srt",
+            "expected_ext": ".srt",
+            "valid": true
+          },
+          {
+            "file": "C:\\Users\\13075\\AppData\\Local\\Temp\\visionai_complete_test_u_fehfqn\\test_data\\original_drama_full.mp4",
+            "expected_ext": ".mp4",
+            "valid": true
+          }
+        ],
+        "processing_score": 1.0
+      },
+      "end_time": "2025-07-25T06:02:20.842278"
+    },
+    "ai_reconstruction": {
+      "test_name": "AI重构处理流程测试",
+      "start_time": "2025-07-25T06:02:20.842278",
+      "status": "passed",
+      "details": {
+        "original_subtitles_count": 15,
+        "viral_subtitles_count": 8,
+        "processing_time": 0.07382369041442871,
+        "progress_simulation": [
+          {
+            "step": "加载原始字幕",
+            "progress": 14.285714285714285,
+            "timestamp": 1753394540.8432791
+          },
+          {
+            "step": "分析内容结构",
+            "progress": 28.57142857142857,
+            "timestamp": 1753394540.8543396
+          },
+          {
+            "step": "识别关键情节点",
+            "progress": 42.857142857142854,
+            "timestamp": 1753394540.864626
+          },
+          {
+            "step": "计算情感强度",
+            "progress": 57.14285714285714,
+            "timestamp": 1753394540.8751106
+          },
+          {
+            "step": "选择精华片段",
+            "progress": 71.42857142857143,
+            "timestamp": 1753394540.8854692
+          },
+          {
+            "step": "优化时间轴",
+            "progress": 85.71428571428571,
+            "timestamp": 1753394540.896
+          },
+          {
+            "step": "生成重构结果",
+            "progress": 100.0,
+            "timestamp": 1753394540.9064028
+          }
+        ],
+        "quality_metrics": {
+          "compression_ratio": 0.5333333333333333,
+          "time_compression": 1.0,
+          "key_moments_preserved": true,
+          "original_segments": 15,
+          "viral_segments": 8,
+          "original_duration": 74.0,
+          "viral_duration": 74.0
+        },
+        "processing_steps_completed": 7,
+        "ai_score": 1.0
+      },
+      "end_time": "2025-07-25T06:02:20.917102"
+    },
+    "video_processing": {
+      "test_name": "视频片段提取和拼接测试",
+      "start_time": "2025-07-25T06:02:20.917102",
+      "status": "passed",
+      "details": {
+        "segments_extracted": 8,
+        "extraction_success": true,
+        "extraction_time": 0.0,
+        "concatenation_time": 0.14457106590270996,
+        "concatenation_progress": [
+          {
+            "step": "准备视频片段",
+            "progress": 14.285714285714285,
+            "timestamp": 1753394540.9171028
+          },
+          {
+            "step": "检查片段兼容性",
+            "progress": 28.57142857142857,
+            "timestamp": 1753394540.9394605
+          },
+          {
+            "step": "设置输出参数",
+            "progress": 42.857142857142854,
+            "timestamp": 1753394540.9597666
+          },
+          {
+            "step": "开始拼接处理",
+            "progress": 57.14285714285714,
+            "timestamp": 1753394540.980281
+          },
+          {
+            "step": "添加转场效果",
+            "progress": 71.42857142857143,
+            "timestamp": 1753394541.0004137
+          },
+          {
+            "step": "音频同步处理",
+            "progress": 85.71428571428571,
+            "timestamp": 1753394541.020849
+          },
+          {
+            "step": "最终渲染输出",
+            "progress": 100.0,
+            "timestamp": 1753394541.0413964
+          }
+        ],
+        "output_exists": true,
+        "output_size": 0,
+        "expected_duration": 32.0,
+        "quality_checks": {
+          "resolution_correct": true,
+          "fps_correct": true,
+          "audio_sync": true,
+          "no_artifacts": true,
+          "duration_accurate": true
+        },
+        "video_segments": [
+          {
+            "id": "segment_1",
+            "start_time": 1.0,
+            "end_time": 5.0,
+            "duration": 4.0,
+            "file_path": "C:\\Users\\13075\\AppData\\Local\\Temp\\visionai_complete_test_u_fehfqn\\test_data\\original_drama_full.mp4",
+            "text": "小雨站在咖啡厅门口，犹豫着要不要进去",
+            "extraction_success": true
+          },
+          {
+            "id": "segment_2",
+            "start_time": 16.0,
+            "end_time": 20.0,
+            "duration": 4.0,
+            "file_path": "C:\\Users\\13075\\AppData\\Local\\Temp\\visionai_complete_test_u_fehfqn\\test_data\\original_drama_full.mp4",
+            "text": "现在李明要结婚了，新娘不是她",
+            "extraction_success": true
+          },
+          {
+            "id": "segment_3",
+            "start_time": 21.0,
+            "end_time": 25.0,
+            "duration": 4.0,
+            "file_path": "C:\\Users\\13075\\AppData\\Local\\Temp\\visionai_complete_test_u_fehfqn\\test_data\\original_drama_full.mp4",
+            "text": "小雨深吸一口气，推开了咖啡厅的门",
+            "extraction_success": true
+          }
+        ],
+        "video_score": 1.0
+      },
+      "end_time": "2025-07-25T06:02:21.061674"
+    },
+    "jianying_export": {
+      "test_name": "剪映工程文件导出测试",
+      "start_time": "2025-07-25T06:02:21.061674",
+      "status": "passed",
+      "details": {
+        "export_success": true,
+        "file_exists": true,
+        "file_size": 25924,
+        "export_time": 0.0,
+        "content_valid": true,
+        "structure_checks": {
+          "has_version": true,
+          "has_materials": true,
+          "has_tracks": true,
+          "has_canvas_config": true,
+          "materials_not_empty": true,
+          "tracks_not_empty": true
+        },
+        "segments_count": 8,
+        "project_version": "3.0.0",
+        "tracks_count": 3,
+        "materials_count": 8,
+        "export_score": 1.0
+      },
+      "end_time": "2025-07-25T06:02:21.084992"
+    },
+    "performance_monitoring": {
+      "test_name": "端到端性能测试",
+      "start_time": "2025-07-25T06:02:21.084992",
+      "status": "passed",
+      "details": {
+        "performance_data": [
+          {
+            "step": "UI启动",
+            "duration": 0.10406661033630371,
+            "memory_usage_mb": 329.8125,
+            "memory_increase_mb": 0.0,
+            "timestamp": 1753394541.1890588
+          },
+          {
+            "step": "文件加载",
+            "duration": 0.05052947998046875,
+            "memory_usage_mb": 329.8125,
+            "memory_increase_mb": 0.0,
+            "timestamp": 1753394541.2395883
+          },
+          {
+            "step": "AI处理",
+            "duration": 0.20044231414794922,
+            "memory_usage_mb": 329.8125,
+            "memory_increase_mb": 0.0,
+            "timestamp": 1753394541.4400306
+          },
+          {
+            "step": "视频处理",
+            "duration": 0.30063724517822266,
+            "memory_usage_mb": 329.8125,
+            "memory_increase_mb": 0.0,
+            "timestamp": 1753394541.7406678
+          },
+          {
+            "step": "导出处理",
+            "duration": 0.10080838203430176,
+            "memory_usage_mb": 329.8125,
+            "memory_increase_mb": 0.0,
+            "timestamp": 1753394541.8414762
+          }
+        ],
+        "performance_metrics": {
+          "total_processing_time": 0.7564840316772461,
+          "initial_memory_mb": 287.921875,
+          "final_memory_mb": 329.8125,
+          "peak_memory_mb": 329.8125,
+          "memory_increase_mb": 41.890625,
+          "memory_efficiency": true,
+          "processing_speed": true,
+          "memory_within_limit": true
+        },
+        "workflow_steps_count": 5,
+        "memory_samples": 5,
+        "performance_score": 1.0
+      },
+      "end_time": "2025-07-25T06:02:21.841476"
+    },
+    "output_verification": {
+      "test_name": "输出结果验证",
+      "start_time": "2025-07-25T06:02:21.841476",
+      "status": "passed",
+      "details": {
+        "output_files_count": 2,
+        "file_quality_checks": [
+          {
+            "file": "complete_workflow_project.json",
+            "file_size": 25924,
+            "json_valid": true,
+            "timecode_accurate": true,
+            "segments_aligned": true,
+            "has_materials": true,
+            "has_tracks": true
+          },
+          {
+            "file": "final_concatenated_video.mp4",
+            "file_size": 0,
+            "exists": true,
+            "format_correct": true
+          }
+        ],
+        "quality_metrics": {
+          "total_output_files": 2,
+          "jianying_files_count": 1,
+          "video_files_count": 1,
+          "all_files_exist": true,
+          "file_sizes_reasonable": false,
+          "formats_correct": true
+        },
+        "output_directory": "C:\\Users\\13075\\AppData\\Local\\Temp\\visionai_complete_test_u_fehfqn\\test_output",
+        "verification_score": 0.8333333333333334
+      },
+      "end_time": "2025-07-25T06:02:21.844729"
+    }
+  },
+  "performance_metrics": {
+    "total_duration": 1.516329,
+    "initial_memory_mb": 287.921875,
+    "final_memory_mb": 329.8125,
+    "memory_increase_mb": 41.890625,
+    "peak_memory_mb": 329.8125,
+    "average_score": 0.9523809523809524,
+    "tests_completed": 7,
+    "memory_within_4gb_limit": true
+  },
+  "ui_process": null,
+  "memory_usage": [],
+  "issues_found": [],
+  "success": true,
+  "test_end_time": "2025-07-25T06:02:21.844729"
+}

@@ -1,0 +1,248 @@
+{
+  "timestamp": "2025-07-25T04:17:21.526981",
+  "validation_summary": {
+    "english": {
+      "language": "en",
+      "total_files": 7,
+      "valid_files": 7,
+      "invalid_files": 0,
+      "total_pairs": 7,
+      "valid_pairs": 7,
+      "file_details": [
+        {
+          "file_name": "contaminated_sample.txt",
+          "language": "en",
+          "is_valid": true,
+          "pair_count": 1,
+          "format_issues": [],
+          "content_issues": [],
+          "quality_scores": [
+            50
+          ],
+          "average_quality_score": 50
+        },
+        {
+          "file_name": "high_quality_pair_1.txt",
+          "language": "en",
+          "is_valid": true,
+          "pair_count": 1,
+          "format_issues": [],
+          "content_issues": [],
+          "quality_scores": [
+            50
+          ],
+          "average_quality_score": 50
+        },
+        {
+          "file_name": "high_quality_pair_2.txt",
+          "language": "en",
+          "is_valid": true,
+          "pair_count": 1,
+          "format_issues": [],
+          "content_issues": [],
+          "quality_scores": [
+            50
+          ],
+          "average_quality_score": 50
+        },
+        {
+          "file_name": "high_quality_pair_3.txt",
+          "language": "en",
+          "is_valid": true,
+          "pair_count": 1,
+          "format_issues": [],
+          "content_issues": [],
+          "quality_scores": [
+            50
+          ],
+          "average_quality_score": 50
+        },
+        {
+          "file_name": "sample1.txt",
+          "language": "en",
+          "is_valid": true,
+          "pair_count": 1,
+          "format_issues": [],
+          "content_issues": [],
+          "quality_scores": [
+            50
+          ],
+          "average_quality_score": 50
+        },
+        {
+          "file_name": "sample2.txt",
+          "language": "en",
+          "is_valid": true,
+          "pair_count": 1,
+          "format_issues": [],
+          "content_issues": [],
+          "quality_scores": [
+            50
+          ],
+          "average_quality_score": 50
+        },
+        {
+          "file_name": "sample_training_pair.txt",
+          "language": "en",
+          "is_valid": true,
+          "pair_count": 1,
+          "format_issues": [],
+          "content_issues": [],
+          "quality_scores": [
+            50
+          ],
+          "average_quality_score": 50
+        }
+      ],
+      "quality_distribution": {
+        "high": 0,
+        "medium": 0,
+        "low": 7
+      }
+    },
+    "chinese": {
+      "language": "zh",
+      "total_files": 9,
+      "valid_files": 7,
+      "invalid_files": 2,
+      "total_pairs": 9,
+      "valid_pairs": 7,
+      "file_details": [
+        {
+          "file_name": "high_quality_pair_1.json",
+          "language": "zh",
+          "is_valid": true,
+          "pair_count": 1,
+          "format_issues": [],
+          "content_issues": [],
+          "quality_scores": [
+            60
+          ],
+          "average_quality_score": 60
+        },
+        {
+          "file_name": "high_quality_pair_2.json",
+          "language": "zh",
+          "is_valid": true,
+          "pair_count": 1,
+          "format_issues": [],
+          "content_issues": [],
+          "quality_scores": [
+            40
+          ],
+          "average_quality_score": 40
+        },
+        {
+          "file_name": "high_quality_pair_3.json",
+          "language": "zh",
+          "is_valid": true,
+          "pair_count": 1,
+          "format_issues": [],
+          "content_issues": [],
+          "quality_scores": [
+            80
+          ],
+          "average_quality_score": 80
+        },
+        {
+          "file_name": "pair_1752312125_2679.json",
+          "language": "zh",
+          "is_valid": false,
+          "pair_count": 1,
+          "format_issues": [
+            "缺少必需字段: original",
+            "缺少必需字段: viral",
+            "元数据缺少genre字段",
+            "元数据缺少quality_score字段"
+          ],
+          "content_issues": [],
+          "quality_scores": [],
+          "average_quality_score": 0
+        },
+        {
+          "file_name": "sample_training_pair.json",
+          "language": "zh",
+          "is_valid": true,
+          "pair_count": 1,
+          "format_issues": [],
+          "content_issues": [],
+          "quality_scores": [
+            100
+          ],
+          "average_quality_score": 100
+        },
+        {
+          "file_name": "training_data_20250708_092433.json",
+          "language": "zh",
+          "is_valid": false,
+          "pair_count": 1,
+          "format_issues": [
+            "缺少必需字段: original",
+            "缺少必需字段: viral",
+            "缺少元数据"
+          ],
+          "content_issues": [],
+          "quality_scores": [],
+          "average_quality_score": 0
+        },
+        {
+          "file_name": "contaminated_sample.txt",
+          "language": "zh",
+          "is_valid": true,
+          "pair_count": 1,
+          "format_issues": [],
+          "content_issues": [],
+          "quality_scores": [
+            50
+          ],
+          "average_quality_score": 50
+        },
+        {
+          "file_name": "sample1.txt",
+          "language": "zh",
+          "is_valid": true,
+          "pair_count": 1,
+          "format_issues": [],
+          "content_issues": [],
+          "quality_scores": [
+            50
+          ],
+          "average_quality_score": 50
+        },
+        {
+          "file_name": "sample2.txt",
+          "language": "zh",
+          "is_valid": true,
+          "pair_count": 1,
+          "format_issues": [],
+          "content_issues": [],
+          "quality_scores": [
+            50
+          ],
+          "average_quality_score": 50
+        }
+      ],
+      "quality_distribution": {
+        "high": 2,
+        "medium": 1,
+        "low": 4
+      }
+    },
+    "total_pairs": 16,
+    "valid_pairs": 14,
+    "validity_rate": 87.5,
+    "quality_distribution": {
+      "high": 2,
+      "medium": 1,
+      "low": 11
+    },
+    "average_quality": 55.714285714285715
+  },
+  "detailed_analysis": {},
+  "quality_assessment": {},
+  "recommendations": [
+    "训练数据量偏少，建议增加训练样本以提高模型效果",
+    "平均质量偏低，建议优化爆款内容的吸引力和表达方式",
+    "高质量样本比例偏低，建议增加更多优秀的爆款案例"
+  ]
+}

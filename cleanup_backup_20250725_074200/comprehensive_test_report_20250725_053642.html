@@ -1,0 +1,56 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VisionAI-ClipsMaster 核心功能测试报告</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { background-color: #f0f0f0; padding: 20px; border-radius: 5px; }
+        .summary { margin: 20px 0; padding: 15px; background-color: #e8f5e8; border-radius: 5px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .passed { color: green; }
+        .failed { color: red; }
+        .error { color: orange; }
+        .warning { color: #ff8c00; }
+        table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .recommendations { background-color: #fff3cd; padding: 15px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>VisionAI-ClipsMaster 核心功能测试报告</h1>
+        <p>测试时间: 2025-07-25T05:36:42.034982</p>
+        <p>测试持续时间: 0.09 秒</p>
+    </div>
+
+    <div class="summary">
+        <h2>测试总结</h2>
+        <p>总测试数: 3</p>
+        <p class="passed">通过测试: 2</p>
+        <p class="failed">失败测试: 1</p>
+        <p class="error">错误测试: 0</p>
+        <p>成功率: 66.7%</p>
+    </div>
+
+    <div class="test-section">
+        <h3 class="passed">爆款SRT视频剪辑功能测试</h3>
+        <p>状态: <span class="passed">PASSED</span></p>
+<h4>子测试结果:</h4><table><tr><th>测试名称</th><th>状态</th><th>详情</th></tr><tr><td>SRT文件解析测试</td><td class='passed'>PASSED</td><td>{'original_subtitles_count': 8, 'viral_subtitles_count': 4, 'parse_time_original': 0.0, 'parse_time_...</td></tr><tr><td>视频片段提取测试</td><td class='passed'>PASSED</td><td>{'segments_extracted': 4, 'total_duration': 13.0, 'segments': [{'segment_id': 1, 'start_time': 1.0, ...</td></tr><tr><td>视频拼接测试</td><td class='passed'>PASSED</td><td>{'concat_params': {'input_segments': 4, 'output_format': 'mp4', 'video_codec': 'h264', 'audio_codec'...</td></tr><tr><td>边界情况测试</td><td class='passed'>PASSED</td><td>{'boundary_tests': [{'test_case': '时间轴不连续', 'status': 'passed', 'details': '解析到3个字幕段'}, {'test_case'...</td></tr></table></div>
+    <div class="test-section">
+        <h3 class="passed">剪映工程文件生成功能测试</h3>
+        <p>状态: <span class="passed">PASSED</span></p>
+<h4>子测试结果:</h4><table><tr><th>测试名称</th><th>状态</th><th>详情</th></tr><tr><td>工程文件格式测试</td><td class='passed'>PASSED</td><td>{'generation_time': 0.0, 'format_valid': True, 'missing_fields': [], 'project_data_keys': ['project_...</td></tr><tr><td>文件完整性测试</td><td class='passed'>PASSED</td><td>{'file_exists': True, 'json_valid': True, 'metadata_complete': True, 'video_paths_valid': True, 'fil...</td></tr><tr><td>剪映兼容性测试</td><td class='passed'>PASSED</td><td>{'version_tests': [{'version': '2.9', 'status': 'passed', 'compatibility_score': 85, 'issues': []}, ...</td></tr></table></div>
+    <div class="test-section">
+        <h3 class="failed">剪映导入功能实际验证测试</h3>
+        <p>状态: <span class="failed">FAILED</span></p>
+<h4>子测试结果:</h4><table><tr><th>测试名称</th><th>状态</th><th>详情</th></tr><tr><td>导入成功率测试</td><td class='passed'>PASSED</td><td>{'test_projects': [{'project_name': '测试项目_1', 'file_path': 'C:\\Users\\13075\\AppData\\Local\\Temp\\...</td></tr><tr><td>素材关联测试</td><td class='failed'>FAILED</td><td>{'materials_count': 7, 'timeline_segments_count': 6, 'paths_valid': True, 'timeline_valid': True, 't...</td></tr><tr><td>项目可编辑性测试</td><td class='passed'>PASSED</td><td>{'editability_checks': [{'check': '轨道结构完整性', 'passed': True, 'details': '视频轨道: True, 音频轨道: True'}, {...</td></tr></table></div>
+    <div class="recommendations">
+        <h2>改进建议</h2>
+        <ul>
+<li class='high'><strong>[HIGH]</strong> 剪映导入功能实际验证测试存在问题，需要修复<br><em>建议: 检查相关模块实现并修复失败的子测试</em></li></ul></div>
+</body>
+</html>

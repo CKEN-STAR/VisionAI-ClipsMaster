@@ -1,0 +1,440 @@
+{
+  "test_info": {
+    "test_name": "VisionAI-ClipsMaster 视频处理模块完整工作流程测试",
+    "version": "v1.0.1",
+    "timestamp": "2025-07-25T00:38:15.407279",
+    "test_duration": 5.364871978759766,
+    "total_tests": 33,
+    "passed_tests": 29,
+    "failed_tests": 4,
+    "skipped_tests": 0
+  },
+  "input_processing_tests": {},
+  "script_reconstruction_tests": {},
+  "video_splicing_tests": {},
+  "performance_stability_tests": {},
+  "output_quality_tests": {},
+  "detailed_results": [
+    {
+      "category": "环境设置",
+      "test_name": "测试环境创建",
+      "status": "PASSED",
+      "details": "临时测试目录: C:\\Users\\13075\\AppData\\Local\\Temp\\visionai_test_icloav2w",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:15.407279"
+    },
+    {
+      "category": "输入处理",
+      "test_name": "测试SRT文件创建",
+      "status": "PASSED",
+      "details": "创建测试字幕: C:\\Users\\13075\\AppData\\Local\\Temp\\visionai_test_icloav2w\\input/subtitles/test_subtitle.srt",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:15.646305"
+    },
+    {
+      "category": "输入处理",
+      "test_name": "字幕格式验证",
+      "status": "PASSED",
+      "details": "字幕格式检查结果: True",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:15.646305"
+    },
+    {
+      "category": "输入处理",
+      "test_name": "文件安全性检查",
+      "status": "PASSED",
+      "details": "文件安全性检查结果: True",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:15.661181"
+    },
+    {
+      "category": "输入处理",
+      "test_name": "测试SRT文件创建",
+      "status": "PASSED",
+      "details": "创建测试字幕: C:\\Users\\13075\\AppData\\Local\\Temp\\visionai_test_icloav2w\\input/subtitles/test_subtitle.srt",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:15.661181"
+    },
+    {
+      "category": "输入处理",
+      "test_name": "文件完整性校验",
+      "status": "PASSED",
+      "details": "文件哈希计算成功: a6074f9f46d2f5c0...",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:15.661181"
+    },
+    {
+      "category": "输入处理",
+      "test_name": "文件完整性验证",
+      "status": "PASSED",
+      "details": "文件完整性验证结果: True",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:15.661181"
+    },
+    {
+      "category": "输入处理",
+      "test_name": "中文语言检测",
+      "status": "PASSED",
+      "details": "检测结果: zh",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:18.711875"
+    },
+    {
+      "category": "输入处理",
+      "test_name": "英文语言检测",
+      "status": "PASSED",
+      "details": "检测结果: en",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:18.711875"
+    },
+    {
+      "category": "输入处理",
+      "test_name": "测试SRT文件创建",
+      "status": "PASSED",
+      "details": "创建测试字幕: C:\\Users\\13075\\AppData\\Local\\Temp\\visionai_test_icloav2w\\input/subtitles/test_subtitle.srt",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:18.727619"
+    },
+    {
+      "category": "剧本重构",
+      "test_name": "字幕文件解析",
+      "status": "PASSED",
+      "details": "成功解析 5 条字幕",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:18.733426"
+    },
+    {
+      "category": "剧本重构",
+      "test_name": "剧情结构分析",
+      "status": "PASSED",
+      "details": "剧情分析完成，分析结果: <class 'dict'>",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:18.734040"
+    },
+    {
+      "category": "剧本重构",
+      "test_name": "字幕数据加载",
+      "status": "PASSED",
+      "details": "成功加载 5 条字幕",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:18.734040"
+    },
+    {
+      "category": "剧本重构",
+      "test_name": "爆款风格重构",
+      "status": "PASSED",
+      "details": "重构完成，结果类型: <class 'dict'>",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:18.734040"
+    },
+    {
+      "category": "剧本重构",
+      "test_name": "剧情结构分析",
+      "status": "PASSED",
+      "details": "剧情分析完成，结果: <class 'dict'>",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:18.734040"
+    },
+    {
+      "category": "剧本重构",
+      "test_name": "字幕时长优化",
+      "status": "PASSED",
+      "details": "时长优化完成，结果: <class 'dict'>",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:18.734040"
+    },
+    {
+      "category": "剧本重构",
+      "test_name": "原始字幕时长计算",
+      "status": "PASSED",
+      "details": "原始字幕总时长: 40.0秒",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:18.734040"
+    },
+    {
+      "category": "剧本重构",
+      "test_name": "重构后长度控制",
+      "status": "PASSED",
+      "details": "重构完成，长度控制正常",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:18.735074"
+    },
+    {
+      "category": "视频拼接",
+      "test_name": "时间轴对齐",
+      "status": "PASSED",
+      "details": "对齐引擎初始化成功",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:19.478394"
+    },
+    {
+      "category": "输入处理",
+      "test_name": "测试视频文件创建",
+      "status": "FAILED",
+      "details": "",
+      "error_info": "name 'PROJECT_ROOT' is not defined",
+      "timestamp": "2025-07-25T00:38:19.494312"
+    },
+    {
+      "category": "视频拼接",
+      "test_name": "片段提取",
+      "status": "FAILED",
+      "details": "测试视频创建失败，无法进行片段提取测试",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:19.494312"
+    },
+    {
+      "category": "输入处理",
+      "test_name": "测试视频文件创建",
+      "status": "FAILED",
+      "details": "",
+      "error_info": "name 'PROJECT_ROOT' is not defined",
+      "timestamp": "2025-07-25T00:38:19.494312"
+    },
+    {
+      "category": "视频拼接",
+      "test_name": "视频拼接",
+      "status": "FAILED",
+      "details": "测试视频创建失败",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:19.494312"
+    },
+    {
+      "category": "性能稳定性",
+      "test_name": "内存占用控制",
+      "status": "PASSED",
+      "details": "当前内存: 339.4MB, 增加: 0.0MB",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:19.997606"
+    },
+    {
+      "category": "性能稳定性",
+      "test_name": "模型切换器初始化",
+      "status": "PASSED",
+      "details": "ModelSwitcher初始化成功",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:20.084234"
+    },
+    {
+      "category": "性能稳定性",
+      "test_name": "模型可用性检查",
+      "status": "PASSED",
+      "details": "模型可用性检查完成: {'zh': True, 'en': True}",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:20.084234"
+    },
+    {
+      "category": "性能稳定性",
+      "test_name": "模型选择",
+      "status": "PASSED",
+      "details": "模型选择完成，耗时: 0.00秒",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:20.085117"
+    },
+    {
+      "category": "性能稳定性",
+      "test_name": "检查点保存",
+      "status": "PASSED",
+      "details": "检查点保存测试",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:20.087850"
+    },
+    {
+      "category": "性能稳定性",
+      "test_name": "断点恢复",
+      "status": "PASSED",
+      "details": "恢复成功，位置: 00:00:04,000",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:20.099667"
+    },
+    {
+      "category": "输出质量",
+      "test_name": "剧情连贯性检查",
+      "status": "PASSED",
+      "details": "连贯性评分: 0.820",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:20.105525"
+    },
+    {
+      "category": "输出质量",
+      "test_name": "剪映工程导出",
+      "status": "PASSED",
+      "details": "导出成功，包含 6 个片段",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:20.767538"
+    },
+    {
+      "category": "输出质量",
+      "test_name": "输出文件完整性",
+      "status": "PASSED",
+      "details": "文件验证通过，哈希: 277ad87f83e05f0c...",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:20.771140"
+    },
+    {
+      "category": "输出质量",
+      "test_name": "文件内容完整性",
+      "status": "PASSED",
+      "details": "内容完整性验证: True",
+      "error_info": "",
+      "timestamp": "2025-07-25T00:38:20.771140"
+    }
+  ],
+  "环境设置_tests": {
+    "测试环境创建": {
+      "status": "PASSED",
+      "details": "临时测试目录: C:\\Users\\13075\\AppData\\Local\\Temp\\visionai_test_icloav2w",
+      "error_info": ""
+    }
+  },
+  "输入处理_tests": {
+    "测试SRT文件创建": {
+      "status": "PASSED",
+      "details": "创建测试字幕: C:\\Users\\13075\\AppData\\Local\\Temp\\visionai_test_icloav2w\\input/subtitles/test_subtitle.srt",
+      "error_info": ""
+    },
+    "字幕格式验证": {
+      "status": "PASSED",
+      "details": "字幕格式检查结果: True",
+      "error_info": ""
+    },
+    "文件安全性检查": {
+      "status": "PASSED",
+      "details": "文件安全性检查结果: True",
+      "error_info": ""
+    },
+    "文件完整性校验": {
+      "status": "PASSED",
+      "details": "文件哈希计算成功: a6074f9f46d2f5c0...",
+      "error_info": ""
+    },
+    "文件完整性验证": {
+      "status": "PASSED",
+      "details": "文件完整性验证结果: True",
+      "error_info": ""
+    },
+    "中文语言检测": {
+      "status": "PASSED",
+      "details": "检测结果: zh",
+      "error_info": ""
+    },
+    "英文语言检测": {
+      "status": "PASSED",
+      "details": "检测结果: en",
+      "error_info": ""
+    },
+    "测试视频文件创建": {
+      "status": "FAILED",
+      "details": "",
+      "error_info": "name 'PROJECT_ROOT' is not defined"
+    }
+  },
+  "剧本重构_tests": {
+    "字幕文件解析": {
+      "status": "PASSED",
+      "details": "成功解析 5 条字幕",
+      "error_info": ""
+    },
+    "剧情结构分析": {
+      "status": "PASSED",
+      "details": "剧情分析完成，结果: <class 'dict'>",
+      "error_info": ""
+    },
+    "字幕数据加载": {
+      "status": "PASSED",
+      "details": "成功加载 5 条字幕",
+      "error_info": ""
+    },
+    "爆款风格重构": {
+      "status": "PASSED",
+      "details": "重构完成，结果类型: <class 'dict'>",
+      "error_info": ""
+    },
+    "字幕时长优化": {
+      "status": "PASSED",
+      "details": "时长优化完成，结果: <class 'dict'>",
+      "error_info": ""
+    },
+    "原始字幕时长计算": {
+      "status": "PASSED",
+      "details": "原始字幕总时长: 40.0秒",
+      "error_info": ""
+    },
+    "重构后长度控制": {
+      "status": "PASSED",
+      "details": "重构完成，长度控制正常",
+      "error_info": ""
+    }
+  },
+  "视频拼接_tests": {
+    "时间轴对齐": {
+      "status": "PASSED",
+      "details": "对齐引擎初始化成功",
+      "error_info": ""
+    },
+    "片段提取": {
+      "status": "FAILED",
+      "details": "测试视频创建失败，无法进行片段提取测试",
+      "error_info": ""
+    },
+    "视频拼接": {
+      "status": "FAILED",
+      "details": "测试视频创建失败",
+      "error_info": ""
+    }
+  },
+  "性能稳定性_tests": {
+    "内存占用控制": {
+      "status": "PASSED",
+      "details": "当前内存: 339.4MB, 增加: 0.0MB",
+      "error_info": ""
+    },
+    "模型切换器初始化": {
+      "status": "PASSED",
+      "details": "ModelSwitcher初始化成功",
+      "error_info": ""
+    },
+    "模型可用性检查": {
+      "status": "PASSED",
+      "details": "模型可用性检查完成: {'zh': True, 'en': True}",
+      "error_info": ""
+    },
+    "模型选择": {
+      "status": "PASSED",
+      "details": "模型选择完成，耗时: 0.00秒",
+      "error_info": ""
+    },
+    "检查点保存": {
+      "status": "PASSED",
+      "details": "检查点保存测试",
+      "error_info": ""
+    },
+    "断点恢复": {
+      "status": "PASSED",
+      "details": "恢复成功，位置: 00:00:04,000",
+      "error_info": ""
+    }
+  },
+  "输出质量_tests": {
+    "剧情连贯性检查": {
+      "status": "PASSED",
+      "details": "连贯性评分: 0.820",
+      "error_info": ""
+    },
+    "剪映工程导出": {
+      "status": "PASSED",
+      "details": "导出成功，包含 6 个片段",
+      "error_info": ""
+    },
+    "输出文件完整性": {
+      "status": "PASSED",
+      "details": "文件验证通过，哈希: 277ad87f83e05f0c...",
+      "error_info": ""
+    },
+    "文件内容完整性": {
+      "status": "PASSED",
+      "details": "内容完整性验证: True",
+      "error_info": ""
+    }
+  }
+}

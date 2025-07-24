@@ -1,0 +1,172 @@
+{
+  "version": "1.0.1",
+  "test_type": "性能监控系统测试",
+  "timestamp": "20250724_110219",
+  "test_results": {
+    "system_resource_monitoring": {
+      "passed": true,
+      "details": "系统资源监控正常 - CPU: 11.0%, 内存: 75.0%",
+      "error_msg": "",
+      "timestamp": "2025-07-24T11:02:15.550155"
+    },
+    "process_monitor_import": {
+      "passed": true,
+      "details": "进程监控器导入成功",
+      "error_msg": "",
+      "timestamp": "2025-07-24T11:02:19.122492"
+    },
+    "process_monitor_methods": {
+      "passed": true,
+      "details": "进程监控方法可用",
+      "error_msg": "",
+      "timestamp": "2025-07-24T11:02:19.122492"
+    },
+    "process_info_collection": {
+      "passed": true,
+      "details": "进程信息收集成功 - PID: 6280, 线程: 19",
+      "error_msg": "",
+      "timestamp": "2025-07-24T11:02:19.126294"
+    },
+    "responsiveness_monitor_import": {
+      "passed": true,
+      "details": "响应性监控器导入成功",
+      "error_msg": "",
+      "timestamp": "2025-07-24T11:02:19.126294"
+    },
+    "responsiveness_monitor_methods": {
+      "passed": true,
+      "details": "响应性监控方法可用",
+      "error_msg": "",
+      "timestamp": "2025-07-24T11:02:19.127294"
+    },
+    "response_time_measurement": {
+      "passed": true,
+      "details": "响应时间测量正常: 100.2ms",
+      "error_msg": "",
+      "timestamp": "2025-07-24T11:02:19.227513"
+    },
+    "memory_manager_available": {
+      "passed": true,
+      "details": "内存管理器可用",
+      "error_msg": "",
+      "timestamp": "2025-07-24T11:02:19.227513"
+    },
+    "memory_monitoring": {
+      "passed": true,
+      "details": "内存监控测试完成，分配测试: 3.9MB",
+      "error_msg": "",
+      "timestamp": "2025-07-24T11:02:19.227513"
+    },
+    "alert_manager_available": {
+      "passed": false,
+      "details": "预警管理器类未找到",
+      "error_msg": "",
+      "timestamp": "2025-07-24T11:02:19.227513"
+    },
+    "threshold_checking": {
+      "passed": true,
+      "details": "阈值检查完成，触发预警: 0个",
+      "error_msg": "",
+      "timestamp": "2025-07-24T11:02:19.340609"
+    },
+    "performance_data_collection": {
+      "passed": true,
+      "details": "性能数据收集成功，收集8项指标",
+      "error_msg": "",
+      "timestamp": "2025-07-24T11:02:19.340609"
+    }
+  },
+  "performance_data": {
+    "cpu_usage": {
+      "value": 11.0,
+      "unit": "%",
+      "timestamp": "2025-07-24T11:02:15.550155"
+    },
+    "memory_usage": {
+      "value": 75.0,
+      "unit": "%",
+      "timestamp": "2025-07-24T11:02:15.550155"
+    },
+    "memory_available": {
+      "value": 4030.94140625,
+      "unit": "MB",
+      "timestamp": "2025-07-24T11:02:15.550155"
+    },
+    "disk_usage": {
+      "value": 51.5,
+      "unit": "%",
+      "timestamp": "2025-07-24T11:02:15.550155"
+    },
+    "process_memory": {
+      "value": 328.37890625,
+      "unit": "MB",
+      "timestamp": "2025-07-24T11:02:19.126294"
+    },
+    "process_threads": {
+      "value": 19,
+      "unit": "threads",
+      "timestamp": "2025-07-24T11:02:19.126294"
+    },
+    "response_time_test": {
+      "value": 100.21853446960449,
+      "unit": "ms",
+      "timestamp": "2025-07-24T11:02:19.227513"
+    },
+    "memory_allocation_test": {
+      "value": 3.921875,
+      "unit": "MB",
+      "timestamp": "2025-07-24T11:02:19.227513"
+    },
+    "alerts_triggered": {
+      "value": 0,
+      "unit": "count",
+      "timestamp": "2025-07-24T11:02:19.340609"
+    },
+    "cpu_count": {
+      "value": 16,
+      "unit": "",
+      "timestamp": "2025-07-24T11:02:19.340609"
+    },
+    "cpu_freq": {
+      "value": 2500.0,
+      "unit": "",
+      "timestamp": "2025-07-24T11:02:19.340609"
+    },
+    "memory_total": {
+      "value": 15.733024597167969,
+      "unit": "GB",
+      "timestamp": "2025-07-24T11:02:19.340609"
+    },
+    "memory_used": {
+      "value": 12.102603912353516,
+      "unit": "GB",
+      "timestamp": "2025-07-24T11:02:19.340609"
+    },
+    "disk_total": {
+      "value": 261.09989166259766,
+      "unit": "GB",
+      "timestamp": "2025-07-24T11:02:19.340609"
+    },
+    "disk_used": {
+      "value": 134.35143280029297,
+      "unit": "GB",
+      "timestamp": "2025-07-24T11:02:19.340609"
+    },
+    "network_sent": {
+      "value": 1126.0551271438599,
+      "unit": "MB",
+      "timestamp": "2025-07-24T11:02:19.340609"
+    },
+    "network_recv": {
+      "value": 3247.609963417053,
+      "unit": "MB",
+      "timestamp": "2025-07-24T11:02:19.340609"
+    }
+  },
+  "errors": [],
+  "summary": {
+    "total_tests": 12,
+    "passed_tests": 11,
+    "success_rate": 91.66666666666666
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "summary": {
+    "total_videos": 1,
+    "passed": 0,
+    "failed": 0,
+    "warnings": 0,
+    "errors": 1
+  },
+  "results": {
+    "D:\\zancun\\VisionAI-ClipsMaster\\test_data\\test_video.mp4": {
+      "status": "ERROR",
+      "error": "FFmpeg未找到，无法进行视频质量检测",
+      "timestamp": "2025-07-24T10:27:47.515908"
+    }
+  },
+  "timestamp": "2025-07-24T10:27:47.515908"
+}

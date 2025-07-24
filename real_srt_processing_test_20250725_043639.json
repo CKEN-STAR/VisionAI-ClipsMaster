@@ -1,0 +1,48 @@
+{
+  "timestamp": "2025-07-25T04:36:39.078793",
+  "srt_processing_tests": {
+    "parsing_success": true,
+    "subtitle_count": 28,
+    "timing_accuracy": {
+      "total_checked": 28,
+      "timing_errors": [],
+      "error_rate": 0.0,
+      "average_duration": 3.5
+    },
+    "content_integrity": {
+      "content_errors": [],
+      "total_characters": 356,
+      "average_text_length": 12.714285714285714,
+      "has_chinese_content": true
+    },
+    "issues": []
+  },
+  "viral_generation_tests": {
+    "transformation_attempted": true,
+    "transformation_success": false,
+    "quality_metrics": {},
+    "content_analysis": {},
+    "issues": [
+      "爆款转换测试失败: 'ScreenplayEngineer' object has no attribute 'generate_viral_version'"
+    ]
+  },
+  "performance_metrics": {
+    "processing_speed": {
+      "srt_parsing_time": 0.0,
+      "viral_transformation_time": 0.0,
+      "total_processing_time": 0.0,
+      "processing_rate": "字幕/秒"
+    },
+    "memory_usage": {
+      "initial_memory_mb": 30.04296875,
+      "final_memory_mb": 30.0625,
+      "memory_increase_mb": 0.01953125,
+      "peak_memory_efficient": true
+    },
+    "accuracy_metrics": {
+      "srt_parsing_success": true,
+      "viral_transformation_success": false,
+      "overall_success_rate": 0.5
+    }
+  }
+}

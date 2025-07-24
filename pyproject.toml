@@ -2,6 +2,29 @@
 requires = ["setuptools>=45", "wheel"]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "visionai-clipsmaster"
+version = "1.0.1"
+description = "AI驱动的短剧视频混剪大师"
+authors = [{name = "VisionAI Team"}]
+license = {text = "MIT"}
+requires-python = ">=3.8"
+keywords = ["ai", "video", "editing", "clips", "short-drama"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Multimedia :: Video :: Non-Linear Editor",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
 [tool.black]
 line-length = 100
 target-version = ['py310']

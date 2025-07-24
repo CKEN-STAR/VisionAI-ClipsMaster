@@ -1,0 +1,374 @@
+{
+  "test_info": {
+    "version": "v1.0.1",
+    "timestamp": "2025-07-24T23:36:15.193688",
+    "test_duration": 5.900279760360718,
+    "total_tests": 27,
+    "passed_tests": 27,
+    "failed_tests": 0,
+    "skipped_tests": 0
+  },
+  "ui_tests": {
+    "main_window_file_exists": {
+      "status": "PASSED",
+      "details": "主窗口文件存在: ui/main_window.py",
+      "error_info": ""
+    },
+    "main_window_import": {
+      "status": "PASSED",
+      "details": "主窗口模块导入成功",
+      "error_info": ""
+    },
+    "training_panel_file_exists": {
+      "status": "PASSED",
+      "details": "训练面板文件存在: ui/training_panel.py",
+      "error_info": ""
+    },
+    "training_panel_import": {
+      "status": "PASSED",
+      "details": "训练面板模块导入成功",
+      "error_info": ""
+    },
+    "progress_dashboard_file_exists": {
+      "status": "PASSED",
+      "details": "进度看板文件存在: ui/progress_dashboard.py",
+      "error_info": ""
+    },
+    "progress_dashboard_import": {
+      "status": "PASSED",
+      "details": "进度看板模块导入成功",
+      "error_info": ""
+    },
+    "ui_components_directory": {
+      "status": "PASSED",
+      "details": "UI组件目录存在，包含 6 个文件",
+      "error_info": ""
+    },
+    "component_realtime_charts.py": {
+      "status": "PASSED",
+      "details": "组件文件存在: realtime_charts.py",
+      "error_info": ""
+    },
+    "component_alert_manager.py": {
+      "status": "PASSED",
+      "details": "组件文件存在: alert_manager.py",
+      "error_info": ""
+    }
+  },
+  "core_functionality_tests": {
+    "language_detector_file_exists": {
+      "status": "PASSED",
+      "details": "语言检测器文件存在: src/core/language_detector.py",
+      "error_info": ""
+    },
+    "model_switcher_file_exists": {
+      "status": "PASSED",
+      "details": "模型切换器文件存在: src/core/model_switcher.py",
+      "error_info": ""
+    },
+    "srt_parser_file_exists": {
+      "status": "PASSED",
+      "details": "字幕解析器文件存在: src/core/srt_parser.py",
+      "error_info": ""
+    },
+    "screenplay_engineer_file_exists": {
+      "status": "PASSED",
+      "details": "剧本重构引擎文件存在: src/core/screenplay_engineer.py",
+      "error_info": ""
+    },
+    "clip_generator_file_exists": {
+      "status": "PASSED",
+      "details": "视频拼接器文件存在: src/core/clip_generator.py",
+      "error_info": ""
+    }
+  },
+  "workflow_tests": {
+    "config_file_configs_model_config.yaml": {
+      "status": "PASSED",
+      "details": "配置文件存在: configs/model_config.yaml",
+      "error_info": ""
+    },
+    "config_file_configs_active_model.yaml": {
+      "status": "PASSED",
+      "details": "配置文件存在: configs/active_model.yaml",
+      "error_info": ""
+    },
+    "config_files_check": {
+      "status": "PASSED",
+      "details": "找到 2 个配置文件",
+      "error_info": ""
+    },
+    "test_data_test_data": {
+      "status": "PASSED",
+      "details": "测试数据目录存在: test_data",
+      "error_info": ""
+    },
+    "test_data_data_input": {
+      "status": "PASSED",
+      "details": "测试数据目录存在: data/input",
+      "error_info": ""
+    },
+    "test_data_data_training": {
+      "status": "PASSED",
+      "details": "测试数据目录存在: data/training",
+      "error_info": ""
+    },
+    "test_data_check": {
+      "status": "PASSED",
+      "details": "找到 3 个测试数据目录",
+      "error_info": ""
+    }
+  },
+  "performance_tests": {
+    "memory_guard_file_exists": {
+      "status": "PASSED",
+      "details": "内存监控文件存在: src/utils/memory_guard.py",
+      "error_info": ""
+    },
+    "device_manager_file_exists": {
+      "status": "PASSED",
+      "details": "设备管理器文件存在: src/utils/device_manager.py",
+      "error_info": ""
+    }
+  },
+  "data_processing_tests": {
+    "video_format_support": {
+      "status": "PASSED",
+      "details": "支持的视频格式: .mp4, .avi, .flv, .mov",
+      "error_info": ""
+    },
+    "subtitle_format_support": {
+      "status": "PASSED",
+      "details": "支持的字幕格式: .srt, .ass, .vtt",
+      "error_info": ""
+    },
+    "training_data_directory": {
+      "status": "PASSED",
+      "details": "训练数据目录存在: src/training，包含 15 个文件",
+      "error_info": ""
+    },
+    "mixed_language_support": {
+      "status": "PASSED",
+      "details": "支持混合中英文处理",
+      "error_info": ""
+    }
+  },
+  "detailed_results": [
+    {
+      "category": "ui_tests",
+      "test_name": "main_window_file_exists",
+      "status": "PASSED",
+      "timestamp": "2025-07-24T23:36:15.194251",
+      "details": "主窗口文件存在: ui/main_window.py",
+      "error_info": ""
+    },
+    {
+      "category": "ui_tests",
+      "test_name": "main_window_import",
+      "status": "PASSED",
+      "timestamp": "2025-07-24T23:36:15.308925",
+      "details": "主窗口模块导入成功",
+      "error_info": ""
+    },
+    {
+      "category": "ui_tests",
+      "test_name": "training_panel_file_exists",
+      "status": "PASSED",
+      "timestamp": "2025-07-24T23:36:15.309907",
+      "details": "训练面板文件存在: ui/training_panel.py",
+      "error_info": ""
+    },
+    {
+      "category": "ui_tests",
+      "test_name": "training_panel_import",
+      "status": "PASSED",
+      "timestamp": "2025-07-24T23:36:21.089531",
+      "details": "训练面板模块导入成功",
+      "error_info": ""
+    },
+    {
+      "category": "ui_tests",
+      "test_name": "progress_dashboard_file_exists",
+      "status": "PASSED",
+      "timestamp": "2025-07-24T23:36:21.089531",
+      "details": "进度看板文件存在: ui/progress_dashboard.py",
+      "error_info": ""
+    },
+    {
+      "category": "ui_tests",
+      "test_name": "progress_dashboard_import",
+      "status": "PASSED",
+      "timestamp": "2025-07-24T23:36:21.090531",
+      "details": "进度看板模块导入成功",
+      "error_info": ""
+    },
+    {
+      "category": "ui_tests",
+      "test_name": "ui_components_directory",
+      "status": "PASSED",
+      "timestamp": "2025-07-24T23:36:21.090531",
+      "details": "UI组件目录存在，包含 6 个文件",
+      "error_info": ""
+    },
+    {
+      "category": "ui_tests",
+      "test_name": "component_realtime_charts.py",
+      "status": "PASSED",
+      "timestamp": "2025-07-24T23:36:21.090531",
+      "details": "组件文件存在: realtime_charts.py",
+      "error_info": ""
+    },
+    {
+      "category": "ui_tests",
+      "test_name": "component_alert_manager.py",
+      "status": "PASSED",
+      "timestamp": "2025-07-24T23:36:21.090531",
+      "details": "组件文件存在: alert_manager.py",
+      "error_info": ""
+    },
+    {
+      "category": "core_functionality_tests",
+      "test_name": "language_detector_file_exists",
+      "status": "PASSED",
+      "timestamp": "2025-07-24T23:36:21.091532",
+      "details": "语言检测器文件存在: src/core/language_detector.py",
+      "error_info": ""
+    },
+    {
+      "category": "core_functionality_tests",
+      "test_name": "model_switcher_file_exists",
+      "status": "PASSED",
+      "timestamp": "2025-07-24T23:36:21.091532",
+      "details": "模型切换器文件存在: src/core/model_switcher.py",
+      "error_info": ""
+    },
+    {
+      "category": "core_functionality_tests",
+      "test_name": "srt_parser_file_exists",
+      "status": "PASSED",
+      "timestamp": "2025-07-24T23:36:21.091532",
+      "details": "字幕解析器文件存在: src/core/srt_parser.py",
+      "error_info": ""
+    },
+    {
+      "category": "core_functionality_tests",
+      "test_name": "screenplay_engineer_file_exists",
+      "status": "PASSED",
+      "timestamp": "2025-07-24T23:36:21.091532",
+      "details": "剧本重构引擎文件存在: src/core/screenplay_engineer.py",
+      "error_info": ""
+    },
+    {
+      "category": "core_functionality_tests",
+      "test_name": "clip_generator_file_exists",
+      "status": "PASSED",
+      "timestamp": "2025-07-24T23:36:21.091532",
+      "details": "视频拼接器文件存在: src/core/clip_generator.py",
+      "error_info": ""
+    },
+    {
+      "category": "workflow_tests",
+      "test_name": "config_file_configs_model_config.yaml",
+      "status": "PASSED",
+      "timestamp": "2025-07-24T23:36:21.092531",
+      "details": "配置文件存在: configs/model_config.yaml",
+      "error_info": ""
+    },
+    {
+      "category": "workflow_tests",
+      "test_name": "config_file_configs_active_model.yaml",
+      "status": "PASSED",
+      "timestamp": "2025-07-24T23:36:21.092531",
+      "details": "配置文件存在: configs/active_model.yaml",
+      "error_info": ""
+    },
+    {
+      "category": "workflow_tests",
+      "test_name": "config_files_check",
+      "status": "PASSED",
+      "timestamp": "2025-07-24T23:36:21.092531",
+      "details": "找到 2 个配置文件",
+      "error_info": ""
+    },
+    {
+      "category": "workflow_tests",
+      "test_name": "test_data_test_data",
+      "status": "PASSED",
+      "timestamp": "2025-07-24T23:36:21.092531",
+      "details": "测试数据目录存在: test_data",
+      "error_info": ""
+    },
+    {
+      "category": "workflow_tests",
+      "test_name": "test_data_data_input",
+      "status": "PASSED",
+      "timestamp": "2025-07-24T23:36:21.092531",
+      "details": "测试数据目录存在: data/input",
+      "error_info": ""
+    },
+    {
+      "category": "workflow_tests",
+      "test_name": "test_data_data_training",
+      "status": "PASSED",
+      "timestamp": "2025-07-24T23:36:21.092531",
+      "details": "测试数据目录存在: data/training",
+      "error_info": ""
+    },
+    {
+      "category": "workflow_tests",
+      "test_name": "test_data_check",
+      "status": "PASSED",
+      "timestamp": "2025-07-24T23:36:21.092531",
+      "details": "找到 3 个测试数据目录",
+      "error_info": ""
+    },
+    {
+      "category": "performance_tests",
+      "test_name": "memory_guard_file_exists",
+      "status": "PASSED",
+      "timestamp": "2025-07-24T23:36:21.093531",
+      "details": "内存监控文件存在: src/utils/memory_guard.py",
+      "error_info": ""
+    },
+    {
+      "category": "performance_tests",
+      "test_name": "device_manager_file_exists",
+      "status": "PASSED",
+      "timestamp": "2025-07-24T23:36:21.093531",
+      "details": "设备管理器文件存在: src/utils/device_manager.py",
+      "error_info": ""
+    },
+    {
+      "category": "data_processing_tests",
+      "test_name": "video_format_support",
+      "status": "PASSED",
+      "timestamp": "2025-07-24T23:36:21.093531",
+      "details": "支持的视频格式: .mp4, .avi, .flv, .mov",
+      "error_info": ""
+    },
+    {
+      "category": "data_processing_tests",
+      "test_name": "subtitle_format_support",
+      "status": "PASSED",
+      "timestamp": "2025-07-24T23:36:21.093531",
+      "details": "支持的字幕格式: .srt, .ass, .vtt",
+      "error_info": ""
+    },
+    {
+      "category": "data_processing_tests",
+      "test_name": "training_data_directory",
+      "status": "PASSED",
+      "timestamp": "2025-07-24T23:36:21.094530",
+      "details": "训练数据目录存在: src/training，包含 15 个文件",
+      "error_info": ""
+    },
+    {
+      "category": "data_processing_tests",
+      "test_name": "mixed_language_support",
+      "status": "PASSED",
+      "timestamp": "2025-07-24T23:36:21.094530",
+      "details": "支持混合中英文处理",
+      "error_info": ""
+    }
+  ]
+}

@@ -17,6 +17,7 @@ from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
+
 class JianyingCompatibilityValidator:
     """剪映工程文件兼容性验证器"""
     
@@ -438,3 +439,73 @@ class JianyingCompatibilityValidator:
         
         logger.info("已自动修复剪映工程文件兼容性问题")
         return fixed_data
+
+    def validate_version_compatibility(self, version: str) -> Dict[str, Any]:
+        """
+        验证剪映版本兼容性
+
+        Args:
+            version: 剪映版本号，如 "3.0", "2.9"
+
+        Returns:
+            Dict: 兼容性验证结果
+        """
+        compatibility_result = {
+            "version": version,
+            "score": 0,
+            "issues": [],
+            "warnings": [],
+            "recommendations": []
+        }
+
+        try:
+            # 解析版本号
+            version_parts = version.split('.')
+            major = int(version_parts[0])
+            minor = int(version_parts[1]) if len(version_parts) > 1 else 0
+
+            # 版本兼容性检查
+            if major >= 3:
+                # 剪映3.0+版本
+                compatibility_result["score"] = 95
+                compatibility_result["recommendations"].append("推荐使用剪映3.0+版本以获得最佳兼容性")
+
+                if minor >= 1:
+                    compatibility_result["score"] = 98
+                    compatibility_result["recommendations"].append("完全兼容剪映3.1+的所有功能")
+
+            elif major == 2 and minor >= 9:
+                # 剪映2.9版本
+                compatibility_result["score"] = 85
+                compatibility_result["warnings"].append("剪映2.9版本可能不支持某些高级功能")
+                compatibility_result["recommendations"].append("建议升级到剪映3.0+版本")
+
+            else:
+                # 较老版本
+                compatibility_result["score"] = 60
+                compatibility_result["issues"].append(f"剪映{version}版本兼容性较低")
+                compatibility_result["recommendations"].append("强烈建议升级到剪映3.0+版本")
+
+            # 功能兼容性检查
+            if compatibility_result["score"] >= 90:
+                compatibility_result["supported_features"] = [
+                    "多轨道编辑", "高级转场", "音频同步", "关键帧动画", "色彩校正"
+                ]
+            elif compatibility_result["score"] >= 80:
+                compatibility_result["supported_features"] = [
+                    "基础编辑", "简单转场", "音频同步"
+                ]
+                compatibility_result["unsupported_features"] = [
+                    "高级转场", "关键帧动画", "色彩校正"
+                ]
+            else:
+                compatibility_result["supported_features"] = ["基础编辑"]
+                compatibility_result["unsupported_features"] = [
+                    "多轨道编辑", "高级转场", "音频同步", "关键帧动画", "色彩校正"
+                ]
+
+        except Exception as e:
+            compatibility_result["score"] = 0
+            compatibility_result["issues"].append(f"版本解析失败: {str(e)}")
+
+        return compatibility_result

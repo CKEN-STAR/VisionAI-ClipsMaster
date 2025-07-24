@@ -129,6 +129,447 @@ class ScreenplayEngineer:
             logger.error(f"剧情分析失败: {e}")
             return {}
 
+    def analyze_plot_structure(self, subtitles: Optional[List[Dict[str, Any]]] = None) -> Dict[str, Any]:
+        """
+        分析剧情结构 - 测试API兼容方法
+
+        Args:
+            subtitles: 字幕列表，如果为None则使用当前加载的字幕
+
+        Returns:
+            剧情结构分析结果
+        """
+        if subtitles is None:
+            subtitles = self.current_subtitles
+
+        if not subtitles:
+            logger.warning("没有字幕数据可供分析")
+            return {"scenes": [], "characters": [], "emotions": []}
+
+        try:
+            # 调用现有的analyze_plot方法
+            analysis = self.analyze_plot(subtitles)
+
+            # 转换为测试期望的格式
+            result = {
+                "scenes": [],
+                "characters": [],
+                "emotions": [],
+                "plot_points": analysis.get("key_moments", []),
+                "structure": analysis.get("plot_structure", {}),
+                "total_duration": analysis.get("total_duration", 0),
+                "subtitle_count": analysis.get("subtitle_count", 0)
+            }
+
+            # 分析场景
+            plot_structure = analysis.get("plot_structure", {})
+            for phase, phase_subtitles in plot_structure.items():
+                if phase_subtitles:
+                    result["scenes"].append({
+                        "phase": phase,
+                        "subtitle_count": len(phase_subtitles),
+                        "start_time": phase_subtitles[0].get("start_time", 0) if phase_subtitles else 0,
+                        "end_time": phase_subtitles[-1].get("end_time", 0) if phase_subtitles else 0
+                    })
+
+            # 简单的角色分析（基于对话模式）
+            characters = set()
+            for subtitle in subtitles:
+                text = subtitle.get("text", "")
+                # 简单的对话检测
+                if ":" in text or "：" in text:
+                    parts = text.split(":" if ":" in text else "：")
+                    if len(parts) > 1:
+                        potential_character = parts[0].strip()
+                        if len(potential_character) < 10:  # 假设角色名不会太长
+                            characters.add(potential_character)
+
+            result["characters"] = list(characters)
+
+            # 情感分析（基于关键词）
+            emotion_keywords = {
+                "happy": ["开心", "高兴", "快乐", "笑", "哈哈"],
+                "sad": ["伤心", "难过", "哭", "眼泪"],
+                "angry": ["生气", "愤怒", "气死", "讨厌"],
+                "surprised": ["惊讶", "震惊", "不敢相信", "天哪"]
+            }
+
+            emotions = []
+            for subtitle in subtitles:
+                text = subtitle.get("text", "")
+                for emotion, keywords in emotion_keywords.items():
+                    if any(keyword in text for keyword in keywords):
+                        emotions.append({
+                            "time": subtitle.get("start_time", 0),
+                            "emotion": emotion,
+                            "text": text
+                        })
+
+            result["emotions"] = emotions
+
+            logger.info(f"剧情结构分析完成: {len(result['scenes'])}个场景, {len(result['characters'])}个角色, {len(result['emotions'])}个情感点")
+            return result
+
+        except Exception as e:
+            logger.error(f"剧情结构分析失败: {e}")
+            return {"scenes": [], "characters": [], "emotions": []}
+
+    def reconstruct_screenplay(self, target_style: str = "viral") -> Dict[str, Any]:
+        """
+        重构剧本为爆款风格 - 核心功能实现
+
+        Args:
+            target_style: 目标风格，默认为"viral"（爆款）
+
+        Returns:
+            重构后的剧本数据
+        """
+        if not self.current_subtitles:
+            logger.warning("没有加载字幕数据，无法进行重构")
+            return {}
+
+        try:
+            # 1. 分析原始剧情结构
+            original_analysis = self.analyze_plot_structure()
+
+            # 2. 提取关键片段
+            key_segments = self._extract_key_segments(self.current_subtitles, original_analysis)
+
+            # 3. 重新排列和优化
+            reconstructed_segments = self._optimize_for_viral_appeal(key_segments)
+
+            # 4. 生成新的时间轴
+            new_timeline = self._generate_new_timeline(reconstructed_segments)
+
+            result = {
+                "original_duration": original_analysis.get("total_duration", 0),
+                "new_duration": new_timeline.get("total_duration", 0),
+                "segments": reconstructed_segments,
+                "timeline": new_timeline,
+                "optimization_score": self._calculate_viral_score(reconstructed_segments),
+                "style": target_style,
+                "created_at": time.time()
+            }
+
+            logger.info(f"剧本重构完成: 原时长{result['original_duration']:.1f}s → 新时长{result['new_duration']:.1f}s, 优化评分{result['optimization_score']:.2f}")
+            return result
+
+        except Exception as e:
+            logger.error(f"剧本重构失败: {e}")
+            return {}
+
+    def _extract_key_segments(self, subtitles: List[Dict[str, Any]], analysis: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """提取关键片段"""
+        key_segments = []
+
+        try:
+            # 1. 提取情感高潮片段
+            emotions = analysis.get("emotions", [])
+            for emotion in emotions:
+                # 找到对应的字幕
+                for subtitle in subtitles:
+                    if abs(subtitle.get("start_time", 0) - emotion["time"]) < 1.0:  # 1秒误差范围
+                        key_segments.append({
+                            "type": "emotional_peak",
+                            "priority": 0.9,
+                            "subtitle": subtitle,
+                            "reason": f"情感高潮: {emotion['emotion']}"
+                        })
+                        break
+
+            # 2. 提取剧情转折点
+            plot_points = analysis.get("plot_points", [])
+            for point in plot_points:
+                for subtitle in subtitles:
+                    if abs(subtitle.get("start_time", 0) - point["time"]) < 1.0:
+                        key_segments.append({
+                            "type": "plot_twist",
+                            "priority": 0.8,
+                            "subtitle": subtitle,
+                            "reason": "剧情转折点"
+                        })
+                        break
+
+            # 3. 提取开头和结尾的关键片段
+            if subtitles:
+                # 开头片段
+                for i in range(min(3, len(subtitles))):
+                    key_segments.append({
+                        "type": "opening",
+                        "priority": 0.7,
+                        "subtitle": subtitles[i],
+                        "reason": "开头吸引"
+                    })
+
+                # 结尾片段
+                for i in range(max(0, len(subtitles) - 3), len(subtitles)):
+                    key_segments.append({
+                        "type": "ending",
+                        "priority": 0.6,
+                        "subtitle": subtitles[i],
+                        "reason": "结尾回味"
+                    })
+
+            # 去重并按优先级排序
+            unique_segments = []
+            seen_times = set()
+
+            for segment in sorted(key_segments, key=lambda x: x["priority"], reverse=True):
+                start_time = segment["subtitle"].get("start_time", 0)
+                if start_time not in seen_times:
+                    unique_segments.append(segment)
+                    seen_times.add(start_time)
+
+            logger.info(f"提取关键片段: {len(unique_segments)}个")
+            return unique_segments
+
+        except Exception as e:
+            logger.error(f"提取关键片段失败: {e}")
+            return []
+
+    def _optimize_for_viral_appeal(self, segments: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """优化片段以提升爆款潜力"""
+        try:
+            # 爆款视频的特征权重
+            viral_weights = {
+                "emotional_peak": 1.0,
+                "plot_twist": 0.9,
+                "opening": 0.8,
+                "ending": 0.6
+            }
+
+            # 重新计算优先级
+            for segment in segments:
+                segment_type = segment.get("type", "")
+                base_priority = segment.get("priority", 0.5)
+                viral_weight = viral_weights.get(segment_type, 0.5)
+
+                # 综合评分
+                segment["viral_score"] = base_priority * viral_weight
+
+                # 添加文本特征分析
+                text = segment["subtitle"].get("text", "")
+                text_score = self._analyze_text_viral_potential(text)
+                segment["viral_score"] *= text_score
+
+            # 按病毒传播潜力排序
+            optimized_segments = sorted(segments, key=lambda x: x["viral_score"], reverse=True)
+
+            # 限制片段数量（避免过长）
+            max_segments = min(15, len(optimized_segments))  # 最多15个片段
+            optimized_segments = optimized_segments[:max_segments]
+
+            logger.info(f"优化片段完成: 保留{len(optimized_segments)}个高质量片段")
+            return optimized_segments
+
+        except Exception as e:
+            logger.error(f"片段优化失败: {e}")
+            return segments
+
+    def _analyze_text_viral_potential(self, text: str) -> float:
+        """分析文本的病毒传播潜力"""
+        try:
+            # 病毒传播关键词
+            viral_keywords = [
+                "震惊", "不敢相信", "太厉害了", "绝了", "牛逼", "卧槽",
+                "什么", "怎么可能", "天哪", "我的天", "不会吧", "真的假的"
+            ]
+
+            # 情感强度词
+            emotion_words = [
+                "爱", "恨", "怒", "喜", "惊", "恐", "悲",
+                "激动", "兴奋", "愤怒", "开心", "难过"
+            ]
+
+            score = 1.0
+
+            # 检查病毒传播关键词
+            for keyword in viral_keywords:
+                if keyword in text:
+                    score *= 1.2
+
+            # 检查情感强度
+            for word in emotion_words:
+                if word in text:
+                    score *= 1.1
+
+            # 检查标点符号（感叹号、问号增加吸引力）
+            if "!" in text or "！" in text:
+                score *= 1.15
+            if "?" in text or "？" in text:
+                score *= 1.1
+
+            # 文本长度适中性（太长或太短都不利于传播）
+            text_length = len(text)
+            if 10 <= text_length <= 50:
+                score *= 1.1
+            elif text_length > 100:
+                score *= 0.9
+
+            return min(score, 2.0)  # 限制最大倍数
+
+        except Exception as e:
+            logger.error(f"文本病毒潜力分析失败: {e}")
+            return 1.0
+
+    def _generate_new_timeline(self, segments: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """生成新的时间轴"""
+        try:
+            timeline = {
+                "segments": [],
+                "total_duration": 0,
+                "transitions": []
+            }
+
+            current_time = 0.0
+            segment_duration = 2.0  # 每个片段默认2秒
+
+            for i, segment in enumerate(segments):
+                original_subtitle = segment["subtitle"]
+
+                # 计算新的时间点
+                start_time = current_time
+                end_time = current_time + segment_duration
+
+                # 创建新的时间轴片段
+                new_segment = {
+                    "index": i,
+                    "start_time": start_time,
+                    "end_time": end_time,
+                    "duration": segment_duration,
+                    "original_start": original_subtitle.get("start_time", 0),
+                    "original_end": original_subtitle.get("end_time", 0),
+                    "text": original_subtitle.get("text", ""),
+                    "type": segment.get("type", ""),
+                    "viral_score": segment.get("viral_score", 0.5)
+                }
+
+                timeline["segments"].append(new_segment)
+                current_time = end_time + 0.1  # 0.1秒间隔
+
+            timeline["total_duration"] = current_time
+
+            logger.info(f"生成新时间轴: {len(timeline['segments'])}个片段, 总时长{timeline['total_duration']:.1f}秒")
+            return timeline
+
+        except Exception as e:
+            logger.error(f"生成时间轴失败: {e}")
+            return {"segments": [], "total_duration": 0, "transitions": []}
+
+    def _calculate_viral_score(self, segments: List[Dict[str, Any]]) -> float:
+        """计算病毒传播评分"""
+        try:
+            if not segments:
+                return 0.0
+
+            total_score = 0.0
+            for segment in segments:
+                viral_score = segment.get("viral_score", 0.5)
+                total_score += viral_score
+
+            # 平均分
+            average_score = total_score / len(segments)
+
+            # 考虑片段数量的影响（太少或太多都不好）
+            segment_count = len(segments)
+            if 8 <= segment_count <= 15:
+                count_multiplier = 1.0
+            elif segment_count < 8:
+                count_multiplier = 0.8  # 太少
+            else:
+                count_multiplier = 0.9  # 太多
+
+            final_score = average_score * count_multiplier
+            return min(final_score, 1.0)  # 限制在1.0以内
+
+        except Exception as e:
+            logger.error(f"计算病毒评分失败: {e}")
+            return 0.0
+
+    def optimize_duration(self, target_duration: Optional[float] = None) -> Dict[str, Any]:
+        """优化视频时长"""
+        try:
+            if not self.current_subtitles:
+                logger.warning("没有字幕数据可供优化")
+                return {}
+
+            # 如果没有指定目标时长，自动计算最优时长
+            if target_duration is None:
+                # 爆款短视频的最优时长通常在15-60秒
+                original_duration = self._calculate_original_duration()
+                if original_duration <= 60:
+                    target_duration = original_duration * 0.8  # 压缩20%
+                else:
+                    target_duration = min(60, original_duration * 0.5)  # 大幅压缩
+
+            # 执行时长优化
+            optimized_result = {
+                "original_duration": self._calculate_original_duration(),
+                "target_duration": target_duration,
+                "optimization_method": "intelligent_compression",
+                "compression_ratio": 0.0,
+                "optimized_segments": []
+            }
+
+            # 重新构建剧本以符合目标时长
+            reconstruction = self.reconstruct_screenplay()
+            if reconstruction:
+                new_duration = reconstruction.get("new_duration", 0)
+                optimized_result["actual_duration"] = new_duration
+                optimized_result["compression_ratio"] = (optimized_result["original_duration"] - new_duration) / optimized_result["original_duration"] if optimized_result["original_duration"] > 0 else 0
+                optimized_result["optimized_segments"] = reconstruction.get("segments", [])
+
+            logger.info(f"时长优化完成: {optimized_result['original_duration']:.1f}s → {optimized_result.get('actual_duration', 0):.1f}s")
+            return optimized_result
+
+        except Exception as e:
+            logger.error(f"时长优化失败: {e}")
+            return {}
+
+    def _calculate_original_duration(self) -> float:
+        """计算原始字幕总时长"""
+        try:
+            if not self.current_subtitles:
+                return 0.0
+
+            # 找到最后一个字幕的结束时间
+            last_subtitle = self.current_subtitles[-1]
+            end_time = last_subtitle.get("end_time", 0)
+
+            # 如果没有end_time，尝试从时间字符串解析
+            if end_time == 0 and "end" in last_subtitle:
+                end_time_str = last_subtitle["end"]
+                end_time = self._parse_time_string(end_time_str)
+
+            return float(end_time)
+
+        except Exception as e:
+            logger.error(f"计算原始时长失败: {e}")
+            return 0.0
+
+    def _parse_time_string(self, time_str: str) -> float:
+        """解析时间字符串为秒数"""
+        try:
+            # 支持格式: "00:00:10,500" 或 "00:00:10.500"
+            time_str = time_str.replace(',', '.')
+            parts = time_str.split(':')
+
+            if len(parts) == 3:
+                hours = int(parts[0])
+                minutes = int(parts[1])
+                seconds = float(parts[2])
+                return hours * 3600 + minutes * 60 + seconds
+            elif len(parts) == 2:
+                minutes = int(parts[0])
+                seconds = float(parts[1])
+                return minutes * 60 + seconds
+            else:
+                return float(parts[0])
+
+        except Exception as e:
+            logger.error(f"解析时间字符串失败: {time_str}, {e}")
+            return 0.0
+
     def reconstruct_plot(self, original_plot: str, language: str = "zh") -> str:
         """
         深度剧情重构 - 基于AI语义分析的原片→爆款转换

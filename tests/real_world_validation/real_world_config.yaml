@@ -1,0 +1,384 @@
+# VisionAI-ClipsMaster 真实环境端到端测试配置文件
+# 用于配置真实环境下的完整工作流程测试
+
+# 测试环境配置
+test_environment:
+  name: "Real_World_E2E_Testing"
+  version: "1.0.0"
+  log_level: "INFO"
+  temp_dir: "tests/temp/real_world"
+  output_dir: "tests/reports/real_world_validation"
+  cleanup_after_test: false
+  parallel_execution: true
+  max_concurrent_tests: 3
+  timeout_seconds: 7200  # 2小时超时
+
+# 真实测试数据配置
+test_data:
+  # 测试视频文件配置
+  video_files:
+    short_video:
+      path: "tests/real_world_validation/test_data/videos/short_video_5min.mp4"
+      duration: 300  # 5分钟
+      resolution: "1920x1080"
+      format: "mp4"
+      codec: "h264"
+      audio_codec: "aac"
+      language: "zh"
+      content_type: "educational"
+      file_size_mb: 150
+    
+    medium_video:
+      path: "tests/real_world_validation/test_data/videos/medium_video_15min.mov"
+      duration: 900  # 15分钟
+      resolution: "1280x720"
+      format: "mov"
+      codec: "h265"
+      audio_codec: "aac"
+      language: "zh-en"
+      content_type: "entertainment"
+      file_size_mb: 400
+    
+    long_video:
+      path: "tests/real_world_validation/test_data/videos/long_video_30min.avi"
+      duration: 1800  # 30分钟
+      resolution: "1920x1080"
+      format: "avi"
+      codec: "h264"
+      audio_codec: "mp3"
+      language: "en"
+      content_type: "tutorial"
+      file_size_mb: 800
+  
+  # 支持的视频格式
+  supported_formats:
+    - "mp4"
+    - "mov"
+    - "avi"
+    - "mkv"
+    - "wmv"
+  
+  # 支持的分辨率
+  supported_resolutions:
+    - "3840x2160"  # 4K
+    - "1920x1080"  # 1080p
+    - "1280x720"   # 720p
+    - "854x480"    # 480p
+    - "640x360"    # 360p
+
+# 工作流程测试配置
+workflow_tests:
+  # 完整流水线测试
+  complete_pipeline:
+    enabled: true
+    timeout: 3600
+    stages:
+      - "video_upload"
+      - "preprocessing"
+      - "ai_analysis"
+      - "script_reconstruction"
+      - "srt_generation"
+      - "video_cutting"
+      - "segment_processing"
+      - "draftinfo_generation"
+      - "quality_validation"
+  
+  # 用户工作流程模拟
+  user_workflow_simulation:
+    enabled: true
+    scenarios:
+      - name: "standard_workflow"
+        description: "标准用户工作流程"
+        steps:
+          - "upload_video"
+          - "select_style"
+          - "generate_viral_script"
+          - "review_and_edit"
+          - "export_to_jianying"
+      
+      - name: "batch_processing"
+        description: "批量处理工作流程"
+        steps:
+          - "upload_multiple_videos"
+          - "batch_ai_analysis"
+          - "batch_script_generation"
+          - "batch_export"
+      
+      - name: "error_recovery"
+        description: "错误恢复工作流程"
+        steps:
+          - "simulate_error"
+          - "error_detection"
+          - "recovery_action"
+          - "resume_processing"
+
+# AI剧本重构测试配置
+ai_script_reconstruction:
+  # 模型配置
+  models:
+    chinese_model:
+      name: "Qwen2.5-7B"
+      language: "zh"
+      max_tokens: 4096
+      temperature: 0.7
+      enabled: true
+    
+    english_model:
+      name: "Mistral-7B"
+      language: "en"
+      max_tokens: 4096
+      temperature: 0.7
+      enabled: true
+  
+  # 内容理解测试
+  content_understanding:
+    scene_detection: true
+    character_recognition: true
+    emotion_analysis: true
+    topic_extraction: true
+    narrative_structure: true
+  
+  # 爆款生成测试
+  viral_generation:
+    compression_ratio_range: [0.3, 0.7]  # 30%-70%压缩比
+    viral_features_threshold: 0.75  # 爆款特征匹配度≥75%
+    content_coherence_threshold: 0.85  # 内容连贯性≥85%
+    engagement_score_threshold: 0.8  # 吸引力评分≥80%
+
+# 性能和稳定性测试配置
+performance_monitoring:
+  # 内存限制测试
+  memory_constraints:
+    max_memory_gb: 4.0
+    warning_threshold_gb: 3.5
+    monitoring_interval_seconds: 1
+    memory_leak_threshold_mb_per_hour: 10
+  
+  # 处理速度测试
+  processing_speed:
+    min_speed_multiplier: 2.0  # 最低2x实时速度
+    target_speed_multiplier: 3.0  # 目标3x实时速度
+    speed_measurement_interval: 10  # 每10秒测量一次
+  
+  # 稳定性监控
+  stability_monitoring:
+    continuous_run_hours: 8  # 连续运行8小时
+    max_error_rate: 0.05  # 最大错误率5%
+    max_crash_count: 0  # 最大崩溃次数0
+    recovery_time_max_seconds: 30  # 最大恢复时间30秒
+  
+  # 资源利用率监控
+  resource_utilization:
+    cpu_usage_threshold: 0.8  # CPU使用率阈值80%
+    disk_io_threshold_mbps: 100  # 磁盘I/O阈值100MB/s
+    network_usage_threshold_mbps: 50  # 网络使用阈值50MB/s
+
+# 剪映兼容性测试配置
+jianying_compatibility:
+  # 支持的剪映版本
+  supported_versions:
+    - "3.0.0"
+    - "3.1.0"
+    - "3.2.0"
+    - "4.0.0"
+    - "4.1.0"
+  
+  # 工程文件验证
+  draftinfo_validation:
+    json_structure_validation: true
+    file_path_validation: true
+    metadata_completeness_check: true
+    version_compatibility_check: true
+  
+  # 导入测试
+  import_testing:
+    import_success_rate_threshold: 1.0  # 100%导入成功率
+    timeline_accuracy_threshold: 0.1  # 时间轴精度±0.1秒
+    material_mapping_accuracy: 1.0  # 100%素材映射准确率
+  
+  # 编辑功能测试
+  editing_functionality:
+    segment_resize_test: true
+    segment_move_test: true
+    segment_delete_test: true
+    material_replace_test: true
+    timeline_navigation_test: true
+
+# 质量标准配置
+quality_standards:
+  # 功能性标准
+  functional:
+    workflow_completion_rate: 1.0  # 100%工作流程完成率
+    timeline_accuracy_seconds: 0.5  # 时间轴精度±0.5秒
+    import_success_rate: 1.0  # 100%导入成功率
+    content_quality_preservation: 1.0  # 100%内容质量保持
+    format_support_rate: 0.95  # 95%格式支持率
+  
+  # 性能标准
+  performance:
+    min_processing_speed_multiplier: 2.0  # 最低2x实时速度
+    max_memory_usage_gb: 4.0  # 最大4GB内存使用
+    max_cpu_utilization: 0.8  # 最大80%CPU利用率
+    max_disk_io_mbps: 100  # 最大100MB/s磁盘I/O
+    max_response_time_seconds: 2  # 最大2秒响应时间
+  
+  # 质量标准
+  quality:
+    ai_understanding_accuracy: 0.85  # AI理解准确率≥85%
+    viral_generation_satisfaction: 0.8  # 爆款生成满意度≥80%
+    subtitle_sync_accuracy_seconds: 0.1  # 字幕同步精度±0.1秒
+    video_quality_preservation: 1.0  # 视频质量无损保持
+    project_file_integrity: 1.0  # 工程文件100%完整性
+  
+  # 稳定性标准
+  stability:
+    continuous_run_hours: 8  # 连续运行≥8小时
+    memory_leak_rate_mb_per_hour: 1  # 内存泄漏率≤1MB/小时
+    error_recovery_rate: 0.95  # 错误恢复率≥95%
+    system_availability: 0.995  # 系统可用性≥99.5%
+
+# 错误处理配置
+error_handling:
+  # 重试策略
+  retry_policy:
+    max_retries: 3
+    retry_delay_seconds: 5
+    exponential_backoff: true
+    retry_on_errors:
+      - "network_timeout"
+      - "temporary_file_lock"
+      - "insufficient_memory"
+  
+  # 错误分类
+  error_categories:
+    critical:
+      - "system_crash"
+      - "data_corruption"
+      - "memory_overflow"
+    
+    recoverable:
+      - "network_timeout"
+      - "file_access_error"
+      - "temporary_resource_unavailable"
+    
+    warning:
+      - "quality_degradation"
+      - "performance_slowdown"
+      - "minor_sync_issue"
+  
+  # 恢复策略
+  recovery_strategies:
+    critical: "abort_and_report"
+    recoverable: "retry_with_fallback"
+    warning: "log_and_continue"
+
+# 报告配置
+reporting:
+  # 报告格式
+  formats:
+    - "html"
+    - "json"
+    - "pdf"
+    - "csv"
+  
+  # 报告内容
+  content:
+    execution_logs: true
+    performance_metrics: true
+    error_analysis: true
+    user_experience_evaluation: true
+    recommendations: true
+    screenshots: true
+    video_samples: true
+  
+  # 实时监控
+  real_time_monitoring:
+    enabled: true
+    update_interval_seconds: 5
+    dashboard_port: 8080
+    metrics_retention_hours: 24
+  
+  # 告警配置
+  alerts:
+    memory_usage_alert_threshold: 3.5  # 3.5GB内存告警
+    processing_timeout_multiplier: 1.5  # 处理时间超过预期150%告警
+    error_rate_alert_threshold: 0.05  # 错误率超过5%告警
+    system_unresponsive_seconds: 30  # 系统无响应30秒告警
+
+# 文件路径配置
+file_paths:
+  # 输入路径
+  input:
+    test_videos_dir: "tests/real_world_validation/test_data/videos"
+    reference_data_dir: "tests/real_world_validation/test_data/reference_data"
+    config_files_dir: "tests/real_world_validation/configs"
+  
+  # 输出路径
+  output:
+    processed_videos_dir: "tests/temp/real_world/processed_videos"
+    generated_srt_dir: "tests/temp/real_world/generated_srt"
+    draftinfo_files_dir: "tests/temp/real_world/draftinfo"
+    reports_dir: "tests/reports/real_world_validation"
+    logs_dir: "tests/logs/real_world"
+  
+  # 临时路径
+  temp:
+    working_dir: "tests/temp/real_world/working"
+    cache_dir: "tests/temp/real_world/cache"
+    backup_dir: "tests/temp/real_world/backup"
+
+# 外部工具配置
+external_tools:
+  # FFmpeg配置
+  ffmpeg:
+    path: "ffmpeg"
+    timeout_seconds: 600
+    quality_preset: "medium"
+    hardware_acceleration: "auto"
+  
+  # MediaInfo配置
+  mediainfo:
+    path: "mediainfo"
+    output_format: "json"
+    timeout_seconds: 30
+  
+  # 剪映模拟器配置
+  jianying_simulator:
+    enabled: true
+    simulation_mode: "full"
+    validation_strict: true
+    timeout_seconds: 120
+
+# 测试数据生成配置
+test_data_generation:
+  # 自动生成测试数据
+  auto_generate: false  # 使用真实视频文件
+  
+  # 数据验证
+  data_validation:
+    file_integrity_check: true
+    format_validation: true
+    duration_validation: true
+    resolution_validation: true
+  
+  # 数据准备
+  data_preparation:
+    download_test_videos: false  # 不自动下载，使用预准备的文件
+    verify_checksums: true
+    create_backup: true
+
+# 调试配置
+debugging:
+  debug_mode: false
+  verbose_logging: true
+  save_intermediate_files: true
+  capture_screenshots: true
+  record_processing_videos: false
+  
+  # 断点配置
+  breakpoints:
+    after_video_upload: false
+    after_ai_analysis: false
+    after_script_generation: false
+    after_video_cutting: false
+    before_draftinfo_generation: false

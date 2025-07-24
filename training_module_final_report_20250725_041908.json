@@ -1,0 +1,126 @@
+{
+  "test_timestamp": "2025-07-25T04:19:06.736669",
+  "system_environment": {
+    "python_version": "3.11.11 | packaged by Anaconda, Inc. | (main, Dec 11 2024, 16:34:19) [MSC v.1929 64 bit (AMD64)]",
+    "pytorch_version": "2.1.2+cpu",
+    "cuda_available": false,
+    "cuda_version": null,
+    "gpu_count": 0,
+    "cpu_count": 16,
+    "memory_total_gb": 15.733024597167969,
+    "memory_available_gb": 2.7896156311035156,
+    "platform": "win32"
+  },
+  "test_results": {
+    "workflow_integrity": {
+      "status": "PASS",
+      "details": {
+        "required_files": 6,
+        "found_files": 6,
+        "missing_files": [],
+        "import_tests": {
+          "EnTrainer": "SUCCESS",
+          "ZhTrainer": "SUCCESS"
+        }
+      },
+      "issues": []
+    },
+    "data_processing": {
+      "status": "PASS",
+      "details": {
+        "english_files": 7,
+        "chinese_files": 9,
+        "total_files": 16,
+        "format_validation": {
+          "checked_files": 5,
+          "valid_files": 5
+        }
+      },
+      "issues": []
+    },
+    "gpu_acceleration": {
+      "status": "WARNING",
+      "details": {
+        "cuda_available": false,
+        "pytorch_version": "2.1.2+cpu"
+      },
+      "issues": [
+        "CUDA不可用，将使用CPU模式"
+      ]
+    },
+    "model_switching": {
+      "status": "PASS",
+      "details": {
+        "config_files": {
+          "configs/models/active_model.yaml": true,
+          "configs/models/available_models/mistral-7b-en.yaml": true,
+          "configs/models/available_models/qwen2.5-7b-zh.yaml": true
+        },
+        "language_detection": [
+          {
+            "text": "Hello world",
+            "expected": "en",
+            "detected": "en",
+            "correct": true
+          },
+          {
+            "text": "你好世界",
+            "expected": "zh",
+            "detected": "zh",
+            "correct": true
+          }
+        ]
+      },
+      "issues": []
+    },
+    "memory_optimization": {
+      "status": "PASS",
+      "details": {
+        "system_memory": {
+          "total_gb": 15.733024597167969,
+          "available_gb": 2.7461318969726562,
+          "used_percent": 82.5
+        },
+        "memory_guard": {
+          "available": true,
+          "current_usage_mb": 261.55078125
+        }
+      },
+      "issues": []
+    },
+    "training_effectiveness": {
+      "status": "PASS",
+      "details": {
+        "model_availability": {
+          "models/mistral": {
+            "exists": true,
+            "model_files": 0
+          },
+          "models/qwen": {
+            "exists": true,
+            "model_files": 0
+          }
+        },
+        "training_history_exists": true
+      },
+      "issues": []
+    }
+  },
+  "performance_metrics": {},
+  "recommendations": {},
+  "final_assessment": {
+    "overall_status": "PASS",
+    "test_summary": {
+      "total": 6,
+      "passed": 5,
+      "warnings": 1,
+      "failed": 0,
+      "pass_rate": 83.33333333333334
+    },
+    "readiness_score": 95.5,
+    "critical_issues": [],
+    "recommendations": [
+      "考虑在有GPU的环境中部署以获得更好的训练性能"
+    ]
+  }
+}

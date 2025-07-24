@@ -139,6 +139,125 @@ class RecoveryManager:
         logger.info(f"任务 {task_id} 已启动，创建了初始恢复点")
         
         return task_id
+
+    def save_checkpoint(self, progress_data: Dict[str, Any], task_id: str = None) -> bool:
+        """
+        保存检查点 - 测试API兼容方法
+
+        Args:
+            progress_data: 进度数据
+            task_id: 任务ID，如果为None则使用当前任务ID
+
+        Returns:
+            bool: 是否保存成功
+        """
+        try:
+            # 使用当前任务ID或提供的任务ID
+            current_task_id = task_id or self.current_task_id
+            if not current_task_id:
+                # 如果没有任务ID，生成一个
+                current_task_id = f"checkpoint_{int(time.time())}"
+                self.current_task_id = current_task_id
+
+            # 创建恢复点
+            recovery_point = RecoveryPoint(
+                task_id=current_task_id,
+                stage="checkpoint",
+                processed_segments=progress_data.get("processed_segments", []),
+                metadata={
+                    "current_position": progress_data.get("current_position", ""),
+                    "total_segments": progress_data.get("total_segments", 0),
+                    "checkpoint_time": datetime.now().isoformat(),
+                    "progress_data": progress_data
+                }
+            )
+
+            # 保存恢复点
+            success = self.save_recovery_point(recovery_point)
+
+            if success:
+                logger.info(f"检查点保存成功: 任务{current_task_id}, 位置{progress_data.get('current_position', 'unknown')}")
+            else:
+                logger.error(f"检查点保存失败: 任务{current_task_id}")
+
+            return success
+
+        except Exception as e:
+            logger.error(f"保存检查点时发生错误: {e}")
+            return False
+
+    def load_checkpoint(self, task_id: str = None) -> Optional[Dict[str, Any]]:
+        """
+        加载检查点 - 测试API兼容方法
+
+        Args:
+            task_id: 任务ID，如果为None则使用当前任务ID
+
+        Returns:
+            Optional[Dict[str, Any]]: 检查点数据，如果不存在则返回None
+        """
+        try:
+            # 使用当前任务ID或提供的任务ID
+            current_task_id = task_id or self.current_task_id
+            if not current_task_id:
+                logger.warning("没有指定任务ID，无法加载检查点")
+                return None
+
+            # 尝试加载恢复点
+            recovery_point = self.load_recovery_point(current_task_id)
+            if not recovery_point:
+                logger.info(f"没有找到任务{current_task_id}的检查点")
+                return None
+
+            # 提取进度数据
+            metadata = recovery_point.metadata
+            progress_data = metadata.get("progress_data", {})
+
+            # 如果没有progress_data，从其他字段构建
+            if not progress_data:
+                progress_data = {
+                    "processed_segments": recovery_point.processed_segments,
+                    "current_position": metadata.get("current_position", ""),
+                    "total_segments": metadata.get("total_segments", 0),
+                    "task_id": recovery_point.task_id,
+                    "stage": recovery_point.stage,
+                    "timestamp": recovery_point.timestamp
+                }
+
+            logger.info(f"检查点加载成功: 任务{current_task_id}, 阶段{recovery_point.stage}")
+            return progress_data
+
+        except Exception as e:
+            logger.error(f"加载检查点时发生错误: {e}")
+            return None
+
+    def load_recovery_point(self, task_id: str) -> Optional[RecoveryPoint]:
+        """
+        加载恢复点
+
+        Args:
+            task_id: 任务ID
+
+        Returns:
+            Optional[RecoveryPoint]: 恢复点对象，如果不存在则返回None
+        """
+        try:
+            recovery_file = self._get_recovery_file_path(task_id)
+
+            if not os.path.exists(recovery_file):
+                logger.debug(f"恢复文件不存在: {recovery_file}")
+                return None
+
+            with open(recovery_file, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+
+            recovery_point = RecoveryPoint.from_dict(data)
+            logger.debug(f"恢复点加载成功: {task_id}")
+            return recovery_point
+
+        except Exception as e:
+            logger.error(f"加载恢复点失败: {task_id}, 错误: {e}")
+            return None
     
     def save_recovery_point(self, recovery_point: RecoveryPoint) -> bool:
         """

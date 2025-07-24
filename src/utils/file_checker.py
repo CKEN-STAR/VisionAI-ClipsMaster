@@ -91,8 +91,150 @@ class FileValidator:
         Returns:
             文件格式是否合法。
         """
+        if not self.validate_file_exists(file_path):
+            return False
         ext = os.path.splitext(file_path)[1][1:].lower()
-        return ext in self.allowed_formats
+        return ext in self.allowed_formats or ext in ['srt', 'ass', 'vtt']  # 添加字幕格式支持
+
+    def calculate_hash(self, file_path: str, algorithm: str = 'sha256') -> str:
+        """计算文件哈希值。
+
+        Args:
+            file_path: 文件路径。
+            algorithm: 哈希算法，支持 'md5', 'sha1', 'sha256'。
+
+        Returns:
+            文件的哈希值字符串。
+        """
+        if not self.validate_file_exists(file_path):
+            raise FileNotFoundError(f"文件不存在: {file_path}")
+
+        # 选择哈希算法
+        if algorithm == 'md5':
+            hash_obj = hashlib.md5()
+        elif algorithm == 'sha1':
+            hash_obj = hashlib.sha1()
+        elif algorithm == 'sha256':
+            hash_obj = hashlib.sha256()
+        else:
+            raise ValueError(f"不支持的哈希算法: {algorithm}")
+
+        try:
+            with open(file_path, 'rb') as f:
+                # 分块读取文件以处理大文件
+                for chunk in iter(lambda: f.read(8192), b""):
+                    hash_obj.update(chunk)
+            return hash_obj.hexdigest()
+        except Exception as e:
+            logger.error(f"计算文件哈希失败: {e}")
+            raise
+
+    def check_file_safety(self, file_path: str) -> bool:
+        """检查文件安全性。
+
+        Args:
+            file_path: 文件路径。
+
+        Returns:
+            文件是否安全。
+        """
+        try:
+            # 基础安全检查
+            if not self.validate_file_exists(file_path):
+                return False
+
+            # 检查文件大小
+            if not self.validate_file_size(file_path):
+                logger.warning(f"文件大小超出限制: {file_path}")
+                return False
+
+            # 检查文件格式
+            if not self.validate_file_format(file_path):
+                logger.warning(f"文件格式不被允许: {file_path}")
+                return False
+
+            # 检查文件路径安全性
+            if self._check_path_traversal(file_path):
+                logger.warning(f"检测到路径遍历攻击: {file_path}")
+                return False
+
+            # 检查文件内容（针对字幕文件）
+            if file_path.lower().endswith(('.srt', '.ass', '.vtt')):
+                return self._check_subtitle_content_safety(file_path)
+
+            return True
+
+        except Exception as e:
+            logger.error(f"文件安全检查失败: {e}")
+            return False
+
+    def verify_integrity(self, file_path: str, expected_hash: str, algorithm: str = 'sha256') -> bool:
+        """验证文件完整性。
+
+        Args:
+            file_path: 文件路径。
+            expected_hash: 期望的哈希值。
+            algorithm: 哈希算法。
+
+        Returns:
+            文件完整性是否正确。
+        """
+        try:
+            actual_hash = self.calculate_hash(file_path, algorithm)
+            return actual_hash.lower() == expected_hash.lower()
+        except Exception as e:
+            logger.error(f"文件完整性验证失败: {e}")
+            return False
+
+    def _check_path_traversal(self, file_path: str) -> bool:
+        """检查路径遍历攻击。
+
+        Args:
+            file_path: 文件路径。
+
+        Returns:
+            是否存在路径遍历攻击。
+        """
+        # 检查危险的路径模式
+        dangerous_patterns = ['../', '..\\', '../', '..\\\\']
+        normalized_path = os.path.normpath(file_path)
+
+        for pattern in dangerous_patterns:
+            if pattern in file_path or pattern in normalized_path:
+                return True
+
+        return False
+
+    def _check_subtitle_content_safety(self, file_path: str) -> bool:
+        """检查字幕文件内容安全性。
+
+        Args:
+            file_path: 字幕文件路径。
+
+        Returns:
+            内容是否安全。
+        """
+        try:
+            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                content = f.read(1024 * 1024)  # 只读取前1MB内容
+
+            # 检查是否包含恶意脚本
+            dangerous_patterns = [
+                '<script', 'javascript:', 'vbscript:', 'onload=', 'onerror=',
+                'eval(', 'document.', 'window.', 'alert('
+            ]
+
+            content_lower = content.lower()
+            for pattern in dangerous_patterns:
+                if pattern in content_lower:
+                    logger.warning(f"字幕文件包含潜在危险内容: {pattern}")
+                    return False
+
+            return True
+
+        except Exception as e:
+            logger.error(f"字幕内容安全检查失败: {e}")
+            return False
 
 
 class VideoValidator(FileValidator):
