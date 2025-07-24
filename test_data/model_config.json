@@ -1,0 +1,21 @@
+{
+  "available_models": [
+    {
+      "name": "mistral-7b-en",
+      "language": "en",
+      "path": "models/mistral/",
+      "quantization": "Q5_K_M",
+      "max_memory_mb": 4000
+    },
+    {
+      "name": "qwen2.5-7b-zh",
+      "language": "zh",
+      "path": "models/qwen/",
+      "quantization": "Q4_K_M",
+      "max_memory_mb": 3800
+    }
+  ],
+  "active_model": "auto",
+  "memory_limit_mb": 3800,
+  "cpu_threads": 4
+}

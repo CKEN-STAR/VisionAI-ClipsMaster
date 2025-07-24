@@ -1,0 +1,112 @@
+{
+  "start_time": "2025-07-24T08:04:40.896904",
+  "tests": {
+    "language_detection": {
+      "success": true,
+      "english_detection": {
+        "language": "en"
+      },
+      "chinese_detection": {
+        "language": "zh"
+      },
+      "english_correct": true,
+      "chinese_correct": true,
+      "error": null
+    },
+    "english_workflow": {
+      "success": true,
+      "processing_time": 0.044005632400512695,
+      "memory_usage": {
+        "before": 352.9765625,
+        "after": 352.984375,
+        "delta": 0.0078125
+      },
+      "progress_updates": 8,
+      "output_exists": true,
+      "output_size": 2097176,
+      "workflow_result": {
+        "success": true,
+        "workflow_id": "workflow_1753315480",
+        "output_path": "C:\\Users\\13075\\AppData\\Local\\Temp\\quick_workflow_test_z88ev0pn\\english_output.mp4",
+        "processing_time": 0.028050899505615234,
+        "subtitle_result": {
+          "success": true,
+          "details": {
+            "method": "fallback_copy",
+            "message": "使用备用字幕处理方案"
+          }
+        },
+        "video_result": {
+          "success": true,
+          "details": {
+            "method": "fallback_copy",
+            "message": "使用备用视频处理方案"
+          }
+        }
+      },
+      "error": null
+    },
+    "chinese_workflow": {
+      "success": true,
+      "processing_time": 0.008943557739257812,
+      "memory_usage": {
+        "before": 352.984375,
+        "after": 352.984375,
+        "delta": 0.0
+      },
+      "progress_updates": 8,
+      "output_exists": true,
+      "output_size": 2097176,
+      "workflow_result": {
+        "success": true,
+        "workflow_id": "workflow_1753315480",
+        "output_path": "C:\\Users\\13075\\AppData\\Local\\Temp\\quick_workflow_test_z88ev0pn\\chinese_output.mp4",
+        "processing_time": 0.008943557739257812,
+        "subtitle_result": {
+          "success": true,
+          "details": {
+            "method": "fallback_copy",
+            "message": "使用备用字幕处理方案"
+          }
+        },
+        "video_result": {
+          "success": true,
+          "details": {
+            "method": "fallback_copy",
+            "message": "使用备用视频处理方案"
+          }
+        }
+      },
+      "error": null
+    },
+    "device_management": {
+      "success": true,
+      "selected_device": "DeviceType.CPU_AVX2",
+      "device_info": {
+        "current_device": "cpu-avx2",
+        "available_devices": "[<DeviceType.CPU_BASIC: 'cpu-basic'>, <DeviceType.CPU_AVX2: 'cpu-avx2'>]",
+        "stats": "{'cpu': {'cores': 12, 'threads': 16, 'features': {'sse': True, 'sse2': True, 'sse3': False, 'ssse3': True, 'sse4_1': True, 'sse4_2': True, 'avx': True, 'avx2': True, 'avx512f': False, 'fma3': False, 'f16c': True, 'mmx': True, 'popcnt': True, 'aes': True}, 'usage': 1.1, 'memory': 74.8}}",
+        "recommendations": "['推荐使用支持CUDA的NVIDIA GPU']"
+      },
+      "gpu_count": 0,
+      "cpu_fallback": true,
+      "error": null
+    },
+    "memory_management": {
+      "success": true,
+      "initial_memory": 353.72265625,
+      "peak_memory": 363.76171875,
+      "final_memory": 353.72265625,
+      "memory_increase": 10.0390625,
+      "cleanup_effective": true,
+      "error": null
+    }
+  },
+  "summary": {
+    "total_tests": 5,
+    "successful_tests": 5,
+    "success_rate": 1.0,
+    "overall_success": true
+  },
+  "end_time": "2025-07-24T08:04:41.278973"
+}

@@ -1,0 +1,30 @@
+{
+  "original": {
+    "file_path": "test_output\\test_data\\subtitles\\original_drama.srt",
+    "language": "zh",
+    "subtitle_count": 20,
+    "total_duration": 300,
+    "style": "complete_narrative"
+  },
+  "viral": {
+    "file_path": "test_output\\test_data\\subtitles\\viral_style.srt",
+    "language": "zh",
+    "subtitle_count": 16,
+    "total_duration": 120,
+    "style": "viral_hooks"
+  },
+  "english": {
+    "file_path": "test_output\\test_data\\subtitles\\english_test.srt",
+    "language": "en",
+    "subtitle_count": 19,
+    "total_duration": 150,
+    "style": "standard_narrative"
+  },
+  "mixed": {
+    "file_path": "test_output\\test_data\\subtitles\\mixed_language.srt",
+    "language": "mixed",
+    "subtitle_count": 15,
+    "total_duration": 90,
+    "style": "multilingual"
+  }
+}

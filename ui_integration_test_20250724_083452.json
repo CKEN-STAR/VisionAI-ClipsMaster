@@ -1,0 +1,103 @@
+{
+  "timestamp": "2025-07-24T08:34:47.579765",
+  "test_summary": {
+    "total_tests": 16,
+    "passed": 14,
+    "failed": 1,
+    "skipped": 1
+  },
+  "test_categories": {
+    "functionality": {
+      "pyqt6_import": {
+        "status": "passed",
+        "details": "PyQt6核心组件导入成功",
+        "timestamp": "2025-07-24T08:34:47.620209"
+      },
+      "main_ui_import": {
+        "status": "passed",
+        "details": "主UI模块导入成功",
+        "timestamp": "2025-07-24T08:34:51.346414"
+      },
+      "core_module_language_detector": {
+        "status": "passed",
+        "details": "语言检测器导入成功",
+        "timestamp": "2025-07-24T08:34:52.146064"
+      },
+      "core_module_model_switcher": {
+        "status": "passed",
+        "details": "模型切换器导入成功",
+        "timestamp": "2025-07-24T08:34:52.161241"
+      },
+      "core_module_screenplay_engineer": {
+        "status": "passed",
+        "details": "剧本工程师导入成功",
+        "timestamp": "2025-07-24T08:34:52.161241"
+      },
+      "core_module_narrative_analyzer": {
+        "status": "passed",
+        "details": "叙事分析器导入成功",
+        "timestamp": "2025-07-24T08:34:52.162085"
+      },
+      "core_module_video_processor": {
+        "status": "passed",
+        "details": "视频处理器导入成功",
+        "timestamp": "2025-07-24T08:34:52.162085"
+      }
+    },
+    "interaction": {
+      "qapplication_creation": {
+        "status": "passed",
+        "details": "QApplication创建成功",
+        "timestamp": "2025-07-24T08:34:52.186035"
+      },
+      "main_window_creation": {
+        "status": "failed",
+        "details": "主窗口创建失败",
+        "timestamp": "2025-07-24T08:34:52.186035",
+        "error": "cannot import name 'VisionAIClipsMaster' from 'simple_ui_fixed' (D:\\zancun\\VisionAI-ClipsMaster\\simple_ui_fixed.py)",
+        "traceback": "Traceback (most recent call last):\n  File \"D:\\zancun\\VisionAI-ClipsMaster\\ui_integration_test.py\", line 125, in test_ui_initialization\n    from simple_ui_fixed import VisionAIClipsMaster\nImportError: cannot import name 'VisionAIClipsMaster' from 'simple_ui_fixed' (D:\\zancun\\VisionAI-ClipsMaster\\simple_ui_fixed.py)\n"
+      }
+    },
+    "integration": {
+      "file_upload_test": {
+        "status": "skipped",
+        "details": "主窗口未初始化",
+        "timestamp": "2025-07-24T08:34:52.186940"
+      },
+      "chinese_detection": {
+        "status": "passed",
+        "details": "中文检测正常",
+        "timestamp": "2025-07-24T08:34:52.190130"
+      },
+      "english_detection": {
+        "status": "passed",
+        "details": "英文检测正常",
+        "timestamp": "2025-07-24T08:34:52.191131"
+      }
+    },
+    "performance": {
+      "initial_memory_check": {
+        "status": "passed",
+        "details": "初始内存使用: 368.7MB",
+        "timestamp": "2025-07-24T08:34:52.191131"
+      },
+      "memory_usage_check": {
+        "status": "passed",
+        "details": "内存使用在合理范围内: 368.7MB",
+        "timestamp": "2025-07-24T08:34:52.191131"
+      },
+      "exception_handler_setup": {
+        "status": "passed",
+        "details": "全局异常处理器设置成功",
+        "timestamp": "2025-07-24T08:34:52.191131"
+      },
+      "log_handler_test": {
+        "status": "passed",
+        "details": "日志处理器测试成功",
+        "timestamp": "2025-07-24T08:34:52.191850"
+      }
+    }
+  },
+  "issues_found": [],
+  "recommendations": []
+}

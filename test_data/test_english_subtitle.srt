@@ -1,0 +1,15 @@
+1
+00:00:01,000 --> 00:00:03,000
+The weather is nice today
+
+2
+00:00:03,500 --> 00:00:06,000
+I went for a walk in the park
+
+3
+00:00:06,500 --> 00:00:09,000
+I saw many beautiful flowers
+
+4
+00:00:09,500 --> 00:00:12,000
+My mood became very pleasant

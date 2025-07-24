@@ -1,0 +1,19 @@
+{
+  "test_time": "2025-07-23 22:57:00",
+  "test_results": {
+    "UI启动": true,
+    "核心模块": true,
+    "视频处理": true,
+    "字幕处理": true,
+    "剪映导出": true,
+    "内存使用": true,
+    "响应时间": true
+  },
+  "overall_status": "PASS",
+  "success_rate": 100.0,
+  "summary": {
+    "total_tests": 7,
+    "passed_tests": 7,
+    "failed_tests": 0
+  }
+}

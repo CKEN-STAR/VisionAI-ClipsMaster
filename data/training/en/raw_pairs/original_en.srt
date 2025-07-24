@@ -1,0 +1,39 @@
+1
+00:00:01,000 --> 00:00:05,000
+John is an ordinary office worker living a nine-to-five life.
+
+2
+00:00:06,000 --> 00:00:10,000
+This morning, he walked into the office as usual.
+
+3
+00:00:11,000 --> 00:00:15,000
+Suddenly, his phone rang with an unknown number.
+
+4
+00:00:16,000 --> 00:00:20,000
+A mysterious voice said: "Your life is about to change."
+
+5
+00:00:21,000 --> 00:00:25,000
+John felt confused but continued working.
+
+6
+00:00:26,000 --> 00:00:30,000
+In the afternoon, he received a mysterious email.
+
+7
+00:00:31,000 --> 00:00:35,000
+The email contained only an address and one sentence: "8 PM tonight, don't miss it."
+
+8
+00:00:36,000 --> 00:00:40,000
+John hesitated for a long time but finally decided to check it out.
+
+9
+00:00:41,000 --> 00:00:45,000
+When he arrived at the address, he found it was an abandoned building.
+
+10
+00:00:46,000 --> 00:00:50,000
+At that moment, the truth was finally revealed.

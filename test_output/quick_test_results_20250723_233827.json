@@ -1,0 +1,81 @@
+{
+  "start_time": "2025-07-23T23:38:20.117405",
+  "tests": {
+    "english_trainer": {
+      "success": true,
+      "training_time": 4.627963304519653,
+      "memory_usage": {
+        "before": 198.26171875,
+        "after": 361.8125,
+        "delta": 163.55078125
+      },
+      "training_result": {
+        "success": true,
+        "accuracy": 0.944813301943378,
+        "loss": 0.23823169778118905,
+        "training_duration": 1.5085101127624512,
+        "samples_processed": 2,
+        "epochs": 3,
+        "model_type": "simulated_english_model",
+        "language": "en",
+        "simulation": true,
+        "statistics": {
+          "total_samples": 2,
+          "avg_length": 36.0,
+          "english_ratio": 0.8194444444444444,
+          "word_count": 13,
+          "vocabulary_size": 11,
+          "avg_words_per_sample": 6.5
+        },
+        "message": "Training completed successfully (simulated mode)"
+      },
+      "validation_result": {
+        "is_valid": true,
+        "english_ratio": 0.8363636363636363,
+        "length": 55,
+        "word_count": 8,
+        "issues": []
+      },
+      "error": null
+    },
+    "chinese_trainer": {
+      "success": true,
+      "training_time": 1.5045087337493896,
+      "memory_usage": {
+        "before": 361.8125,
+        "after": 361.8125,
+        "delta": 0.0
+      },
+      "training_result": {
+        "success": true,
+        "accuracy": 0.9359938303560974,
+        "loss": 0.19394798510309924,
+        "training_duration": 1.502497911453247,
+        "samples_processed": 2,
+        "epochs": 3,
+        "model_type": "simulated_chinese_model",
+        "language": "zh",
+        "simulation": true,
+        "statistics": {
+          "total_samples": 2,
+          "avg_length": 9.0,
+          "chinese_char_ratio": 0.8888888888888888,
+          "vocabulary_size": 15
+        },
+        "message": "训练成功完成（模拟模式）"
+      },
+      "validation_result": {
+        "is_valid": true,
+        "chinese_ratio": 0.8333333333333334,
+        "length": 18,
+        "issues": []
+      },
+      "error": null
+    },
+    "device_manager": {
+      "success": true,
+      "selected_device": "DeviceType.CPU_AVX2",
+      "device_info": {
+        "current_device": "cpu-avx2",
+        "available_devices": [
+          

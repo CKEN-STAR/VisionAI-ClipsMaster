@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="3.0">
+    <settings>
+        <width>1920</width>
+        <height>1080</height>
+        <fps>25</fps>
+        <duration>120</duration>
+    </settings>
+    <timeline>
+        <track id="video_track_1" type="video">
+            <!-- Video clips will be inserted here -->
+        </track>
+        <track id="audio_track_1" type="audio">
+            <!-- Audio clips will be inserted here -->
+        </track>
+    </timeline>
+    <materials>
+        <videos>
+            <!-- Video materials will be listed here -->
+        </videos>
+        <audios>
+            <!-- Audio materials will be listed here -->
+        </audios>
+    </materials>
+</project>

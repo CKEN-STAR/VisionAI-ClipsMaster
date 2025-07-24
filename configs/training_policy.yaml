@@ -1,7 +1,116 @@
 # VisionAI-ClipsMaster 训练策略配置
-# 用于配置模型微调和训练参数
+# 支持中英文独立训练和课程学习
 
-# 基础训练配置
+# 全局训练配置
+global_config:
+  max_epochs: 10
+  batch_size: 4
+  learning_rate: 3e-5
+  warmup_steps: 100
+  save_steps: 500
+  eval_steps: 250
+  gradient_accumulation_steps: 2
+  max_grad_norm: 1.0
+  weight_decay: 0.01
+  adam_epsilon: 1e-8
+
+# 英文训练配置
+en_training:
+  model_name: "mistral-7b-en"
+  model_path: "models/mistral/base"
+  quantization: "Q5_K_M"
+  language: "en"
+
+  # 数据配置
+  data_config:
+    train_data_path: "data/training/en"
+    hit_subtitles_path: "data/training/en/hit_subtitles"
+    raw_pairs_path: "data/training/en/raw_pairs"
+    augmented_data_path: "data/training/en/augmented_data"
+    max_sequence_length: 512
+    min_sequence_length: 10
+
+  # 课程学习配置
+  curriculum_learning:
+    enabled: true
+    stages:
+      - name: "basic_alignment"
+        description: "Learn basic timeline alignment"
+        difficulty: "easy"
+        max_samples: 50
+        epochs: 2
+        learning_rate: 5e-5
+      - name: "structure_understanding"
+        description: "Master plot structure reorganization"
+        difficulty: "medium"
+        max_samples: 100
+        epochs: 3
+        learning_rate: 3e-5
+      - name: "advanced_reconstruction"
+        description: "Master non-linear narrative structures"
+        difficulty: "hard"
+        max_samples: 200
+        epochs: 4
+        learning_rate: 2e-5
+
+  # 特殊标记
+  special_tokens:
+    - "SHOCKING"
+    - "AMAZING"
+    - "UNBELIEVABLE"
+    - "INCREDIBLE"
+    - "MUST WATCH"
+    - "VIRAL"
+
+# 中文训练配置
+zh_training:
+  model_name: "qwen2.5-7b-zh"
+  model_path: "models/qwen/base"
+  quantization: "Q4_K_M"
+  language: "zh"
+
+  # 数据配置
+  data_config:
+    train_data_path: "data/training/zh"
+    hit_subtitles_path: "data/training/zh/hit_subtitles"
+    raw_pairs_path: "data/training/zh/raw_pairs"
+    augmented_data_path: "data/training/zh/augmented_data"
+    max_sequence_length: 512
+    min_sequence_length: 10
+
+  # 课程学习配置
+  curriculum_learning:
+    enabled: true
+    stages:
+      - name: "基础对齐阶段"
+        description: "学习基础时间轴对齐"
+        difficulty: "easy"
+        max_samples: 50
+        epochs: 2
+        learning_rate: 5e-5
+      - name: "结构理解阶段"
+        description: "掌握剧情结构重组"
+        difficulty: "medium"
+        max_samples: 100
+        epochs: 3
+        learning_rate: 3e-5
+      - name: "高级重构阶段"
+        description: "掌握非线性叙事结构"
+        difficulty: "hard"
+        max_samples: 200
+        epochs: 4
+        learning_rate: 2e-5
+
+  # 特殊标记
+  special_tokens:
+    - "震撼"
+    - "惊呆"
+    - "不敢相信"
+    - "史上最"
+    - "必看"
+    - "爆款"
+
+# 基础训练配置（保持向后兼容）
 training:
   # 学习率配置
   learning_rate:
@@ -206,3 +315,67 @@ deployment:
     port: 8000
     workers: 1
     timeout: 30
+
+# 数据增强配置
+data_augmentation:
+  enabled: true
+  techniques:
+    - "synonym_replacement"
+    - "sentence_reordering"
+    - "emotional_intensification"
+    - "plot_variation"
+
+  # 增强比例
+  augmentation_ratio: 0.3
+
+  # 质量控制
+  quality_threshold: 0.8
+  max_augmented_samples: 1000
+
+# 评估配置
+evaluation:
+  metrics:
+    - "bleu_score"
+    - "rouge_score"
+    - "narrative_coherence"
+    - "emotional_impact"
+
+  # 验证集配置
+  validation_split: 0.2
+  test_split: 0.1
+
+  # 早停配置
+  early_stopping:
+    enabled: true
+    patience: 3
+    min_delta: 0.001
+
+# 模型保存配置
+model_saving:
+  save_best_only: true
+  save_total_limit: 3
+  output_dir: "models/finetuned"
+
+  # 检查点配置
+  checkpoint_config:
+    save_steps: 500
+    keep_best_checkpoints: 5
+
+# 硬件优化配置
+hardware_optimization:
+  # 内存优化
+  memory_optimization:
+    gradient_checkpointing: true
+    dataloader_num_workers: 2
+    pin_memory: true
+
+  # CPU优化
+  cpu_optimization:
+    use_cpu_only: true
+    num_threads: 4
+
+  # 量化配置
+  quantization_config:
+    load_in_4bit: true
+    bnb_4bit_compute_dtype: "float16"
+    bnb_4bit_use_double_quant: true

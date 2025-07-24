@@ -1,0 +1,13 @@
+{
+  "text_augmentation": {
+    "synonym_replacement": true,
+    "random_insertion": false,
+    "random_swap": true,
+    "random_deletion": false
+  },
+  "plot_augmentation": {
+    "emotion_variation": true,
+    "character_substitution": true,
+    "scene_reordering": true
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "basic_clipping": {
+    "name": "基础剪辑测试",
+    "description": "测试基本的视频剪辑功能",
+    "input_video": "standard_mp4",
+    "input_subtitle": "viral",
+    "expected_clips": 16,
+    "max_precision_error": 0.5,
+    "test_cases": [
+      "clip_generation_accuracy",
+      "timeline_structure_validation",
+      "material_library_completeness"
+    ]
+  },
+  "multi_format_compatibility": {
+    "name": "多格式兼容性测试",
+    "description": "测试不同视频格式的兼容性",
+    "input_videos": [
+      "standard_mp4",
+      "high_quality_mp4",
+      "legacy_avi",
+      "web_flv"
+    ],
+    "input_subtitle": "original",
+    "test_cases": [
+      "format_support_validation",
+      "quality_preservation_check",
+      "export_compatibility_test"
+    ]
+  },
+  "precision_alignment": {
+    "name": "精度对齐测试",
+    "description": "测试高精度时间轴对齐",
+    "input_video": "high_quality_mp4",
+    "input_subtitle": "viral",
+    "precision_requirements": {
+      "standard": 0.5,
+      "high": 0.2,
+      "ultra": 0.1
+    },
+    "test_cases": [
+      "sub_frame_accuracy_test",
+      "frame_boundary_alignment",
+      "audio_sync_validation"
+    ]
+  },
+  "large_scale_processing": {
+    "name": "大规模处理测试",
+    "description": "测试大量片段的处理能力",
+    "input_video": "standard_mp4",
+    "input_subtitle": "original",
+    "scale_parameters": {
+      "max_clips": 100,
+      "max_duration": 600,
+      "memory_limit_gb": 3.8
+    },
+    "test_cases": [
+      "memory_usage_monitoring",
+      "processing_speed_benchmark",
+      "stability_under_load"
+    ]
+  },
+  "jianying_integration": {
+    "name": "剪映集成测试",
+    "description": "测试与剪映的完整集成",
+    "input_video": "standard_mp4",
+    "input_subtitle": "viral",
+    "jianying_versions": [
+      "3.0",
+      "2.9",
+      "2.8"
+    ],
+    "test_cases": [
+      "project_file_generation",
+      "version_compatibility_check",
+      "import_success_validation",
+      "editing_functionality_test"
+    ]
+  }
+}

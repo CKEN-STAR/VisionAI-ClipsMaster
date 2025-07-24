@@ -1,0 +1,283 @@
+{
+  "version": "3.0.0",
+  "type": "draft_content",
+  "platform": "windows",
+  "create_time": 1753282620186851,
+  "update_time": 1753282620191509,
+  "id": "dfa08f9b-a1a9-4321-8bea-273917ccbba2",
+  "draft_id": "dfa08f9b-a1a9-4321-8bea-273917ccbba2",
+  "draft_name": "VisionAI混剪项目",
+  "canvas_config": {
+    "height": 1080,
+    "width": 1920,
+    "duration": 10000,
+    "fps": 30,
+    "ratio": "16:9"
+  },
+  "tracks": [
+    {
+      "id": "02a4efb6-2745-4225-b7ad-1e7f9d7b231a",
+      "type": "video",
+      "attribute": 0,
+      "flag": 0,
+      "segments": [
+        {
+          "id": "b6bad786-12dc-40a8-81f2-9cc9a2ce13c0",
+          "type": "video",
+          "material_id": "video_material_0",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 0,
+            "duration": 5000
+          },
+          "target_timerange": {
+            "start": 0,
+            "duration": 5000
+          },
+          "extra_material_refs": [],
+          "uniform_scale": {
+            "on": true,
+            "value": 1.0
+          },
+          "transform": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 1.0,
+            "height": 1.0
+          },
+          "visible": true,
+          "volume": 1.0
+        },
+        {
+          "id": "2ce6360d-685d-4cad-921c-0722a12b7762",
+          "type": "video",
+          "material_id": "video_material_1",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 5000,
+            "duration": 5000
+          },
+          "target_timerange": {
+            "start": 5000,
+            "duration": 5000
+          },
+          "extra_material_refs": [],
+          "uniform_scale": {
+            "on": true,
+            "value": 1.0
+          },
+          "transform": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 1.0,
+            "height": 1.0
+          },
+          "visible": true,
+          "volume": 1.0
+        }
+      ]
+    },
+    {
+      "id": "1ca2e1b6-d7f7-47c4-8f14-2e7971ea9cd1",
+      "type": "audio",
+      "attribute": 0,
+      "flag": 0,
+      "segments": [
+        {
+          "id": "5e370af2-3b60-49d1-8cf9-3c5bdf12ed7e",
+          "type": "audio",
+          "material_id": "audio_material_0",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 0,
+            "duration": 5000
+          },
+          "target_timerange": {
+            "start": 0,
+            "duration": 5000
+          },
+          "extra_material_refs": [],
+          "volume": 1.0,
+          "speed": 1.0,
+          "visible": true
+        },
+        {
+          "id": "b6c985f0-a0a4-491d-b7cd-f00cd5bed2a3",
+          "type": "audio",
+          "material_id": "audio_material_1",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 5000,
+            "duration": 5000
+          },
+          "target_timerange": {
+            "start": 5000,
+            "duration": 5000
+          },
+          "extra_material_refs": [],
+          "volume": 1.0,
+          "speed": 1.0,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "c6802d35-de30-42e8-b17b-9e13ab10aa26",
+      "type": "text",
+      "attribute": 0,
+      "flag": 0,
+      "segments": [
+        {
+          "id": "d30da607-67c2-450a-9c80-097926c5ecc6",
+          "type": "text",
+          "material_id": "text_material_0",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 0,
+            "duration": 5000
+          },
+          "target_timerange": {
+            "start": 0,
+            "duration": 5000
+          },
+          "extra_material_refs": [],
+          "content": "工作流程测试片段1",
+          "style": {
+            "font_size": 24,
+            "font_color": "#FFFFFF",
+            "background_color": "#00000080",
+            "alignment": "center"
+          },
+          "visible": true
+        },
+        {
+          "id": "38b0ebc7-88df-4bf6-ab09-649029301e32",
+          "type": "text",
+          "material_id": "text_material_1",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 0,
+            "duration": 5000
+          },
+          "target_timerange": {
+            "start": 5000,
+            "duration": 5000
+          },
+          "extra_material_refs": [],
+          "content": "工作流程测试片段2",
+          "style": {
+            "font_size": 24,
+            "font_color": "#FFFFFF",
+            "background_color": "#00000080",
+            "alignment": "center"
+          },
+          "visible": true
+        }
+      ]
+    }
+  ],
+  "materials": {
+    "videos": [
+      {
+        "id": "video_material_0",
+        "type": "video",
+        "path": "test_video.mp4",
+        "duration": 5000,
+        "width": 1920,
+        "height": 1080,
+        "fps": 30,
+        "format": "mp4",
+        "codec": "h264",
+        "bitrate": "2000k",
+        "create_time": 1753282620191509,
+        "file_size": 0
+      },
+      {
+        "id": "video_material_1",
+        "type": "video",
+        "path": "test_video.mp4",
+        "duration": 5000,
+        "width": 1920,
+        "height": 1080,
+        "fps": 30,
+        "format": "mp4",
+        "codec": "h264",
+        "bitrate": "2000k",
+        "create_time": 1753282620191509,
+        "file_size": 0
+      }
+    ],
+    "audios": [
+      {
+        "id": "audio_material_0",
+        "type": "audio",
+        "path": "test_video.mp4",
+        "duration": 5000,
+        "sample_rate": 44100,
+        "channels": 2,
+        "format": "aac",
+        "codec": "aac",
+        "bitrate": "128k",
+        "create_time": 1753282620191509
+      },
+      {
+        "id": "audio_material_1",
+        "type": "audio",
+        "path": "test_video.mp4",
+        "duration": 5000,
+        "sample_rate": 44100,
+        "channels": 2,
+        "format": "aac",
+        "codec": "aac",
+        "bitrate": "128k",
+        "create_time": 1753282620191509
+      }
+    ],
+    "texts": [
+      {
+        "id": "text_material_0",
+        "type": "text",
+        "content": "工作流程测试片段1",
+        "font_family": "Microsoft YaHei",
+        "font_size": 24,
+        "font_color": "#FFFFFF",
+        "background_color": "#00000080",
+        "alignment": "center",
+        "bold": false,
+        "italic": false,
+        "underline": false,
+        "create_time": 1753282620191509
+      },
+      {
+        "id": "text_material_1",
+        "type": "text",
+        "content": "工作流程测试片段2",
+        "font_family": "Microsoft YaHei",
+        "font_size": 24,
+        "font_color": "#FFFFFF",
+        "background_color": "#00000080",
+        "alignment": "center",
+        "bold": false,
+        "italic": false,
+        "underline": false,
+        "create_time": 1753282620191509
+      }
+    ],
+    "effects": [],
+    "stickers": [],
+    "images": [],
+    "sounds": []
+  },
+  "extra_info": {
+    "export_range": {
+      "start": 0,
+      "end": 10000
+    },
+    "fps": 30,
+    "audio_sample_rate": 44100,
+    "video_codec": "h264",
+    "audio_codec": "aac"
+  },
+  "keyframes": [],
+  "relations": []
+}

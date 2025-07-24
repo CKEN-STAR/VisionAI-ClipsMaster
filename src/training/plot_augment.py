@@ -444,3 +444,23 @@ class PlotAugmenter:
         except Exception as e:
             print(f"❌ 剧情增强失败: {e}")
             return plot_text  # 返回原始文本作为回退
+
+
+# 为了保持向后兼容性，添加别名
+PlotAugment = PlotAugmenter
+
+
+if __name__ == "__main__":
+    # 测试剧情增强器
+    augmenter = PlotAugmenter("zh")
+
+    test_plot = """
+    第一幕：男主角在公司加班，突然接到神秘电话。
+    第二幕：他发现自己被卷入了一个巨大的阴谋。
+    第三幕：经过重重困难，他终于揭开了真相。
+    """
+
+    print(f"原始剧情: {test_plot}")
+
+    augmented = augmenter.augment_plot(test_plot)
+    print(f"增强后剧情: {augmented}")

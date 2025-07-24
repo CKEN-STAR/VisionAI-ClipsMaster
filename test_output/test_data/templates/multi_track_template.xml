@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="2.9">
+    <settings>
+        <width>1920</width>
+        <height>1080</height>
+        <fps>25</fps>
+        <duration>180</duration>
+    </settings>
+    <timeline>
+        <track id="video_track_1" type="video" layer="1">
+            <!-- Main video track -->
+        </track>
+        <track id="video_track_2" type="video" layer="2">
+            <!-- Overlay video track -->
+        </track>
+        <track id="audio_track_1" type="audio" layer="1">
+            <!-- Main audio track -->
+        </track>
+        <track id="audio_track_2" type="audio" layer="2">
+            <!-- Background music track -->
+        </track>
+    </timeline>
+    <materials>
+        <videos>
+            <!-- Video materials -->
+        </videos>
+        <audios>
+            <!-- Audio materials -->
+        </audios>
+        <effects>
+            <!-- Effects library -->
+        </effects>
+    </materials>
+</project>

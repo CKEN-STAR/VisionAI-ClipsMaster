@@ -51,6 +51,48 @@ class BaseError(Exception):
     """基础异常类"""
     pass
 
+class DataCleaningError(ClipMasterError):
+    """数据清洗错误"""
+
+    def __init__(self, message="数据清洗过程中发生错误"):
+        """初始化数据清洗异常"""
+        super().__init__(message, code="DATA_CLEANING_ERROR", critical=False)
+
+class PathError(ClipMasterError):
+    """路径错误"""
+
+    def __init__(self, message="路径相关错误"):
+        """初始化路径异常"""
+        super().__init__(message, code="PATH_ERROR", critical=False)
+
+class ConfigurationError(ClipMasterError):
+    """配置错误"""
+
+    def __init__(self, message="配置相关错误"):
+        """初始化配置异常"""
+        super().__init__(message, code="CONFIGURATION_ERROR", critical=False)
+
+class ValidationError(ClipMasterError):
+    """验证错误"""
+
+    def __init__(self, message="验证相关错误"):
+        """初始化验证异常"""
+        super().__init__(message, code="VALIDATION_ERROR", critical=False)
+
+class ConfigError(ClipMasterError):
+    """配置文件错误"""
+
+    def __init__(self, message="配置文件相关错误"):
+        """初始化配置文件异常"""
+        super().__init__(message, code="CONFIG_ERROR", critical=False)
+
+class WorkflowError(ClipMasterError):
+    """工作流程错误"""
+
+    def __init__(self, message="工作流程执行错误"):
+        """初始化工作流程异常"""
+        super().__init__(message, code="WORKFLOW_ERROR", critical=True)
+
 # 情感相关异常
 class EmotionError(BaseError):
     """情感处理相关异常的基类"""

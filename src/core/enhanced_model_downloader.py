@@ -391,6 +391,10 @@ class EnhancedModelDownloader(QObject):
             from .intelligent_model_selector import SelectionStrategy, DeploymentTarget
             logger.info("✅ 智能选择器模块导入成功")
 
+            # 强制刷新硬件配置以确保检测到最新的硬件状态
+            logger.info("🔄 强制刷新硬件配置...")
+            self.intelligent_selector.force_refresh_hardware()
+
             # 获取智能推荐
             logger.info("🔍 正在获取智能推荐...")
             recommendation = self.intelligent_selector.recommend_model_version(
@@ -415,7 +419,14 @@ class EnhancedModelDownloader(QObject):
                         logger.error(f"❌ 重新获取后仍然不一致，回退到基础下载")
                         return self._basic_download(model_name, parent_widget)
 
-                logger.info(f"✅ 获取推荐成功: {recommendation.variant.name} (模型: {recommendation.model_name})")
+                # 记录推荐详情
+                logger.info(f"✅ 获取推荐成功:")
+                logger.info(f"  模型: {recommendation.model_name}")
+                logger.info(f"  变体: {recommendation.variant.name}")
+                logger.info(f"  量化: {recommendation.variant.quantization.value}")
+                logger.info(f"  大小: {recommendation.variant.size_gb:.1f}GB")
+                logger.info(f"  质量保持: {recommendation.variant.quality_retention:.1%}")
+
                 # 显示推荐对话框
                 logger.info("🎨 准备显示推荐对话框...")
                 return self._show_recommendation_dialog(recommendation, parent_widget)

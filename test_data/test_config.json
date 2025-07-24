@@ -1,13 +1,13 @@
 {
-  "test_files": {
-    "chinese_srt": "test_data/chinese_test.srt",
-    "english_srt": "test_data/english_test.srt",
-    "viral_chinese_srt": "test_data/viral_chinese_test.srt"
+  "model_config": {
+    "chinese_model": "qwen2.5-7b-zh",
+    "english_model": "mistral-7b-en",
+    "quantization": "Q4_K_M",
+    "max_memory_mb": 3800
   },
-  "expected_results": {
-    "chinese_subtitle_count": 7,
-    "english_subtitle_count": 7,
-    "viral_chinese_subtitle_count": 6,
-    "total_duration_seconds": 21.0
+  "clip_settings": {
+    "min_segment_duration": 1.0,
+    "max_segment_duration": 10.0,
+    "alignment_tolerance": 0.5
   }
 }

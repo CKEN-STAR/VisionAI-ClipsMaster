@@ -363,11 +363,17 @@ class UIMemoryManager(QObject):
 
 class MemoryWatcher(QObject):
     """内存监视器（轻量级）"""
-    
+
+    # 信号定义
+    memory_warning = pyqtSignal(str)
+    memory_status_changed = pyqtSignal(dict)
+
     def __init__(self):
         super().__init__()
         self.last_check_time = time.time()
         self.check_interval = 10.0  # 10秒
+        self.monitoring = False
+        self.monitor_timer = None
     
     def should_cleanup(self) -> bool:
         """检查是否应该清理内存"""
@@ -395,6 +401,61 @@ class MemoryWatcher(QObject):
             gc.collect()
         except Exception:
             pass
+
+    def start_monitoring(self, interval_ms: int = 5000):
+        """开始内存监控"""
+        try:
+            if self.monitoring:
+                return
+
+            self.monitoring = True
+            self.check_interval = interval_ms / 1000.0  # 转换为秒
+
+            # 创建定时器
+            from PyQt6.QtCore import QTimer
+            self.monitor_timer = QTimer()
+            self.monitor_timer.timeout.connect(self._check_memory)
+            self.monitor_timer.start(interval_ms)
+
+            print(f"[OK] 内存监控已启动，间隔: {interval_ms}ms")
+
+        except Exception as e:
+            print(f"[ERROR] 启动内存监控失败: {e}")
+
+    def stop_monitoring(self):
+        """停止内存监控"""
+        try:
+            if self.monitor_timer:
+                self.monitor_timer.stop()
+                self.monitor_timer = None
+
+            self.monitoring = False
+            print("[OK] 内存监控已停止")
+
+        except Exception as e:
+            print(f"[ERROR] 停止内存监控失败: {e}")
+
+    def _check_memory(self):
+        """检查内存状态"""
+        try:
+            import psutil
+            memory = psutil.virtual_memory()
+
+            # 发送状态更新信号
+            status = {
+                "percent": memory.percent,
+                "available": memory.available,
+                "total": memory.total
+            }
+            self.memory_status_changed.emit(status)
+
+            # 检查是否需要发出警告
+            if memory.percent > 85.0:
+                warning_msg = f"内存使用率过高: {memory.percent:.1f}%"
+                self.memory_warning.emit(warning_msg)
+
+        except Exception as e:
+            print(f"[WARN] 内存检查失败: {e}")
 
 # 全局内存管理器实例
 _memory_manager: Optional[UIMemoryManager] = None

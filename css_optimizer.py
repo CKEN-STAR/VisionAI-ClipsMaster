@@ -355,15 +355,67 @@ def optimize_stylesheet(stylesheet):
     """优化样式表的全局接口"""
     return css_optimizer.optimize_stylesheet(stylesheet)
 
+def get_base_style_for_widget(widget_type):
+    """获取组件的基础样式"""
+    base_styles = {
+        "QPushButton": """
+            QPushButton {
+                background-color: #007bff;
+                color: white;
+                border: 1px solid #007bff;
+                border-radius: 6px;
+                padding: 8px 16px;
+                font-weight: 500;
+                min-width: 80px;
+                min-height: 32px;
+            }
+            QPushButton:hover {
+                background-color: #0056b3;
+                border-color: #0056b3;
+            }
+        """,
+        "QLabel": """
+            QLabel {
+                color: #333333;
+                font-size: 13px;
+                background-color: transparent;
+            }
+        """,
+        "QLineEdit": """
+            QLineEdit {
+                background-color: #ffffff;
+                border: 2px solid #e9ecef;
+                border-radius: 6px;
+                padding: 8px 12px;
+                font-size: 13px;
+                color: #495057;
+            }
+            QLineEdit:focus {
+                border-color: #007bff;
+                background-color: #ffffff;
+            }
+        """,
+        "QMainWindow": """
+            QMainWindow {
+                background-color: #FFFFFF;
+                color: #333333;
+                font-family: "Microsoft YaHei UI", "PingFang SC", "Noto Sans CJK SC";
+                font-size: 13px;
+            }
+        """
+    }
+
+    return base_styles.get(widget_type, "")
+
 def apply_optimized_styles(widget):
     """应用优化的样式表到组件"""
     try:
         # 获取组件类型
         widget_type = widget.__class__.__name__
-        
+
         # 生成缓存键
         cache_key = f"optimized_{widget_type}"
-        
+
         # 获取基础样式
         base_style = get_base_style_for_widget(widget_type)
         

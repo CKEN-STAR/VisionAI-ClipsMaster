@@ -1,13 +1,22 @@
 {
-  "current_version": "v1.2",
+  "current_version": "v1.0.1",
   "languages": ["zh_CN", "en_US"],
   "published_versions": [
     {
-      "version": "v1.2",
-      "release_date": "2025-04-20",
-      "code_name": "稳定版",
-      "path": "/v1.2/",
-      "description": "最新稳定版本，包含完整的API性能监控功能和多语言支持",
+      "version": "v1.0.1",
+      "release_date": "2025-07-23",
+      "code_name": "修复版",
+      "path": "/v1.0.1/",
+      "description": "修复版本，完善了核心功能模块，提升了系统稳定性和兼容性",
+      "documentation_complete": true,
+      "supported": true
+    },
+    {
+      "version": "v1.0.0",
+      "release_date": "2025-07-22",
+      "code_name": "首发版",
+      "path": "/v1.0.0/",
+      "description": "首个正式版本，包含完整的短剧混剪功能和双语模型支持",
       "documentation_complete": true,
       "supported": true
     },

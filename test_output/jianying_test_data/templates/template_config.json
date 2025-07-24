@@ -1,0 +1,14 @@
+{
+  "basic": {
+    "file_path": "test_output\\jianying_test_data\\templates\\basic_project_template.xml",
+    "description": "基础剪映工程模板",
+    "tracks": 2,
+    "supports_version": "3.0+"
+  },
+  "multi_track": {
+    "file_path": "test_output\\jianying_test_data\\templates\\multi_track_template.xml",
+    "description": "多轨道剪映工程模板",
+    "tracks": 4,
+    "supports_version": "2.9+"
+  }
+}

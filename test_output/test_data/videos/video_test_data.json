@@ -1,0 +1,90 @@
+{
+  "standard_mp4": {
+    "file_path": "test_output\\test_data\\videos\\standard_mp4.mp4",
+    "format": "mp4",
+    "codec": "h264",
+    "width": 1920,
+    "height": 1080,
+    "fps": 25,
+    "duration": 300,
+    "bitrate": "2000k",
+    "audio_codec": "aac",
+    "file_size": 231735296,
+    "created_time": "2025-07-23T22:55:28.683424",
+    "metadata": {
+      "title": "测试短剧_standard_mp4",
+      "description": "用于测试的MP4格式短剧视频",
+      "tags": [
+        "测试",
+        "短剧",
+        "mp4"
+      ]
+    }
+  },
+  "high_quality_mp4": {
+    "file_path": "test_output\\test_data\\videos\\high_quality_mp4.mp4",
+    "format": "mp4",
+    "codec": "h265",
+    "width": 3840,
+    "height": 2160,
+    "fps": 60,
+    "duration": 180,
+    "bitrate": "8000k",
+    "audio_codec": "aac",
+    "file_size": 211812352,
+    "created_time": "2025-07-23T22:55:28.683424",
+    "metadata": {
+      "title": "测试短剧_high_quality_mp4",
+      "description": "用于测试的MP4格式短剧视频",
+      "tags": [
+        "测试",
+        "短剧",
+        "mp4"
+      ]
+    }
+  },
+  "legacy_avi": {
+    "file_path": "test_output\\test_data\\videos\\legacy_avi.avi",
+    "format": "avi",
+    "codec": "xvid",
+    "width": 1280,
+    "height": 720,
+    "fps": 30,
+    "duration": 240,
+    "bitrate": "1500k",
+    "audio_codec": "mp3",
+    "file_size": 430964736,
+    "created_time": "2025-07-23T22:55:28.683424",
+    "metadata": {
+      "title": "测试短剧_legacy_avi",
+      "description": "用于测试的AVI格式短剧视频",
+      "tags": [
+        "测试",
+        "短剧",
+        "avi"
+      ]
+    }
+  },
+  "web_flv": {
+    "file_path": "test_output\\test_data\\videos\\web_flv.flv",
+    "format": "flv",
+    "codec": "h264",
+    "width": 854,
+    "height": 480,
+    "fps": 24,
+    "duration": 360,
+    "bitrate": "1000k",
+    "audio_codec": "aac",
+    "file_size": 483393536,
+    "created_time": "2025-07-23T22:55:28.683424",
+    "metadata": {
+      "title": "测试短剧_web_flv",
+      "description": "用于测试的FLV格式短剧视频",
+      "tags": [
+        "测试",
+        "短剧",
+        "flv"
+      ]
+    }
+  }
+}

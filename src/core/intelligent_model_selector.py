@@ -183,15 +183,26 @@ class IntelligentModelSelector:
         import time
         current_time = time.time()
 
-        # 如果缓存存在且未过期（5分钟内），使用缓存
-        if (self._hardware_cache and self._cache_timestamp and
+        # 检查是否需要强制刷新硬件配置
+        force_refresh = self._should_force_refresh_hardware()
+
+        # 如果缓存存在且未过期（5分钟内）且不需要强制刷新，使用缓存
+        if (not force_refresh and self._hardware_cache and self._cache_timestamp and
             current_time - self._cache_timestamp < 300):  # 5分钟缓存
             logger.debug("🔄 使用缓存的硬件配置")
             return self._hardware_cache
 
         # 重新检测硬件配置
-        logger.info("🔍 重新检测硬件配置")
+        if force_refresh:
+            logger.info("🔄 强制刷新硬件配置（检测到设备变化）")
+        else:
+            logger.info("🔍 重新检测硬件配置")
+
         hardware = self.detector.detect_hardware()
+
+        # 检测硬件配置是否发生重大变化
+        if self._hardware_cache:
+            self._log_hardware_changes(self._hardware_cache, hardware)
 
         # 更新缓存
         self._hardware_cache = hardware
@@ -199,6 +210,70 @@ class IntelligentModelSelector:
 
         logger.info(f"💾 硬件配置已缓存: GPU={hardware.gpu_memory_gb}GB, RAM={hardware.system_ram_gb}GB")
         return hardware
+
+    def _should_force_refresh_hardware(self) -> bool:
+        """检查是否需要强制刷新硬件配置"""
+        try:
+            # 检查GPU状态变化的快速指标
+            import torch
+
+            # 如果之前没有缓存，需要检测
+            if not self._hardware_cache:
+                return True
+
+            # 检查CUDA可用性是否发生变化
+            cuda_available_now = torch.cuda.is_available() if hasattr(torch, 'cuda') else False
+            cuda_was_available = self._hardware_cache.gpu_memory_gb > 0
+
+            if cuda_available_now != cuda_was_available:
+                logger.info(f"🔄 检测到CUDA状态变化: {cuda_was_available} -> {cuda_available_now}")
+                return True
+
+            # 检查GPU数量是否发生变化
+            if cuda_available_now:
+                current_gpu_count = torch.cuda.device_count()
+                cached_gpu_count = getattr(self._hardware_cache, 'gpu_count', 0)
+                if current_gpu_count != cached_gpu_count:
+                    logger.info(f"🔄 检测到GPU数量变化: {cached_gpu_count} -> {current_gpu_count}")
+                    return True
+
+            return False
+
+        except Exception as e:
+            logger.debug(f"硬件变化检测失败，强制刷新: {e}")
+            return True
+
+    def _log_hardware_changes(self, old_hardware: HardwareProfile, new_hardware: HardwareProfile):
+        """记录硬件配置变化"""
+        try:
+            changes = []
+
+            # 检查GPU变化
+            if old_hardware.gpu_memory_gb != new_hardware.gpu_memory_gb:
+                changes.append(f"GPU显存: {old_hardware.gpu_memory_gb:.1f}GB -> {new_hardware.gpu_memory_gb:.1f}GB")
+
+            # 检查内存变化
+            if abs(old_hardware.system_ram_gb - new_hardware.system_ram_gb) > 0.5:
+                changes.append(f"系统内存: {old_hardware.system_ram_gb:.1f}GB -> {new_hardware.system_ram_gb:.1f}GB")
+
+            # 检查性能等级变化
+            if hasattr(old_hardware, 'performance_level') and hasattr(new_hardware, 'performance_level'):
+                if old_hardware.performance_level != new_hardware.performance_level:
+                    changes.append(f"性能等级: {old_hardware.performance_level.value} -> {new_hardware.performance_level.value}")
+
+            if changes:
+                logger.info(f"🔄 检测到硬件配置变化: {'; '.join(changes)}")
+            else:
+                logger.debug("硬件配置无重大变化")
+
+        except Exception as e:
+            logger.debug(f"硬件变化记录失败: {e}")
+
+    def force_refresh_hardware(self):
+        """强制刷新硬件配置（公共接口）"""
+        logger.info("🔄 强制刷新硬件配置")
+        self._hardware_cache = None
+        self._cache_timestamp = None
     
     def _auto_recommend(
         self, 
@@ -263,35 +338,69 @@ class IntelligentModelSelector:
         )
     
     def _calculate_variant_score(
-        self, 
-        variant: ModelVariant, 
+        self,
+        variant: ModelVariant,
         hardware: HardwareProfile,
         deployment_target: DeploymentTarget,
         quality_requirement: str
     ) -> float:
-        """计算变体评分"""
+        """计算变体评分（与硬件检测器推荐逻辑保持一致）"""
         score = 0.0
-        
-        # 兼容性评分 (40%)
+
+        # 获取硬件信息
+        gpu_memory = getattr(hardware, 'gpu_memory_gb', 0)
+        gpu_type = getattr(hardware, 'gpu_type', None)
+        system_memory = getattr(hardware, 'system_ram_gb', getattr(hardware, 'total_memory_gb', 0))
+
+        # 基于硬件检测器的推荐逻辑进行评分
+        variant_quant = variant.quantization.value.upper()
+
+        # 根据硬件配置确定最适合的量化等级（与硬件检测器保持严格一致）
+        if gpu_type and hasattr(gpu_type, 'value') and gpu_type.value == 'nvidia':
+            if gpu_memory >= 16:
+                preferred_quants = ["Q8_0", "Q5_K_M"]
+            elif gpu_memory >= 12:
+                preferred_quants = ["Q5_K_M", "Q4_K_M"]
+            elif gpu_memory >= 8:
+                preferred_quants = ["Q4_K_M", "Q4_K"]
+            elif gpu_memory >= 6:
+                preferred_quants = ["Q4_K_M", "Q4_K"]
+            else:
+                preferred_quants = ["Q4_K", "Q2_K"]
+        elif gpu_type and hasattr(gpu_type, 'value') and gpu_type.value == 'intel':
+            # 集成显卡：与硬件检测器保持一致的保守推荐
+            if system_memory >= 16:
+                preferred_quants = ["Q2_K"]  # 更改为Q2_K以与硬件检测器一致
+            else:
+                preferred_quants = ["Q2_K"]
+        else:
+            # 无GPU：最保守配置
+            preferred_quants = ["Q2_K"]
+
+        # 量化等级匹配评分 (50%)
+        if variant_quant in preferred_quants:
+            quant_score = 1.0 - (preferred_quants.index(variant_quant) * 0.2)  # 首选得分最高
+        else:
+            quant_score = 0.3  # 不匹配的量化等级得分较低
+        score += quant_score * 0.5
+
+        # 兼容性评分 (25%)
         compatibility = self.detector.assess_compatibility(hardware, variant)
-        score += compatibility["compatibility_score"] * 0.4
-        
-        # 质量要求评分 (30%)
+        score += compatibility["compatibility_score"] * 0.25
+
+        # 质量要求评分 (15%)
         required_quality = self.selection_rules["quality_requirements"].get(quality_requirement, 0.90)
         if variant.quality_retention >= required_quality:
             quality_score = variant.quality_retention
         else:
-            quality_score = variant.quality_retention * 0.5  # 惩罚不满足要求的版本
-        score += quality_score * 0.3
-        
-        # 部署目标适配评分 (20%)
-        target_score = self._calculate_target_alignment_score(variant, hardware, deployment_target)
-        score += target_score * 0.2
-        
-        # 性能效率评分 (10%)
-        efficiency_score = variant.inference_speed_factor * variant.quality_retention
-        score += efficiency_score * 0.1
-        
+            quality_score = variant.quality_retention * 0.7  # 轻微惩罚
+        score += quality_score * 0.15
+
+        # 资源效率评分 (10%)
+        # 优先选择资源占用合理的版本
+        memory_efficiency = max(0, 1 - variant.memory_requirement_gb / max(system_memory * 0.6, 4.0))
+        score += memory_efficiency * 0.1
+
         return score
     
     def _calculate_target_alignment_score(
@@ -326,19 +435,37 @@ class IntelligentModelSelector:
             return size_score * 0.4 + memory_score * 0.4 + cpu_compat_score * 0.2
     
     def _infer_deployment_target(self, hardware: HardwareProfile) -> DeploymentTarget:
-        """根据硬件推断部署目标"""
+        """根据硬件推断部署目标（与硬件检测器保持一致）"""
         memory_thresholds = self.selection_rules["memory_thresholds"]
-        
-        total_memory = hardware.gpu_memory_gb if hardware.has_gpu else hardware.system_ram_gb
-        
-        if total_memory >= memory_thresholds["high_performance"]:
-            return DeploymentTarget.HIGH_PERFORMANCE
-        elif total_memory >= memory_thresholds["balanced"]:
-            return DeploymentTarget.BALANCED
-        elif total_memory >= memory_thresholds["lightweight"]:
-            return DeploymentTarget.LIGHTWEIGHT
+
+        # 获取GPU信息
+        gpu_memory = hardware.gpu_memory_gb if hasattr(hardware, 'gpu_memory_gb') else 0
+        gpu_type = getattr(hardware, 'gpu_type', None)
+        system_memory = hardware.system_ram_gb if hasattr(hardware, 'system_ram_gb') else hardware.total_memory_gb
+
+        # 与硬件检测器保持一致的推断逻辑
+        if gpu_type and hasattr(gpu_type, 'value') and gpu_type.value == 'nvidia':
+            # NVIDIA独显设备
+            if gpu_memory >= 16:
+                return DeploymentTarget.HIGH_PERFORMANCE
+            elif gpu_memory >= 8:
+                return DeploymentTarget.BALANCED
+            else:
+                return DeploymentTarget.LIGHTWEIGHT
+        elif gpu_type and hasattr(gpu_type, 'value') and gpu_type.value == 'intel':
+            # 集成显卡设备：最高只能是LIGHTWEIGHT
+            if system_memory >= 16:
+                return DeploymentTarget.LIGHTWEIGHT
+            else:
+                return DeploymentTarget.ULTRA_LIGHT
         else:
-            return DeploymentTarget.ULTRA_LIGHT
+            # 无GPU设备：根据系统内存决定
+            if system_memory >= 16:
+                return DeploymentTarget.LIGHTWEIGHT
+            elif system_memory >= 8:
+                return DeploymentTarget.ULTRA_LIGHT
+            else:
+                return DeploymentTarget.ULTRA_LIGHT
     
     def _generate_reasoning(
         self, 

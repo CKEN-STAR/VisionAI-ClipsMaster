@@ -201,48 +201,164 @@ class HardwareDetector:
                 "type": GPUType.NONE,
                 "count": 0,
                 "memory_gb": 0.0,
-                "names": []
+                "names": [],
+                "detection_method": "none",
+                "detailed_info": []
             }
-            
-            # 检测NVIDIA GPU
+
+            self.logger.info("🔍 开始GPU检测...")
+
+            # 方法1: 使用GPUtil检测NVIDIA GPU（最准确的显存信息）
             if GPU_UTIL_AVAILABLE:
                 try:
+                    self.logger.debug("尝试使用GPUtil检测GPU...")
                     gpus = GPUtil.getGPUs()
                     if gpus:
                         gpu_info["type"] = GPUType.NVIDIA
                         gpu_info["count"] = len(gpus)
                         gpu_info["memory_gb"] = sum(gpu.memoryTotal / 1024 for gpu in gpus)
                         gpu_info["names"] = [gpu.name for gpu in gpus]
+                        gpu_info["detection_method"] = "gputil"
+                        gpu_info["detailed_info"] = [
+                            {
+                                "id": i,
+                                "name": gpu.name,
+                                "memory_total_mb": gpu.memoryTotal,
+                                "memory_free_mb": gpu.memoryFree,
+                                "memory_used_mb": gpu.memoryUsed,
+                                "temperature": gpu.temperature,
+                                "load": gpu.load
+                            }
+                            for i, gpu in enumerate(gpus)
+                        ]
+                        self.logger.info(f"✅ GPUtil检测成功: {len(gpus)}个NVIDIA GPU, 总显存: {gpu_info['memory_gb']:.1f}GB")
                         return gpu_info
-                except:
-                    pass
-            
-            # 检测PyTorch CUDA支持
+                except Exception as e:
+                    self.logger.debug(f"GPUtil检测失败: {e}")
+
+            # 方法2: 使用PyTorch CUDA检测
             if TORCH_AVAILABLE:
                 try:
+                    self.logger.debug("尝试使用PyTorch CUDA检测GPU...")
                     if torch.cuda.is_available():
                         gpu_count = torch.cuda.device_count()
                         if gpu_count > 0:
                             gpu_info["type"] = GPUType.NVIDIA
                             gpu_info["count"] = gpu_count
-                            gpu_info["names"] = [torch.cuda.get_device_name(i) for i in range(gpu_count)]
-                            # 估算显存
-                            gpu_info["memory_gb"] = gpu_count * 8.0  # 估算值
+                            gpu_info["names"] = []
+                            total_memory = 0.0
+                            detailed_info = []
+
+                            for i in range(gpu_count):
+                                try:
+                                    name = torch.cuda.get_device_name(i)
+                                    props = torch.cuda.get_device_properties(i)
+                                    memory_gb = props.total_memory / (1024**3)
+
+                                    gpu_info["names"].append(name)
+                                    total_memory += memory_gb
+
+                                    detailed_info.append({
+                                        "id": i,
+                                        "name": name,
+                                        "memory_total_gb": memory_gb,
+                                        "compute_capability": f"{props.major}.{props.minor}",
+                                        "multiprocessor_count": props.multiprocessor_count
+                                    })
+                                except Exception as e:
+                                    self.logger.warning(f"获取GPU {i} 详细信息失败: {e}")
+                                    # 使用默认估算值
+                                    gpu_info["names"].append(f"CUDA Device {i}")
+                                    total_memory += 8.0  # 默认8GB估算
+                                    detailed_info.append({
+                                        "id": i,
+                                        "name": f"CUDA Device {i}",
+                                        "memory_total_gb": 8.0,
+                                        "error": str(e)
+                                    })
+
+                            gpu_info["memory_gb"] = total_memory
+                            gpu_info["detection_method"] = "pytorch_cuda"
+                            gpu_info["detailed_info"] = detailed_info
+                            self.logger.info(f"✅ PyTorch CUDA检测成功: {gpu_count}个GPU, 总显存: {total_memory:.1f}GB")
                             return gpu_info
-                except:
-                    pass
-            
-            # 检测集成显卡（通过系统信息推断）
-            if "intel" in platform.processor().lower():
+                except Exception as e:
+                    self.logger.debug(f"PyTorch CUDA检测失败: {e}")
+
+            # 方法3: 使用nvidia-ml-py检测
+            try:
+                self.logger.debug("尝试使用nvidia-ml-py检测GPU...")
+                import pynvml
+                pynvml.nvmlInit()
+                device_count = pynvml.nvmlDeviceGetCount()
+
+                if device_count > 0:
+                    gpu_info["type"] = GPUType.NVIDIA
+                    gpu_info["count"] = device_count
+                    gpu_info["names"] = []
+                    total_memory = 0.0
+                    detailed_info = []
+
+                    for i in range(device_count):
+                        handle = pynvml.nvmlDeviceGetHandleByIndex(i)
+                        name = pynvml.nvmlDeviceGetName(handle).decode('utf-8')
+                        memory_info = pynvml.nvmlDeviceGetMemoryInfo(handle)
+                        memory_gb = memory_info.total / (1024**3)
+
+                        gpu_info["names"].append(name)
+                        total_memory += memory_gb
+
+                        detailed_info.append({
+                            "id": i,
+                            "name": name,
+                            "memory_total_gb": memory_gb,
+                            "memory_free_gb": memory_info.free / (1024**3),
+                            "memory_used_gb": memory_info.used / (1024**3)
+                        })
+
+                    gpu_info["memory_gb"] = total_memory
+                    gpu_info["detection_method"] = "pynvml"
+                    gpu_info["detailed_info"] = detailed_info
+                    self.logger.info(f"✅ pynvml检测成功: {device_count}个GPU, 总显存: {total_memory:.1f}GB")
+                    return gpu_info
+
+            except ImportError:
+                self.logger.debug("pynvml不可用")
+            except Exception as e:
+                self.logger.debug(f"pynvml检测失败: {e}")
+
+            # 方法4: 检测集成显卡
+            self.logger.debug("检测集成显卡...")
+            processor_info = platform.processor().lower()
+            if "intel" in processor_info:
                 gpu_info["type"] = GPUType.INTEL
                 gpu_info["count"] = 1
                 gpu_info["names"] = ["Intel Integrated Graphics"]
-            
+                gpu_info["memory_gb"] = 2.0  # 集成显卡估算2GB共享内存
+                gpu_info["detection_method"] = "integrated_intel"
+                self.logger.info("✅ 检测到Intel集成显卡")
+            elif "amd" in processor_info:
+                gpu_info["type"] = GPUType.AMD
+                gpu_info["count"] = 1
+                gpu_info["names"] = ["AMD Integrated Graphics"]
+                gpu_info["memory_gb"] = 2.0  # 集成显卡估算2GB共享内存
+                gpu_info["detection_method"] = "integrated_amd"
+                self.logger.info("✅ 检测到AMD集成显卡")
+            else:
+                self.logger.info("❌ 未检测到GPU设备")
+
             return gpu_info
-            
+
         except Exception as e:
             self.logger.error(f"GPU检测失败: {e}")
-            return {"type": GPUType.NONE, "count": 0, "memory_gb": 0.0, "names": []}
+            return {
+                "type": GPUType.NONE,
+                "count": 0,
+                "memory_gb": 0.0,
+                "names": [],
+                "detection_method": "failed",
+                "error": str(e)
+            }
     
     def _detect_system(self) -> Dict[str, Any]:
         """检测系统信息"""
@@ -257,7 +373,7 @@ class HardwareDetector:
             return {"os_type": "Unknown", "os_version": "Unknown", "python_version": "3.11"}
 
     def _evaluate_performance_level(self, memory_info: Dict, cpu_info: Dict, gpu_info: Dict) -> PerformanceLevel:
-        """评估设备性能等级"""
+        """评估设备性能等级（重新校准阈值）"""
         try:
             total_memory = memory_info["total_gb"]
             cpu_count = cpu_info["count"]
@@ -273,15 +389,28 @@ class HardwareDetector:
             # 综合评分
             total_score = memory_score + cpu_score + gpu_score
 
-            # 根据分数确定性能等级
-            if total_score >= 80:
-                return PerformanceLevel.ULTRA
-            elif total_score >= 60:
-                return PerformanceLevel.HIGH
-            elif total_score >= 40:
-                return PerformanceLevel.MEDIUM
+            # 记录详细评分信息
+            self.logger.info(f"性能评分详情: 内存={memory_score}, CPU={cpu_score}, GPU={gpu_score}, 总分={total_score}")
+
+            # 重新校准的性能等级阈值（提高门槛，避免集成显卡被评为过高等级）
+            if total_score >= 85:  # 提高ULTRA门槛
+                performance_level = PerformanceLevel.ULTRA
+            elif total_score >= 65:  # 提高HIGH门槛
+                performance_level = PerformanceLevel.HIGH
+            elif total_score >= 45:  # 提高MEDIUM门槛
+                performance_level = PerformanceLevel.MEDIUM
             else:
-                return PerformanceLevel.LOW
+                performance_level = PerformanceLevel.LOW
+
+            # 特殊规则：集成显卡最高只能是MEDIUM等级
+            if gpu_type == GPUType.INTEL and performance_level == PerformanceLevel.HIGH:
+                self.logger.info("集成显卡性能等级限制：HIGH -> MEDIUM")
+                performance_level = PerformanceLevel.MEDIUM
+            elif gpu_type == GPUType.INTEL and performance_level == PerformanceLevel.ULTRA:
+                self.logger.info("集成显卡性能等级限制：ULTRA -> MEDIUM")
+                performance_level = PerformanceLevel.MEDIUM
+
+            return performance_level
 
         except Exception as e:
             self.logger.error(f"性能等级评估失败: {e}")
@@ -319,62 +448,124 @@ class HardwareDetector:
         return core_score + freq_score
 
     def _calculate_gpu_score(self, gpu_type: GPUType, gpu_memory_gb: float) -> int:
-        """计算GPU分数"""
+        """计算GPU分数（重新校准，降低集成显卡权重）"""
         if gpu_type == GPUType.NVIDIA:
-            if gpu_memory_gb >= 16:
-                return 25
+            # NVIDIA独显评分更加细致，确保高端显卡能得到高分
+            if gpu_memory_gb >= 24:
+                return 35  # 高端显卡（RTX 4090, RTX 3090等）
+            elif gpu_memory_gb >= 16:
+                return 30  # 中高端显卡（RTX 4080, RTX 3080等）
+            elif gpu_memory_gb >= 12:
+                return 25  # 中端显卡（RTX 4070Ti, RTX 3070等）
             elif gpu_memory_gb >= 8:
-                return 20
+                return 20  # 入门独显（RTX 4060, GTX 1660等）
             elif gpu_memory_gb >= 4:
-                return 15
+                return 15  # 低端独显
             else:
-                return 10
+                return 10  # 极低端独显
         elif gpu_type == GPUType.AMD:
-            return 15  # AMD GPU基础分数
+            # AMD独显评分
+            if gpu_memory_gb >= 16:
+                return 25  # 高端AMD显卡
+            elif gpu_memory_gb >= 8:
+                return 20  # 中端AMD显卡
+            elif gpu_memory_gb >= 4:
+                return 15  # 入门AMD显卡
+            else:
+                return 10  # 低端AMD显卡
         elif gpu_type == GPUType.INTEL:
-            return 8   # 集成显卡分数
+            # 大幅降低集成显卡分数，避免性能等级评估过高
+            if gpu_memory_gb >= 4:
+                return 5   # 高端集成显卡（较新的Iris Xe等）
+            elif gpu_memory_gb >= 2:
+                return 3   # 标准集成显卡
+            else:
+                return 1   # 低端集成显卡
         else:
             return 0   # 无GPU
 
     def _generate_recommendations(self, memory_info: Dict, cpu_info: Dict,
                                 gpu_info: Dict, performance_level: PerformanceLevel) -> Dict[str, Any]:
-        """生成推荐配置"""
+        """生成推荐配置（优化量化策略，更加保守稳定）"""
         try:
             total_memory = memory_info["total_gb"]
             available_memory = memory_info["available_gb"]
+            gpu_memory = gpu_info.get("memory_gb", 0.0)
+            gpu_type = gpu_info.get("type", GPUType.NONE)
 
-            # 根据性能等级生成推荐配置
+            self.logger.info(f"生成推荐配置 - 性能等级: {performance_level.value}, GPU: {gpu_type.value}, 显存: {gpu_memory:.1f}GB")
+
+            # 优化后的量化推荐策略：更加保守，确保稳定性
             if performance_level == PerformanceLevel.ULTRA:
+                # 超高性能：只有真正的高端独显才推荐最高精度
+                if gpu_type == GPUType.NVIDIA and gpu_memory >= 16:
+                    quantization = "Q8_0"  # 只有16GB+独显才推荐Q8_0
+                elif gpu_type == GPUType.NVIDIA and gpu_memory >= 12:
+                    quantization = "Q5_K"  # 12GB+独显推荐Q5_K
+                else:
+                    quantization = "Q4_K_M"  # 其他情况保守推荐
+
                 return {
                     "memory_tier": "ultra",
                     "compute_tier": "ultra",
-                    "quantization": "Q5_K",
-                    "max_model_memory": min(total_memory * 0.6, 12.0),
-                    "concurrent_models": 2
+                    "quantization": quantization,
+                    "max_model_memory": min(total_memory * 0.6, 16.0),
+                    "concurrent_models": 2,
+                    "gpu_acceleration": gpu_type == GPUType.NVIDIA,
+                    "recommended_batch_size": 8 if gpu_type == GPUType.NVIDIA else 4
                 }
             elif performance_level == PerformanceLevel.HIGH:
+                # 高性能：更保守的推荐策略
+                if gpu_type == GPUType.NVIDIA and gpu_memory >= 12:
+                    quantization = "Q5_K"  # 只有12GB+独显才推荐Q5_K
+                elif gpu_type == GPUType.NVIDIA and gpu_memory >= 8:
+                    quantization = "Q4_K_M"  # 8GB独显推荐Q4_K_M
+                else:
+                    quantization = "Q4_K"  # 其他情况更保守
+
                 return {
                     "memory_tier": "high",
                     "compute_tier": "high",
-                    "quantization": "Q4_K_M",
-                    "max_model_memory": min(total_memory * 0.5, 8.0),
-                    "concurrent_models": 2
+                    "quantization": quantization,
+                    "max_model_memory": min(total_memory * 0.5, 10.0),
+                    "concurrent_models": 1 if gpu_type != GPUType.NVIDIA else 2,
+                    "gpu_acceleration": gpu_type == GPUType.NVIDIA,
+                    "recommended_batch_size": 4 if gpu_type == GPUType.NVIDIA else 2
                 }
             elif performance_level == PerformanceLevel.MEDIUM:
+                # 中等性能：针对集成显卡优化
+                if gpu_type == GPUType.NVIDIA and gpu_memory >= 6:
+                    quantization = "Q4_K_M"  # 6GB+独显
+                elif gpu_type == GPUType.NVIDIA and gpu_memory >= 4:
+                    quantization = "Q4_K"    # 4GB独显
+                elif gpu_type == GPUType.INTEL:
+                    # 集成显卡特殊处理：根据系统内存决定
+                    if total_memory >= 16:
+                        quantization = "Q4_K"    # 16GB+内存的集成显卡
+                    else:
+                        quantization = "Q2_K"    # 低内存集成显卡
+                else:
+                    quantization = "Q2_K"    # 无GPU或其他情况
+
                 return {
                     "memory_tier": "medium",
                     "compute_tier": "medium",
-                    "quantization": "Q4_K_M",
+                    "quantization": quantization,
                     "max_model_memory": min(total_memory * 0.4, 6.0),
-                    "concurrent_models": 1
+                    "concurrent_models": 1,
+                    "gpu_acceleration": gpu_type == GPUType.NVIDIA,
+                    "recommended_batch_size": 2 if gpu_type == GPUType.NVIDIA else 1
                 }
             else:  # LOW
+                # 低性能：最保守配置
                 return {
                     "memory_tier": "low",
                     "compute_tier": "low",
-                    "quantization": "Q2_K",
+                    "quantization": "Q2_K",  # 统一使用最轻量配置
                     "max_model_memory": min(total_memory * 0.8, 3.5),
-                    "concurrent_models": 1
+                    "concurrent_models": 1,
+                    "gpu_acceleration": False,
+                    "recommended_batch_size": 1
                 }
 
         except Exception as e:

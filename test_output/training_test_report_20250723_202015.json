@@ -1,0 +1,180 @@
+{
+  "test_start_time": "2025-07-23T20:20:08.737198",
+  "training_module_tests": {
+    "en_trainer_import": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:20:10.343501",
+      "details": {
+        "message": "英文训练器导入成功"
+      },
+      "error": null
+    },
+    "en_trainer_train_method": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:20:10.343501",
+      "details": {
+        "message": "英文训练器train方法存在"
+      },
+      "error": null
+    },
+    "zh_trainer_import": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:20:10.343501",
+      "details": {
+        "message": "中文训练器导入成功"
+      },
+      "error": null
+    },
+    "zh_trainer_train_method": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:20:10.343501",
+      "details": {
+        "message": "中文训练器train方法存在"
+      },
+      "error": null
+    },
+    "model_fine_tuner_import": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:20:14.493138",
+      "details": {
+        "message": "模型微调器导入成功"
+      },
+      "error": null
+    }
+  },
+  "data_pipeline_tests": {
+    "data_splitter_import": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:20:14.493138",
+      "details": {
+        "message": "数据分割器导入成功"
+      },
+      "error": null
+    },
+    "split_by_language_method": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:20:14.493138",
+      "details": {
+        "message": "split_by_language方法存在"
+      },
+      "error": null
+    },
+    "data_augment_import": {
+      "status": "FAIL",
+      "timestamp": "2025-07-23T20:20:14.508453",
+      "details": {
+        "message": "数据增强器导入失败"
+      },
+      "error": "cannot import name 'DataAugment' from 'src.training.data_augment' (D:\\zancun\\VisionAI-ClipsMaster\\src\\training\\data_augment.py)"
+    },
+    "plot_augment_import": {
+      "status": "FAIL",
+      "timestamp": "2025-07-23T20:20:14.511273",
+      "details": {
+        "message": "剧情增强器导入失败"
+      },
+      "error": "cannot import name 'PlotAugment' from 'src.training.plot_augment' (D:\\zancun\\VisionAI-ClipsMaster\\src\\training\\plot_augment.py)"
+    },
+    "data_cleaner_import": {
+      "status": "FAIL",
+      "timestamp": "2025-07-23T20:20:14.543615",
+      "details": {
+        "message": "数据清洗器导入失败"
+      },
+      "error": "cannot import name 'DataCleaningError' from 'src.utils.exceptions' (D:\\zancun\\VisionAI-ClipsMaster\\src\\utils\\exceptions.py)"
+    }
+  },
+  "curriculum_tests": {
+    "curriculum_learning_import": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:20:14.545612",
+      "details": {
+        "message": "课程学习策略导入成功"
+      },
+      "error": null
+    },
+    "generate_curriculum_method": {
+      "status": "FAIL",
+      "timestamp": "2025-07-23T20:20:14.545612",
+      "details": {
+        "message": "generate_curriculum方法不存在"
+      },
+      "error": null
+    },
+    "train_manager_import": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:20:15.311148",
+      "details": {
+        "message": "训练管理器导入成功"
+      },
+      "error": null
+    }
+  },
+  "bilingual_tests": {
+    "training_dir_en_base": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:20:15.311148",
+      "details": {
+        "message": "训练目录data/training/en存在"
+      },
+      "error": null
+    },
+    "training_dir_zh_base": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:20:15.312174",
+      "details": {
+        "message": "训练目录data/training/zh存在"
+      },
+      "error": null
+    },
+    "training_dir_en_hit_subtitles": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:20:15.312174",
+      "details": {
+        "message": "训练目录data/training/en/hit_subtitles存在"
+      },
+      "error": null
+    },
+    "training_dir_zh_hit_subtitles": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:20:15.312174",
+      "details": {
+        "message": "训练目录data/training/zh/hit_subtitles存在"
+      },
+      "error": null
+    },
+    "training_dir_en_raw_pairs": {
+      "status": "FAIL",
+      "timestamp": "2025-07-23T20:20:15.312174",
+      "details": {
+        "message": "训练目录data/training/en/raw_pairs不存在"
+      },
+      "error": null
+    },
+    "training_dir_zh_raw_pairs": {
+      "status": "FAIL",
+      "timestamp": "2025-07-23T20:20:15.312174",
+      "details": {
+        "message": "训练目录data/training/zh/raw_pairs不存在"
+      },
+      "error": null
+    },
+    "bilingual_policy_config": {
+      "status": "FAIL",
+      "timestamp": "2025-07-23T20:20:15.320427",
+      "details": {
+        "message": "双语训练策略配置不完整"
+      },
+      "error": null
+    }
+  },
+  "overall_status": "FAIL",
+  "test_end_time": "2025-07-23T20:20:15.320427",
+  "summary": {
+    "total_tests": 20,
+    "passed": 13,
+    "failed": 7,
+    "skipped": 0,
+    "success_rate": "65.0%"
+  }
+}

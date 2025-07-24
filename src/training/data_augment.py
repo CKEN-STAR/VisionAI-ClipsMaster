@@ -489,3 +489,26 @@ class DataAugmenter:
         except Exception as e:
             print(f"❌ 文本增强失败: {e}")
             return text  # 返回原始文本作为回退
+
+
+# 为了保持向后兼容性，添加别名
+DataAugment = DataAugmenter
+
+
+if __name__ == "__main__":
+    # 测试数据增强器
+    augmenter = DataAugmenter("zh")
+
+    test_text = "这个视频太震撼了！不敢相信这是真的！"
+    print(f"原文: {test_text}")
+
+    augmented = augmenter.augment_text(test_text)
+    print(f"增强后: {augmented}")
+
+    # 测试英文增强
+    en_augmenter = DataAugmenter("en")
+    en_text = "This is SHOCKING! You won't believe what happens next!"
+    print(f"Original: {en_text}")
+
+    en_augmented = en_augmenter.augment_text(en_text)
+    print(f"Augmented: {en_augmented}")

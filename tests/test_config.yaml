@@ -1,0 +1,210 @@
+# VisionAI-ClipsMaster 测试配置文件
+# 定义测试标准、阈值和验证规则
+
+# 测试环境配置
+environment:
+  python_version: ">=3.8"
+  memory_limit_gb: 4.0
+  gpu_required: false
+  test_timeout_seconds: 300
+
+# 验证标准
+validation_standards:
+  # 视频-字幕映射精度标准
+  alignment_precision:
+    ultra_high: 0.1    # ≤0.1秒，关键场景
+    high: 0.2          # ≤0.2秒，标准高精度  
+    standard: 0.5      # ≤0.5秒，常规精度
+    relaxed: 1.0       # ≤1.0秒，宽松精度
+    
+  # 语言检测准确率
+  language_detection:
+    min_accuracy: 0.9  # ≥90%
+    chinese_accuracy: 0.95
+    english_accuracy: 0.95
+    mixed_language_support: true
+    
+  # 模型切换性能
+  model_switching:
+    max_switch_time: 1.5      # ≤1.5秒
+    max_memory_usage_gb: 3.8  # ≤3.8GB
+    cache_hit_rate: 0.8       # ≥80%
+    
+  # 剧本重构质量
+  screenplay_reconstruction:
+    min_coherence_score: 0.7  # ≥0.7
+    min_duration_ratio: 0.3   # 避免过短
+    max_duration_ratio: 0.8   # 避免过长
+    viral_style_score: 0.8    # ≥0.8
+    
+  # 导出兼容性
+  export_compatibility:
+    jianying_success_rate: 1.0  # 100%
+    xml_validation_rate: 1.0    # 100%
+    timeline_accuracy: 0.2      # ≤0.2秒误差
+
+# 性能基准
+performance_benchmarks:
+  # 启动性能
+  startup:
+    cold_start_time: 5.0      # ≤5秒
+    warm_start_time: 2.0      # ≤2秒
+    ui_load_time: 3.0         # ≤3秒
+    
+  # 处理性能
+  processing:
+    subtitle_parsing_rate: 1000   # ≥1000条/秒
+    alignment_rate: 100           # ≥100段/秒
+    reconstruction_time: 30       # ≤30秒/分钟素材
+    
+  # 内存使用
+  memory:
+    peak_usage_gb: 3.8           # ≤3.8GB
+    sustained_usage_gb: 3.0      # ≤3.0GB
+    memory_leak_threshold: 0.1   # ≤100MB/小时
+    
+  # 响应时间
+  response:
+    ui_response_time: 0.5        # ≤0.5秒
+    api_response_time: 2.0       # ≤2秒
+    export_response_time: 10.0   # ≤10秒
+
+# 测试数据配置
+test_data:
+  # 字幕文件
+  subtitles:
+    chinese_samples: 10
+    english_samples: 10
+    mixed_samples: 5
+    long_duration_samples: 3
+    edge_case_samples: 8
+    
+  # 视频信息
+  videos:
+    formats: ["mp4", "avi", "flv", "mkv"]
+    resolutions: ["480p", "720p", "1080p", "4K"]
+    durations: [30, 60, 120, 300]  # 秒
+    
+  # 训练数据对
+  training_pairs:
+    chinese_pairs: 20
+    english_pairs: 20
+    viral_styles: ["emotional_hook", "suspense", "comedy", "romance"]
+
+# 测试场景
+test_scenarios:
+  # 核心功能测试
+  core_functionality:
+    - name: "alignment_precision_test"
+      description: "测试视频-字幕对齐精度"
+      priority: "P0"
+      timeout: 60
+      
+    - name: "language_detection_test"
+      description: "测试中英文语言检测"
+      priority: "P0"
+      timeout: 30
+      
+    - name: "model_switching_test"
+      description: "测试模型动态切换"
+      priority: "P0"
+      timeout: 90
+      
+    - name: "screenplay_reconstruction_test"
+      description: "测试剧本重构能力"
+      priority: "P0"
+      timeout: 120
+      
+  # 集成测试
+  integration:
+    - name: "end_to_end_chinese_workflow"
+      description: "中文完整工作流程测试"
+      priority: "P0"
+      timeout: 300
+      
+    - name: "end_to_end_english_workflow"
+      description: "英文完整工作流程测试"
+      priority: "P0"
+      timeout: 300
+      
+    - name: "mixed_language_workflow"
+      description: "混合语言工作流程测试"
+      priority: "P1"
+      timeout: 300
+      
+  # 性能测试
+  performance:
+    - name: "memory_usage_monitoring"
+      description: "内存使用监控测试"
+      priority: "P0"
+      timeout: 600
+      
+    - name: "large_file_processing"
+      description: "大文件处理性能测试"
+      priority: "P1"
+      timeout: 900
+      
+  # 边界测试
+  edge_cases:
+    - name: "empty_input_handling"
+      description: "空输入处理测试"
+      priority: "P1"
+      timeout: 30
+      
+    - name: "invalid_format_handling"
+      description: "无效格式处理测试"
+      priority: "P1"
+      timeout: 30
+      
+    - name: "error_recovery_test"
+      description: "错误恢复机制测试"
+      priority: "P1"
+      timeout: 60
+
+# 报告配置
+reporting:
+  # 输出格式
+  formats: ["json", "html", "xml"]
+  
+  # 报告内容
+  include:
+    - test_summary
+    - performance_metrics
+    - validation_results
+    - failure_details
+    - recommendations
+    
+  # 阈值警告
+  warnings:
+    memory_usage_threshold: 3.5    # GB
+    response_time_threshold: 1.0   # 秒
+    failure_rate_threshold: 0.05   # 5%
+    
+  # 自动化
+  auto_upload: false
+  notification_webhook: null
+  
+# 调试配置
+debug:
+  verbose_logging: false
+  save_intermediate_results: true
+  capture_screenshots: false
+  profile_performance: true
+  
+# 并发配置
+concurrency:
+  max_parallel_tests: 4
+  test_isolation: true
+  shared_resources: false
+  
+# 重试配置
+retry:
+  max_attempts: 3
+  retry_delay: 5  # 秒
+  retry_on_failure: true
+  
+# 清理配置
+cleanup:
+  auto_cleanup: true
+  preserve_on_failure: true
+  cleanup_timeout: 30  # 秒

@@ -1,0 +1,51 @@
+{
+  "test_data_version": "1.0",
+  "generated_time": "2025-07-23T22:40:59.874216",
+  "generator_info": {
+    "name": "JianyingTestDataGenerator",
+    "version": "1.0",
+    "description": "VisionAI-ClipsMaster 剪映导出功能测试数据生成器"
+  },
+  "output_directories": {
+    "root": "test_output\\jianying_test_data",
+    "videos": "test_output\\jianying_test_data\\videos",
+    "subtitles": "test_output\\jianying_test_data\\subtitles",
+    "projects": "test_output\\jianying_test_data\\projects",
+    "templates": "test_output\\jianying_test_data\\templates"
+  },
+  "data_summary": {
+    "video_formats": 4,
+    "subtitle_types": 4,
+    "project_templates": 2,
+    "test_scenarios": 5
+  },
+  "validation_standards": {
+    "clipping_precision": {
+      "standard": 0.5,
+      "high": 0.2,
+      "ultra": 0.1
+    },
+    "project_compatibility": {
+      "jianying_import_success_rate": 1.0,
+      "timeline_structure_validity": 1.0,
+      "material_mapping_accuracy": 1.0
+    },
+    "editing_functionality": {
+      "drag_adjustment_support": true,
+      "real_time_preview_support": true,
+      "clip_extension_support": true
+    },
+    "performance_requirements": {
+      "max_memory_usage_gb": 3.8,
+      "max_processing_time_per_minute": 30,
+      "min_clips_per_second": 2
+    }
+  },
+  "test_execution_order": [
+    "basic_clipping",
+    "precision_alignment",
+    "multi_format_compatibility",
+    "jianying_integration",
+    "large_scale_processing"
+  ]
+}

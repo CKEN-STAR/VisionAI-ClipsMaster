@@ -11,7 +11,7 @@ import threading
 import time
 from typing import Dict, Any, Optional, List, Tuple
 
-from PyQt6.QtWidgets import QPushButton, QAction, QMenu
+from PyQt6.QtWidgets import QPushButton, QMenu
 from PyQt6.QtGui import QAction, QIcon
 from PyQt6.QtCore import QObject, pyqtSignal, QTimer
 

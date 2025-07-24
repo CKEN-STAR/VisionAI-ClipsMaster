@@ -2,9 +2,9 @@
   "version_info": {
     "major": 1,
     "minor": 0,
-    "patch": 0,
-    "build": "dev",
-    "release_date": null
+    "patch": 1,
+    "build": "stable",
+    "release_date": "2025-07-23"
   },
   "version_control": {
     "branch_strategy": {

@@ -1,0 +1,16 @@
+[
+  {
+    "original_srt": "zh_drama_original.srt",
+    "viral_srt": "zh_viral_example.srt",
+    "metadata": {
+      "genre": "romance",
+      "style": "domineering_ceo",
+      "target_length_ratio": 0.4,
+      "key_elements": [
+        "first_meeting",
+        "workplace",
+        "identity_reveal"
+      ]
+    }
+  }
+]

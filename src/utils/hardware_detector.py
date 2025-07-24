@@ -259,6 +259,105 @@ class HardwareDetector:
             'compatibility': self.is_compatible()[0]
         }
 
+    def detect_hardware(self):
+        """检测硬件配置并返回标准化的硬件信息对象"""
+        try:
+            # 获取基础信息
+            memory_gb = self.memory_info.get('total_gb', 0)
+            available_memory_gb = self.memory_info.get('available_gb', 0)
+            cpu_cores = self.cpu_info.get('cores_logical', 0)
+
+            # GPU信息
+            gpu_info = self.gpu_info
+            has_gpu = gpu_info.get('available', False)
+            gpu_memory_gb = 0
+            gpu_names = []
+            gpu_type = "None"
+
+            if has_gpu and gpu_info.get('devices'):
+                # 获取第一个GPU的信息
+                first_gpu = gpu_info['devices'][0]
+                gpu_memory_gb = first_gpu.get('memory_gb', 0)
+                gpu_names = [device.get('name', 'Unknown GPU') for device in gpu_info['devices']]
+                gpu_type = first_gpu.get('type', 'Unknown')
+
+            # CPU频率
+            cpu_freq_mhz = 0
+            try:
+                freq_info = psutil.cpu_freq()
+                if freq_info:
+                    cpu_freq_mhz = freq_info.current
+            except:
+                pass
+
+            # 性能等级评估
+            performance_level = self._evaluate_performance_level(memory_gb, has_gpu, gpu_memory_gb, cpu_cores)
+
+            # 推荐量化等级
+            recommended_quantization = self._get_recommended_quantization(memory_gb, has_gpu, gpu_memory_gb)
+
+            # 创建硬件信息对象
+            class HardwareInfo:
+                def __init__(self):
+                    self.gpu_type = gpu_type
+                    self.gpu_memory_gb = gpu_memory_gb
+                    self.gpu_count = len(gpu_info.get('devices', []))
+                    self.gpu_names = gpu_names
+                    self.total_memory_gb = memory_gb
+                    self.available_memory_gb = available_memory_gb
+                    self.cpu_cores = cpu_cores
+                    self.cpu_freq_mhz = cpu_freq_mhz
+                    self.performance_level = performance_level
+                    self.recommended_quantization = recommended_quantization
+                    self.gpu_acceleration = has_gpu
+
+            return HardwareInfo()
+
+        except Exception as e:
+            logger.error(f"硬件检测失败: {e}")
+            # 返回默认的硬件信息
+            class DefaultHardwareInfo:
+                def __init__(self):
+                    self.gpu_type = "Unknown"
+                    self.gpu_memory_gb = 0
+                    self.gpu_count = 0
+                    self.gpu_names = []
+                    self.total_memory_gb = 4.0  # 默认4GB
+                    self.available_memory_gb = 2.0
+                    self.cpu_cores = 4
+                    self.cpu_freq_mhz = 2000
+                    self.performance_level = "Low"
+                    self.recommended_quantization = "Q4_K_M"
+                    self.gpu_acceleration = False
+
+            return DefaultHardwareInfo()
+
+    def _evaluate_performance_level(self, memory_gb: float, has_gpu: bool, gpu_memory_gb: float, cpu_cores: int) -> str:
+        """评估性能等级"""
+        try:
+            if has_gpu and gpu_memory_gb >= 8 and memory_gb >= 16:
+                return "High"
+            elif (has_gpu and gpu_memory_gb >= 4) or (memory_gb >= 12 and cpu_cores >= 8):
+                return "Medium"
+            else:
+                return "Low"
+        except:
+            return "Low"
+
+    def _get_recommended_quantization(self, memory_gb: float, has_gpu: bool, gpu_memory_gb: float) -> str:
+        """获取推荐的量化等级"""
+        try:
+            if has_gpu and gpu_memory_gb >= 12:
+                return "Q8_0"  # 高质量
+            elif memory_gb >= 16:
+                return "Q5_K_M"  # 平衡
+            elif memory_gb >= 8:
+                return "Q4_K_M"  # 标准
+            else:
+                return "Q2_K"  # 轻量
+        except:
+            return "Q4_K_M"
+
 def main():
     """作为独立脚本运行时的主函数"""
     detector = HardwareDetector()

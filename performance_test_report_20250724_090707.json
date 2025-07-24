@@ -1,0 +1,155 @@
+{
+  "test_info": {
+    "start_time": "2025-07-24T09:05:50.762099",
+    "test_version": "1.0.0",
+    "system_info": {
+      "platform": "Windows",
+      "platform_release": "10",
+      "cpu_count": 16,
+      "memory_total_gb": 15.73,
+      "python_version": "3.11.11",
+      "timestamp": "2025-07-24T09:05:50.791170"
+    }
+  },
+  "memory_tests": {
+    "startup": {
+      "initial_memory_mb": 20.90625,
+      "import_time": 0.0528872013092041,
+      "window_creation_time": 4.075523853302002,
+      "total_startup_time": 6.134730339050293,
+      "post_startup_memory_mb": 353.55859375,
+      "memory_increase_mb": 332.65234375,
+      "startup_performance": {
+        "excellent": false,
+        "good": true,
+        "acceptable": true,
+        "needs_improvement": false
+      }
+    },
+    "stability": {
+      "duration_minutes": 1,
+      "initial_memory_mb": 373.08984375,
+      "final_memory_mb": 374.1875,
+      "memory_increase_mb": 1.09765625,
+      "peak_memory_mb": 374.3046875,
+      "avg_memory_mb": 374.05859375,
+      "memory_samples": [
+        {
+          "time": 0.0010058879852294922,
+          "memory_mb": 373.09375
+        },
+        {
+          "time": 10.849371194839478,
+          "memory_mb": 374.29296875
+        },
+        {
+          "time": 21.70034122467041,
+          "memory_mb": 374.3046875
+        },
+        {
+          "time": 32.54578518867493,
+          "memory_mb": 374.234375
+        },
+        {
+          "time": 43.38631749153137,
+          "memory_mb": 374.2421875
+        },
+        {
+          "time": 54.21729564666748,
+          "memory_mb": 374.18359375
+        }
+      ],
+      "gc_object_counts": [
+        306037,
+        306061,
+        306067,
+        306070,
+        306067,
+        306067
+      ],
+      "memory_leak_detected": false,
+      "stability_rating": "excellent"
+    }
+  },
+  "ui_response_tests": {
+    "tab_switching": {
+      "times": [
+        0.08862638473510742,
+        0.0010211467742919922,
+        0.08344578742980957,
+        0.07847929000854492,
+        0.07556843757629395,
+        0.07658147811889648,
+        0.07504868507385254,
+        0.07855391502380371,
+        0.07828950881958008,
+        0.0762476921081543,
+        0.07178354263305664,
+        0.0786130428314209
+      ],
+      "avg_time": 0.0718549092610677,
+      "max_time": 0.08862638473510742,
+      "min_time": 0.0010211467742919922,
+      "samples": 12
+    },
+    "window_repaint": {
+      "avg_time": 0.014942526817321777,
+      "max_time": 0.08095335960388184,
+      "samples": 10
+    },
+    "user_interaction": {
+      "avg_time": 0.00030009746551513673,
+      "max_time": 0.003049135208129883,
+      "samples": 20
+    },
+    "performance_rating": {
+      "tab_switching_excellent": true,
+      "tab_switching_good": true,
+      "repaint_excellent": true,
+      "repaint_good": true
+    }
+  },
+  "core_function_tests": {
+    "error": "apply_rtl_styles() takes 1 positional argument but 2 were given"
+  },
+  "stress_tests": {
+    "file_operations": {
+      "total_time": 0.06792712211608887,
+      "avg_operation_time": 0.006792712211608887,
+      "operations_count": 10
+    },
+    "rapid_ui_operations": {
+      "total_time": 0.06264901161193848,
+      "avg_operation_time": 0.0006264901161193848,
+      "operations_per_second": 1596.194376048925,
+      "max_operation_time": 0.007901668548583984
+    },
+    "memory_pressure": {
+      "memory_before_stress_mb": 374.2265625,
+      "memory_after_gc_mb": 374.2265625,
+      "memory_freed_by_gc_mb": 0.0
+    }
+  },
+  "performance_summary": {
+    "memory": {
+      "peak_mb": 375.03515625,
+      "avg_mb": 361.82740542763156,
+      "min_mb": 21.0078125,
+      "samples": 76,
+      "within_limits": true
+    },
+    "cpu": {
+      "peak_percent": 90.6,
+      "avg_percent": 13.513235294117628,
+      "samples": 68
+    }
+  },
+  "recommendations": [
+    {
+      "category": "启动性能",
+      "priority": "中",
+      "issue": "启动时间较长: 6.13秒",
+      "suggestion": "可以进一步优化组件初始化流程"
+    }
+  ]
+}

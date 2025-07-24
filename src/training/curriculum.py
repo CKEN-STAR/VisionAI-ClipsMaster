@@ -178,6 +178,47 @@ class CurriculumLearning:
             print("🏆 已完成所有训练阶段！")
             return False
 
+    def generate_curriculum(self, data_complexity_levels: List[str] = None) -> Dict[str, Any]:
+        """
+        生成课程学习计划
+
+        Args:
+            data_complexity_levels: 数据复杂度级别列表
+
+        Returns:
+            Dict: 生成的课程计划
+        """
+        if data_complexity_levels is None:
+            data_complexity_levels = ["basic", "intermediate", "advanced"]
+
+        curriculum_plan = {
+            "language": self.language,
+            "total_stages": self.total_stages,
+            "current_stage": self.current_stage,
+            "stages": [],
+            "complexity_levels": data_complexity_levels,
+            "estimated_duration": f"{self.total_stages * 2} hours"
+        }
+
+        for stage_id, stage_info in self.stages.items():
+            stage_plan = {
+                "stage_id": stage_id,
+                "name": stage_info["name"],
+                "description": stage_info["description"],
+                "complexity_level": data_complexity_levels[min(stage_id, len(data_complexity_levels) - 1)],
+                "learning_objectives": stage_info.get("objectives", []),
+                "estimated_time": "2 hours",
+                "difficulty": stage_info.get("difficulty", "medium"),
+                "focus": stage_info.get("focus", "general")
+            }
+            curriculum_plan["stages"].append(stage_plan)
+
+        print(f"📚 已生成 {self.language} 语言的课程学习计划")
+        print(f"🎯 总阶段数: {self.total_stages}")
+        print(f"⏱️ 预计总时长: {curriculum_plan['estimated_duration']}")
+
+        return curriculum_plan
+
     def execute_curriculum_training(self, training_data: List[Dict[str, Any]],
                                   trainer_class,
                                   progress_callback: Optional[Callable] = None) -> Dict[str, Any]:

@@ -1804,3 +1804,74 @@ if __name__ == "__main__":
                 
                 print(f"生成完成: {len(result['segments'])} 个片段, "
                      f"总时长: {result['total_duration']:.2f}秒")
+
+    def reconstruct_screenplay(self, subtitles: List[Dict], analysis: Dict, language: str) -> List[Dict]:
+        """
+        重构剧本 - 工作流程接口
+
+        Args:
+            subtitles: 原始字幕列表
+            analysis: 剧情分析结果
+            language: 语言代码
+
+        Returns:
+            List[Dict]: 重构后的字幕列表
+        """
+        try:
+            logger.info(f"🎭 开始剧本重构，语言: {language}")
+
+            # 转换字幕格式为内部格式
+            segments = []
+            for i, subtitle in enumerate(subtitles):
+                segment = {
+                    "id": i + 1,
+                    "start_time": subtitle.get("start", "00:00:00,000"),
+                    "end_time": subtitle.get("end", "00:00:00,000"),
+                    "text": subtitle.get("text", ""),
+                    "duration": self._calculate_duration(
+                        subtitle.get("start", "00:00:00,000"),
+                        subtitle.get("end", "00:00:00,000")
+                    )
+                }
+                segments.append(segment)
+
+            # 使用现有的生成方法
+            result = self.generate_viral_clips(segments, language=language)
+
+            if result["status"] == "success":
+                # 转换回标准格式
+                reconstructed_subtitles = []
+                for segment in result["segments"]:
+                    subtitle = {
+                        "start": segment["start_time"],
+                        "end": segment["end_time"],
+                        "text": segment["text"],
+                        "duration": segment["duration"]
+                    }
+                    reconstructed_subtitles.append(subtitle)
+
+                logger.info(f"✅ 剧本重构完成，生成 {len(reconstructed_subtitles)} 个片段")
+                return reconstructed_subtitles
+            else:
+                logger.error(f"❌ 剧本重构失败: {result.get('error', '未知错误')}")
+                return subtitles  # 返回原始字幕作为回退
+
+        except Exception as e:
+            logger.error(f"❌ 剧本重构异常: {e}")
+            return subtitles  # 返回原始字幕作为回退
+
+    def _calculate_duration(self, start_time: str, end_time: str) -> float:
+        """计算时长（秒）"""
+        try:
+            def time_to_seconds(time_str):
+                parts = time_str.replace(',', '.').split(':')
+                hours = int(parts[0])
+                minutes = int(parts[1])
+                seconds = float(parts[2])
+                return hours * 3600 + minutes * 60 + seconds
+
+            start_seconds = time_to_seconds(start_time)
+            end_seconds = time_to_seconds(end_time)
+            return end_seconds - start_seconds
+        except:
+            return 3.0  # 默认3秒

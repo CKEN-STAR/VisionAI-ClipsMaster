@@ -1,0 +1,33 @@
+{
+  "timestamp": "2025-07-24T08:05:21.100598",
+  "system_info": {
+    "platform": "win32",
+    "python_version": "3.11.11 | packaged by Anaconda, Inc. | (main, Dec 11 2024, 16:34:19) [MSC v.1929 64 bit (AMD64)]"
+  },
+  "performance_metrics": {
+    "total_duration": 16.464751720428467,
+    "total_tests": 18,
+    "avg_test_duration": 0.9147084289126926,
+    "module_durations": {
+      "end_to_end_workflow": 3.860994815826416,
+      "video_format_compatibility": 10.180574655532837,
+      "quality_validation": 0.06589460372924805,
+      "ui_integration": 0.6814765930175781,
+      "exception_handling": 1.6728057861328125
+    },
+    "fastest_module": [
+      "quality_validation",
+      0.06589460372924805
+    ],
+    "slowest_module": [
+      "video_format_compatibility",
+      10.180574655532837
+    ],
+    "performance_score": 100
+  },
+  "baseline_comparison": {
+    "expected_total_duration": 600,
+    "actual_total_duration": 16.464751720428467,
+    "performance_ratio": 1.0
+  }
+}

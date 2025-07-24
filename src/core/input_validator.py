@@ -590,6 +590,80 @@ class InputValidator:
         self.validation_history.clear()
         logger.info("验证历史已清空")
 
+    def validate_srt_file(self, srt_path: str) -> bool:
+        """
+        验证SRT字幕文件
+
+        Args:
+            srt_path: SRT文件路径
+
+        Returns:
+            bool: 验证是否通过
+        """
+        try:
+            if not os.path.exists(srt_path):
+                logger.error(f"SRT文件不存在: {srt_path}")
+                return False
+
+            if not srt_path.lower().endswith('.srt'):
+                logger.error(f"文件不是SRT格式: {srt_path}")
+                return False
+
+            # 读取并验证SRT内容
+            with open(srt_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+
+            # 基本的SRT格式验证
+            srt_pattern = r'\d+\s*\n\d{2}:\d{2}:\d{2},\d{3}\s*-->\s*\d{2}:\d{2}:\d{2},\d{3}\s*\n.+?(?=\n\d+\s*\n|\n*$)'
+            matches = re.findall(srt_pattern, content, re.DOTALL)
+
+            if len(matches) == 0:
+                logger.error(f"SRT文件格式无效: {srt_path}")
+                return False
+
+            logger.info(f"SRT文件验证通过: {srt_path}, 包含 {len(matches)} 个字幕条目")
+            return True
+
+        except Exception as e:
+            logger.error(f"SRT文件验证失败: {srt_path}, 错误: {e}")
+            return False
+
+    def validate_video_file(self, video_path: str) -> bool:
+        """
+        验证视频文件
+
+        Args:
+            video_path: 视频文件路径
+
+        Returns:
+            bool: 验证是否通过
+        """
+        try:
+            if not os.path.exists(video_path):
+                logger.error(f"视频文件不存在: {video_path}")
+                return False
+
+            # 检查文件扩展名
+            valid_extensions = ['.mp4', '.avi', '.mov', '.mkv', '.flv', '.wmv']
+            file_ext = os.path.splitext(video_path)[1].lower()
+
+            if file_ext not in valid_extensions:
+                logger.error(f"不支持的视频格式: {file_ext}")
+                return False
+
+            # 检查文件大小
+            file_size = os.path.getsize(video_path)
+            if file_size == 0:
+                logger.error(f"视频文件为空: {video_path}")
+                return False
+
+            logger.info(f"视频文件验证通过: {video_path}, 大小: {file_size / (1024*1024):.2f}MB")
+            return True
+
+        except Exception as e:
+            logger.error(f"视频文件验证失败: {video_path}, 错误: {e}")
+            return False
+
 # 便捷函数
 def validate_input_files(video_path: str, subtitle_path: str) -> ValidationResult:
     """

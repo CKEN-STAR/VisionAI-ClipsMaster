@@ -1,0 +1,74 @@
+{
+  "memory_usage_by_format": {
+    "mp4": {
+      "format": "mp4",
+      "processing_time": 2.002821207046509,
+      "memory_before_mb": 463.60546875,
+      "memory_after_mb": 463.625,
+      "peak_memory_mb": 463.62890625,
+      "memory_delta_mb": 0.01953125,
+      "memory_samples": [
+        463.62890625,
+        463.62890625,
+        463.62890625,
+        463.62890625
+      ]
+    },
+    "avi": {
+      "format": "avi",
+      "processing_time": 2.009564161300659,
+      "memory_before_mb": 463.60546875,
+      "memory_after_mb": 463.625,
+      "peak_memory_mb": 463.62890625,
+      "memory_delta_mb": 0.01953125,
+      "memory_samples": [
+        463.62890625,
+        463.62890625,
+        463.62890625,
+        463.62890625
+      ]
+    },
+    "mkv": {
+      "format": "mkv",
+      "processing_time": 2.0041086673736572,
+      "memory_before_mb": 463.60546875,
+      "memory_after_mb": 463.625,
+      "peak_memory_mb": 463.62890625,
+      "memory_delta_mb": 0.01953125,
+      "memory_samples": [
+        463.62890625,
+        463.62890625,
+        463.62890625,
+        463.62890625
+      ]
+    },
+    "mov": {
+      "format": "mov",
+      "processing_time": 2.0036399364471436,
+      "memory_before_mb": 463.60546875,
+      "memory_after_mb": 463.625,
+      "peak_memory_mb": 463.62890625,
+      "memory_delta_mb": 0.01953125,
+      "memory_samples": [
+        463.62890625,
+        463.62890625,
+        463.62890625,
+        463.62890625
+      ]
+    },
+    "flv": {
+      "format": "flv",
+      "processing_time": 2.009296178817749,
+      "memory_before_mb": 463.60546875,
+      "memory_after_mb": 463.625,
+      "peak_memory_mb": 463.62890625,
+      "memory_delta_mb": 0.01953125,
+      "memory_samples": [
+        463.62890625,
+        463.62890625,
+        463.62890625,
+        463.62890625
+      ]
+    }
+  }
+}

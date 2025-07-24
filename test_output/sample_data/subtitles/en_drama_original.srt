@@ -1,0 +1,40 @@
+1
+00:00:00,000 --> 00:00:03,000
+Today is the most important day of my life
+
+2
+00:00:03,000 --> 00:00:06,000
+I'm finally going to meet that person
+
+3
+00:00:06,000 --> 00:00:09,000
+I feel both nervous and excited
+
+4
+00:00:09,000 --> 00:00:12,000
+I hope everything goes smoothly
+
+5
+00:00:12,000 --> 00:00:15,000
+This decision will change my life
+
+6
+00:00:15,000 --> 00:00:18,000
+I'm ready to face any challenge
+
+7
+00:00:18,000 --> 00:00:21,000
+No matter what happens, I won't regret it
+
+8
+00:00:21,000 --> 00:00:24,000
+Because this is what I truly want
+
+9
+00:00:24,000 --> 00:00:27,000
+Love requires courage to pursue
+
+10
+00:00:27,000 --> 00:00:30,000
+I believe true love will conquer all
+

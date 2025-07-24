@@ -1,0 +1,20 @@
+[
+  {
+    "filename": "zh_drama_episode1.mp4",
+    "duration": 48.0,
+    "resolution": "1920x1080",
+    "fps": 30,
+    "language": "zh",
+    "genre": "romance",
+    "subtitle_file": "zh_drama_original.srt"
+  },
+  {
+    "filename": "en_drama_episode1.mp4",
+    "duration": 48.0,
+    "resolution": "1920x1080",
+    "fps": 30,
+    "language": "en",
+    "genre": "romance",
+    "subtitle_file": "en_drama_original.srt"
+  }
+]

@@ -1,0 +1,16 @@
+[
+  {
+    "original_srt": "en_drama_original.srt",
+    "viral_srt": "en_viral_example.srt",
+    "metadata": {
+      "genre": "romance",
+      "style": "workplace_drama",
+      "target_length_ratio": 0.4,
+      "key_elements": [
+        "first_meeting",
+        "workplace",
+        "plot_twist"
+      ]
+    }
+  }
+]

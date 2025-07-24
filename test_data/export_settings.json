@@ -1,0 +1,18 @@
+{
+  "default_format": "mp4",
+  "supported_formats": [
+    "mp4",
+    "avi",
+    "mov"
+  ],
+  "jianying_export": {
+    "enabled": true,
+    "version": "3.0",
+    "template_path": "templates/jianying_template.json"
+  },
+  "quality_settings": {
+    "resolution": "1080p",
+    "bitrate": "5000k",
+    "fps": 30
+  }
+}

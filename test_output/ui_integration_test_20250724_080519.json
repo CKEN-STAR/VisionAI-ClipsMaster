@@ -1,0 +1,127 @@
+{
+  "workflow_ui_integration": {
+    "success": true,
+    "total_time": 0.108978271484375,
+    "progress_updates": [
+      {
+        "stage": "验证输入文件",
+        "progress": 5.0,
+        "timestamp": 1753315519.3139355
+      },
+      {
+        "stage": "内存检查",
+        "progress": 10.0,
+        "timestamp": 1753315519.3261423
+      },
+      {
+        "stage": "AI字幕重构",
+        "progress": 20.0,
+        "timestamp": 1753315519.3364975
+      },
+      {
+        "stage": "字幕重构完成",
+        "progress": 50.0,
+        "timestamp": 1753315519.3520567
+      },
+      {
+        "stage": "视频处理",
+        "progress": 60.0,
+        "timestamp": 1753315519.3679245
+      },
+      {
+        "stage": "视频处理完成",
+        "progress": 90.0,
+        "timestamp": 1753315519.3904557
+      },
+      {
+        "stage": "清理临时文件",
+        "progress": 95.0,
+        "timestamp": 1753315519.4019277
+      },
+      {
+        "stage": "工作流完成",
+        "progress": 100.0,
+        "timestamp": 1753315519.4120774
+      }
+    ],
+    "ui_updates": [
+      {
+        "stage": "验证输入文件",
+        "progress": 5.0,
+        "ui_update_time": 0.012206792831420898,
+        "timestamp": 1753315519.3139355
+      },
+      {
+        "stage": "内存检查",
+        "progress": 10.0,
+        "ui_update_time": 0.010355234146118164,
+        "timestamp": 1753315519.3261423
+      },
+      {
+        "stage": "AI字幕重构",
+        "progress": 20.0,
+        "ui_update_time": 0.010555505752563477,
+        "timestamp": 1753315519.3364975
+      },
+      {
+        "stage": "字幕重构完成",
+        "progress": 50.0,
+        "ui_update_time": 0.01586771011352539,
+        "timestamp": 1753315519.3520567
+      },
+      {
+        "stage": "视频处理",
+        "progress": 60.0,
+        "ui_update_time": 0.011527299880981445,
+        "timestamp": 1753315519.3679245
+      },
+      {
+        "stage": "视频处理完成",
+        "progress": 90.0,
+        "ui_update_time": 0.011471986770629883,
+        "timestamp": 1753315519.3904557
+      },
+      {
+        "stage": "清理临时文件",
+        "progress": 95.0,
+        "ui_update_time": 0.010149717330932617,
+        "timestamp": 1753315519.4019277
+      },
+      {
+        "stage": "工作流完成",
+        "progress": 100.0,
+        "ui_update_time": 0.010836362838745117,
+        "timestamp": 1753315519.4120774
+      }
+    ],
+    "ui_analysis": {
+      "total_ui_updates": 8,
+      "total_progress_updates": 8,
+      "avg_ui_update_time": 0.011621326208114624,
+      "max_ui_update_time": 0.01586771011352539,
+      "min_ui_update_time": 0.010149717330932617,
+      "avg_progress_interval": 0.014020272663661413,
+      "ui_responsiveness_score": 0.9841322898864746
+    },
+    "workflow_result": {
+      "success": true,
+      "workflow_id": "workflow_1753315519",
+      "output_path": "C:\\Users\\13075\\AppData\\Local\\Temp\\ui_test_alminbta\\ui_test_output.mp4",
+      "processing_time": 0.09814190864562988,
+      "subtitle_result": {
+        "success": true,
+        "details": {
+          "method": "fallback_copy",
+          "message": "使用备用字幕处理方案"
+        }
+      },
+      "video_result": {
+        "success": true,
+        "details": {
+          "method": "fallback_copy",
+          "message": "使用备用视频处理方案"
+        }
+      }
+    }
+  }
+}

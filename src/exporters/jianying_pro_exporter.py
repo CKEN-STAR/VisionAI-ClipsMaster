@@ -13,6 +13,14 @@ from typing import Dict, List, Any, Optional
 from pathlib import Path
 import logging
 
+# 导入兼容性验证器
+try:
+    from .jianying_compatibility_validator import JianyingCompatibilityValidator
+    HAS_VALIDATOR = True
+except ImportError:
+    HAS_VALIDATOR = False
+    print("警告: 无法导入剪映兼容性验证器")
+
 logger = logging.getLogger(__name__)
 
 class JianYingProExporter:
@@ -27,36 +35,58 @@ class JianYingProExporter:
             "video_codec": "h264",
             "audio_codec": "aac"
         }
-        logger.info("剪映专业版导出器初始化完成")
+
+        # 初始化兼容性验证器
+        if HAS_VALIDATOR:
+            self.validator = JianyingCompatibilityValidator()
+            logger.info("剪映专业版导出器初始化完成（包含兼容性验证器）")
+        else:
+            self.validator = None
+            logger.info("剪映专业版导出器初始化完成（无兼容性验证器）")
     
     def _load_project_template(self) -> Dict[str, Any]:
-        """加载剪映工程文件模板 - 修复：添加完整的素材结构"""
+        """加载剪映工程文件模板 - 修复：完整兼容剪映3.0+格式"""
+        current_time = int(time.time() * 1000000)  # 微秒时间戳
+        project_id = str(uuid.uuid4())
+
         return {
             "version": "3.0.0",
             "type": "draft_content",
             "platform": "windows",
-            "create_time": int(time.time() * 1000),
-            "update_time": int(time.time() * 1000),
-            "id": str(uuid.uuid4()),
+            "create_time": current_time,
+            "update_time": current_time,
+            "id": project_id,
+            "draft_id": project_id,  # 修复：添加draft_id字段
+            "draft_name": "VisionAI混剪项目",  # 修复：添加项目名称
             "canvas_config": {
                 "height": 1080,
                 "width": 1920,
-                "duration": 0
+                "duration": 0,
+                "fps": 30,  # 修复：添加帧率
+                "ratio": "16:9"  # 修复：添加宽高比
             },
             "tracks": [],
             "materials": {
                 "videos": [],
                 "audios": [],
                 "texts": [],
-                "effects": [],      # 修复：添加缺失的effects字段
-                "stickers": []      # 修复：添加缺失的stickers字段
+                "effects": [],
+                "stickers": [],
+                "images": [],  # 修复：添加图片素材
+                "sounds": []   # 修复：添加音效素材
             },
             "extra_info": {
                 "export_range": {
                     "start": 0,
                     "end": 0
-                }
-            }
+                },
+                "fps": 30,  # 修复：添加帧率信息
+                "audio_sample_rate": 44100,  # 修复：添加音频采样率
+                "video_codec": "h264",  # 修复：添加视频编码
+                "audio_codec": "aac"    # 修复：添加音频编码
+            },
+            "keyframes": [],  # 修复：添加关键帧数组
+            "relations": []   # 修复：添加关系数组
         }
     
     def export_project(self, segments_or_project_data, output_path: str) -> bool:
@@ -90,6 +120,28 @@ class JianYingProExporter:
             jianying_project = self._convert_to_jianying_format(project_data)
             logger.info("格式转换完成")
 
+            # 修复：兼容性验证和自动修复
+            if self.validator:
+                logger.info("正在进行兼容性验证...")
+                is_compatible, errors = self.validator.validate_project(jianying_project)
+
+                if not is_compatible:
+                    logger.warning(f"发现 {len(errors)} 个兼容性问题，正在自动修复...")
+                    jianying_project = self.validator.fix_compatibility_issues(jianying_project)
+
+                    # 重新验证
+                    is_compatible, remaining_errors = self.validator.validate_project(jianying_project)
+                    if is_compatible:
+                        logger.info("兼容性问题已自动修复")
+                    else:
+                        logger.error(f"仍有 {len(remaining_errors)} 个兼容性问题无法自动修复")
+                        for error in remaining_errors:
+                            logger.error(f"  - {error}")
+                        # 继续导出，但记录警告
+                        logger.warning("将继续导出，但可能存在兼容性问题")
+                else:
+                    logger.info("兼容性验证通过")
+
             # 确保输出目录存在
             output_dir = Path(output_path).parent
             output_dir.mkdir(parents=True, exist_ok=True)
@@ -108,146 +160,216 @@ class JianYingProExporter:
             return False
     
     def _convert_to_jianying_format(self, project_data: Dict[str, Any]) -> Dict[str, Any]:
-        """将项目数据转换为剪映格式"""
-        jianying_project = self.project_template.copy()
-        
+        """将项目数据转换为剪映格式 - 修复：完整兼容性支持"""
+        import copy
+        jianying_project = copy.deepcopy(self.project_template)
+
         # 更新基本信息
-        jianying_project["update_time"] = int(time.time() * 1000)
-        
+        current_time = int(time.time() * 1000000)  # 微秒时间戳
+        jianying_project["update_time"] = current_time
+
         # 处理视频片段
         segments = project_data.get("segments", [])
-        total_duration = 0
-        
-        # 创建视频轨道
+        total_duration_ms = 0  # 使用毫秒为单位
+
+        # 修复：创建标准剪映轨道结构
         video_track = {
             "id": str(uuid.uuid4()),
             "type": "video",
+            "attribute": 0,  # 修复：添加轨道属性
+            "flag": 0,       # 修复：添加轨道标志
             "segments": []
         }
-        
-        # 创建音频轨道
+
         audio_track = {
             "id": str(uuid.uuid4()),
-            "type": "audio", 
+            "type": "audio",
+            "attribute": 0,
+            "flag": 0,
             "segments": []
         }
-        
-        # 创建字幕轨道
+
         text_track = {
             "id": str(uuid.uuid4()),
             "type": "text",
+            "attribute": 0,
+            "flag": 0,
             "segments": []
         }
         
+        # 修复：处理每个片段，添加完整验证和错误处理
         for i, segment in enumerate(segments):
-            segment_id = str(uuid.uuid4())
-            start_time = self._parse_time_to_ms(segment.get("start_time", 0))
-            end_time = self._parse_time_to_ms(segment.get("end_time", 0))
-            duration = end_time - start_time
-            
-            # 视频片段
+            start_time_ms = self._parse_time_to_ms(segment.get("start_time", 0))
+            end_time_ms = self._parse_time_to_ms(segment.get("end_time", 0))
+            duration_ms = end_time_ms - start_time_ms
+
+            # 修复：添加持续时间验证
+            if duration_ms <= 0:
+                logger.warning(f"片段 {i} 持续时间无效: {duration_ms}ms，跳过")
+                continue
+
+            # 修复：生成唯一且一致的ID
+            video_segment_id = str(uuid.uuid4())
+            audio_segment_id = str(uuid.uuid4())
+            text_segment_id = str(uuid.uuid4())
+
+            video_material_id = f"video_material_{i}"
+            audio_material_id = f"audio_material_{i}"
+            text_material_id = f"text_material_{i}"
+
+            # 修复：完整的视频片段结构
             video_segment = {
-                "id": segment_id,
+                "id": video_segment_id,
                 "type": "video",
-                "material_id": f"video_{i}",
+                "material_id": video_material_id,
                 "track_render_index": 0,
                 "source_timerange": {
-                    "start": start_time,
-                    "duration": duration
+                    "start": start_time_ms,
+                    "duration": duration_ms
                 },
                 "target_timerange": {
-                    "start": total_duration,
-                    "duration": duration
+                    "start": total_duration_ms,
+                    "duration": duration_ms
                 },
-                "extra_material_refs": []
+                "extra_material_refs": [],
+                "uniform_scale": {  # 修复：添加缩放信息
+                    "on": True,
+                    "value": 1.0
+                },
+                "transform": {  # 修复：添加变换信息
+                    "x": 0.0,
+                    "y": 0.0,
+                    "width": 1.0,
+                    "height": 1.0
+                },
+                "visible": True,  # 修复：添加可见性
+                "volume": 1.0     # 修复：添加音量
             }
-            
-            # 音频片段
+
+            # 修复：完整的音频片段结构
             audio_segment = {
-                "id": str(uuid.uuid4()),
+                "id": audio_segment_id,
                 "type": "audio",
-                "material_id": f"audio_{i}",
+                "material_id": audio_material_id,
                 "track_render_index": 0,
                 "source_timerange": {
-                    "start": start_time,
-                    "duration": duration
+                    "start": start_time_ms,
+                    "duration": duration_ms
                 },
                 "target_timerange": {
-                    "start": total_duration,
-                    "duration": duration
-                }
+                    "start": total_duration_ms,
+                    "duration": duration_ms
+                },
+                "extra_material_refs": [],
+                "volume": 1.0,  # 修复：添加音量控制
+                "speed": 1.0,   # 修复：添加播放速度
+                "visible": True # 修复：添加可见性
             }
-            
-            # 字幕片段
+
+            # 修复：完整的字幕片段结构
+            text_content = segment.get("text", f"字幕片段 {i+1}")
             text_segment = {
-                "id": str(uuid.uuid4()),
+                "id": text_segment_id,
                 "type": "text",
-                "material_id": f"text_{i}",
+                "material_id": text_material_id,
                 "track_render_index": 0,
                 "source_timerange": {
                     "start": 0,
-                    "duration": duration
+                    "duration": duration_ms
                 },
                 "target_timerange": {
-                    "start": total_duration,
-                    "duration": duration
+                    "start": total_duration_ms,
+                    "duration": duration_ms
                 },
-                "extra_material_refs": []
+                "extra_material_refs": [],
+                "content": text_content,  # 修复：添加字幕内容
+                "style": {  # 修复：添加字幕样式
+                    "font_size": 24,
+                    "font_color": "#FFFFFF",
+                    "background_color": "#00000080",
+                    "alignment": "center"
+                },
+                "visible": True
             }
             
             video_track["segments"].append(video_segment)
             audio_track["segments"].append(audio_segment)
             text_track["segments"].append(text_segment)
-            
-            # 添加素材信息
+
+            # 修复：添加完整的素材信息
             source_file = segment.get("source_file", "")
-            
-            # 视频素材
+            if not source_file:
+                source_file = project_data.get("source_video", "")
+
+            # 修复：完整的视频素材结构
             video_material = {
-                "id": f"video_{i}",
+                "id": video_material_id,
                 "type": "video",
                 "path": source_file,
-                "duration": duration,
-                "width": 1920,
-                "height": 1080,
-                "fps": 30
+                "duration": duration_ms,
+                "width": segment.get("width", 1920),
+                "height": segment.get("height", 1080),
+                "fps": segment.get("fps", 30),
+                "format": self._get_video_format(source_file),  # 修复：添加格式检测
+                "codec": "h264",  # 修复：添加编码信息
+                "bitrate": segment.get("bitrate", "2000k"),  # 修复：添加码率
+                "create_time": current_time,  # 修复：添加创建时间
+                "file_size": segment.get("file_size", 0)  # 修复：添加文件大小
             }
-            
-            # 音频素材 - 修复：添加音频格式支持
+
+            # 修复：完整的音频素材结构
             audio_material = {
-                "id": f"audio_{i}",
+                "id": audio_material_id,
                 "type": "audio",
                 "path": source_file,
-                "duration": duration,
-                "sample_rate": 44100,
-                "channels": 2,
-                "format": self._get_audio_format(source_file)  # 修复：添加格式字段
+                "duration": duration_ms,
+                "sample_rate": segment.get("sample_rate", 44100),
+                "channels": segment.get("channels", 2),
+                "format": self._get_audio_format(source_file),
+                "codec": "aac",  # 修复：添加音频编码
+                "bitrate": segment.get("audio_bitrate", "128k"),  # 修复：添加音频码率
+                "create_time": current_time
             }
-            
-            # 文本素材
+
+            # 修复：完整的文本素材结构
             text_material = {
-                "id": f"text_{i}",
+                "id": text_material_id,
                 "type": "text",
-                "content": segment.get("text", ""),
+                "content": text_content,
+                "font_family": "Microsoft YaHei",  # 修复：添加字体
                 "font_size": 24,
                 "font_color": "#FFFFFF",
-                "background_color": "#000000",
-                "alignment": "center"
+                "background_color": "#00000080",  # 修复：半透明背景
+                "alignment": "center",
+                "bold": False,  # 修复：添加粗体设置
+                "italic": False,  # 修复：添加斜体设置
+                "underline": False,  # 修复：添加下划线设置
+                "create_time": current_time
             }
-            
+
             jianying_project["materials"]["videos"].append(video_material)
             jianying_project["materials"]["audios"].append(audio_material)
             jianying_project["materials"]["texts"].append(text_material)
-            
-            total_duration += duration
-        
-        # 添加轨道
+
+            # 修复：正确累加总时长（使用毫秒）
+            total_duration_ms += duration_ms
+
+        # 修复：添加轨道到项目，确保顺序正确
         jianying_project["tracks"] = [video_track, audio_track, text_track]
-        
-        # 更新画布配置
-        jianying_project["canvas_config"]["duration"] = total_duration
-        jianying_project["extra_info"]["export_range"]["end"] = total_duration
-        
+
+        # 修复：更新画布配置（使用毫秒）
+        jianying_project["canvas_config"]["duration"] = total_duration_ms
+        jianying_project["extra_info"]["export_range"]["end"] = total_duration_ms
+
+        # 修复：添加关键帧和关系信息
+        jianying_project["keyframes"] = []
+        jianying_project["relations"] = []
+
+        # 修复：验证项目结构完整性
+        if not self._validate_project_structure(jianying_project):
+            logger.error("生成的剪映项目结构验证失败")
+            raise ValueError("剪映项目结构不完整")
+
         return jianying_project
 
     def _get_audio_format(self, file_path: str) -> str:
@@ -268,8 +390,66 @@ class JianYingProExporter:
         }
         return format_map.get(ext, 'aac')  # 默认使用AAC格式
 
+    def _get_video_format(self, file_path: str) -> str:
+        """获取视频格式 - 修复：添加视频格式检测"""
+        from pathlib import Path
+
+        ext = Path(file_path).suffix.lower()
+        format_map = {
+            '.mp4': 'mp4',
+            '.avi': 'avi',
+            '.mov': 'mov',
+            '.mkv': 'mkv',
+            '.flv': 'flv',
+            '.wmv': 'wmv',
+            '.webm': 'webm'
+        }
+        return format_map.get(ext, 'mp4')  # 默认使用MP4格式
+
+    def _validate_project_structure(self, project: Dict[str, Any]) -> bool:
+        """验证剪映项目结构完整性 - 修复：添加结构验证"""
+        required_fields = [
+            'version', 'type', 'platform', 'create_time', 'update_time',
+            'id', 'draft_id', 'canvas_config', 'tracks', 'materials'
+        ]
+
+        # 检查必需字段
+        for field in required_fields:
+            if field not in project:
+                logger.error(f"缺少必需字段: {field}")
+                return False
+
+        # 检查canvas_config结构
+        canvas_config = project.get('canvas_config', {})
+        canvas_required = ['height', 'width', 'duration', 'fps']
+        for field in canvas_required:
+            if field not in canvas_config:
+                logger.error(f"canvas_config缺少字段: {field}")
+                return False
+
+        # 检查materials结构
+        materials = project.get('materials', {})
+        material_types = ['videos', 'audios', 'texts', 'effects', 'stickers']
+        for mat_type in material_types:
+            if mat_type not in materials:
+                logger.error(f"materials缺少类型: {mat_type}")
+                return False
+
+        # 检查轨道结构
+        tracks = project.get('tracks', [])
+        if len(tracks) < 1:
+            logger.error("至少需要一个轨道")
+            return False
+
+        for track in tracks:
+            if 'id' not in track or 'type' not in track or 'segments' not in track:
+                logger.error("轨道结构不完整")
+                return False
+
+        return True
+
     def _parse_time_to_ms(self, time_value) -> int:
-        """将时间值转换为毫秒
+        """将时间值转换为毫秒 - 修复：提高时间解析精度
 
         Args:
             time_value: 时间值，可以是字符串（SRT格式）或数字
@@ -278,35 +458,63 @@ class JianYingProExporter:
             int: 毫秒数
         """
         if isinstance(time_value, (int, float)):
-            return int(time_value * 1000)
+            return int(round(time_value * 1000))  # 修复：使用round提高精度
 
         if isinstance(time_value, str):
             # 解析SRT时间格式: "00:00:01,000" 或 "00:00:01.000"
             try:
-                # 替换逗号为点号
-                time_str = time_value.replace(',', '.')
+                # 修复：更精确的时间格式处理
+                time_str = time_value.strip()
+
+                # 处理SRT格式的逗号
+                if ',' in time_str:
+                    time_str = time_str.replace(',', '.')
 
                 # 分割时:分:秒.毫秒
                 if ':' in time_str:
                     parts = time_str.split(':')
-                    if len(parts) == 3:
-                        hours = int(parts[0])
-                        minutes = int(parts[1])
-                        seconds_parts = parts[2].split('.')
-                        seconds = int(seconds_parts[0])
-                        milliseconds = int(seconds_parts[1]) if len(seconds_parts) > 1 else 0
+                    if len(parts) >= 2:  # 修复：支持分:秒格式
+                        if len(parts) == 2:
+                            # 分:秒格式
+                            hours = 0
+                            minutes = int(parts[0])
+                            seconds_part = parts[1]
+                        else:
+                            # 时:分:秒格式
+                            hours = int(parts[0])
+                            minutes = int(parts[1])
+                            seconds_part = parts[2]
+
+                        # 修复：更精确的秒和毫秒解析
+                        if '.' in seconds_part:
+                            seconds_parts = seconds_part.split('.')
+                            seconds = int(seconds_parts[0])
+                            # 修复：正确处理毫秒位数
+                            ms_str = seconds_parts[1]
+                            if len(ms_str) == 1:
+                                milliseconds = int(ms_str) * 100
+                            elif len(ms_str) == 2:
+                                milliseconds = int(ms_str) * 10
+                            elif len(ms_str) >= 3:
+                                milliseconds = int(ms_str[:3])
+                            else:
+                                milliseconds = 0
+                        else:
+                            seconds = int(seconds_part)
+                            milliseconds = 0
 
                         # 转换为总毫秒数
                         total_ms = (hours * 3600 + minutes * 60 + seconds) * 1000 + milliseconds
                         return total_ms
 
                 # 如果是纯数字字符串
-                return int(float(time_str) * 1000)
+                return int(round(float(time_str) * 1000))
 
-            except (ValueError, IndexError):
-                logger.warning(f"无法解析时间格式: {time_value}")
+            except (ValueError, IndexError) as e:
+                logger.warning(f"无法解析时间格式: {time_value}, 错误: {e}")
                 return 0
 
+        logger.warning(f"不支持的时间格式类型: {type(time_value)}")
         return 0
     
     def create_project_package(self, project_data: Dict[str, Any], output_dir: str) -> bool:

@@ -1,0 +1,90 @@
+{
+  "test_start_time": "2025-07-23T21:03:37.437059",
+  "training_module_tests": {
+    "en_trainer_import": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T21:03:39.025560",
+      "details": {
+        "message": "英文训练器导入成功"
+      },
+      "error": null
+    },
+    "en_trainer_train_method": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T21:03:39.025560",
+      "details": {
+        "message": "英文训练器train方法存在"
+      },
+      "error": null
+    },
+    "zh_trainer_import": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T21:03:39.028451",
+      "details": {
+        "message": "中文训练器导入成功"
+      },
+      "error": null
+    },
+    "zh_trainer_train_method": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T21:03:39.028451",
+      "details": {
+        "message": "中文训练器train方法存在"
+      },
+      "error": null
+    },
+    "model_fine_tuner_import": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T21:03:41.853639",
+      "details": {
+        "message": "模型微调器导入成功"
+      },
+      "error": null
+    }
+  },
+  "data_pipeline_tests": {
+    "data_splitter_import": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T21:03:41.853639",
+      "details": {
+        "message": "数据分割器导入成功"
+      },
+      "error": null
+    },
+    "split_by_language_method": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T21:03:41.853639",
+      "details": {
+        "message": "split_by_language方法存在"
+      },
+      "error": null
+    },
+    "data_augment_import": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T21:03:41.853639",
+      "details": {
+        "message": "数据增强器导入成功"
+      },
+      "error": null
+    },
+    "plot_augment_import": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T21:03:41.868986",
+      "details": {
+        "message": "剧情增强器导入成功"
+      },
+      "error": null
+    }
+  },
+  "curriculum_tests": {},
+  "bilingual_tests": {},
+  "overall_status": "PASS",
+  "test_end_time": "2025-07-23T21:03:41.920733",
+  "summary": {
+    "total_tests": 9,
+    "passed": 9,
+    "failed": 0,
+    "skipped": 0,
+    "success_rate": "100.0%"
+  }
+}

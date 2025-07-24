@@ -1,0 +1,111 @@
+{
+  "test_start_time": "2025-07-23T21:06:15.019895",
+  "input_validation_tests": {
+    "srt_validation": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T21:06:15.055450",
+      "details": {
+        "message": "SRT文件验证通过"
+      },
+      "error": null
+    },
+    "video_validation": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T21:06:15.055450",
+      "details": {
+        "message": "视频文件存在"
+      },
+      "error": null
+    }
+  },
+  "processing_pipeline_tests": {
+    "language_detection": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T21:06:17.682159",
+      "details": {
+        "message": "语言检测正确: zh"
+      },
+      "error": null
+    },
+    "screenplay_reconstruction": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T21:06:17.682159",
+      "details": {
+        "message": "剧本重构模块可用"
+      },
+      "error": null
+    }
+  },
+  "output_generation_tests": {
+    "video_processor_import": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T21:06:18.335510",
+      "details": {
+        "message": "视频处理器导入成功"
+      },
+      "error": null
+    },
+    "clip_generator_import": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T21:06:18.335510",
+      "details": {
+        "message": "片段生成器导入成功"
+      },
+      "error": null
+    }
+  },
+  "length_control_tests": {
+    "rhythm_analyzer_import": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T21:06:18.335510",
+      "details": {
+        "message": "节奏分析器导入成功"
+      },
+      "error": null
+    },
+    "length_analysis_method": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T21:06:18.335510",
+      "details": {
+        "message": "长度分析方法存在"
+      },
+      "error": null
+    },
+    "segment_advisor_import": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T21:06:18.335510",
+      "details": {
+        "message": "片段建议器导入成功"
+      },
+      "error": null
+    }
+  },
+  "export_tests": {
+    "jianying_exporter_import": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T21:06:19.332440",
+      "details": {
+        "message": "剪映导出器导入成功"
+      },
+      "error": null
+    },
+    "export_project_method": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T21:06:19.332440",
+      "details": {
+        "message": "export_project方法存在"
+      },
+      "error": null
+    }
+  },
+  "overall_status": "PASS",
+  "test_end_time": "2025-07-23T21:06:19.332440",
+  "summary": {
+    "total_tests": 11,
+    "passed": 11,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "success_rate": "100.0%"
+  }
+}

@@ -1,0 +1,199 @@
+{
+  "test_start_time": "2025-07-23T20:10:28.018420",
+  "ui_tests": {
+    "main_ui_file_exists": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:10:28.019417",
+      "details": {
+        "message": "simple_ui_fixed.py文件存在"
+      },
+      "error": null
+    },
+    "ui_syntax_check": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:10:28.275758",
+      "details": {
+        "message": "UI文件语法检查通过"
+      },
+      "error": null
+    },
+    "ui_import_test": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:10:34.549835",
+      "details": {
+        "message": "UI模块导入成功"
+      },
+      "error": null
+    }
+  },
+  "core_module_tests": {
+    "language_detector": {
+      "status": "ERROR",
+      "timestamp": "2025-07-23T20:10:35.658785",
+      "details": {
+        "message": "语言检测器测试异常"
+      },
+      "error": "'LanguageDetector' object has no attribute 'detect'"
+    },
+    "model_switcher_import": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:10:35.674701",
+      "details": {
+        "message": "模型切换器导入成功"
+      },
+      "error": null
+    },
+    "srt_parser": {
+      "status": "ERROR",
+      "timestamp": "2025-07-23T20:10:35.678641",
+      "details": {
+        "message": "SRT解析器测试异常"
+      },
+      "error": "File not found: 1\n00:00:01,000 --> 00:00:03,000\n这是第一句台词\n\n2\n00:00:04,000 --> 00:00:06,000\n这是第二句台词\n"
+    },
+    "narrative_analyzer": {
+      "status": "FAIL",
+      "timestamp": "2025-07-23T20:10:35.694986",
+      "details": {
+        "message": "剧情分析器导入失败"
+      },
+      "error": "cannot import name 'NarrativeAnalyzer' from 'src.core.narrative_analyzer' (D:\\zancun\\VisionAI-ClipsMaster\\src\\core\\narrative_analyzer.py)"
+    },
+    "screenplay_engineer": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:10:35.694986",
+      "details": {
+        "message": "剧本工程师导入成功"
+      },
+      "error": null
+    }
+  },
+  "workflow_tests": {
+    "test_data_check": {
+      "status": "SKIP",
+      "timestamp": "2025-07-23T20:10:35.696012",
+      "details": {
+        "message": "测试视频文件不存在，跳过工作流程测试"
+      },
+      "error": null
+    }
+  },
+  "performance_tests": {
+    "memory_usage": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:10:35.696467",
+      "details": {
+        "message": "内存使用: 362.41MB (< 4GB)"
+      },
+      "error": null
+    },
+    "config_load_model_config.yaml": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:10:35.719327",
+      "details": {
+        "message": "configs/model_config.yaml加载成功"
+      },
+      "error": null
+    },
+    "config_load_clip_settings.json": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:10:35.735416",
+      "details": {
+        "message": "configs/clip_settings.json加载成功"
+      },
+      "error": null
+    },
+    "config_load_security_policy.json": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:10:35.748301",
+      "details": {
+        "message": "configs/security_policy.json加载成功"
+      },
+      "error": null
+    },
+    "config_load_training_policy.yaml": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:10:35.767179",
+      "details": {
+        "message": "configs/training_policy.yaml加载成功"
+      },
+      "error": null
+    }
+  },
+  "training_tests": {
+    "entrainer_import": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:10:35.769361",
+      "details": {
+        "message": "EnTrainer导入成功"
+      },
+      "error": null
+    },
+    "zhtrainer_import": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:10:35.775024",
+      "details": {
+        "message": "ZhTrainer导入成功"
+      },
+      "error": null
+    },
+    "datasplitter_import": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:10:35.777967",
+      "details": {
+        "message": "DataSplitter导入成功"
+      },
+      "error": null
+    },
+    "curriculumlearning_import": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:10:35.782287",
+      "details": {
+        "message": "CurriculumLearning导入成功"
+      },
+      "error": null
+    },
+    "training_dir_data_training_en": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:10:35.783261",
+      "details": {
+        "message": "训练数据目录data/training/en存在"
+      },
+      "error": null
+    },
+    "training_dir_data_training_zh": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:10:35.783261",
+      "details": {
+        "message": "训练数据目录data/training/zh存在"
+      },
+      "error": null
+    },
+    "training_dir_data_training_en_hit_subtitles": {
+      "status": "FAIL",
+      "timestamp": "2025-07-23T20:10:35.783261",
+      "details": {
+        "message": "训练数据目录data/training/en/hit_subtitles不存在"
+      },
+      "error": null
+    },
+    "training_dir_data_training_zh_hit_subtitles": {
+      "status": "FAIL",
+      "timestamp": "2025-07-23T20:10:35.783261",
+      "details": {
+        "message": "训练数据目录data/training/zh/hit_subtitles不存在"
+      },
+      "error": null
+    }
+  },
+  "overall_status": "ERROR",
+  "test_end_time": "2025-07-23T20:10:35.783261",
+  "summary": {
+    "total_tests": 22,
+    "passed": 16,
+    "failed": 3,
+    "errors": 2,
+    "skipped": 1,
+    "success_rate": "72.7%"
+  }
+}

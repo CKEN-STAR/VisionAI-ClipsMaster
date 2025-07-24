@@ -1,0 +1,51 @@
+{
+  "test_start_time": "2025-07-23T20:18:15.803115",
+  "memory_tests": {
+    "initial_memory": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:18:15.806763",
+      "details": {
+        "message": "初始内存: 19.28MB"
+      },
+      "error": null
+    },
+    "memory_limit_check": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:18:15.806763",
+      "details": {
+        "message": "内存使用 19.28MB < 4GB限制"
+      },
+      "error": null
+    },
+    "memory_guard_import": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:18:15.913008",
+      "details": {
+        "message": "内存监控器导入成功"
+      },
+      "error": null
+    }
+  },
+  "quantization_tests": {
+    "quant_analyzer_import": {
+      "status": "PASS",
+      "timestamp": "2025-07-23T20:18:16.552932",
+      "details": {
+        "message": "量化分析器导入成功"
+      },
+      "error": null
+    }
+  },
+  "stability_tests": {},
+  "recovery_tests": {},
+  "overall_status": "PASS",
+  "test_end_time": "2025-07-23T20:18:16.555931",
+  "summary": {
+    "total_tests": 4,
+    "passed": 4,
+    "failed": 0,
+    "warned": 0,
+    "skipped": 0,
+    "success_rate": "100.0%"
+  }
+}
