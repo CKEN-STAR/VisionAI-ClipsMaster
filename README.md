@@ -23,21 +23,21 @@
 
 ## ✨ 项目亮点
 
-🤖 **双模型AI架构**: Mistral-7B(英文) + Qwen2.5-7B(中文)，智能分析剧情结构
+-🤖 **双模型AI架构**: Mistral-7B(英文) + Qwen2.5-7B(中文)，智能分析剧情结构
 
-🎯 **智能剧本重构**: AI深度理解原始字幕，重构为病毒式传播的爆款短剧风格
+-🎯 **智能剧本重构**: AI深度理解原始字幕，重构为病毒式传播的爆款短剧风格
 
-💾 **4GB内存优化**: 专为低配设备优化，支持Q2_K/Q4_K_M/Q5_K量化模型
+-💾 **4GB内存优化**: 专为低配设备优化，支持Q2_K/Q4_K_M/Q5_K量化模型
 
-🎨 **现代化UI**: PyQt6界面，支持深色/浅色主题，响应式设计
+-🎨 **现代化UI**: PyQt6界面，支持深色/浅色主题，响应式设计
 
-⚡ **高效处理**: 精确时间轴映射(≤0.5秒误差)，零损失视频剪辑
+-⚡ **高效处理**: 精确时间轴映射(≤0.5秒误差)，零损失视频剪辑
 
-📤 **剪映导出**: 完美兼容剪映项目文件格式，无缝对接后期制作
+-📤 **剪映导出**: 完美兼容剪映项目文件格式，无缝对接后期制作
 
-🏆 **生产就绪**: EXCELLENT级别测试认证，100%功能验证通过
+-🏆 **生产就绪**: EXCELLENT级别测试认证，100%功能验证通过
 
-🔧 **体积优化**: 项目体积1.46GB，经过专业优化，高效部署
+-🔧 **体积优化**: 项目体积1.46GB，经过专业优化，高效部署
 
 
 ## 🚀 快速开始
@@ -129,8 +129,6 @@ python optimized_quick_launcher.py
 ### 🔄 持续优化
 - [ ] **模型微调**: 基于用户反馈优化AI模型
 - [ ] **批量处理**: 支持多文件并行处理
-- [ ] **云端部署**: 支持云端AI推理服务
-- [ ] **移动端适配**: 开发移动端应用
 
 ## 🎯 使用场景
 
@@ -175,7 +173,7 @@ python optimized_quick_launcher.py
 | **�🔧 开发指南** | 代码结构和开发规范 | [👨‍💻 DEVELOPMENT.md](DEVELOPMENT.md) | 开发者 |
 | **📚 API参考** | 核心模块API接口文档 | [🔌 API_REFERENCE.md](docs/API_REFERENCE.md) | 开发者/集成者 |
 | **🧪 测试指南** | 测试框架和测试用例 | [🧪 TESTING.md](docs/TESTING.md) | 开发者 |
-| **🤝 贡献指南** | 如何参与项目贡献 | [🤝 CONTRIBUTING.md](docs/CONTRIBUTING.md) | 贡献者 |
+| **🤝 贡献指南** | 如何参与项目贡献 | [🤝 CONTRIBUTING.md](CONTRIBUTING.md) | 贡献者 |
 
 ### 🚀 部署运维文档
 
@@ -391,7 +389,7 @@ pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/
 
 我们欢迎所有形式的贡献！无论是代码、文档、测试还是建议。
 
-> 📚 **完整贡献指南**: [🤝 CONTRIBUTING.md](docs/CONTRIBUTING.md) - 详细的贡献流程和规范
+> 📚 **完整贡献指南**: [🤝 CONTRIBUTING.md](CONTRIBUTING.md) - 详细的贡献流程和规范
 
 ### 🔧 开发环境设置
 
@@ -562,7 +560,7 @@ python comprehensive_production_verification_test.py
 | [📥 立即安装](INSTALLATION.md) | [🔧 开发指南](DEVELOPMENT.md) | [🏗️ 部署指南](DEPLOYMENT.md) | [❓ 常见问题](FAQ.md) |
 | [📖 使用教程](USAGE.md) | [📚 API文档](docs/API_REFERENCE.md) | [🐳 Docker部署](DEPLOYMENT.md#docker容器部署) | [🐛 报告问题](https://github.com/CKEN-STAR/VisionAI-ClipsMaster/issues) |
 | [🎬 快速开始](docs/zh/QUICKSTART.md) | [🧪 测试指南](docs/TESTING.md) | [☁️ 云端部署](DEPLOYMENT.md#云平台部署) | [💬 讨论交流](https://github.com/CKEN-STAR/VisionAI-ClipsMaster/discussions) |
-| [📚 完整文档](DOCUMENTATION_INDEX.md) | [🤝 贡献指南](docs/CONTRIBUTING.md) | [📊 性能监控](docs/PERFORMANCE.md) | [📧 邮件联系](mailto:peresbreedanay7156@gmail.com) |
+| [📚 完整文档](DOCUMENTATION_INDEX.md) | [🤝 贡献指南](CONTRIBUTING.md) | [📊 性能监控](docs/PERFORMANCE.md) | [📧 邮件联系](mailto:peresbreedanay7156@gmail.com) |
 
 ### 🌐 多语言支持
 
