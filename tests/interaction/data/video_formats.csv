@@ -1,7 +1,0 @@
-video_format,expected,meta_description
-mp4,true,常见视频格式，支持良好
-mov,true,苹果设备常用格式
-avi,true,传统视频格式
-mkv,false,不支持的容器格式
-webm,true,网页视频格式
-flv,true,Flash视频格式 

@@ -1,0 +1,68 @@
+{
+  "ui_tests": {
+    "import_simple_ui": {
+      "status": "PASS",
+      "message": "simple_ui_fixed.py 导入成功"
+    },
+    "main_window_class": {
+      "status": "PASS",
+      "message": "SimpleScreenplayApp 类存在"
+    }
+  },
+  "core_functionality_tests": {
+    "src.core.language_detector": {
+      "status": "PASS",
+      "message": "src.core.language_detector 导入成功"
+    },
+    "src.core.screenplay_engineer": {
+      "status": "PASS",
+      "message": "src.core.screenplay_engineer 导入成功"
+    },
+    "src.core.clip_generator": {
+      "status": "PASS",
+      "message": "src.core.clip_generator 导入成功"
+    },
+    "src.core.model_switcher": {
+      "status": "PASS",
+      "message": "src.core.model_switcher 导入成功"
+    },
+    "src.core.video_processor": {
+      "status": "PASS",
+      "message": "src.core.video_processor 导入成功"
+    },
+    "language_detection": {
+      "status": "FAIL",
+      "message": "语言检测失败: 'LanguageDetector' object has no attribute 'detect'"
+    },
+    "srt_parsing": {
+      "status": "FAIL",
+      "message": "SRT解析失败: File not found: 1\n00:00:01,000 --> 00:00:03,000\n这是第一句测试字幕\n\n2\n00:00:04,000 --> 00:00:06,000\nThis is the second test subtitle\n"
+    },
+    "model_loading": {
+      "status": "FAIL",
+      "message": "模型加载测试失败: 'ModelLoader' object has no attribute 'check_model_config'"
+    },
+    "video_processing": {
+      "status": "FAIL",
+      "message": "视频处理测试失败: 'VideoProcessor' object has no attribute 'check_dependencies'"
+    },
+    "training_modules": {
+      "status": "FAIL",
+      "message": "训练模块测试失败: cannot import name 'Trainer' from 'src.training.trainer' (D:\\zancun\\VisionAI-ClipsMaster\\src\\training\\trainer.py)"
+    },
+    "export_functionality": {
+      "status": "FAIL",
+      "message": "导出功能测试失败: 'JianYingProExporter' object has no attribute 'check_compatibility'"
+    }
+  },
+  "workflow_tests": {},
+  "quality_tests": {},
+  "timestamp": "2025-07-25T09:14:54.852613",
+  "overall_status": "MANY_FAILURES",
+  "test_summary": {
+    "total_tests": 13,
+    "passed_tests": 7,
+    "failed_tests": 6,
+    "pass_rate": "53.8%"
+  }
+}

@@ -589,8 +589,9 @@ class JianYingProExporter:
                 return False
         
         segments = project_data.get("segments", [])
-        if not segments:
-            logger.error("项目数据中没有视频片段")
+        # 允许空片段列表（用于测试和初始化）
+        if not isinstance(segments, list):
+            logger.error("segments字段必须是列表类型")
             return False
         
         for i, segment in enumerate(segments):

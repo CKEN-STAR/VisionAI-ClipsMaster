@@ -1,0 +1,90 @@
+{
+  "ui_tests": {
+    "import_simple_ui": {
+      "status": "PASS",
+      "message": "simple_ui_fixed.py 导入成功"
+    },
+    "main_window_class": {
+      "status": "PASS",
+      "message": "SimpleScreenplayApp 类存在"
+    },
+    "pyqt6_availability": {
+      "status": "PASS",
+      "message": "PyQt6可用，UI组件可以正常创建"
+    }
+  },
+  "core_functionality_tests": {
+    "src.core.language_detector": {
+      "status": "PASS",
+      "message": "src.core.language_detector 导入成功"
+    },
+    "src.core.screenplay_engineer": {
+      "status": "PASS",
+      "message": "src.core.screenplay_engineer 导入成功"
+    },
+    "src.core.clip_generator": {
+      "status": "PASS",
+      "message": "src.core.clip_generator 导入成功"
+    },
+    "src.core.model_switcher": {
+      "status": "PASS",
+      "message": "src.core.model_switcher 导入成功"
+    },
+    "src.core.video_processor": {
+      "status": "PASS",
+      "message": "src.core.video_processor 导入成功"
+    },
+    "language_detection": {
+      "status": "PASS",
+      "message": "语言检测功能正常 - 中文:zh, 英文:en"
+    },
+    "srt_parsing": {
+      "status": "PASS",
+      "message": "SRT解析成功，解析了2条字幕"
+    },
+    "model_loading": {
+      "status": "PASS",
+      "message": "模型内存检查: 通过 - "
+    },
+    "video_processing": {
+      "status": "PASS",
+      "message": "视频处理器初始化: 成功 - FFmpeg: 可用"
+    },
+    "training_modules": {
+      "status": "PASS",
+      "message": "训练模块初始化: 成功 - 内存管理器: 可用"
+    },
+    "export_functionality": {
+      "status": "FAIL",
+      "message": "剪映导出功能: 不可用 - 数据验证: 失败"
+    }
+  },
+  "workflow_tests": {
+    "test_data_availability": {
+      "status": "PASS",
+      "message": "测试数据目录存在: D:\\zancun\\VisionAI-ClipsMaster\\test_data"
+    },
+    "output_directory": {
+      "status": "PASS",
+      "message": "输出目录可用: D:\\zancun\\VisionAI-ClipsMaster\\output"
+    }
+  },
+  "quality_tests": {
+    "memory_management": {
+      "status": "FAIL",
+      "message": "可用内存: 1.6GB - 不足"
+    },
+    "configuration_files": {
+      "status": "PASS",
+      "message": "所有关键配置文件存在"
+    }
+  },
+  "timestamp": "2025-07-25T09:21:23.397657",
+  "overall_status": "MOSTLY_PASS",
+  "test_summary": {
+    "total_tests": 18,
+    "passed_tests": 16,
+    "failed_tests": 2,
+    "pass_rate": "88.9%"
+  }
+}

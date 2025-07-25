@@ -3273,8 +3273,8 @@ class SimpleScreenplayApp(QMainWindow):
 
         try:
             # 设置窗口属性（关键组件，立即加载）
-            self.setWindowTitle("🎬 VisionAI-ClipsMaster - AI短剧混剪大师 v1.0.1 [生产就绪版]")
-            self.resize(1024, 768)
+            self.setWindowTitle("🎬 VisionAI-ClipsMaster - AI短剧混剪大师 v1.0.1 [完美无敌版]")
+            self.resize(1350, 900)  # 增加到1350x900尺寸，保持3:2宽高比，提供更好的屏幕空间利用率
 
             # 设置窗口最小尺寸
             self.setMinimumSize(800, 600)
@@ -3335,16 +3335,11 @@ class SimpleScreenplayApp(QMainWindow):
                 print(f"[FAIL] UI组件初始化失败: {e}")
                 raise
 
-            # 设置UI样式
+            # 设置UI样式 - 强制使用传统样式以确保一致性
             try:
-                if CSS_OPTIMIZER_AVAILABLE:
-                    # 使用CSS优化器
-                    apply_optimized_styles(self)
-                    print("[OK] 优化的UI样式设置完成")
-                else:
-                    # 使用传统样式
-                    self.setup_ui_style()
-                    print("[OK] 传统UI样式设置完成")
+                # 始终使用传统样式，确保UI外观的一致性和稳定性
+                self.setup_ui_style()
+                print("[OK] 传统UI样式设置完成")
             except Exception as e:
                 print(f"[WARN] UI样式设置失败: {e}")
                 # 回退到基础样式
@@ -3790,14 +3785,11 @@ class SimpleScreenplayApp(QMainWindow):
             min-height: 32px;
             font-weight: 500;
             font-size: %dpx;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         QPushButton:hover {
             background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
                                       stop: 0 #5ba0f2, stop: 1 #4682cd);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
 
         QPushButton:pressed {
