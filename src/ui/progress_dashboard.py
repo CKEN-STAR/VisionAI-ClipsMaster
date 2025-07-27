@@ -21,7 +21,7 @@ try:
     from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
                                QLabel, QTextEdit, QProgressBar, QGroupBox,
                                QSplitter, QTabWidget, QTableWidget, QTableWidgetItem,
-                               QListWidget, QListWidgetItem, QComboBox, QFrame)
+                               QListWidget, QListWidgetItem, QComboBox, QFrame, QCheckBox)
     from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QThread, QObject
     from PyQt6.QtGui import QFont, QPalette, QColor, QPixmap, QIcon
     QT_AVAILABLE = True

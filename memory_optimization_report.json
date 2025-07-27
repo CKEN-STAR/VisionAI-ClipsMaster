@@ -1,0 +1,28 @@
+{
+  "current_memory": {
+    "physical": {
+      "total_gb": 15.733024597167969,
+      "used_gb": 12.760551452636719,
+      "available_gb": 2.97247314453125,
+      "percent": 81.1,
+      "free_gb": 2.97247314453125,
+      "cached_gb": 0.0
+    },
+    "swap": {
+      "total_gb": 10.5,
+      "used_gb": 4.8700103759765625,
+      "percent": 46.4
+    },
+    "status": "emergency"
+  },
+  "cleanup_statistics": {
+    "total_cleanups": 1,
+    "total_freed_mb": 0,
+    "average_freed_mb": 0.0
+  },
+  "recommendations": [
+    "⚠️ 内存使用较高，建议启用自动清理",
+    "🔧 使用量化模型减少内存占用",
+    "🔧 启用模型分片加载"
+  ]
+}

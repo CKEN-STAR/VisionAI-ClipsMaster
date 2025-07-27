@@ -382,13 +382,13 @@ def eliminate_all_css_warnings(file_path: str) -> dict:
     
     # 1. 移除所有CSS3不兼容属性
     css3_patterns = [
-        r'transform:[^;]+;',
-        r'box-shadow:[^;]+;',
-        r'text-shadow:[^;]+;',
-        r'transition:[^;]+;',
-        r'animation:[^;]+;',
-        r'filter:[^;]+;',
-        r'backdrop-filter:[^;]+;',
+        r'/* transform not supported in QSS */]+;',
+        r'/* box-shadow not supported in QSS - use border instead */]+;',
+        r'/* text-shadow not supported in QSS - use color/font-weight instead */]+;',
+        r'/* transition not supported in QSS */]+;',
+        r'/* animation not supported in QSS */]+;',
+        r'/* CSS property removed for QSS compatibility */]+;',
+        r'backdrop-/* CSS property removed for QSS compatibility */]+;',
         r'clip-path:[^;]+;',
         r'mask:[^;]+;',
         r'perspective:[^;]+;',

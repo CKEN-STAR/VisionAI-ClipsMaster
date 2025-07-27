@@ -1,0 +1,85 @@
+{
+  "python_environment": {
+    "python_version": "3.11.11",
+    "python_implementation": "CPython",
+    "architecture": "64bit",
+    "platform": "Windows-10-10.0.26100-SP0",
+    "executable": "C:\\Users\\13075\\Miniconda3\\python.exe",
+    "prefix": "C:\\Users\\13075\\Miniconda3",
+    "path": [
+      "D:\\zancun\\VisionAI-ClipsMaster",
+      "C:\\Users\\13075\\Miniconda3\\python311.zip",
+      "C:\\Users\\13075\\Miniconda3\\DLLs"
+    ]
+  },
+  "wmi_module_status": {
+    "import_success": false,
+    "import_error": "No module named 'wmi'",
+    "module_location": null,
+    "module_version": null,
+    "pywin32_available": true,
+    "com_available": true
+  },
+  "dependencies_check": {
+    "pywin32": {
+      "available": false,
+      "version": null,
+      "error": "No module named 'pywin32'"
+    },
+    "pythoncom": {
+      "available": true,
+      "version": "未知版本"
+    },
+    "win32com": {
+      "available": true,
+      "version": "未知版本"
+    },
+    "win32api": {
+      "available": true,
+      "version": "未知版本"
+    }
+  },
+  "installation_attempts": [
+    {
+      "method": "pip install WMI",
+      "success": false,
+      "error": "ERROR: Could not find a version that satisfies the requirement WMI (from versions: none)\nERROR: No matching distribution found for WMI\n"
+    },
+    {
+      "method": "pip install pywin32",
+      "success": true,
+      "output": "Looking in indexes: https://mirrors.aliyun.com/pypi/simple/\nRequirement already satisfied: pywin32 in c:\\users\\13075\\miniconda3\\lib\\site-packages (310)\n"
+    },
+    {
+      "method": "pip install wmi",
+      "success": false,
+      "error": "ERROR: Could not find a version that satisfies the requirement wmi (from versions: none)\nERROR: No matching distribution found for wmi\n"
+    },
+    {
+      "method": "conda install pywin32",
+      "success": false,
+      "error": "安装超时"
+    }
+  ],
+  "fix_recommendations": [
+    {
+      "priority": 1,
+      "action": "安装pywin32依赖",
+      "command": "pip install pywin32",
+      "description": "WMI模块需要pywin32作为依赖"
+    },
+    {
+      "priority": 1,
+      "action": "使用成功的安装方法: pip install pywin32",
+      "command": "pip install pywin32",
+      "description": "该方法已验证可以成功安装"
+    }
+  ],
+  "alternatives": [
+    {
+      "name": "win32com.client",
+      "success": true,
+      "description": "直接使用win32com.client访问WMI"
+    }
+  ]
+}

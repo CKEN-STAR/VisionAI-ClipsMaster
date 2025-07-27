@@ -1,0 +1,146 @@
+{
+  "test_suite": "VisionAI-ClipsMaster Core Module Tests",
+  "execution_summary": {
+    "start_time": "2025-07-26T10:51:56.966009",
+    "end_time": "2025-07-26T10:52:03.082860",
+    "total_duration": 6.116851,
+    "total_tests": 4,
+    "passed_tests": 1,
+    "failed_tests": 3,
+    "skipped_tests": 0,
+    "success_rate": 25.0
+  },
+  "performance_summary": {
+    "total_execution_time": 6.107228994369507,
+    "average_execution_time": 1.5268072485923767,
+    "max_execution_time": 4.255073547363281,
+    "min_execution_time": 0.00664520263671875
+  },
+  "detailed_results": [
+    {
+      "module": "bilingual_model_switching",
+      "test": "language_detection_accuracy",
+      "status": "FAIL",
+      "execution_time": 4.255073547363281,
+      "error_message": "语言检测准确率不达标，当前准确率: 66.67%",
+      "performance_data": {
+        "detection_results": [
+          {
+            "test_case": "pure_chinese",
+            "expected_language": "zh",
+            "detected_language": "zh",
+            "is_correct": true,
+            "confidence_score": 0.9205429053376203,
+            "confidence_threshold": 0.95,
+            "meets_threshold": false,
+            "execution_time": 0.0062983036041259766
+          },
+          {
+            "test_case": "pure_english",
+            "expected_language": "en",
+            "detected_language": "en",
+            "is_correct": true,
+            "confidence_score": 0.9555075051171398,
+            "confidence_threshold": 0.95,
+            "meets_threshold": true,
+            "execution_time": 0.0
+          },
+          {
+            "test_case": "mixed_language",
+            "expected_language": "zh",
+            "detected_language": "en",
+            "is_correct": false,
+            "confidence_score": 0.5121325870789528,
+            "confidence_threshold": 0.8,
+            "meets_threshold": false,
+            "execution_time": 0.0043828487396240234
+          }
+        ],
+        "accuracy": 0.6666666666666666,
+        "average_confidence": 0.7960609991779043,
+        "accuracy_threshold": 0.95,
+        "correct_detections": 2,
+        "total_tests": 3
+      }
+    },
+    {
+      "module": "bilingual_model_switching",
+      "test": "model_switching_performance",
+      "status": "PASS",
+      "execution_time": 0.00664520263671875,
+      "error_message": null,
+      "performance_data": {
+        "switching_results": [
+          {
+            "scenario": "初始加载中文模型",
+            "from_model": null,
+            "to_model": "zh",
+            "switch_success": true,
+            "execution_time": 0.0017278194427490234,
+            "meets_timeout": true,
+            "timeout_threshold": 1.5
+          },
+          {
+            "scenario": "中文切换到英文",
+            "from_model": "zh",
+            "to_model": "en",
+            "switch_success": true,
+            "execution_time": 0.0,
+            "meets_timeout": true,
+            "timeout_threshold": 1.5
+          },
+          {
+            "scenario": "英文切换到中文",
+            "from_model": "en",
+            "to_model": "zh",
+            "switch_success": true,
+            "execution_time": 0.0017137527465820312,
+            "meets_timeout": true,
+            "timeout_threshold": 1.5
+          },
+          {
+            "scenario": "相同模型重复切换",
+            "from_model": "zh",
+            "to_model": "zh",
+            "switch_success": true,
+            "execution_time": 0.0,
+            "meets_timeout": true,
+            "timeout_threshold": 1.5
+          },
+          {
+            "scenario": "相同模型重复切换",
+            "from_model": "en",
+            "to_model": "en",
+            "switch_success": true,
+            "execution_time": 0.0,
+            "meets_timeout": true,
+            "timeout_threshold": 1.5
+          }
+        ],
+        "successful_switches": 5,
+        "total_switches": 5,
+        "success_rate": 1.0,
+        "average_switch_time": 0.0006883144378662109,
+        "max_switch_time": 0.0017278194427490234,
+        "timeout_compliance_rate": 1.0,
+        "timeout_threshold": 1.5
+      }
+    },
+    {
+      "module": "bilingual_model_switching",
+      "test": "model_generation_quality",
+      "status": "FAIL",
+      "execution_time": 1.8383276462554932,
+      "error_message": "测试执行异常: Can't instantiate abstract class BaseLLM with abstract methods generate, load, tokenize",
+      "performance_data": {}
+    },
+    {
+      "module": "bilingual_model_switching",
+      "test": "mixed_language_processing",
+      "status": "FAIL",
+      "execution_time": 0.007182598114013672,
+      "error_message": "测试执行异常: 'EnhancedLanguageDetector' object has no attribute 'detect_mixed_language'",
+      "performance_data": {}
+    }
+  ]
+}

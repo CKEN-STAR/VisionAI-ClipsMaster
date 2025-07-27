@@ -17,7 +17,6 @@ import glob
 from pathlib import Path
 
 # 导入相关模块
-from src.core.screenplay_engineer import import_srt
 from src.utils.log_handler import get_logger
 
 # 配置日志
@@ -309,7 +308,8 @@ class ClipGenerator:
     def generate_from_srt(self, video_path: str, srt_path: str, output_path: str) -> Dict[str, Any]:
         """根据SRT字幕文件生成混剪视频"""
         try:
-            subtitle_segments = import_srt(srt_path)
+            from src.core.srt_parser import parse_srt
+            subtitle_segments = parse_srt(srt_path)
             if not subtitle_segments:
                 return {'status': 'error', 'error': f"SRT文件导入失败或为空: {srt_path}"}
             return self.generate_clips(video_path, subtitle_segments, output_path)
@@ -317,11 +317,41 @@ class ClipGenerator:
             logger.error(f"通过SRT生成视频失败: {str(e)}")
             return {'status': 'error', 'error': str(e)}
     
-    def export_jianying_project(self, segments: List[Dict[str, Any]], video_path: str, 
+    def export_jianying_project(self, segments: List[Dict[str, Any]], video_path: str,
                                 output_path: str) -> bool:
         """导出剪映工程文件"""
         logger.warning("剪映工程导出功能尚未实现")
         return False
+
+    def generate_clips_from_subtitles(self, subtitle_segments: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """
+        从字幕段生成视频片段信息
+
+        Args:
+            subtitle_segments: 字幕段列表
+
+        Returns:
+            视频片段信息列表
+        """
+        try:
+            clips = []
+            for i, segment in enumerate(subtitle_segments):
+                clip = {
+                    "id": i,
+                    "start_time": segment.get("start_time", 0.0),
+                    "end_time": segment.get("end_time", 0.0),
+                    "duration": segment.get("duration", 0.0),
+                    "text": segment.get("text", ""),
+                    "source_segment": segment
+                }
+                clips.append(clip)
+
+            logger.info(f"从 {len(subtitle_segments)} 个字幕段生成了 {len(clips)} 个视频片段")
+            return clips
+
+        except Exception as e:
+            logger.error(f"从字幕生成片段失败: {e}")
+            return []
 
 
 # 创建全局单例
@@ -336,7 +366,7 @@ def generate_from_srt(video_path: str, srt_path: str, output_path: str) -> Dict[
     """便捷函数，根据SRT字幕文件生成混剪视频"""
     return clip_generator.generate_from_srt(video_path, srt_path, output_path)
 
-def export_jianying_project(segments: List[Dict[str, Any]], video_path: str, 
+def export_jianying_project(segments: List[Dict[str, Any]], video_path: str,
                            output_path: str) -> bool:
     """便捷函数，导出剪映工程文件"""
     return clip_generator.export_jianying_project(segments, video_path, output_path)

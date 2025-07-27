@@ -24,6 +24,109 @@ class SegmentAdvisor:
 
         logger.info("🎯 片段建议器初始化完成")
 
+    def suggest_segment_merging(self, segments: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """
+        建议片段合并策略
+
+        Args:
+            segments: 片段列表
+
+        Returns:
+            合并建议结果
+        """
+        try:
+            if not segments:
+                return {
+                    "status": "empty",
+                    "suggestions": [],
+                    "total_segments": 0
+                }
+
+            suggestions = []
+
+            # 分析相邻片段的合并可能性
+            for i in range(len(segments) - 1):
+                current_seg = segments[i]
+                next_seg = segments[i + 1]
+
+                # 计算时间间隔
+                current_end = current_seg.get("end_time", 0.0)
+                next_start = next_seg.get("start_time", 0.0)
+                gap = next_start - current_end
+
+                # 如果间隔很小，建议合并
+                if gap < 1.0:  # 小于1秒
+                    suggestion = {
+                        "type": "merge",
+                        "segments": [i, i + 1],
+                        "reason": f"时间间隔很小 ({gap:.2f}秒)",
+                        "confidence": 0.8 if gap < 0.5 else 0.6
+                    }
+                    suggestions.append(suggestion)
+
+                # 如果内容相关，建议合并
+                current_text = current_seg.get("text", "")
+                next_text = next_seg.get("text", "")
+
+                if self._are_texts_related(current_text, next_text):
+                    suggestion = {
+                        "type": "merge",
+                        "segments": [i, i + 1],
+                        "reason": "内容相关性高",
+                        "confidence": 0.7
+                    }
+                    suggestions.append(suggestion)
+
+            # 分析过短片段
+            for i, segment in enumerate(segments):
+                duration = segment.get("duration", 0.0)
+                if duration < 2.0:  # 小于2秒
+                    suggestion = {
+                        "type": "extend",
+                        "segments": [i],
+                        "reason": f"片段过短 ({duration:.2f}秒)",
+                        "confidence": 0.9
+                    }
+                    suggestions.append(suggestion)
+
+            return {
+                "status": "success",
+                "suggestions": suggestions,
+                "total_segments": len(segments),
+                "merge_candidates": len([s for s in suggestions if s["type"] == "merge"]),
+                "extend_candidates": len([s for s in suggestions if s["type"] == "extend"])
+            }
+
+        except Exception as e:
+            logger.error(f"片段合并建议失败: {e}")
+            return {
+                "status": "failed",
+                "suggestions": [],
+                "total_segments": len(segments),
+                "error": str(e)
+            }
+
+    def _are_texts_related(self, text1: str, text2: str) -> bool:
+        """判断两个文本是否相关"""
+        try:
+            # 简单的相关性判断
+            words1 = set(text1.split())
+            words2 = set(text2.split())
+
+            if not words1 or not words2:
+                return False
+
+            # 计算词汇重叠率
+            overlap = len(words1.intersection(words2))
+            total_unique = len(words1.union(words2))
+
+            overlap_rate = overlap / total_unique if total_unique > 0 else 0
+
+            return overlap_rate > 0.3  # 30%以上重叠认为相关
+
+        except Exception:
+            return False
+
     def suggest_optimal_segments(self, subtitles: List[Dict],
                                target_length: Tuple[int, int]) -> List[Dict]:
         """

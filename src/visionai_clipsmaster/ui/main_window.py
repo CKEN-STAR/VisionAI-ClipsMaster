@@ -220,7 +220,7 @@ from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
                            QComboBox, QGroupBox, QRadioButton, QButtonGroup, QProgressDialog, QDialog, QFrame, QSlider,
                            QTableWidget, QTableWidgetItem, QHeaderView, QLineEdit, QSpinBox, QFormLayout, QScrollArea)
 from PyQt6.QtCore import Qt, pyqtSignal, QThread, QObject, QTimer
-from PyQt6.QtGui import QFont, QAction, QIcon
+from PyQt6.QtGui import QFont, , QIcon
 
 # 导入增强模型下载器
 try:
@@ -228,7 +228,7 @@ try:
     HAS_ENHANCED_DOWNLOADER = True
 except ImportError:
     HAS_ENHANCED_DOWNLOADER = False
-    print("警告: 无法导入增强模型下载器，将使用基础下载功能")
+    print("警告: 无法导入增强模型下载器，将使用基础下载功能", QAction)
 
 # 添加一个AlertManager的替代类，用于在原始AlertManager无法初始化时作为备用
 class SimpleAlertManager:

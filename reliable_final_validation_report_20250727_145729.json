@@ -1,0 +1,98 @@
+{
+  "test_summary": {
+    "test_start_time": "2025-07-27T14:57:16.354798",
+    "test_end_time": "2025-07-27T14:57:29.445508",
+    "total_duration": 13.090710401535034,
+    "total_tests": 4,
+    "passed_tests": 4,
+    "partial_tests": 0,
+    "failed_tests": 0,
+    "success_rate": 1.0,
+    "overall_status": "优秀"
+  },
+  "performance_metrics": {
+    "max_memory_usage_mb": 307.859375,
+    "memory_within_limit": false,
+    "total_duration": 13.090710401535034
+  },
+  "test_results": {
+    "ui_components_import": {
+      "test_name": "ui_components_import",
+      "start_time": 1753599436.3547978,
+      "status": "passed",
+      "details": {
+        "ui_module_import": "success",
+        "components_imported": 6,
+        "total_components": 6,
+        "success_rate": 1.0,
+        "memory_usage_mb": 307.859375
+      },
+      "duration": 3.7026357650756836
+    },
+    "enhanced_systems": {
+      "test_name": "enhanced_systems",
+      "start_time": 1753599440.0594287,
+      "status": "passed",
+      "details": {
+        "passed_subtests": 3,
+        "total_subtests": 3,
+        "success_rate": 1.0,
+        "memory_usage_mb": 0.81640625
+      },
+      "sub_tests": {
+        "enhanced_trainer": {
+          "status": "passed",
+          "device": "cpu",
+          "batch_size": 2
+        },
+        "gpu_cpu_manager": {
+          "status": "passed",
+          "recommended_device": "cpu",
+          "batch_size": 4
+        },
+        "path_manager": {
+          "status": "passed",
+          "platform": "windows",
+          "portable_path_created": true
+        }
+      },
+      "duration": 2.904597520828247
+    },
+    "core_workflow": {
+      "test_name": "core_workflow",
+      "start_time": 1753599442.9640262,
+      "status": "passed",
+      "details": {
+        "e2e_success": true,
+        "return_code": 0,
+        "memory_usage_mb": 0.01171875
+      },
+      "duration": 6.465017080307007
+    },
+    "system_stability": {
+      "test_name": "system_stability",
+      "start_time": 1753599449.4290433,
+      "status": "passed",
+      "details": {
+        "memory_within_limit": true,
+        "current_memory_mb": 329.6328125,
+        "error_handling_ok": true,
+        "platform_info": {
+          "system": "Windows",
+          "architecture": "64bit",
+          "python_version": "3.11.11"
+        },
+        "stability_score": 1.0,
+        "memory_usage_mb": 0.00390625
+      },
+      "duration": 0.016464948654174805
+    }
+  },
+  "validation_criteria_met": {
+    "ui_startup_success": true,
+    "functional_modules_pass": true,
+    "e2e_workflow_success": true,
+    "system_stability": true,
+    "memory_usage_ok": true
+  }
+}

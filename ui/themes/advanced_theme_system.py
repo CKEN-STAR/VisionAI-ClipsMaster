@@ -274,36 +274,246 @@ class AdvancedThemeSystem(QObject):
         return self.themes.get(theme_name)
     
     def apply_theme(self, theme_name: str) -> bool:
-        """应用主题"""
+        """应用主题 - 增强版本"""
         if theme_name not in self.themes:
             print(f"[WARN] 主题不存在: {theme_name}")
             return False
-        
+
         theme_config = self.themes[theme_name]
-        
+
         try:
-            # 生成CSS样式
-            css = self._generate_theme_css(theme_config)
-            
-            # 应用到应用程序
-            app = QApplication.instance()
-            if app:
-                app.setStyleSheet(css)
-            
+            # 生成增强的CSS样式
+            css = self._generate_enhanced_theme_css(theme_config)
+
+            # 查找主窗口并应用主题
+            main_window = self._find_main_window()
+            if main_window:
+                main_window.setStyleSheet(css)
+                print(f"[OK] 主题已应用到主窗口: {theme_config.display_name}")
+            else:
+                # 备用方案：应用到整个应用程序
+                app = QApplication.instance()
+                if app:
+                    app.setStyleSheet(css)
+                    print(f"[OK] 主题已应用到应用程序: {theme_config.display_name}")
+
             # 更新当前主题
             self.current_theme = theme_name
-            
+
             # 发送信号
             self.theme_changed.emit(theme_name)
             self.theme_loaded.emit(asdict(theme_config))
-            
-            print(f"[OK] 主题已应用: {theme_config.display_name}")
+
             return True
-            
+
         except Exception as e:
             print(f"[ERROR] 应用主题失败: {e}")
             return False
-    
+
+    def _find_main_window(self):
+        """查找主窗口"""
+        try:
+            app = QApplication.instance()
+            if app:
+                for widget in app.topLevelWidgets():
+                    if hasattr(widget, 'tabs') and hasattr(widget, 'setup_ui_style'):
+                        return widget
+            return None
+        except Exception:
+            return None
+
+    def _generate_enhanced_theme_css(self, theme: ThemeConfig) -> str:
+        """生成增强的主题CSS - 与现有样式兼容"""
+        colors = theme.colors
+
+        # 安全获取颜色属性
+        primary_light = getattr(colors, 'primary_light', colors.primary)
+        primary_dark = getattr(colors, 'primary_dark', colors.primary)
+        text_secondary = getattr(colors, 'text_secondary', colors.text_primary)
+
+        css = f"""
+        /* 主窗口和基础组件 */
+        QMainWindow {{
+            background-color: {colors.background};
+            color: {colors.text_primary};
+            font-family: "{theme.font_family}";
+            font-size: {theme.font_size}pt;
+        }}
+
+        QWidget {{
+            background-color: {colors.background};
+            color: {colors.text_primary};
+        }}
+
+        /* 按钮样式 */
+        QPushButton {{
+            background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 {colors.primary}, stop: 1 {colors.primary});
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: {theme.border_radius}px;
+            font-weight: bold;
+            min-height: 25px;
+        }}
+
+        QPushButton:hover {{
+            background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 {primary_light}, stop: 1 {colors.primary});
+            border: 2px solid {colors.primary};
+        }}
+
+        QPushButton:pressed {{
+            background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                      stop: 0 {primary_dark}, stop: 1 {colors.primary});
+            border: 2px solid {primary_dark};
+        }}
+
+        /* 输入框样式 */
+        QLineEdit, QTextEdit, QComboBox {{
+            background-color: {colors.surface};
+            color: {colors.text_primary};
+            border: 1px solid {colors.border};
+            border-radius: {theme.border_radius}px;
+            padding: 6px 12px;
+            font-size: {theme.font_size}pt;
+        }}
+
+        QLineEdit:focus, QTextEdit:focus, QComboBox:focus {{
+            border: 2px solid {colors.primary};
+            background-color: {colors.surface};
+        }}
+
+        /* 标签页样式 */
+        QTabWidget::pane {{
+            border: 1px solid {colors.border};
+            background-color: {colors.surface};
+            border-radius: {theme.border_radius}px;
+        }}
+
+        QTabBar::tab {{
+            background-color: {colors.surface};
+            color: {colors.text_primary};
+            border: 1px solid {colors.border};
+            padding: 10px 20px;
+            margin-right: 2px;
+            border-top-left-radius: {theme.border_radius}px;
+            border-top-right-radius: {theme.border_radius}px;
+        }}
+
+        QTabBar::tab:selected {{
+            background-color: {colors.primary};
+            color: white;
+            border-bottom: 1px solid {colors.primary};
+        }}
+
+        QTabBar::tab:hover {{
+            background-color: {primary_light};
+            color: white;
+        }}
+
+        /* 列表和表格样式 */
+        QListWidget, QTableWidget {{
+            background-color: {colors.surface};
+            color: {colors.text_primary};
+            border: 1px solid {colors.border};
+            border-radius: {theme.border_radius}px;
+            alternate-background-color: {colors.background};
+        }}
+
+        QListWidget::item:selected, QTableWidget::item:selected {{
+            background-color: {colors.primary};
+            color: white;
+        }}
+
+        QListWidget::item:hover, QTableWidget::item:hover {{
+            background-color: {primary_light};
+            color: white;
+        }}
+
+        /* 分组框样式 */
+        QGroupBox {{
+            color: {colors.text_primary};
+            border: 2px solid {colors.border};
+            border-radius: {theme.border_radius + 1}px;
+            margin-top: 10px;
+            font-weight: bold;
+            font-size: {theme.font_size + 1}pt;
+        }}
+
+        QGroupBox::title {{
+            subcontrol-origin: margin;
+            left: 10px;
+            padding: 0 8px 0 8px;
+            color: {colors.primary};
+        }}
+
+        /* 进度条样式 */
+        QProgressBar {{
+            border: 2px solid {colors.border};
+            border-radius: {theme.border_radius}px;
+            background-color: {colors.surface};
+            color: {colors.text_primary};
+            text-align: center;
+            font-weight: bold;
+        }}
+
+        QProgressBar::chunk {{
+            background-color: {colors.primary};
+            border-radius: {theme.border_radius - 1}px;
+        }}
+
+        /* 滚动条样式 */
+        QScrollBar:vertical {{
+            background-color: {colors.surface};
+            width: 12px;
+            border-radius: 6px;
+        }}
+
+        QScrollBar::handle:vertical {{
+            background-color: {colors.primary};
+            border-radius: 6px;
+            min-height: 20px;
+        }}
+
+        QScrollBar::handle:vertical:hover {{
+            background-color: {primary_light};
+        }}
+
+        /* 菜单样式 */
+        QMenuBar {{
+            background-color: {colors.surface};
+            color: {colors.text_primary};
+            border-bottom: 1px solid {colors.border};
+        }}
+
+        QMenuBar::item:selected {{
+            background-color: {colors.primary};
+            color: white;
+        }}
+
+        QMenu {{
+            background-color: {colors.surface};
+            color: {colors.text_primary};
+            border: 1px solid {colors.border};
+            border-radius: {theme.border_radius}px;
+        }}
+
+        QMenu::item:selected {{
+            background-color: {colors.primary};
+            color: white;
+        }}
+
+        /* 状态栏样式 */
+        QStatusBar {{
+            background-color: {colors.surface};
+            color: {text_secondary};
+            border-top: 1px solid {colors.border};
+        }}
+        """
+
+        return css
+
     def _generate_theme_css(self, theme: ThemeConfig) -> str:
         """生成主题CSS"""
         colors = theme.colors

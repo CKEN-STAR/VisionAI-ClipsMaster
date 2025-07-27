@@ -9,7 +9,7 @@ import os
 import json
 from typing import List, Dict, Any, Optional
 
-from src.knowledge.graph_builder import DramaKnowledgeGraph, build_knowledge_graph
+from src.knowledge.graph_builder import KnowledgeGraph as DramaKnowledgeGraph, build_knowledge_graph
 from src.parsers.srt_decoder import SRTDecoder
 from src.api.security import api_key_auth
 from src.utils.log_handler import get_logger

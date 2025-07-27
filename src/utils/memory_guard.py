@@ -70,7 +70,84 @@ class MemoryManager:
 
 class MemoryGuard(MemoryManager):
     """内存守护器（向后兼容）"""
-    pass
+
+    def get_memory_info(self) -> Dict[str, float]:
+        """获取详细的内存信息"""
+        try:
+            import psutil
+
+            # 获取系统内存信息
+            memory = psutil.virtual_memory()
+
+            # 获取当前进程内存信息
+            process = psutil.Process()
+            process_memory = process.memory_info()
+
+            return {
+                "total_memory_gb": memory.total / (1024**3),
+                "available_memory_gb": memory.available / (1024**3),
+                "used_memory_gb": memory.used / (1024**3),
+                "memory_percent": memory.percent,
+                "process_memory_mb": process_memory.rss / (1024**2),
+                "process_memory_gb": process_memory.rss / (1024**3)
+            }
+        except Exception as e:
+            return {
+                "total_memory_gb": 0.0,
+                "available_memory_gb": 0.0,
+                "used_memory_gb": 0.0,
+                "memory_percent": 0.0,
+                "process_memory_mb": 0.0,
+                "process_memory_gb": 0.0,
+                "error": str(e)
+            }
+
+    def optimize_memory_usage(self) -> Dict[str, Any]:
+        """优化内存使用"""
+        try:
+            import gc
+
+            # 记录优化前的内存使用
+            before_memory = self.get_memory_usage()
+
+            # 执行垃圾回收
+            collected = gc.collect()
+
+            # 触发清理回调
+            self._trigger_cleanup()
+
+            # 记录优化后的内存使用
+            after_memory = self.get_memory_usage()
+
+            return {
+                "status": "success",
+                "before_memory_mb": before_memory,
+                "after_memory_mb": after_memory,
+                "freed_memory_mb": before_memory - after_memory,
+                "gc_collected": collected
+            }
+        except Exception as e:
+            return {
+                "status": "failed",
+                "error": str(e)
+            }
+
+    def check_memory_safety(self) -> bool:
+        """检查内存安全状态"""
+        try:
+            memory_info = self.get_memory_info()
+
+            # 检查系统内存使用率
+            if memory_info["memory_percent"] > 90:
+                return False
+
+            # 检查进程内存使用
+            if memory_info["process_memory_gb"] > 3.5:  # 4GB设备的安全阈值
+                return False
+
+            return True
+        except Exception:
+            return False
 
 # 全局实例
 memory_manager = MemoryManager()

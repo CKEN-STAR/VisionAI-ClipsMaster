@@ -3,6 +3,9 @@ PyQt6>=6.4.0
 psutil>=5.9.0
 GPUtil>=1.4.0
 
+# Windows Management Instrumentation for GPU detection
+WMI>=1.5.1
+
 # Optional dependencies for advanced features
 matplotlib>=3.6.0
 numpy>=1.21.0

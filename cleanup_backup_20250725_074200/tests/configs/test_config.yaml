@@ -1,5 +1,0 @@
-core:
-  max_memory: 4096
-  timeout: 30
-memory:
-  max_usage: 3500

@@ -73,6 +73,38 @@ class ModelSwitcher:
             "loaded_models": list(self.model_cache.keys())
         }
 
+    def auto_switch_model(self, text: str) -> bool:
+        """根据文本内容自动切换模型"""
+        try:
+            from .language_detector import LanguageDetector
+
+            # 检测语言
+            detector = LanguageDetector()
+            detected_language = detector.detect_language(text)
+
+            logger.info(f"检测到语言: {detected_language}, 文本: {text[:50]}...")
+
+            # 根据检测结果切换模型
+            if detected_language == 'zh':
+                return self.switch_to_chinese_model()
+            elif detected_language == 'en':
+                return self.switch_to_english_model()
+            else:
+                logger.warning(f"未知语言: {detected_language}, 保持当前模型")
+                return True
+
+        except Exception as e:
+            logger.error(f"自动模型切换失败: {e}")
+            return False
+
+    def switch_to_chinese_model(self) -> bool:
+        """切换到中文模型"""
+        return self.switch_model('zh')
+
+    def switch_to_english_model(self) -> bool:
+        """切换到英文模型"""
+        return self.switch_model('en')
+
     def check_model_availability(self) -> Dict[str, bool]:
         """检查模型可用性 - 测试API兼容方法"""
         try:

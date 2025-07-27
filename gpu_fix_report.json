@@ -1,0 +1,43 @@
+{
+  "timestamp": 1753453603.876279,
+  "gpu_detection": {
+    "gpu_available": true,
+    "gpu_type": "integrated",
+    "gpu_name": "Intel(R) Iris(R) Xe Graphics",
+    "gpu_memory_gb": 1.0,
+    "cuda_available": false,
+    "recommended_mode": "cpu",
+    "optimization_suggestions": [
+      "检测到Intel集成显卡，推荐使用CPU模式以获得最佳性能",
+      "启用Intel OpenVINO优化以加速CPU推理",
+      "使用量化模型减少内存占用",
+      "内存使用较高，启用激进内存清理策略",
+      "使用模型分片加载减少内存占用",
+      "考虑使用swap文件扩展虚拟内存"
+    ]
+  },
+  "cpu_optimization": {
+    "config": {
+      "memory_limit_gb": 3.8,
+      "max_threads": 6,
+      "batch_size": 1,
+      "enable_quantization": true,
+      "enable_memory_mapping": true,
+      "enable_sharding": true,
+      "enable_caching": true
+    },
+    "optimizations_applied": [
+      "启用内存映射减少RAM占用",
+      "启用模型量化（Q4_K_M）",
+      "设置最大线程数为6",
+      "设置批次大小为1（CPU模式优化）",
+      "启用模型分片加载",
+      "启用模型缓存机制"
+    ]
+  },
+  "system_status": {
+    "memory_usage_percent": 81.1,
+    "cpu_count": 16,
+    "platform": "Windows"
+  }
+}

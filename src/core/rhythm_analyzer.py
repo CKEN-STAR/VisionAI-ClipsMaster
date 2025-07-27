@@ -22,6 +22,81 @@ class RhythmAnalyzer:
 
         logger.info("[MUSIC] 节奏分析器初始化完成")
 
+    def analyze_rhythm(self, file_path: str) -> Dict[str, Any]:
+        """
+        分析SRT文件的节奏
+
+        Args:
+            file_path: SRT文件路径
+
+        Returns:
+            节奏分析结果
+        """
+        try:
+            from .srt_parser import SRTParser
+
+            # 解析SRT文件
+            parser = SRTParser()
+            segments = parser.parse_srt_file(file_path)
+
+            return self.analyze_segments(segments)
+
+        except Exception as e:
+            logger.error(f"节奏分析失败: {e}")
+            return {
+                "pattern_type": "unknown",
+                "average_pace": 0.0,
+                "error": str(e)
+            }
+
+    def analyze_segments(self, segments: List[Dict]) -> Dict[str, Any]:
+        """
+        分析字幕段的节奏
+
+        Args:
+            segments: 字幕段列表
+
+        Returns:
+            节奏分析结果
+        """
+        try:
+            if not segments:
+                return {
+                    "pattern_type": "empty",
+                    "average_pace": 0.0
+                }
+
+            # 计算平均节奏
+            total_duration = 0.0
+            for segment in segments:
+                duration = self._get_duration(segment)
+                total_duration += duration
+
+            average_pace = total_duration / len(segments) if segments else 0.0
+
+            # 判断节奏模式
+            if average_pace < 2.0:
+                pattern_type = "fast"
+            elif average_pace < 4.0:
+                pattern_type = "medium"
+            else:
+                pattern_type = "slow"
+
+            return {
+                "pattern_type": pattern_type,
+                "average_pace": average_pace,
+                "total_segments": len(segments),
+                "total_duration": total_duration
+            }
+
+        except Exception as e:
+            logger.error(f"段落节奏分析失败: {e}")
+            return {
+                "pattern_type": "unknown",
+                "average_pace": 0.0,
+                "error": str(e)
+            }
+
     def analyze_optimal_length(self, subtitles: List[Dict]) -> Dict[str, Any]:
         """
         分析最佳长度

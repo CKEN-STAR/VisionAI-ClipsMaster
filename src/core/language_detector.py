@@ -191,10 +191,10 @@ class LanguageDetector:
     
     def detect_from_file(self, subtitle_file: str) -> str:
         """从字幕文件检测语言
-        
+
         Args:
             subtitle_file: 字幕文件路径
-            
+
         Returns:
             语言代码 (en/zh)
         """
@@ -202,15 +202,32 @@ class LanguageDetector:
         if subtitle_file in self.cache:
             logger.debug(f"从缓存获取语言: {subtitle_file} -> {self.cache[subtitle_file]}")
             return self.cache[subtitle_file]
-        
-        # 调用检测函数
-        lang_code = detect_language(subtitle_file)
-        
-        # 更新缓存
-        self.cache[subtitle_file] = lang_code
-        self._save_cache()
-        
-        return lang_code
+
+        try:
+            # 读取字幕文件
+            with open(subtitle_file, 'r', encoding='utf-8') as f:
+                content = f.read()
+
+            # 提取纯文本
+            text_content = extract_text_from_srt(content)
+
+            if not text_content.strip():
+                logger.warning(f"字幕文件为空或无有效文本: {subtitle_file}")
+                return 'zh'  # 默认中文
+
+            # 使用改进的语言检测算法
+            lang_code = self.detect_language(text_content)
+
+            # 更新缓存
+            self.cache[subtitle_file] = lang_code
+            self._save_cache()
+
+            logger.info(f"检测到文本语言: {lang_code} (置信度: {self.get_confidence(text_content):.2f})")
+            return lang_code
+
+        except Exception as e:
+            logger.error(f"语言检测失败: {subtitle_file}, 错误: {str(e)}")
+            return 'zh'  # 默认返回中文
     
     def detect_from_text(self, text: str) -> str:
         """从文本内容检测语言

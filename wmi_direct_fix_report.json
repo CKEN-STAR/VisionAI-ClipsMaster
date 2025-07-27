@@ -1,0 +1,48 @@
+{
+  "pywin32_installation": {
+    "success": true,
+    "already_installed": true
+  },
+  "wmi_installation": {
+    "success": true,
+    "mirror": "https://pypi.tuna.tsinghua.edu.cn/simple/",
+    "output": "Looking in indexes: https://pypi.tuna.tsinghua.edu.cn/simple/\nCollecting WMI\n  Downloading https://pypi.tuna.tsinghua.edu.cn/packages/ee/b9/a80d1ed4d115dac8e2ac08d16af046a77ab58e3d186e22395bf2add24090/WMI-1.5.1-py2.py3-none-any.whl (28 kB)\nRequirement already satisfied: pywin32 in c:\\users\\13075\\miniconda3\\lib\\site-packages (from WMI) (310)\nInstalling collected packages: WMI\nSuccessfully installed WMI-1.5.1\n",
+    "method": "pip install -i https://pypi.tuna.tsinghua.edu.cn/simple/ WMI"
+  },
+  "import_verification": {
+    "import_success": true,
+    "wmi_instance_creation": true,
+    "gpu_detection_test": true,
+    "module_info": {
+      "module_file": "C:\\Users\\13075\\Miniconda3\\Lib\\site-packages\\wmi.py",
+      "module_version": "1.5.1",
+      "module_doc": "Windows Management Instrumentation (WMI) is Microsoft's answer to\nthe DMTF's Common Information Mode..."
+    },
+    "detected_gpus": [
+      {
+        "name": "Intel(R) Iris(R) Xe Graphics",
+        "driver_version": "31.0.101.3358",
+        "adapter_ram": 1073741824
+      }
+    ]
+  },
+  "functionality_test": {
+    "wmi_gpu_detection": true,
+    "core_functions": {
+      "语言检测": true,
+      "模型切换": true,
+      "剧本重构": true
+    },
+    "ui_components": {
+      "PyQt6": true,
+      "训练面板": true
+    },
+    "overall_success": true,
+    "core_success_rate": 100.0,
+    "ui_success_rate": 100.0
+  },
+  "code_fixes": {
+    "success": true,
+    "action": "无需修复，代码已正常工作"
+  }
+}

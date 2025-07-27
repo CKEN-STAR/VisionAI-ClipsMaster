@@ -1,9 +1,9 @@
 {
   "id": 1,
   "original_files": [
-    "original.srt"
+    "chinese_original.srt"
   ],
-  "viral_file": "viral.srt",
-  "original_count": 1,
-  "viral_count": 1
+  "viral_file": "chinese_viral.srt",
+  "original_count": 8,
+  "viral_count": 4
 }

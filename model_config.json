@@ -1,0 +1,196 @@
+{
+  "model_configurations": {
+    "simple_seq2seq": {
+      "name": "简单序列到序列模型",
+      "description": "基础的Seq2Seq模型，适合快速训练和测试",
+      "architecture": "seq2seq",
+      "parameters": {
+        "vocab_size": 5000,
+        "embedding_dim": 128,
+        "hidden_size": 256,
+        "num_layers": 2,
+        "dropout": 0.1
+      },
+      "training": {
+        "learning_rate": 0.001,
+        "batch_size": 32,
+        "epochs": 10,
+        "optimizer": "adam"
+      },
+      "requirements": ["torch", "numpy"],
+      "gpu_support": true,
+      "memory_requirement": "2GB"
+    },
+    "transformer_base": {
+      "name": "Transformer基础模型",
+      "description": "基于Transformer架构的文本转换模型",
+      "architecture": "transformer",
+      "parameters": {
+        "vocab_size": 10000,
+        "d_model": 512,
+        "nhead": 8,
+        "num_encoder_layers": 6,
+        "num_decoder_layers": 6,
+        "dim_feedforward": 2048,
+        "dropout": 0.1
+      },
+      "training": {
+        "learning_rate": 0.0001,
+        "batch_size": 16,
+        "epochs": 20,
+        "optimizer": "adamw",
+        "scheduler": "cosine"
+      },
+      "requirements": ["torch", "transformers", "numpy"],
+      "gpu_support": true,
+      "memory_requirement": "8GB"
+    },
+    "bert_fine_tuned": {
+      "name": "BERT微调模型",
+      "description": "基于预训练BERT的中文文本转换模型",
+      "architecture": "bert",
+      "base_model": "bert-base-chinese",
+      "parameters": {
+        "hidden_size": 768,
+        "num_attention_heads": 12,
+        "num_hidden_layers": 12,
+        "intermediate_size": 3072,
+        "max_position_embeddings": 512
+      },
+      "training": {
+        "learning_rate": 2e-5,
+        "batch_size": 8,
+        "epochs": 5,
+        "optimizer": "adamw",
+        "warmup_steps": 500
+      },
+      "requirements": ["torch", "transformers", "numpy", "tokenizers"],
+      "gpu_support": true,
+      "memory_requirement": "16GB"
+    },
+    "gpt_style": {
+      "name": "GPT风格生成模型",
+      "description": "基于GPT架构的文本生成模型，适合创意文本生成",
+      "architecture": "gpt",
+      "parameters": {
+        "vocab_size": 15000,
+        "n_embd": 768,
+        "n_head": 12,
+        "n_layer": 12,
+        "block_size": 256
+      },
+      "training": {
+        "learning_rate": 3e-4,
+        "batch_size": 4,
+        "epochs": 15,
+        "optimizer": "adamw",
+        "gradient_accumulation_steps": 4
+      },
+      "requirements": ["torch", "transformers", "numpy"],
+      "gpu_support": true,
+      "memory_requirement": "12GB"
+    }
+  },
+  "training_strategies": {
+    "basic": {
+      "name": "基础训练策略",
+      "description": "适合初学者和快速原型开发",
+      "features": [
+        "简单的损失函数",
+        "固定学习率",
+        "基础数据增强"
+      ],
+      "suitable_models": ["simple_seq2seq"]
+    },
+    "advanced": {
+      "name": "高级训练策略",
+      "description": "适合专业开发和生产环境",
+      "features": [
+        "学习率调度",
+        "梯度裁剪",
+        "早停机制",
+        "模型检查点",
+        "数据增强"
+      ],
+      "suitable_models": ["transformer_base", "bert_fine_tuned", "gpt_style"]
+    },
+    "production": {
+      "name": "生产级训练策略",
+      "description": "适合大规模部署和高性能要求",
+      "features": [
+        "分布式训练",
+        "混合精度训练",
+        "动态批处理",
+        "模型蒸馏",
+        "量化优化"
+      ],
+      "suitable_models": ["bert_fine_tuned", "gpt_style"]
+    }
+  },
+  "data_preprocessing": {
+    "chinese_text": {
+      "tokenization": "jieba",
+      "normalization": true,
+      "remove_punctuation": false,
+      "lowercase": false,
+      "max_length": 256,
+      "padding": true,
+      "truncation": true
+    },
+    "viral_enhancement": {
+      "emoji_processing": true,
+      "emotion_detection": true,
+      "keyword_extraction": true,
+      "style_transfer": true
+    }
+  },
+  "evaluation_metrics": {
+    "text_quality": [
+      "bleu_score",
+      "rouge_score",
+      "perplexity"
+    ],
+    "viral_effectiveness": [
+      "engagement_score",
+      "emotion_intensity",
+      "readability_score",
+      "viral_potential"
+    ]
+  },
+  "deployment": {
+    "inference_modes": {
+      "cpu": {
+        "description": "CPU推理模式，适合低配置环境",
+        "memory_requirement": "2GB",
+        "latency": "高",
+        "throughput": "低"
+      },
+      "gpu": {
+        "description": "GPU推理模式，适合高性能需求",
+        "memory_requirement": "4GB",
+        "latency": "低",
+        "throughput": "高"
+      },
+      "optimized": {
+        "description": "优化推理模式，使用TensorRT等加速",
+        "memory_requirement": "6GB",
+        "latency": "极低",
+        "throughput": "极高"
+      }
+    },
+    "model_formats": [
+      "pytorch",
+      "onnx",
+      "tensorrt",
+      "quantized"
+    ]
+  },
+  "version": "1.0.0",
+  "last_updated": "2025-07-27",
+  "compatibility": {
+    "python": ">=3.8",
+    "pytorch": ">=1.9.0",
+    "transformers": ">=4.0.0",
+    "cuda": ">=11.0"
+  }
+}

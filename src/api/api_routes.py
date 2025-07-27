@@ -10,7 +10,7 @@ from pydantic import UUID4
 import uuid
 import time
 import os
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 import asyncio
 
 from .schema import (
@@ -31,7 +31,7 @@ from src.api.timefold_api import (
 
 # 创建路由器
 router = APIRouter(tags=["clips"])
-logger = get_logger()
+logger = get_logger(__name__)
 
 # 内存中存储任务状态（生产环境应使用Redis等持久化）
 tasks: Dict[str, Dict] = {}

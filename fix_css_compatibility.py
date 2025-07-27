@@ -34,8 +34,8 @@ def fix_css_compatibility(file_path: str) -> dict:
     }
     
     # 1. 移除 transform 属性
-    # transform: translateY(-2px); -> 注释掉
-    transform_pattern = r'(\s*)(transform:\s*[^;]+;)'
+    # /* transform not supported in QSS */ -> 注释掉
+    transform_pattern = r'(\s*)(/* transform not supported in QSS */]+;)'
     def replace_transform(match):
         fixes_applied['transform_removed'] += 1
         indent = match.group(1)
@@ -45,8 +45,8 @@ def fix_css_compatibility(file_path: str) -> dict:
     content = re.sub(transform_pattern, replace_transform, content)
     
     # 2. 移除 box-shadow 属性
-    # box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); -> 注释掉
-    box_shadow_pattern = r'(\s*)(box-shadow:\s*[^;]+;)'
+    # /* box-shadow not supported in QSS - use border instead */ -> 注释掉
+    box_shadow_pattern = r'(\s*)(/* box-shadow not supported in QSS - use border instead */]+;)'
     def replace_box_shadow(match):
         fixes_applied['box_shadow_removed'] += 1
         indent = match.group(1)
@@ -56,8 +56,8 @@ def fix_css_compatibility(file_path: str) -> dict:
     content = re.sub(box_shadow_pattern, replace_box_shadow, content)
     
     # 3. 移除 text-shadow 属性
-    # text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); -> 注释掉
-    text_shadow_pattern = r'(\s*)(text-shadow:\s*[^;]+;)'
+    # /* text-shadow not supported in QSS - use color/font-weight instead */ -> 注释掉
+    text_shadow_pattern = r'(\s*)(/* text-shadow not supported in QSS - use color/font-weight instead */]+;)'
     def replace_text_shadow(match):
         fixes_applied['text_shadow_removed'] += 1
         indent = match.group(1)
@@ -67,8 +67,8 @@ def fix_css_compatibility(file_path: str) -> dict:
     content = re.sub(text_shadow_pattern, replace_text_shadow, content)
     
     # 4. 移除 transition 属性
-    # transition: all 0.2s ease; -> 注释掉
-    transition_pattern = r'(\s*)(transition:\s*[^;]+;)'
+    # /* transition not supported in QSS */ -> 注释掉
+    transition_pattern = r'(\s*)(/* transition not supported in QSS */]+;)'
     def replace_transition(match):
         fixes_applied['transition_removed'] += 1
         indent = match.group(1)

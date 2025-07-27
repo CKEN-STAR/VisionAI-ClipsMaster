@@ -15,7 +15,7 @@ class HTMLReport:
         self.sections = []
         self.css = """
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; background: #f8f9fa; }
-        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; /* CSS property removed for QSS compatibility */ }
         h1 { color: #0066cc; border-bottom: 2px solid #eee; padding-bottom: 10px; }
         h2 { color: #444; margin-top: 30px; border-left: 4px solid #0066cc; padding-left: 10px; }
         h3 { color: #0066cc; margin-top: 25px; }
@@ -23,7 +23,7 @@ class HTMLReport:
         .chart { width: 100%; margin: 20px 0; border: 1px solid #eee; border-radius: 5px; }
         .summary { background: #f1f8ff; padding: 15px; border-radius: 5px; margin: 20px 0; }
         .stats { display: flex; flex-wrap: wrap; gap: 20px; }
-        .stat-card { flex: 1; min-width: 200px; background: white; padding: 15px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .stat-card { flex: 1; min-width: 200px; background: white; padding: 15px; border-radius: 5px; /* CSS property removed for QSS compatibility */ }
         .good { color: #28a745; }
         .warning { color: #ffc107; }
         .error { color: #dc3545; }

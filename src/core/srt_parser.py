@@ -42,6 +42,18 @@ class SRTParser:
         """
         return parse_srt(file_path, self.encoding)
 
+    def parse_srt_file(self, file_path: str) -> List[Dict[str, Any]]:
+        """
+        解析SRT字幕文件（别名方法）
+
+        Args:
+            file_path: SRT文件路径
+
+        Returns:
+            包含字幕信息的字典列表
+        """
+        return self.parse(file_path)
+
     def parse_srt_content(self, srt_content: str) -> List[Dict[str, Any]]:
         """
         解析SRT字幕内容字符串
@@ -103,20 +115,37 @@ class SRTParser:
 
 def parse_srt(file_path: str, encoding: str = 'utf-8') -> List[Dict[str, Any]]:
     """解析SRT字幕文件
-    
+
     Args:
         file_path: SRT文件路径
         encoding: 文件编码，默认为utf-8
-    
+
     Returns:
         包含字幕信息的字典列表，每个字典包含id, start_time, end_time, text等字段
-    
+
     Raises:
         InvalidSRTError: SRT格式不正确
         FileOperationError: 文件读取错误
     """
-    decoder = SRTDecoder(file_path, encoding)
     try:
+        # 首先检查文件是否存在和是否为空
+        if not os.path.exists(file_path):
+            logger.warning(f"SRT文件不存在: {file_path}")
+            return []
+
+        # 检查文件大小
+        if os.path.getsize(file_path) == 0:
+            logger.info(f"SRT文件为空: {file_path}")
+            return []
+
+        # 检查文件内容是否只包含空白字符
+        with open(file_path, 'r', encoding=encoding) as f:
+            content = f.read().strip()
+            if not content:
+                logger.info(f"SRT文件内容为空: {file_path}")
+                return []
+
+        decoder = SRTDecoder(file_path, encoding)
         doc = decoder.parse_file()
         return [
             {
@@ -128,6 +157,14 @@ def parse_srt(file_path: str, encoding: str = 'utf-8') -> List[Dict[str, Any]]:
             }
             for subtitle in doc.subtitles
         ]
+    except InvalidSRTError as e:
+        # 如果是"No valid subtitles found"错误，返回空列表而不是抛出异常
+        if "No valid subtitles found" in str(e):
+            logger.info(f"SRT文件中没有有效字幕: {file_path}")
+            return []
+        else:
+            logger.error(f"SRT格式错误: {e}")
+            raise
     except Exception as e:
         logger.error(f"Error parsing SRT file: {str(e)}")
         raise

@@ -1,0 +1,179 @@
+{
+  "test_suite": "VisionAI-ClipsMaster Core Module Tests",
+  "execution_summary": {
+    "start_time": "2025-07-26T10:15:43.254502",
+    "end_time": "2025-07-26T10:15:44.552828",
+    "total_duration": 1.298326,
+    "total_tests": 4,
+    "passed_tests": 4,
+    "failed_tests": 0,
+    "skipped_tests": 0,
+    "success_rate": 100.0
+  },
+  "performance_summary": {
+    "total_execution_time": 1.2935748100280762,
+    "average_execution_time": 0.32339370250701904,
+    "max_execution_time": 1.291581630706787,
+    "min_execution_time": 0.0
+  },
+  "detailed_results": [
+    {
+      "module": "alignment_verification",
+      "test": "alignment_precision",
+      "status": "PASS",
+      "execution_time": 1.291581630706787,
+      "error_message": null,
+      "performance_data": {
+        "average_alignment_error": 0.24385664244188768,
+        "test_cases": [
+          {
+            "test_case": "chinese_standard",
+            "alignment_error": 0.2417056083498689,
+            "expected_precision": 0.5,
+            "precision_met": true,
+            "execution_time": 0.01635456085205078
+          },
+          {
+            "test_case": "english_standard",
+            "alignment_error": 0.2638769302182854,
+            "expected_precision": 0.5,
+            "precision_met": true,
+            "execution_time": 0.0
+          },
+          {
+            "test_case": "mixed_language",
+            "alignment_error": 0.22598738875750884,
+            "expected_precision": 0.5,
+            "precision_met": true,
+            "execution_time": 0.001001596450805664
+          }
+        ],
+        "precision_threshold": 0.5,
+        "all_cases_passed": true
+      }
+    },
+    {
+      "module": "alignment_verification",
+      "test": "dtw_algorithm",
+      "status": "PASS",
+      "execution_time": 0.0009937286376953125,
+      "error_message": null,
+      "performance_data": {
+        "dtw_results": [
+          {
+            "sequence": "short_sequence",
+            "length": 10,
+            "dtw_score": 0.986552547145419,
+            "execution_time": 0.0
+          },
+          {
+            "sequence": "medium_sequence",
+            "length": 50,
+            "dtw_score": 0.9427467623279803,
+            "execution_time": 0.0
+          },
+          {
+            "sequence": "long_sequence",
+            "length": 100,
+            "dtw_score": 0.9821611704328871,
+            "execution_time": 0.0
+          }
+        ],
+        "average_dtw_score": 0.9704868266354287,
+        "max_execution_time": 0.0
+      }
+    },
+    {
+      "module": "alignment_verification",
+      "test": "format_compatibility",
+      "status": "PASS",
+      "execution_time": 0.00099945068359375,
+      "error_message": null,
+      "performance_data": {
+        "format_results": [
+          {
+            "format": "SRT",
+            "extension": ".srt",
+            "expected_support": true,
+            "actual_support": true,
+            "compatibility_match": true
+          },
+          {
+            "format": "ASS",
+            "extension": ".ass",
+            "expected_support": true,
+            "actual_support": true,
+            "compatibility_match": true
+          },
+          {
+            "format": "JSON",
+            "extension": ".json",
+            "expected_support": true,
+            "actual_support": true,
+            "compatibility_match": true
+          },
+          {
+            "format": "VTT",
+            "extension": ".vtt",
+            "expected_support": false,
+            "actual_support": false,
+            "compatibility_match": true
+          }
+        ],
+        "compatibility_rate": 1.0
+      }
+    },
+    {
+      "module": "alignment_verification",
+      "test": "boundary_conditions",
+      "status": "PASS",
+      "execution_time": 0.0,
+      "error_message": null,
+      "performance_data": {
+        "boundary_results": [
+          {
+            "test_name": "超长视频",
+            "test_params": {
+              "duration": 7200
+            },
+            "expected_pass": true,
+            "actual_result": true,
+            "execution_time": 0.0,
+            "result_match": true
+          },
+          {
+            "test_name": "高帧率视频",
+            "test_params": {
+              "fps": 60
+            },
+            "expected_pass": true,
+            "actual_result": true,
+            "execution_time": 0.0,
+            "result_match": true
+          },
+          {
+            "test_name": "极短视频",
+            "test_params": {
+              "duration": 5
+            },
+            "expected_pass": true,
+            "actual_result": true,
+            "execution_time": 0.0,
+            "result_match": true
+          },
+          {
+            "test_name": "空字幕文件",
+            "test_params": {
+              "subtitle_count": 0
+            },
+            "expected_pass": false,
+            "actual_result": false,
+            "execution_time": 0.0,
+            "result_match": true
+          }
+        ],
+        "success_rate": 1.0
+      }
+    }
+  ]
+}

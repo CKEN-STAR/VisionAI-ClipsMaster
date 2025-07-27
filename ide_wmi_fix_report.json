@@ -1,0 +1,67 @@
+{
+  "python_interpreter_check": {
+    "executable_path": "C:\\Users\\13075\\Miniconda3\\python.exe",
+    "python_version": "3.11.11 | packaged by Anaconda, Inc. | (main, Dec 11 2024, 16:34:19) [MSC v.1929 64 bit (AMD64)]",
+    "python_path": [
+      "D:\\zancun\\VisionAI-ClipsMaster",
+      "D:\\zancun\\VisionAI-ClipsMaster",
+      "C:\\Users\\13075\\Miniconda3\\python311.zip",
+      "C:\\Users\\13075\\Miniconda3\\DLLs",
+      "C:\\Users\\13075\\Miniconda3\\Lib"
+    ],
+    "site_packages": [
+      "C:\\Users\\13075\\Miniconda3\\Lib\\site-packages",
+      "C:\\Users\\13075\\Miniconda3\\Lib\\site-packages\\win32",
+      "C:\\Users\\13075\\Miniconda3\\Lib\\site-packages\\win32\\lib",
+      "C:\\Users\\13075\\Miniconda3\\Lib\\site-packages\\Pythonwin"
+    ],
+    "wmi_in_path": true,
+    "wmi_location": "C:\\Users\\13075\\Miniconda3\\Lib\\site-packages\\wmi.py"
+  },
+  "wmi_module_verification": {
+    "import_test": true,
+    "module_location": "C:\\Users\\13075\\Miniconda3\\Lib\\site-packages\\wmi.py",
+    "module_version": "1.5.1",
+    "module_attributes": [
+      "Dispatch",
+      "GetObject",
+      "ProvideConstants",
+      "Registry",
+      "SelfDeprecatingDict",
+      "WMI",
+      "connect",
+      "connect_server",
+      "construct_moniker",
+      "from_1601"
+    ],
+    "wmi_instance_test": true,
+    "gpu_detection_test": true,
+    "detected_gpu_count": 1
+  },
+  "ide_cache_cleanup": {},
+  "module_index_refresh": {
+    "cache_invalidation": true,
+    "module_reload": true,
+    "import_after_reload": true
+  },
+  "functionality_verification": {
+    "core_functions": {
+      "语言检测": true,
+      "模型切换": true,
+      "剧本重构": true,
+      "训练功能": true,
+      "剪映导出": true
+    },
+    "ui_components": {
+      "PyQt6核心": true,
+      "训练面板": true,
+      "进度仪表板": true,
+      "实时图表": true,
+      "警报管理器": true
+    },
+    "workflow_test": {},
+    "overall_success": true,
+    "core_success_rate": 100.0,
+    "ui_success_rate": 100.0
+  }
+}

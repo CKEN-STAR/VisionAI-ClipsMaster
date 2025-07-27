@@ -1,0 +1,269 @@
+# VisionAI-ClipsMaster 测试配置文件
+# 定义所有测试模块的参数、阈值和预期结果
+
+# 全局测试配置
+global_config:
+  test_timeout_seconds: 1800  # 30分钟总超时
+  memory_limit_gb: 3.8        # 内存限制
+  temp_dir_cleanup: true      # 测试后清理临时文件
+  generate_html_report: true  # 生成HTML报告
+  log_level: "INFO"          # 日志级别
+  
+# 系统要求验证
+system_requirements:
+  min_memory_gb: 4.0
+  min_disk_space_gb: 2.0
+  min_python_version: [3, 8]
+  required_packages:
+    - "torch"
+    - "transformers" 
+    - "opencv-python"
+    - "psutil"
+    - "pyyaml"
+
+# 1. 视频-字幕映射精度验证配置
+alignment_precision_test:
+  enabled: true
+  timeout_seconds: 300
+  
+  # 精度要求
+  precision_requirements:
+    max_alignment_error_seconds: 0.5    # 最大对齐误差
+    min_accuracy_rate: 0.95             # 最小准确率
+    max_time_sequence_errors: 0         # 最大时间序列错误数
+    
+  # 测试场景
+  test_scenarios:
+    - name: "standard_alignment"
+      video_duration: 35.0
+      subtitle_duration: 34.5
+      expected_error: 0.5
+      
+    - name: "precise_alignment"
+      video_duration: 35.0
+      subtitle_duration: 35.0
+      expected_error: 0.0
+      
+    - name: "slight_drift"
+      video_duration: 35.0
+      subtitle_duration: 35.3
+      expected_error: 0.3
+      
+  # 边界条件测试
+  edge_cases:
+    - name: "very_short_segments"
+      segment_duration: 0.5
+      expected_precision: 0.1
+      
+    - name: "very_long_segments"
+      segment_duration: 45.0
+      expected_precision: 0.5
+      
+    - name: "rapid_transitions"
+      transition_gap: 0.05
+      expected_precision: 0.1
+
+# 2. AI剧本重构功能测试配置
+viral_srt_generation_test:
+  enabled: true
+  timeout_seconds: 600
+  
+  # 生成质量要求
+  quality_requirements:
+    min_generation_success_rate: 0.9    # 最小生成成功率
+    min_coherence_score: 0.7            # 最小连贯性评分
+    min_viral_feature_score: 0.75       # 最小爆款特征评分
+    min_text_quality_score: 0.8         # 最小文本质量评分
+    
+  # 时长控制要求
+  length_control:
+    min_compression_ratio: 0.3          # 最小压缩比（不能太短）
+    max_compression_ratio: 0.8          # 最大压缩比（不能太长）
+    optimal_compression_ratio: 0.5      # 最佳压缩比
+    
+  # 模型切换测试
+  model_switching:
+    max_switching_time_seconds: 1.5     # 最大切换时间
+    min_detection_accuracy: 0.85        # 最小语言检测准确率
+    
+  # 爆款特征权重
+  viral_features:
+    emotional_intensity:
+      weight: 0.3
+      threshold: 0.7
+    suspense_creation:
+      weight: 0.25
+      threshold: 0.7
+    rhythm_optimization:
+      weight: 0.2
+      threshold: 0.7
+    hook_effectiveness:
+      weight: 0.25
+      threshold: 0.7
+
+# 3. 端到端工作流集成测试配置
+system_integration_test:
+  enabled: true
+  timeout_seconds: 900
+  
+  # 工作流性能要求
+  workflow_performance:
+    max_total_processing_time: 35.0     # 最大总处理时间（秒）
+    min_workflow_success_rate: 0.9      # 最小工作流成功率
+    min_step_success_rate: 0.85         # 最小单步成功率
+    
+  # 工作流步骤配置
+  workflow_steps:
+    file_upload:
+      expected_duration: 2.0
+      success_rate: 0.98
+      
+    language_detection:
+      expected_duration: 0.5
+      success_rate: 0.95
+      
+    model_loading:
+      expected_duration: 3.0
+      success_rate: 0.92
+      
+    srt_generation:
+      expected_duration: 8.0
+      success_rate: 0.88
+      
+    video_alignment:
+      expected_duration: 5.0
+      success_rate: 0.94
+      
+    video_clipping:
+      expected_duration: 10.0
+      success_rate: 0.90
+      
+    output_generation:
+      expected_duration: 3.0
+      success_rate: 0.96
+      
+  # 剪映导出测试
+  jianying_export:
+    min_export_success_rate: 0.95       # 最小导出成功率
+    max_export_time_per_segment: 0.2    # 每片段最大导出时间
+    min_compatibility_rate: 0.95        # 最小兼容性
+    
+  # 异常恢复测试
+  recovery_mechanism:
+    max_recovery_time_multiplier: 1.5   # 最大恢复时间倍数
+    min_data_integrity: 0.9             # 最小数据完整性
+    min_checkpoint_success_rate: 0.95   # 最小检查点成功率
+    
+  # 格式兼容性测试
+  format_compatibility:
+    supported_video_formats:
+      - format: "mp4"
+        expected_compatibility: 1.0
+      - format: "avi" 
+        expected_compatibility: 0.95
+      - format: "flv"
+        expected_compatibility: 0.90
+      - format: "mov"
+        expected_compatibility: 0.85
+      - format: "mkv"
+        expected_compatibility: 0.88
+        
+    min_format_support_rate: 0.85       # 最小格式支持率
+
+# 4. 性能压力测试配置
+performance_stress_test:
+  enabled: true
+  timeout_seconds: 1200
+  
+  # 内存管理测试
+  memory_management:
+    max_memory_growth_mb: 50            # 最大内存增长
+    min_gc_efficiency: 0.8              # 最小垃圾回收效率
+    min_limit_enforcement_accuracy: 0.95 # 最小限制执行准确性
+    
+  # 压力测试场景
+  stress_scenarios:
+    large_file_processing:
+      file_size_mb: 500
+      expected_time: 120
+      memory_limit_gb: 3.5
+      
+    concurrent_processing:
+      concurrent_tasks: 3
+      expected_time: 180
+      memory_limit_gb: 3.8
+      
+    long_duration_video:
+      video_duration_min: 60
+      expected_time: 300
+      memory_limit_gb: 3.6
+
+# 5. 测试数据配置
+test_data:
+  # 中文测试数据
+  chinese_samples:
+    original_srt: "chinese_original.srt"
+    expected_viral_srt: "chinese_viral.srt"
+    video_metadata:
+      duration: 35.0
+      fps: 25.0
+      resolution: "1920x1080"
+      
+  # 英文测试数据  
+  english_samples:
+    original_srt: "english_original.srt"
+    expected_viral_srt: "english_viral.srt"
+    video_metadata:
+      duration: 35.0
+      fps: 30.0
+      resolution: "1920x1080"
+      
+  # 混合语言测试数据
+  mixed_language_samples:
+    original_srt: "mixed_language.srt"
+    target_model: "qwen2.5-7b-zh"  # 混合语言默认使用中文模型
+
+# 6. 报告生成配置
+reporting:
+  # HTML报告配置
+  html_report:
+    enabled: true
+    include_charts: true
+    include_detailed_logs: false
+    theme: "light"  # light/dark
+    
+  # JSON报告配置
+  json_report:
+    enabled: true
+    include_raw_data: true
+    compress: false
+    
+  # 性能指标配置
+  performance_metrics:
+    track_memory_usage: true
+    track_cpu_usage: true
+    track_execution_time: true
+    sample_interval_seconds: 1
+    
+  # 质量评估配置
+  quality_assessment:
+    overall_quality_weights:
+      alignment_precision: 0.3
+      viral_generation: 0.4
+      system_integration: 0.3
+      
+    performance_rating_thresholds:
+      excellent: 0.9    # A级
+      good: 0.8         # B级
+      acceptable: 0.7   # C级
+      needs_improvement: 0.6  # D级
+      # < 0.6 为F级（不合格）
+
+# 7. 清理配置
+cleanup:
+  auto_cleanup: true
+  preserve_reports: true
+  preserve_logs_count: 3  # 保留最新的3个日志文件
+  cleanup_temp_files: true
+  cleanup_test_videos: true
+  cleanup_model_cache: true

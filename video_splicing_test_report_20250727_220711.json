@@ -1,0 +1,78 @@
+{
+  "test_time": "2025-07-27T22:07:04.313294",
+  "total_tests": 6,
+  "successful_tests": 4,
+  "failed_tests": 2,
+  "test_results": {
+    "视频片段生成器功能": {
+      "status": "failed",
+      "error": "'ClipGenerator' object has no attribute 'generate_clips_from_subtitles'",
+      "traceback": "Traceback (most recent call last):\n  File \"D:\\zancun\\VisionAI-ClipsMaster\\video_splicing_test.py\", line 77, in test_clip_generator\n    clips = generator.generate_clips_from_subtitles(self.test_segments)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'ClipGenerator' object has no attribute 'generate_clips_from_subtitles'\n"
+    },
+    "对齐工程师功能": {
+      "status": "success",
+      "alignment_results": {
+        "status": "failed",
+        "aligned_segments": [],
+        "precision_rate": 0.0,
+        "average_error": 999.0,
+        "processing_time": 0.0,
+        "error": "'AlignmentPoint' object has no attribute 'original_index'"
+      },
+      "alignment_time": 0.01355743408203125
+    },
+    "片段建议器功能": {
+      "status": "success",
+      "advice_results": {
+        "status": "success",
+        "suggestions": [],
+        "total_segments": 3,
+        "merge_candidates": 0,
+        "extend_candidates": 0
+      },
+      "advice_time": 0.0
+    },
+    "视频处理功能": {
+      "status": "success",
+      "ffmpeg_available": true,
+      "processing_capabilities": {
+        "ffmpeg_available": true,
+        "ffprobe_available": true,
+        "supported_formats": [
+          "avi",
+          "avi",
+          "avi",
+          "mov",
+          "mp4",
+          "mov",
+          "mp4",
+          "mp4",
+          "mov",
+          "mp4",
+          "mov",
+          "mov"
+        ],
+        "supported_codecs": [
+          "h264",
+          "aac",
+          "aac"
+        ]
+      }
+    },
+    "导出功能": {
+      "status": "success",
+      "export_results": {
+        "success": true,
+        "file_size": 10506
+      },
+      "export_time": 0.0
+    },
+    "端到端视频拼接": {
+      "status": "failed",
+      "error": "'ClipGenerator' object has no attribute 'generate_clips_from_subtitles'",
+      "traceback": "Traceback (most recent call last):\n  File \"D:\\zancun\\VisionAI-ClipsMaster\\video_splicing_test.py\", line 300, in test_end_to_end_splicing\n    clips = generator.generate_clips_from_subtitles(self.test_segments)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nAttributeError: 'ClipGenerator' object has no attribute 'generate_clips_from_subtitles'\n"
+    }
+  },
+  "performance_metrics": {},
+  "errors": []
+}

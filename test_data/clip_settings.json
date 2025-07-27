@@ -1,9 +1,0 @@
-{
-  "target_compression_ratio": 0.6,
-  "min_segment_duration": 2.0,
-  "max_segment_duration": 10.0,
-  "transition_buffer": 0.5,
-  "quality_threshold": 0.7,
-  "emotion_weight": 0.8,
-  "narrative_weight": 0.9
-}

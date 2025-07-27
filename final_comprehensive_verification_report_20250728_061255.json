@@ -1,0 +1,124 @@
+{
+  "test_time": "2025-07-28T06:12:43.717584",
+  "total_test_categories": 4,
+  "successful_categories": 4,
+  "failed_categories": 0,
+  "test_results": {
+    "UI启动和显示功能": {
+      "status": "success",
+      "ui_tests": {
+        "pyqt6_import": "success",
+        "main_ui_import": "success",
+        "MainWindow_import": "success",
+        "TrainingPanel_import": "success",
+        "ProgressDashboard_import": "success",
+        "widget_creation": "success"
+      },
+      "startup_time": 5.211309909820557
+    },
+    "核心业务功能": {
+      "status": "success",
+      "function_tests": {
+        "srt_normal": {
+          "status": "success",
+          "segments_parsed": 9
+        },
+        "srt_empty": {
+          "status": "success",
+          "segments_parsed": 0
+        },
+        "srt_malformed": {
+          "status": "success",
+          "segments_parsed": 3
+        },
+        "narrative_analysis": {
+          "status": "success",
+          "result_type": "dict"
+        },
+        "screenplay_reconstruction": {
+          "status": "success",
+          "result_type": "dict"
+        },
+        "video_splicing": {
+          "status": "success",
+          "clips_generated": 3
+        },
+        "training": {
+          "status": "success",
+          "training_status": "success"
+        }
+      },
+      "processing_time": 5.570327520370483
+    },
+    "端到端工作流程": {
+      "status": "success",
+      "workflow_steps": {
+        "step1_parse": {
+          "status": "success",
+          "segments": 9
+        },
+        "step2_analyze": {
+          "status": "success",
+          "analysis_type": "dict"
+        },
+        "step3_reconstruct": {
+          "status": "success",
+          "reconstruction_type": "dict"
+        },
+        "step4_clips": {
+          "status": "success",
+          "clips_generated": 9
+        },
+        "step5_export": {
+          "status": "success",
+          "export_success": true,
+          "output_file_exists": true
+        }
+      },
+      "total_workflow_time": 0.10940814018249512,
+      "workflow_success_rate": 100.0
+    },
+    "系统稳定性和可靠性": {
+      "status": "success",
+      "stability_tests": {
+        "memory_stability": {
+          "status": "success",
+          "memory_increase_mb": 0.0,
+          "initial_memory_mb": 510.13671875,
+          "final_memory_mb": 510.13671875
+        },
+        "error_recovery": {
+          "status": "success",
+          "recovery_rate": 100.0,
+          "successful_recoveries": 3,
+          "total_tests": 3
+        },
+        "concurrent_processing": {
+          "status": "success",
+          "success_rate": 100.0,
+          "successful_threads": 5,
+          "total_threads": 5
+        },
+        "long_run_stability": {
+          "status": "success",
+          "success_rate": 100.0,
+          "successful_runs": 20,
+          "total_runs": 20
+        }
+      },
+      "reliability_metrics": {
+        "test_duration": 0.5497334003448486,
+        "overall_stability_score": 100.0
+      }
+    }
+  },
+  "performance_metrics": {
+    "total_test_time": 11.44941234588623
+  },
+  "errors": [],
+  "cleanup_status": {
+    "files_deleted": 6,
+    "directories_deleted": 1,
+    "cleanup_errors": []
+  }
+}

@@ -24,7 +24,7 @@ import platform
 import psutil
 
 from loguru import logger
-from src.utils.log_handler import LogHandler
+from src.utils.log_handler import get_logger
 
 # 可选依赖 - 如果已安装则导入
 try:
@@ -52,7 +52,7 @@ class APIMonitor:
             influx_config: InfluxDB配置，包含url、token、org和bucket等字段
                            如果为None，则不使用InfluxDB
         """
-        self.log_handler = LogHandler()
+        self.logger = get_logger(__name__)
         self.metrics_lock = threading.RLock()
         
         # 性能指标内存缓存 - 用于实时统计
@@ -124,11 +124,7 @@ class APIMonitor:
         success = 200 <= status_code < 400
         
         # 记录到日志
-        self.log_handler.log_performance_metric(
-            metric_name=f"api_{path.replace('/', '_')}",
-            value=latency,
-            unit="ms"
-        )
+        self.logger.info(f"API性能指标 - {path}: {latency}ms, 状态码: {status_code}")
         
         # 更新内存缓存
         with self.metrics_lock:

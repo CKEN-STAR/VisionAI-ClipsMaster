@@ -95,6 +95,54 @@ class MemoryManager:
 
         return False
 
+    def force_cleanup(self) -> Dict[str, Any]:
+        """
+        强制清理内存 - 为测试兼容性添加的方法
+
+        Returns:
+            Dict[str, Any]: 清理结果统计
+        """
+        print("🧹 执行强制内存清理...")
+
+        # 记录清理前状态
+        before_memory = self.get_current_memory_usage()
+
+        # 执行多轮垃圾回收
+        total_collected = 0
+        for i in range(5):  # 执行5轮清理
+            collected = gc.collect()
+            total_collected += collected
+            time.sleep(0.01)  # 短暂等待
+
+        # 清理Python内部缓存
+        try:
+            import sys
+            if hasattr(sys, 'intern'):
+                # 清理字符串intern缓存（如果可能）
+                pass
+        except:
+            pass
+
+        # 记录清理后状态
+        after_memory = self.get_current_memory_usage()
+
+        cleanup_result = {
+            "total_objects_collected": total_collected,
+            "memory_before_gb": before_memory["current_gb"],
+            "memory_after_gb": after_memory["current_gb"],
+            "memory_freed_gb": before_memory["current_gb"] - after_memory["current_gb"],
+            "cleanup_rounds": 5,
+            "success": True
+        }
+
+        print(f"✅ 强制清理完成:")
+        print(f"   回收对象: {total_collected}")
+        print(f"   释放内存: {cleanup_result['memory_freed_gb']:.3f}GB")
+        print(f"   清理前: {cleanup_result['memory_before_gb']:.2f}GB")
+        print(f"   清理后: {cleanup_result['memory_after_gb']:.2f}GB")
+
+        return cleanup_result
+
 class ModelTrainer:
     """通用模型训练器 - 集成内存管理和错误处理"""
 

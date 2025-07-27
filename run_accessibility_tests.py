@@ -98,7 +98,7 @@ def generate_html_report(test_results, output_path):
             background: white;
             padding: 15px;
             border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            /* CSS property removed for QSS compatibility */
         }}
         .success {{
             color: #28A745;
