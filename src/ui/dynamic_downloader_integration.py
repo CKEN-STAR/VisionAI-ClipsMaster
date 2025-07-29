@@ -21,6 +21,37 @@ sys.path.insert(0, str(project_root))
 
 logger = logging.getLogger(__name__)
 
+class DynamicDownloaderIntegrationManager(QObject):
+    """动态下载器集成管理器 - 主管理类"""
+
+    download_completed = pyqtSignal(str, bool)  # 下载完成信号
+    hardware_changed = pyqtSignal(object)  # 硬件变化信号
+    recommendation_updated = pyqtSignal(str, object)  # 推荐更新信号
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.parent_widget = parent
+        self.integration = DynamicDownloaderIntegration(parent)
+
+        # 连接信号
+        self.integration.download_completed.connect(self.download_completed)
+        self.integration.hardware_changed.connect(self.hardware_changed)
+        self.integration.recommendation_updated.connect(self.recommendation_updated)
+
+        logger.info("动态下载器集成管理器初始化完成")
+
+    def show_smart_downloader(self, model_name: str = None):
+        """显示智能下载器"""
+        return self.integration.show_smart_downloader(model_name)
+
+    def refresh_hardware_info(self):
+        """刷新硬件信息"""
+        return self.integration.refresh_hardware_info()
+
+    def get_recommendation(self, model_name: str):
+        """获取推荐"""
+        return self.integration.get_recommendation(model_name)
+
 class DynamicDownloaderIntegration(QObject):
     """动态下载器集成管理器"""
     

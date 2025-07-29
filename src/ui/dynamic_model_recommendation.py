@@ -448,3 +448,33 @@ class DynamicModelRecommendationWidget(QWidget):
         if 0 <= current_row < len(self.current_variants):
             return self.current_variants[current_row]
         return None
+
+    def stop_recommendation(self):
+        """停止推荐线程"""
+        try:
+            if self.recommendation_worker:
+                self.recommendation_worker.is_cancelled = True
+
+            if hasattr(self, 'recommendation_thread') and self.recommendation_thread and self.recommendation_thread.isRunning():
+                self.recommendation_thread.quit()
+                if not self.recommendation_thread.wait(3000):  # 等待3秒
+                    logger.warning("推荐线程未能在3秒内正常退出，强制终止")
+                    self.recommendation_thread.terminate()
+                    self.recommendation_thread.wait(1000)  # 再等待1秒
+
+            # 清理引用
+            self.recommendation_worker = None
+            if hasattr(self, 'recommendation_thread'):
+                self.recommendation_thread = None
+
+            logger.info("推荐线程已停止")
+
+        except Exception as e:
+            logger.error(f"停止推荐线程失败: {e}")
+
+    def __del__(self):
+        """析构函数，确保资源清理"""
+        try:
+            self.stop_recommendation()
+        except:
+            pass  # 析构函数中忽略异常

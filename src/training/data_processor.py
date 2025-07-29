@@ -31,9 +31,15 @@ class TrainingDataProcessor:
             processed_data = []
             
             for item in training_data:
+                # 支持多种字段名格式
+                original_text = item.get("original_text", item.get("original", ""))
+                viral_text = item.get("viral_text", item.get("viral", ""))
+
                 processed_item = {
-                    "original_text": item.get("original_text", ""),
-                    "viral_text": item.get("viral_text", ""),
+                    "original": original_text,  # 训练器期望的字段名
+                    "viral": viral_text,        # 训练器期望的字段名
+                    "original_text": original_text,  # 保持兼容性
+                    "viral_text": viral_text,        # 保持兼容性
                     "engagement_score": item.get("engagement_score", 0.0),
                     "category": item.get("category", "unknown"),
                     "features": self._extract_features(item)
@@ -50,9 +56,9 @@ class TrainingDataProcessor:
     def _extract_features(self, item: Dict[str, Any]) -> List[float]:
         """提取特征"""
         try:
-            # 简单的特征提取
-            original_text = item.get("original_text", "")
-            viral_text = item.get("viral_text", "")
+            # 简单的特征提取，支持多种字段名格式
+            original_text = item.get("original_text", item.get("original", ""))
+            viral_text = item.get("viral_text", item.get("viral", ""))
             
             features = [
                 len(original_text),  # 原文长度

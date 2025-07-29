@@ -1,0 +1,409 @@
+{
+  "version": "3.0.0",
+  "type": "draft_content",
+  "platform": "windows",
+  "create_time": 1753695981274139,
+  "update_time": 1753695981314970,
+  "created_time": 1753695981274,
+  "last_modified": 1753695981274,
+  "app_version": "剪映专业版 3.0.0",
+  "id": "bf6938a8-b3f0-4e9c-a9e1-2bfec0b78b41",
+  "project_id": "bf6938a8-b3f0-4e9c-a9e1-2bfec0b78b41",
+  "draft_id": "bf6938a8-b3f0-4e9c-a9e1-2bfec0b78b41",
+  "draft_name": "VisionAI混剪项目",
+  "project_name": "VisionAI爆款短剧混剪",
+  "timeline": {
+    "duration": 0,
+    "tracks": [],
+    "fps": 30,
+    "resolution": "1920x1080"
+  },
+  "export_settings": {
+    "resolution": "1920x1080",
+    "fps": 30,
+    "bitrate": "8000k",
+    "format": "mp4",
+    "quality": "high"
+  },
+  "canvas_config": {
+    "height": 1080,
+    "width": 1920,
+    "duration": 6000,
+    "fps": 30,
+    "ratio": "16:9"
+  },
+  "tracks": [
+    {
+      "id": "c1b8ce74-fe15-408e-8ce4-e1d82a1e45e2",
+      "type": "video",
+      "attribute": 0,
+      "flag": 0,
+      "segments": [
+        {
+          "id": "c1de1cf7-d188-452d-b320-0b8dfbd8d11b",
+          "type": "video",
+          "material_id": "video_material_0",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 0,
+            "duration": 2000
+          },
+          "target_timerange": {
+            "start": 0,
+            "duration": 2000
+          },
+          "extra_material_refs": [],
+          "uniform_scale": {
+            "on": true,
+            "value": 1.0
+          },
+          "transform": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 1.0,
+            "height": 1.0
+          },
+          "visible": true,
+          "volume": 1.0
+        },
+        {
+          "id": "3b028c07-2180-4852-9f63-7bad962269f3",
+          "type": "video",
+          "material_id": "video_material_1",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 2000,
+            "duration": 2000
+          },
+          "target_timerange": {
+            "start": 2000,
+            "duration": 2000
+          },
+          "extra_material_refs": [],
+          "uniform_scale": {
+            "on": true,
+            "value": 1.0
+          },
+          "transform": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 1.0,
+            "height": 1.0
+          },
+          "visible": true,
+          "volume": 1.0
+        },
+        {
+          "id": "8c423f93-795e-40ad-a05c-d44170d0dd9f",
+          "type": "video",
+          "material_id": "video_material_2",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 4000,
+            "duration": 2000
+          },
+          "target_timerange": {
+            "start": 4000,
+            "duration": 2000
+          },
+          "extra_material_refs": [],
+          "uniform_scale": {
+            "on": true,
+            "value": 1.0
+          },
+          "transform": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 1.0,
+            "height": 1.0
+          },
+          "visible": true,
+          "volume": 1.0
+        }
+      ]
+    },
+    {
+      "id": "0fa6f3e5-8daa-4939-949d-2248842af3d4",
+      "type": "audio",
+      "attribute": 0,
+      "flag": 0,
+      "segments": [
+        {
+          "id": "b5efc4fa-9070-4c09-b9fc-164a2612c996",
+          "type": "audio",
+          "material_id": "audio_material_0",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 0,
+            "duration": 2000
+          },
+          "target_timerange": {
+            "start": 0,
+            "duration": 2000
+          },
+          "extra_material_refs": [],
+          "volume": 1.0,
+          "speed": 1.0,
+          "visible": true
+        },
+        {
+          "id": "ff54cdd6-0e33-43ea-b80e-1b92e49c0391",
+          "type": "audio",
+          "material_id": "audio_material_1",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 2000,
+            "duration": 2000
+          },
+          "target_timerange": {
+            "start": 2000,
+            "duration": 2000
+          },
+          "extra_material_refs": [],
+          "volume": 1.0,
+          "speed": 1.0,
+          "visible": true
+        },
+        {
+          "id": "2f86e8ab-93ab-4894-a44b-de4601e22b0d",
+          "type": "audio",
+          "material_id": "audio_material_2",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 4000,
+            "duration": 2000
+          },
+          "target_timerange": {
+            "start": 4000,
+            "duration": 2000
+          },
+          "extra_material_refs": [],
+          "volume": 1.0,
+          "speed": 1.0,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "460fcb2c-9aa4-4cfd-9eb7-eae7e806338b",
+      "type": "text",
+      "attribute": 0,
+      "flag": 0,
+      "segments": [
+        {
+          "id": "39696874-57a2-4ebf-840b-92273924b005",
+          "type": "text",
+          "material_id": "text_material_0",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 0,
+            "duration": 2000
+          },
+          "target_timerange": {
+            "start": 0,
+            "duration": 2000
+          },
+          "extra_material_refs": [],
+          "content": "字幕片段 1",
+          "style": {
+            "font_size": 24,
+            "font_color": "#FFFFFF",
+            "background_color": "#00000080",
+            "alignment": "center"
+          },
+          "visible": true
+        },
+        {
+          "id": "9239bf22-b9b4-473c-a4a8-8166fdf88132",
+          "type": "text",
+          "material_id": "text_material_1",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 0,
+            "duration": 2000
+          },
+          "target_timerange": {
+            "start": 2000,
+            "duration": 2000
+          },
+          "extra_material_refs": [],
+          "content": "字幕片段 2",
+          "style": {
+            "font_size": 24,
+            "font_color": "#FFFFFF",
+            "background_color": "#00000080",
+            "alignment": "center"
+          },
+          "visible": true
+        },
+        {
+          "id": "bed378b5-8944-40cf-834a-34b418ba27ba",
+          "type": "text",
+          "material_id": "text_material_2",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 0,
+            "duration": 2000
+          },
+          "target_timerange": {
+            "start": 4000,
+            "duration": 2000
+          },
+          "extra_material_refs": [],
+          "content": "字幕片段 3",
+          "style": {
+            "font_size": 24,
+            "font_color": "#FFFFFF",
+            "background_color": "#00000080",
+            "alignment": "center"
+          },
+          "visible": true
+        }
+      ]
+    }
+  ],
+  "materials": {
+    "videos": [
+      {
+        "id": "video_material_0",
+        "type": "video",
+        "path": "",
+        "duration": 2000,
+        "width": 1920,
+        "height": 1080,
+        "fps": 30,
+        "format": "mp4",
+        "codec": "h264",
+        "bitrate": "2000k",
+        "create_time": 1753695981314970,
+        "file_size": 0
+      },
+      {
+        "id": "video_material_1",
+        "type": "video",
+        "path": "",
+        "duration": 2000,
+        "width": 1920,
+        "height": 1080,
+        "fps": 30,
+        "format": "mp4",
+        "codec": "h264",
+        "bitrate": "2000k",
+        "create_time": 1753695981314970,
+        "file_size": 0
+      },
+      {
+        "id": "video_material_2",
+        "type": "video",
+        "path": "",
+        "duration": 2000,
+        "width": 1920,
+        "height": 1080,
+        "fps": 30,
+        "format": "mp4",
+        "codec": "h264",
+        "bitrate": "2000k",
+        "create_time": 1753695981314970,
+        "file_size": 0
+      }
+    ],
+    "audios": [
+      {
+        "id": "audio_material_0",
+        "type": "audio",
+        "path": "",
+        "duration": 2000,
+        "sample_rate": 44100,
+        "channels": 2,
+        "format": "aac",
+        "codec": "aac",
+        "bitrate": "128k",
+        "create_time": 1753695981314970
+      },
+      {
+        "id": "audio_material_1",
+        "type": "audio",
+        "path": "",
+        "duration": 2000,
+        "sample_rate": 44100,
+        "channels": 2,
+        "format": "aac",
+        "codec": "aac",
+        "bitrate": "128k",
+        "create_time": 1753695981314970
+      },
+      {
+        "id": "audio_material_2",
+        "type": "audio",
+        "path": "",
+        "duration": 2000,
+        "sample_rate": 44100,
+        "channels": 2,
+        "format": "aac",
+        "codec": "aac",
+        "bitrate": "128k",
+        "create_time": 1753695981314970
+      }
+    ],
+    "texts": [
+      {
+        "id": "text_material_0",
+        "type": "text",
+        "content": "字幕片段 1",
+        "font_family": "Microsoft YaHei",
+        "font_size": 24,
+        "font_color": "#FFFFFF",
+        "background_color": "#00000080",
+        "alignment": "center",
+        "bold": false,
+        "italic": false,
+        "underline": false,
+        "create_time": 1753695981314970
+      },
+      {
+        "id": "text_material_1",
+        "type": "text",
+        "content": "字幕片段 2",
+        "font_family": "Microsoft YaHei",
+        "font_size": 24,
+        "font_color": "#FFFFFF",
+        "background_color": "#00000080",
+        "alignment": "center",
+        "bold": false,
+        "italic": false,
+        "underline": false,
+        "create_time": 1753695981314970
+      },
+      {
+        "id": "text_material_2",
+        "type": "text",
+        "content": "字幕片段 3",
+        "font_family": "Microsoft YaHei",
+        "font_size": 24,
+        "font_color": "#FFFFFF",
+        "background_color": "#00000080",
+        "alignment": "center",
+        "bold": false,
+        "italic": false,
+        "underline": false,
+        "create_time": 1753695981314970
+      }
+    ],
+    "effects": [],
+    "stickers": [],
+    "images": [],
+    "sounds": []
+  },
+  "extra_info": {
+    "export_range": {
+      "start": 0,
+      "end": 6000
+    },
+    "fps": 30,
+    "audio_sample_rate": 44100,
+    "video_codec": "h264",
+    "audio_codec": "aac"
+  },
+  "keyframes": [],
+  "relations": []
+}

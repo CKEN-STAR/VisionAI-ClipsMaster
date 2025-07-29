@@ -39,8 +39,16 @@ class SRTParser:
 
         Returns:
             包含字幕信息的字典列表
+
+        Raises:
+            FileOperationError: 文件读取错误
+            InvalidSRTError: SRT格式不正确
         """
-        return parse_srt(file_path, self.encoding)
+        try:
+            return parse_srt(file_path, self.encoding)
+        except Exception as e:
+            logger.error(f"SRTParser解析失败: {file_path}, 错误: {e}")
+            raise
 
     def parse_srt_file(self, file_path: str) -> List[Dict[str, Any]]:
         """
@@ -124,68 +132,120 @@ def parse_srt(file_path: str, encoding: str = 'utf-8') -> List[Dict[str, Any]]:
         包含字幕信息的字典列表，每个字典包含id, start_time, end_time, text等字段
 
     Raises:
-        InvalidSRTError: SRT格式不正确
         FileOperationError: 文件读取错误
+        InvalidSRTError: SRT格式不正确
     """
     try:
-        # 首先检查文件是否存在和是否为空
+        # 首先检查文件是否存在
         if not os.path.exists(file_path):
-            logger.warning(f"SRT文件不存在: {file_path}")
-            return []
+            error_msg = f"SRT文件不存在: {file_path}"
+            logger.error(error_msg)
+            raise FileOperationError(error_msg)
+
+        # 检查文件是否可读
+        if not os.access(file_path, os.R_OK):
+            error_msg = f"SRT文件无法读取: {file_path}"
+            logger.error(error_msg)
+            raise FileOperationError(error_msg)
 
         # 检查文件大小
-        if os.path.getsize(file_path) == 0:
-            logger.info(f"SRT文件为空: {file_path}")
-            return []
+        try:
+            file_size = os.path.getsize(file_path)
+            if file_size == 0:
+                logger.warning(f"SRT文件为空: {file_path}")
+                return []
+        except OSError as e:
+            error_msg = f"无法获取文件大小: {file_path}, 错误: {e}"
+            logger.error(error_msg)
+            raise FileOperationError(error_msg)
 
         # 检查文件内容是否只包含空白字符
-        with open(file_path, 'r', encoding=encoding) as f:
-            content = f.read().strip()
-            if not content:
-                logger.info(f"SRT文件内容为空: {file_path}")
+        try:
+            with open(file_path, 'r', encoding=encoding) as f:
+                content = f.read().strip()
+                if not content:
+                    logger.warning(f"SRT文件内容为空: {file_path}")
+                    return []
+        except UnicodeDecodeError as e:
+            error_msg = f"SRT文件编码错误: {file_path}, 编码: {encoding}, 错误: {e}"
+            logger.error(error_msg)
+            raise FileOperationError(error_msg)
+        except IOError as e:
+            error_msg = f"SRT文件读取失败: {file_path}, 错误: {e}"
+            logger.error(error_msg)
+            raise FileOperationError(error_msg)
+
+        # 使用SRTDecoder解析文件
+        try:
+            decoder = SRTDecoder(file_path, encoding)
+            doc = decoder.parse_file()
+
+            # 检查是否解析出有效字幕
+            if not doc or not hasattr(doc, 'subtitles') or not doc.subtitles:
+                logger.warning(f"SRT文件中没有有效字幕: {file_path}")
                 return []
 
-        decoder = SRTDecoder(file_path, encoding)
-        doc = decoder.parse_file()
-        return [
-            {
-                "id": subtitle.index,
-                "start_time": subtitle.start_time.total_seconds(),
-                "end_time": subtitle.end_time.total_seconds(),
-                "duration": subtitle.duration.total_seconds(),
-                "text": subtitle.content
-            }
-            for subtitle in doc.subtitles
-        ]
-    except InvalidSRTError as e:
-        # 如果是"No valid subtitles found"错误，返回空列表而不是抛出异常
-        if "No valid subtitles found" in str(e):
-            logger.info(f"SRT文件中没有有效字幕: {file_path}")
-            return []
-        else:
-            logger.error(f"SRT格式错误: {e}")
-            raise
-    except Exception as e:
-        logger.error(f"Error parsing SRT file: {str(e)}")
+            return [
+                {
+                    "id": subtitle.index,
+                    "start_time": subtitle.start_time.total_seconds(),
+                    "end_time": subtitle.end_time.total_seconds(),
+                    "duration": subtitle.duration.total_seconds(),
+                    "text": subtitle.content
+                }
+                for subtitle in doc.subtitles
+            ]
+        except InvalidSRTError as e:
+            # 如果是"No valid subtitles found"错误，返回空列表而不是抛出异常
+            if "No valid subtitles found" in str(e):
+                logger.warning(f"SRT文件中没有有效字幕: {file_path}")
+                return []
+            else:
+                logger.error(f"SRT格式错误: {file_path}, 错误: {e}")
+                raise
+        except Exception as e:
+            error_msg = f"SRT解析过程中发生未知错误: {file_path}, 错误: {e}"
+            logger.error(error_msg)
+            raise FileOperationError(error_msg)
+
+    except (FileOperationError, InvalidSRTError):
+        # 重新抛出已知的异常
         raise
+    except Exception as e:
+        # 捕获所有其他异常并包装为FileOperationError
+        error_msg = f"SRT文件处理失败: {file_path}, 错误: {e}"
+        logger.error(error_msg)
+        raise FileOperationError(error_msg)
 
 
 def auto_detect_parse_srt(file_path: str) -> List[Dict[str, Any]]:
     """自动检测编码并解析SRT字幕文件
-    
+
     Args:
         file_path: SRT文件路径
-    
+
     Returns:
         包含字幕信息的字典列表，每个字典包含id, start_time, end_time, text等字段
-    
+
     Raises:
-        InvalidSRTError: SRT格式不正确
         FileOperationError: 文件读取错误
+        InvalidSRTError: SRT格式不正确
     """
-    decoder = SRTDecoder(file_path)
     try:
+        # 首先检查文件是否存在
+        if not os.path.exists(file_path):
+            error_msg = f"SRT文件不存在: {file_path}"
+            logger.error(error_msg)
+            raise FileOperationError(error_msg)
+
+        decoder = SRTDecoder(file_path)
         doc = decoder.auto_decode()
+
+        # 检查是否解析出有效字幕
+        if not doc or not hasattr(doc, 'subtitles') or not doc.subtitles:
+            logger.warning(f"SRT文件中没有有效字幕: {file_path}")
+            return []
+
         return [
             {
                 "id": subtitle.index,
@@ -196,31 +256,47 @@ def auto_detect_parse_srt(file_path: str) -> List[Dict[str, Any]]:
             }
             for subtitle in doc.subtitles
         ]
-    except Exception as e:
-        logger.error(f"Error auto-parsing SRT file: {str(e)}")
+    except (FileOperationError, InvalidSRTError):
+        # 重新抛出已知的异常
         raise
+    except Exception as e:
+        error_msg = f"自动检测解析SRT文件失败: {file_path}, 错误: {e}"
+        logger.error(error_msg)
+        raise FileOperationError(error_msg)
 
 
 def parse_subtitle(file_path: str, auto_detect_format: bool = True) -> List[Dict[str, Any]]:
     """解析各种格式的字幕文件
-    
+
     支持SRT, ASS/SSA, VTT, JSON等格式，会自动检测格式或根据文件扩展名判断
-    
+
     Args:
         file_path: 字幕文件路径
         auto_detect_format: 是否自动检测字幕格式，如果为False则根据扩展名判断
-    
+
     Returns:
         包含字幕信息的字典列表，每个字典包含id, start_time, end_time, text等字段
-    
+
     Raises:
+        FileOperationError: 文件读取错误
         ValueError: 不支持的字幕格式
         InvalidSRTError: 字幕格式不正确
-        FileOperationError: 文件读取错误
     """
     try:
+        # 首先检查文件是否存在
+        if not os.path.exists(file_path):
+            error_msg = f"字幕文件不存在: {file_path}"
+            logger.error(error_msg)
+            raise FileOperationError(error_msg)
+
         parser = create_parser(file_path, auto_detect_format)
         doc = parser.parse_file()
+
+        # 检查是否解析出有效字幕
+        if not doc or not hasattr(doc, 'subtitles') or not doc.subtitles:
+            logger.warning(f"字幕文件中没有有效字幕: {file_path}")
+            return []
+
         return [
             {
                 "id": subtitle.index,
@@ -231,25 +307,37 @@ def parse_subtitle(file_path: str, auto_detect_format: bool = True) -> List[Dict
             }
             for subtitle in doc.subtitles
         ]
-    except Exception as e:
-        logger.error(f"Error parsing subtitle file: {str(e)}")
+    except (FileOperationError, ValueError, InvalidSRTError):
+        # 重新抛出已知的异常
         raise
+    except Exception as e:
+        error_msg = f"解析字幕文件失败: {file_path}, 错误: {e}"
+        logger.error(error_msg)
+        raise FileOperationError(error_msg)
 
 
 def is_valid_srt(file_path: str) -> bool:
     """检查文件是否是有效的SRT格式
-    
+
     Args:
         file_path: SRT文件路径
-    
+
     Returns:
         是否是有效的SRT格式
     """
-    if not os.path.exists(file_path):
-        return False
-    
     try:
-        parse_srt(file_path)
-        return True
-    except Exception:
+        # 检查文件是否存在
+        if not os.path.exists(file_path):
+            return False
+
+        # 检查文件是否可读
+        if not os.access(file_path, os.R_OK):
+            return False
+
+        # 尝试解析SRT文件
+        result = parse_srt(file_path)
+        # 如果解析成功且有内容，则认为是有效的
+        return isinstance(result, list)
+    except Exception as e:
+        logger.debug(f"SRT文件验证失败: {file_path}, 错误: {e}")
         return False

@@ -343,9 +343,13 @@ class EnhancedSmartDownloaderDialog(QDialog):
             # 停止硬件监控
             if self.hardware_widget:
                 self.hardware_widget.stop_monitoring()
-            
+
+            # 停止推荐线程
+            if self.recommendation_widget:
+                self.recommendation_widget.stop_recommendation()
+
             super().closeEvent(event)
-            
+
         except Exception as e:
             logger.error(f"关闭对话框失败: {e}")
             super().closeEvent(event)

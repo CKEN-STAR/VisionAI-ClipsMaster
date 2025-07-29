@@ -66,6 +66,9 @@ class AlignmentPoint:
     boundary_type: BoundaryType            # 边界类型
     is_critical: bool = False              # 是否为关键点
     adjustment_reason: str = ""            # 调整原因
+    original_index: int = 0                # 原始索引
+    reconstructed_index: int = 0           # 重构索引
+    time_error: float = 0.0                # 时间误差
 
 @dataclass
 class VideoSegment:
@@ -805,8 +808,19 @@ class PrecisionAlignmentEngineer:
                 # 创建视频片段（如果有对应的字幕）
                 if orig_idx < len(original_subtitles):
                     orig_sub = original_subtitles[orig_idx]
-                    start_time = self._parse_time_string(orig_sub.get('start', '0'))
-                    end_time = self._parse_time_string(orig_sub.get('end', '0'))
+
+                    # 确保orig_sub是字典类型
+                    if isinstance(orig_sub, dict):
+                        start_time = self._parse_time_string(orig_sub.get('start', '0'))
+                        end_time = self._parse_time_string(orig_sub.get('end', '0'))
+                    elif hasattr(orig_sub, 'start_time') and hasattr(orig_sub, 'end_time'):
+                        # 如果是对象类型，直接使用属性
+                        start_time = float(orig_sub.start_time)
+                        end_time = float(orig_sub.end_time)
+                    else:
+                        # 默认值
+                        start_time = 0.0
+                        end_time = 1.0
 
                     segment = VideoSegment(
                         start_time=start_time,

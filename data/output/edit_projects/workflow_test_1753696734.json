@@ -1,0 +1,409 @@
+{
+  "version": "3.0.0",
+  "type": "draft_content",
+  "platform": "windows",
+  "create_time": 1753696734309357,
+  "update_time": 1753696734359304,
+  "created_time": 1753696734309,
+  "last_modified": 1753696734309,
+  "app_version": "剪映专业版 3.0.0",
+  "id": "6eaec81e-3f16-4cc7-bd22-f32cedb26550",
+  "project_id": "6eaec81e-3f16-4cc7-bd22-f32cedb26550",
+  "draft_id": "6eaec81e-3f16-4cc7-bd22-f32cedb26550",
+  "draft_name": "VisionAI混剪项目",
+  "project_name": "VisionAI爆款短剧混剪",
+  "timeline": {
+    "duration": 0,
+    "tracks": [],
+    "fps": 30,
+    "resolution": "1920x1080"
+  },
+  "export_settings": {
+    "resolution": "1920x1080",
+    "fps": 30,
+    "bitrate": "8000k",
+    "format": "mp4",
+    "quality": "high"
+  },
+  "canvas_config": {
+    "height": 1080,
+    "width": 1920,
+    "duration": 6000,
+    "fps": 30,
+    "ratio": "16:9"
+  },
+  "tracks": [
+    {
+      "id": "85b533cc-fe04-4344-9a2d-4be060c1e450",
+      "type": "video",
+      "attribute": 0,
+      "flag": 0,
+      "segments": [
+        {
+          "id": "60ce7500-dc22-4c93-b5b8-6ef08e569173",
+          "type": "video",
+          "material_id": "video_material_0",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 0,
+            "duration": 2000
+          },
+          "target_timerange": {
+            "start": 0,
+            "duration": 2000
+          },
+          "extra_material_refs": [],
+          "uniform_scale": {
+            "on": true,
+            "value": 1.0
+          },
+          "transform": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 1.0,
+            "height": 1.0
+          },
+          "visible": true,
+          "volume": 1.0
+        },
+        {
+          "id": "135f45f3-2680-4067-ada7-4abd919792b0",
+          "type": "video",
+          "material_id": "video_material_1",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 2000,
+            "duration": 2000
+          },
+          "target_timerange": {
+            "start": 2000,
+            "duration": 2000
+          },
+          "extra_material_refs": [],
+          "uniform_scale": {
+            "on": true,
+            "value": 1.0
+          },
+          "transform": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 1.0,
+            "height": 1.0
+          },
+          "visible": true,
+          "volume": 1.0
+        },
+        {
+          "id": "30e4ca0f-0440-4e66-9087-8fe3fc98fa7b",
+          "type": "video",
+          "material_id": "video_material_2",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 4000,
+            "duration": 2000
+          },
+          "target_timerange": {
+            "start": 4000,
+            "duration": 2000
+          },
+          "extra_material_refs": [],
+          "uniform_scale": {
+            "on": true,
+            "value": 1.0
+          },
+          "transform": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 1.0,
+            "height": 1.0
+          },
+          "visible": true,
+          "volume": 1.0
+        }
+      ]
+    },
+    {
+      "id": "539ee113-ae74-4c7c-8ad0-5103f72c7b58",
+      "type": "audio",
+      "attribute": 0,
+      "flag": 0,
+      "segments": [
+        {
+          "id": "de07073e-f84a-455e-9c96-17b1ea7e7fa5",
+          "type": "audio",
+          "material_id": "audio_material_0",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 0,
+            "duration": 2000
+          },
+          "target_timerange": {
+            "start": 0,
+            "duration": 2000
+          },
+          "extra_material_refs": [],
+          "volume": 1.0,
+          "speed": 1.0,
+          "visible": true
+        },
+        {
+          "id": "6e354436-74c8-4557-aeeb-0ffb95308f07",
+          "type": "audio",
+          "material_id": "audio_material_1",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 2000,
+            "duration": 2000
+          },
+          "target_timerange": {
+            "start": 2000,
+            "duration": 2000
+          },
+          "extra_material_refs": [],
+          "volume": 1.0,
+          "speed": 1.0,
+          "visible": true
+        },
+        {
+          "id": "20ef3b63-2185-4832-94b9-e41fa6df25ea",
+          "type": "audio",
+          "material_id": "audio_material_2",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 4000,
+            "duration": 2000
+          },
+          "target_timerange": {
+            "start": 4000,
+            "duration": 2000
+          },
+          "extra_material_refs": [],
+          "volume": 1.0,
+          "speed": 1.0,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "1a046987-f28a-4e06-b77a-0dab5e53070a",
+      "type": "text",
+      "attribute": 0,
+      "flag": 0,
+      "segments": [
+        {
+          "id": "3fdea13c-58a9-453d-922e-46cf7ab71676",
+          "type": "text",
+          "material_id": "text_material_0",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 0,
+            "duration": 2000
+          },
+          "target_timerange": {
+            "start": 0,
+            "duration": 2000
+          },
+          "extra_material_refs": [],
+          "content": "字幕片段 1",
+          "style": {
+            "font_size": 24,
+            "font_color": "#FFFFFF",
+            "background_color": "#00000080",
+            "alignment": "center"
+          },
+          "visible": true
+        },
+        {
+          "id": "3a82a199-5f29-4355-beac-af1ecbc6a9b8",
+          "type": "text",
+          "material_id": "text_material_1",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 0,
+            "duration": 2000
+          },
+          "target_timerange": {
+            "start": 2000,
+            "duration": 2000
+          },
+          "extra_material_refs": [],
+          "content": "字幕片段 2",
+          "style": {
+            "font_size": 24,
+            "font_color": "#FFFFFF",
+            "background_color": "#00000080",
+            "alignment": "center"
+          },
+          "visible": true
+        },
+        {
+          "id": "05aac26d-95f8-4026-a493-eedc23fcfac9",
+          "type": "text",
+          "material_id": "text_material_2",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 0,
+            "duration": 2000
+          },
+          "target_timerange": {
+            "start": 4000,
+            "duration": 2000
+          },
+          "extra_material_refs": [],
+          "content": "字幕片段 3",
+          "style": {
+            "font_size": 24,
+            "font_color": "#FFFFFF",
+            "background_color": "#00000080",
+            "alignment": "center"
+          },
+          "visible": true
+        }
+      ]
+    }
+  ],
+  "materials": {
+    "videos": [
+      {
+        "id": "video_material_0",
+        "type": "video",
+        "path": "data/test/workflow\\test_story.mp4",
+        "duration": 2000,
+        "width": 1920,
+        "height": 1080,
+        "fps": 30,
+        "format": "mp4",
+        "codec": "h264",
+        "bitrate": "2000k",
+        "create_time": 1753696734359304,
+        "file_size": 0
+      },
+      {
+        "id": "video_material_1",
+        "type": "video",
+        "path": "data/test/workflow\\test_story.mp4",
+        "duration": 2000,
+        "width": 1920,
+        "height": 1080,
+        "fps": 30,
+        "format": "mp4",
+        "codec": "h264",
+        "bitrate": "2000k",
+        "create_time": 1753696734359304,
+        "file_size": 0
+      },
+      {
+        "id": "video_material_2",
+        "type": "video",
+        "path": "data/test/workflow\\test_story.mp4",
+        "duration": 2000,
+        "width": 1920,
+        "height": 1080,
+        "fps": 30,
+        "format": "mp4",
+        "codec": "h264",
+        "bitrate": "2000k",
+        "create_time": 1753696734359304,
+        "file_size": 0
+      }
+    ],
+    "audios": [
+      {
+        "id": "audio_material_0",
+        "type": "audio",
+        "path": "data/test/workflow\\test_story.mp4",
+        "duration": 2000,
+        "sample_rate": 44100,
+        "channels": 2,
+        "format": "aac",
+        "codec": "aac",
+        "bitrate": "128k",
+        "create_time": 1753696734359304
+      },
+      {
+        "id": "audio_material_1",
+        "type": "audio",
+        "path": "data/test/workflow\\test_story.mp4",
+        "duration": 2000,
+        "sample_rate": 44100,
+        "channels": 2,
+        "format": "aac",
+        "codec": "aac",
+        "bitrate": "128k",
+        "create_time": 1753696734359304
+      },
+      {
+        "id": "audio_material_2",
+        "type": "audio",
+        "path": "data/test/workflow\\test_story.mp4",
+        "duration": 2000,
+        "sample_rate": 44100,
+        "channels": 2,
+        "format": "aac",
+        "codec": "aac",
+        "bitrate": "128k",
+        "create_time": 1753696734359304
+      }
+    ],
+    "texts": [
+      {
+        "id": "text_material_0",
+        "type": "text",
+        "content": "字幕片段 1",
+        "font_family": "Microsoft YaHei",
+        "font_size": 24,
+        "font_color": "#FFFFFF",
+        "background_color": "#00000080",
+        "alignment": "center",
+        "bold": false,
+        "italic": false,
+        "underline": false,
+        "create_time": 1753696734359304
+      },
+      {
+        "id": "text_material_1",
+        "type": "text",
+        "content": "字幕片段 2",
+        "font_family": "Microsoft YaHei",
+        "font_size": 24,
+        "font_color": "#FFFFFF",
+        "background_color": "#00000080",
+        "alignment": "center",
+        "bold": false,
+        "italic": false,
+        "underline": false,
+        "create_time": 1753696734359304
+      },
+      {
+        "id": "text_material_2",
+        "type": "text",
+        "content": "字幕片段 3",
+        "font_family": "Microsoft YaHei",
+        "font_size": 24,
+        "font_color": "#FFFFFF",
+        "background_color": "#00000080",
+        "alignment": "center",
+        "bold": false,
+        "italic": false,
+        "underline": false,
+        "create_time": 1753696734359304
+      }
+    ],
+    "effects": [],
+    "stickers": [],
+    "images": [],
+    "sounds": []
+  },
+  "extra_info": {
+    "export_range": {
+      "start": 0,
+      "end": 6000
+    },
+    "fps": 30,
+    "audio_sample_rate": 44100,
+    "video_codec": "h264",
+    "audio_codec": "aac"
+  },
+  "keyframes": [],
+  "relations": []
+}

@@ -125,21 +125,57 @@ class HardwareDetector:
         }
     
     def recommend_model_config(self) -> Dict:
-        """根据硬件能力推荐最佳模型配置"""
+        """根据硬件能力推荐最佳模型配置 - 增强版本"""
         config = {}
-        
-        # 确定量化等级
+
+        # 获取硬件信息
         memory_gb = self.memory_info.get('total_gb', 0)
+        available_gb = self.memory_info.get('available_gb', 0)
+        gpu_available = self.gpu_info.get('available', False)
+        gpu_type = self.gpu_info.get('type', 'Unknown')
+        cpu_cores = self.cpu_info.get('cores_logical', 0)
+
+        # 增强的量化等级推荐逻辑
         if memory_gb < 4:
-            config['quantization'] = 'Q2_K'  # 极低内存设备
-            config['model_size'] = 'nano'  # 使用最小模型
+            # 极低内存设备 (<4GB)
+            config['quantization'] = 'Q2_K'
+            config['model_size'] = 'nano'
             config['warning'] = '设备内存不足4GB，将使用最低配置，性能可能受限'
+            config['device_category'] = 'low_memory'
         elif memory_gb < 8:
-            config['quantization'] = 'Q4_K_M'  # 低内存设备
+            # 低内存设备 (4-8GB)
+            if gpu_available and gpu_type in ['CUDA', 'NVIDIA']:
+                config['quantization'] = 'Q4_K_M'  # GPU可以补偿一些性能
+            else:
+                config['quantization'] = 'Q2_K'  # CPU-only设备使用更轻量级
             config['model_size'] = 'base'
+            config['device_category'] = 'low_memory'
+        elif memory_gb < 16:
+            # 中等内存设备 (8-16GB)
+            if gpu_available and gpu_type in ['CUDA', 'NVIDIA']:
+                config['quantization'] = 'Q5_K_M'  # 独立GPU可以使用更高质量
+            elif gpu_available:
+                config['quantization'] = 'Q4_K_M'  # 集成GPU使用平衡配置
+            else:
+                config['quantization'] = 'Q4_K_M'  # CPU-only使用平衡配置
+            config['model_size'] = 'base'
+            config['device_category'] = 'medium_performance'
+        elif memory_gb < 32:
+            # 高内存设备 (16-32GB)
+            if gpu_available and gpu_type in ['CUDA', 'NVIDIA']:
+                config['quantization'] = 'Q8_0'  # 高质量量化
+            else:
+                config['quantization'] = 'Q5_K_M'
+            config['model_size'] = 'large'
+            config['device_category'] = 'high_performance'
         else:
-            config['quantization'] = 'Q5_K_M'  # 内存充足
-            config['model_size'] = 'base'
+            # 超高性能设备 (>32GB)
+            if gpu_available and gpu_type in ['CUDA', 'NVIDIA']:
+                config['quantization'] = 'FP16'  # 最高质量
+            else:
+                config['quantization'] = 'Q8_0'
+            config['model_size'] = 'large'
+            config['device_category'] = 'ultra_high_performance'
             
         # GPU加速设置
         if self.gpu_info.get('available', False):
@@ -168,21 +204,104 @@ class HardwareDetector:
                 config['cpu_optimization'] = 'basic'
                 config['warning'] = '未检测到高级CPU指令集，性能可能受限'
                 
-        # 设置批处理大小
+        # 增强的批处理大小设置
         if memory_gb < 4:
             config['batch_size'] = 1
         elif memory_gb < 8:
-            config['batch_size'] = 2
+            config['batch_size'] = 2 if not gpu_available else 4
+        elif memory_gb < 16:
+            config['batch_size'] = 4 if not gpu_available else 8
         else:
-            config['batch_size'] = 4
-            
-        # 模型加载策略
+            config['batch_size'] = 8 if not gpu_available else 16
+
+        # 增强的模型加载策略
         if memory_gb < 6:
             config['loading_strategy'] = 'disk_offload'  # 磁盘分片加载
+        elif memory_gb < 12:
+            config['loading_strategy'] = 'memory_mapped'  # 内存映射
         else:
-            config['loading_strategy'] = 'normal'
+            config['loading_strategy'] = 'full_memory'  # 全内存加载
+
+        # 添加性能预期
+        config['performance_tier'] = self._calculate_performance_tier(memory_gb, gpu_available, gpu_type, cpu_cores)
+
+        # 添加推荐理由
+        config['recommendation_reason'] = self._generate_recommendation_reason(config)
             
         return config
+
+    def _calculate_performance_tier(self, memory_gb: float, gpu_available: bool, gpu_type: str, cpu_cores: int) -> str:
+        """计算设备性能等级"""
+        score = 0
+
+        # 内存评分 (0-40分)
+        if memory_gb >= 32:
+            score += 40
+        elif memory_gb >= 16:
+            score += 30
+        elif memory_gb >= 8:
+            score += 20
+        elif memory_gb >= 4:
+            score += 10
+
+        # GPU评分 (0-40分)
+        if gpu_available:
+            if gpu_type in ['CUDA', 'NVIDIA']:
+                score += 40  # 独立NVIDIA GPU
+            elif gpu_type in ['AMD', 'Radeon']:
+                score += 30  # AMD GPU
+            else:
+                score += 15  # 集成GPU
+
+        # CPU评分 (0-20分)
+        if cpu_cores >= 16:
+            score += 20
+        elif cpu_cores >= 8:
+            score += 15
+        elif cpu_cores >= 4:
+            score += 10
+        else:
+            score += 5
+
+        # 根据总分确定等级
+        if score >= 80:
+            return "ultra_high"
+        elif score >= 60:
+            return "high"
+        elif score >= 40:
+            return "medium"
+        elif score >= 20:
+            return "low"
+        else:
+            return "minimal"
+
+    def _generate_recommendation_reason(self, config: Dict) -> str:
+        """生成推荐理由"""
+        memory_gb = self.memory_info.get('total_gb', 0)
+        gpu_available = self.gpu_info.get('available', False)
+        gpu_type = self.gpu_info.get('type', 'Unknown')
+        quantization = config.get('quantization', 'Unknown')
+
+        reasons = []
+
+        # 内存相关理由
+        if memory_gb < 8:
+            reasons.append(f"内存{memory_gb:.1f}GB较少，推荐轻量级{quantization}量化")
+        elif memory_gb >= 32:
+            reasons.append(f"内存{memory_gb:.1f}GB充足，可使用高质量{quantization}量化")
+        else:
+            reasons.append(f"内存{memory_gb:.1f}GB适中，推荐平衡的{quantization}量化")
+
+        # GPU相关理由
+        if gpu_available:
+            if gpu_type in ['CUDA', 'NVIDIA']:
+                reasons.append("检测到NVIDIA GPU，可使用GPU加速")
+            else:
+                reasons.append(f"检测到{gpu_type} GPU，提供基础加速")
+        else:
+            reasons.append("未检测到GPU，使用CPU优化配置")
+
+        return "; ".join(reasons)
     
     def is_compatible(self) -> Tuple[bool, str]:
         """检查设备是否满足最低要求"""

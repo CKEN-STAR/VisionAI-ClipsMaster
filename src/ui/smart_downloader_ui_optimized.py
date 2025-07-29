@@ -519,6 +519,35 @@ class DynamicRecommendationWidget(QFrame):
         return self.recommendation_info.copy()
 
 
+class OptimizedSmartDownloaderDialog(QDialog):
+    """优化的智能推荐下载器对话框"""
+
+    download_requested = pyqtSignal(str, dict)  # 下载请求信号
+
+    def __init__(self, model_name: str, parent=None):
+        super().__init__(parent)
+        self.model_name = model_name
+        self.dialog = SmartDownloaderDialog(model_name, parent)
+
+        # 连接信号
+        self.dialog.download_requested.connect(self.download_requested)
+
+        # 设置窗口属性
+        self.setWindowTitle(f"优化智能下载器 - {model_name}")
+        self.setModal(True)
+
+    def show_intelligent_recommendation(self):
+        """显示智能推荐"""
+        return self.dialog.show_intelligent_recommendation()
+
+    def update_recommendation(self, recommendation):
+        """更新推荐"""
+        return self.dialog.update_recommendation(recommendation)
+
+    def exec(self):
+        """执行对话框"""
+        return self.dialog.exec()
+
 class SmartDownloaderDialog(QDialog):
     """智能推荐下载器对话框 - 优化版本"""
 

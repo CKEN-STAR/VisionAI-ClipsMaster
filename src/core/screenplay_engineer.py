@@ -490,7 +490,7 @@ class ScreenplayEngineer:
             return 1.0
 
     def _generate_new_timeline(self, segments: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """生成新的时间轴"""
+        """生成新的时间轴 - 修复：改进时长计算逻辑"""
         try:
             timeline = {
                 "segments": [],
@@ -499,10 +499,25 @@ class ScreenplayEngineer:
             }
 
             current_time = 0.0
-            segment_duration = 2.0  # 每个片段默认2秒
 
             for i, segment in enumerate(segments):
                 original_subtitle = segment["subtitle"]
+
+                # 修复：计算更合理的片段时长
+                original_duration = original_subtitle.get("end_time", 0) - original_subtitle.get("start_time", 0)
+
+                # 使用原始时长，但限制在合理范围内（1-5秒）
+                if original_duration > 0:
+                    segment_duration = max(1.0, min(5.0, original_duration))
+                else:
+                    # 根据文本长度估算时长
+                    text_length = len(original_subtitle.get("text", ""))
+                    if text_length <= 10:
+                        segment_duration = 1.5
+                    elif text_length <= 20:
+                        segment_duration = 2.5
+                    else:
+                        segment_duration = 3.5
 
                 # 计算新的时间点
                 start_time = current_time
@@ -516,6 +531,7 @@ class ScreenplayEngineer:
                     "duration": segment_duration,
                     "original_start": original_subtitle.get("start_time", 0),
                     "original_end": original_subtitle.get("end_time", 0),
+                    "original_duration": original_duration,  # 修复：保留原始时长信息
                     "text": original_subtitle.get("text", ""),
                     "type": segment.get("type", ""),
                     "viral_score": segment.get("viral_score", 0.5)

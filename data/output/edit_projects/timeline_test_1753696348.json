@@ -1,0 +1,409 @@
+{
+  "version": "3.0.0",
+  "type": "draft_content",
+  "platform": "windows",
+  "create_time": 1753696348388550,
+  "update_time": 1753696348391274,
+  "created_time": 1753696348388,
+  "last_modified": 1753696348388,
+  "app_version": "剪映专业版 3.0.0",
+  "id": "cd1c9536-7051-4bc8-9427-d6b2759bb6f1",
+  "project_id": "cd1c9536-7051-4bc8-9427-d6b2759bb6f1",
+  "draft_id": "cd1c9536-7051-4bc8-9427-d6b2759bb6f1",
+  "draft_name": "VisionAI混剪项目",
+  "project_name": "VisionAI爆款短剧混剪",
+  "timeline": {
+    "duration": 0,
+    "tracks": [],
+    "fps": 30,
+    "resolution": "1920x1080"
+  },
+  "export_settings": {
+    "resolution": "1920x1080",
+    "fps": 30,
+    "bitrate": "8000k",
+    "format": "mp4",
+    "quality": "high"
+  },
+  "canvas_config": {
+    "height": 1080,
+    "width": 1920,
+    "duration": 10800,
+    "fps": 30,
+    "ratio": "16:9"
+  },
+  "tracks": [
+    {
+      "id": "cc2566fd-4600-47e1-ad4d-fcc9a947b454",
+      "type": "video",
+      "attribute": 0,
+      "flag": 0,
+      "segments": [
+        {
+          "id": "f16c8f10-d23d-4074-a77d-f4ebe2e21be5",
+          "type": "video",
+          "material_id": "video_material_0",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 0,
+            "duration": 3500
+          },
+          "target_timerange": {
+            "start": 0,
+            "duration": 3500
+          },
+          "extra_material_refs": [],
+          "uniform_scale": {
+            "on": true,
+            "value": 1.0
+          },
+          "transform": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 1.0,
+            "height": 1.0
+          },
+          "visible": true,
+          "volume": 1.0
+        },
+        {
+          "id": "0f7fbc2d-1323-468c-b8a4-340850ebfcab",
+          "type": "video",
+          "material_id": "video_material_1",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 3500,
+            "duration": 3700
+          },
+          "target_timerange": {
+            "start": 3500,
+            "duration": 3700
+          },
+          "extra_material_refs": [],
+          "uniform_scale": {
+            "on": true,
+            "value": 1.0
+          },
+          "transform": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 1.0,
+            "height": 1.0
+          },
+          "visible": true,
+          "volume": 1.0
+        },
+        {
+          "id": "4c80cda0-4ea9-4f4d-84dd-e1020302a7f1",
+          "type": "video",
+          "material_id": "video_material_2",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 7200,
+            "duration": 3600
+          },
+          "target_timerange": {
+            "start": 7200,
+            "duration": 3600
+          },
+          "extra_material_refs": [],
+          "uniform_scale": {
+            "on": true,
+            "value": 1.0
+          },
+          "transform": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 1.0,
+            "height": 1.0
+          },
+          "visible": true,
+          "volume": 1.0
+        }
+      ]
+    },
+    {
+      "id": "3313040f-a2b9-4508-a574-e85a38376f96",
+      "type": "audio",
+      "attribute": 0,
+      "flag": 0,
+      "segments": [
+        {
+          "id": "5816c940-ea72-4177-ae9f-661978ff7ad6",
+          "type": "audio",
+          "material_id": "audio_material_0",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 0,
+            "duration": 3500
+          },
+          "target_timerange": {
+            "start": 0,
+            "duration": 3500
+          },
+          "extra_material_refs": [],
+          "volume": 1.0,
+          "speed": 1.0,
+          "visible": true
+        },
+        {
+          "id": "40092de1-a782-46a0-9a07-9e7cc9e48152",
+          "type": "audio",
+          "material_id": "audio_material_1",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 3500,
+            "duration": 3700
+          },
+          "target_timerange": {
+            "start": 3500,
+            "duration": 3700
+          },
+          "extra_material_refs": [],
+          "volume": 1.0,
+          "speed": 1.0,
+          "visible": true
+        },
+        {
+          "id": "49100581-19b5-4b42-ba51-6deda07e82cf",
+          "type": "audio",
+          "material_id": "audio_material_2",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 7200,
+            "duration": 3600
+          },
+          "target_timerange": {
+            "start": 7200,
+            "duration": 3600
+          },
+          "extra_material_refs": [],
+          "volume": 1.0,
+          "speed": 1.0,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "9a1146b2-abef-469a-a09c-dbea6fbccf58",
+      "type": "text",
+      "attribute": 0,
+      "flag": 0,
+      "segments": [
+        {
+          "id": "4d547cfb-4daf-44d5-b8b5-371b418bb644",
+          "type": "text",
+          "material_id": "text_material_0",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 0,
+            "duration": 3500
+          },
+          "target_timerange": {
+            "start": 0,
+            "duration": 3500
+          },
+          "extra_material_refs": [],
+          "content": "这是第一个精彩的视频片段",
+          "style": {
+            "font_size": 24,
+            "font_color": "#FFFFFF",
+            "background_color": "#00000080",
+            "alignment": "center"
+          },
+          "visible": true
+        },
+        {
+          "id": "94ca46ed-6721-45b4-a7b8-d41646dff5f0",
+          "type": "text",
+          "material_id": "text_material_1",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 0,
+            "duration": 3700
+          },
+          "target_timerange": {
+            "start": 3500,
+            "duration": 3700
+          },
+          "extra_material_refs": [],
+          "content": "接下来是更加激动人心的内容",
+          "style": {
+            "font_size": 24,
+            "font_color": "#FFFFFF",
+            "background_color": "#00000080",
+            "alignment": "center"
+          },
+          "visible": true
+        },
+        {
+          "id": "910480ad-b369-414b-82af-84d519ade73a",
+          "type": "text",
+          "material_id": "text_material_2",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 0,
+            "duration": 3600
+          },
+          "target_timerange": {
+            "start": 7200,
+            "duration": 3600
+          },
+          "extra_material_refs": [],
+          "content": "最后一个片段带来惊喜结局",
+          "style": {
+            "font_size": 24,
+            "font_color": "#FFFFFF",
+            "background_color": "#00000080",
+            "alignment": "center"
+          },
+          "visible": true
+        }
+      ]
+    }
+  ],
+  "materials": {
+    "videos": [
+      {
+        "id": "video_material_0",
+        "type": "video",
+        "path": "data/test/videos/test_video_segment_1.mp4",
+        "duration": 3500,
+        "width": 1920,
+        "height": 1080,
+        "fps": 30,
+        "format": "mp4",
+        "codec": "h264",
+        "bitrate": "2000k",
+        "create_time": 1753696348391274,
+        "file_size": 0
+      },
+      {
+        "id": "video_material_1",
+        "type": "video",
+        "path": "data/test/videos/test_video_segment_2.mp4",
+        "duration": 3700,
+        "width": 1920,
+        "height": 1080,
+        "fps": 30,
+        "format": "mp4",
+        "codec": "h264",
+        "bitrate": "2000k",
+        "create_time": 1753696348391274,
+        "file_size": 0
+      },
+      {
+        "id": "video_material_2",
+        "type": "video",
+        "path": "data/test/videos/test_video_segment_3.mp4",
+        "duration": 3600,
+        "width": 1920,
+        "height": 1080,
+        "fps": 30,
+        "format": "mp4",
+        "codec": "h264",
+        "bitrate": "2000k",
+        "create_time": 1753696348391274,
+        "file_size": 0
+      }
+    ],
+    "audios": [
+      {
+        "id": "audio_material_0",
+        "type": "audio",
+        "path": "data/test/videos/test_video_segment_1.mp4",
+        "duration": 3500,
+        "sample_rate": 44100,
+        "channels": 2,
+        "format": "aac",
+        "codec": "aac",
+        "bitrate": "128k",
+        "create_time": 1753696348391274
+      },
+      {
+        "id": "audio_material_1",
+        "type": "audio",
+        "path": "data/test/videos/test_video_segment_2.mp4",
+        "duration": 3700,
+        "sample_rate": 44100,
+        "channels": 2,
+        "format": "aac",
+        "codec": "aac",
+        "bitrate": "128k",
+        "create_time": 1753696348391274
+      },
+      {
+        "id": "audio_material_2",
+        "type": "audio",
+        "path": "data/test/videos/test_video_segment_3.mp4",
+        "duration": 3600,
+        "sample_rate": 44100,
+        "channels": 2,
+        "format": "aac",
+        "codec": "aac",
+        "bitrate": "128k",
+        "create_time": 1753696348391274
+      }
+    ],
+    "texts": [
+      {
+        "id": "text_material_0",
+        "type": "text",
+        "content": "这是第一个精彩的视频片段",
+        "font_family": "Microsoft YaHei",
+        "font_size": 24,
+        "font_color": "#FFFFFF",
+        "background_color": "#00000080",
+        "alignment": "center",
+        "bold": false,
+        "italic": false,
+        "underline": false,
+        "create_time": 1753696348391274
+      },
+      {
+        "id": "text_material_1",
+        "type": "text",
+        "content": "接下来是更加激动人心的内容",
+        "font_family": "Microsoft YaHei",
+        "font_size": 24,
+        "font_color": "#FFFFFF",
+        "background_color": "#00000080",
+        "alignment": "center",
+        "bold": false,
+        "italic": false,
+        "underline": false,
+        "create_time": 1753696348391274
+      },
+      {
+        "id": "text_material_2",
+        "type": "text",
+        "content": "最后一个片段带来惊喜结局",
+        "font_family": "Microsoft YaHei",
+        "font_size": 24,
+        "font_color": "#FFFFFF",
+        "background_color": "#00000080",
+        "alignment": "center",
+        "bold": false,
+        "italic": false,
+        "underline": false,
+        "create_time": 1753696348391274
+      }
+    ],
+    "effects": [],
+    "stickers": [],
+    "images": [],
+    "sounds": []
+  },
+  "extra_info": {
+    "export_range": {
+      "start": 0,
+      "end": 10800
+    },
+    "fps": 30,
+    "audio_sample_rate": 44100,
+    "video_codec": "h264",
+    "audio_codec": "aac"
+  },
+  "keyframes": [],
+  "relations": []
+}

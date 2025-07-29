@@ -370,23 +370,30 @@ class LanguageDetector:
         if english_common_count >= 2:
             scores["en"] += common_weight * min(english_common_count / len(words), 1.0)
 
-        # 6. 特殊规则调整
+        # 6. 特殊规则调整 - 修复：针对中文短剧字幕优化
+        # 如果有任何中文字符，强化中文得分（短剧通常是中文为主）
+        if features["chinese_chars"] > 0:
+            scores["zh"] += 0.4  # 大幅提升中文得分
+
+        # 如果中文字符数量≥3，进一步强化中文得分
+        if features["chinese_chars"] >= 3:
+            scores["zh"] += 0.3
+
         # 如果英文单词数量很少但中文字符很多，强化中文得分
         if features["english_words"] <= 2 and features["chinese_chars"] >= 5:
             scores["zh"] += 0.2
 
-        # 如果英文单词数量很多但中文字符很少，强化英文得分
-        if features["english_words"] >= 4 and features["chinese_chars"] <= 2:
+        # 只有在完全没有中文字符且英文单词较多时才强化英文得分
+        if features["english_words"] >= 4 and features["chinese_chars"] == 0:
             scores["en"] += 0.2
 
-        # 特殊案例处理："这个project很important，需要careful planning。"
-        # 如果中文字符数量≥5且句子以中文开头，强化中文得分
-        if features["chinese_chars"] >= 5 and features["sentence_start_pattern"] in ["chinese_char", "chinese"]:
-            scores["zh"] += 0.3
+        # 特殊案例处理：中文字幕文件通常以中文开头
+        if features["chinese_chars"] >= 1 and features["sentence_start_pattern"] in ["chinese_char", "chinese"]:
+            scores["zh"] += 0.5  # 大幅强化中文得分
 
-        # 如果中文字符与英文单词数量接近，但句子以中文开头，倾向中文
-        if abs(features["chinese_chars"] - features["english_words"]) <= 2 and features["sentence_start_pattern"] in ["chinese_char", "chinese"]:
-            scores["zh"] += 0.25
+        # 如果有中文字符，无论英文单词多少都倾向中文（短剧混剪场景）
+        if features["chinese_chars"] > 0:
+            scores["zh"] += 0.3
 
         return scores
 

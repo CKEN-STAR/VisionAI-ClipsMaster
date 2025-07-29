@@ -249,16 +249,30 @@ class RealTimeHardwareInfoWidget(QWidget):
         try:
             if self.monitor_worker:
                 self.monitor_worker.stop_monitoring()
-            
-            if self.monitor_thread:
+
+            if self.monitor_thread and self.monitor_thread.isRunning():
                 self.monitor_thread.quit()
-                self.monitor_thread.wait(3000)  # 等待3秒
-                
+                if not self.monitor_thread.wait(3000):  # 等待3秒
+                    logger.warning("线程未能在3秒内正常退出，强制终止")
+                    self.monitor_thread.terminate()
+                    self.monitor_thread.wait(1000)  # 再等待1秒
+
+            # 清理引用
+            self.monitor_worker = None
+            self.monitor_thread = None
+
             logger.info("硬件监控已停止")
-            
+
         except Exception as e:
             logger.error(f"停止硬件监控失败: {e}")
-    
+
+    def __del__(self):
+        """析构函数，确保资源清理"""
+        try:
+            self.stop_monitoring()
+        except:
+            pass  # 析构函数中忽略异常
+
     def force_refresh(self):
         """强制刷新硬件信息"""
         try:

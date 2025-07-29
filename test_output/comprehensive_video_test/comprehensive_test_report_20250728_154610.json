@@ -1,0 +1,413 @@
+{
+  "test_session_id": "comprehensive_test_20250728_154605",
+  "start_time": "2025-07-28T15:46:05.032576",
+  "tests": {
+    "subtitle_video_mapping": {
+      "status": "PASSED",
+      "start_time": "2025-07-28T15:46:05.032576",
+      "subtests": {
+        "srt_parsing_alignment": {
+          "status": "PASSED",
+          "message": "SRT解析和对齐测试通过",
+          "details": {
+            "chinese": {
+              "subtitle_count": 8,
+              "time_errors": [],
+              "max_error": 0
+            },
+            "english": {
+              "subtitle_count": 8
+            }
+          },
+          "max_allowed_error": 0.5
+        },
+        "timecode_sync_accuracy": {
+          "status": "PASSED",
+          "message": "时间码同步精度测试通过",
+          "details": {
+            "parsing_errors": [],
+            "max_sync_error": 0.5,
+            "test_timecodes_count": 4
+          }
+        },
+        "multi_episode_recognition": {
+          "status": "PASSED",
+          "message": "多集字幕识别测试，成功率: 100.0%",
+          "details": {
+            "recognition_results": [
+              {
+                "filename": "chinese_original.srt",
+                "status": "SUCCESS",
+                "subtitle_count": 8,
+                "duration": 24.0,
+                "is_valid": true
+              },
+              {
+                "filename": "chinese_viral.srt",
+                "status": "SUCCESS",
+                "subtitle_count": 4,
+                "duration": 16.0,
+                "is_valid": true
+              },
+              {
+                "filename": "english_original.srt",
+                "status": "SUCCESS",
+                "subtitle_count": 8,
+                "duration": 24.0,
+                "is_valid": true
+              },
+              {
+                "filename": "english_viral.srt",
+                "status": "SUCCESS",
+                "subtitle_count": 4,
+                "duration": 16.0,
+                "is_valid": true
+              }
+            ],
+            "success_rate": 1.0,
+            "total_files_tested": 4,
+            "total_duration": 80.0
+          }
+        }
+      },
+      "end_time": "2025-07-28T15:46:06.044270"
+    },
+    "viral_srt_generation": {
+      "status": "PASSED",
+      "start_time": "2025-07-28T15:46:06.044270",
+      "subtests": {
+        "real_drama_srt_input": {
+          "status": "PASSED",
+          "message": "真实短剧SRT输入处理成功",
+          "details": {
+            "chinese": {
+              "subtitle_count": 8,
+              "total_duration": 24.0,
+              "text_quality": 0.75,
+              "avg_subtitle_length": 6.5
+            },
+            "english": {
+              "subtitle_count": 8,
+              "total_duration": 24.0,
+              "text_quality": 0.75,
+              "avg_subtitle_length": 23.875
+            }
+          }
+        },
+        "model_loading_inference": {
+          "status": "PASSED",
+          "message": "大模型加载和推理测试通过",
+          "details": {
+            "chinese_model": {
+              "status": "SUCCESS",
+              "message": "模型 qwen2.5-7b-zh 加载成功（Q4量化）",
+              "model_name": "qwen2.5-7b-zh",
+              "simulated_memory_mb": 2800,
+              "load_time_seconds": 0.1
+            },
+            "english_model": {
+              "status": "SUCCESS",
+              "message": "模型 mistral-7b-en 加载成功（Q4量化）",
+              "model_name": "mistral-7b-en",
+              "simulated_memory_mb": 3200,
+              "load_time_seconds": 0.1
+            },
+            "memory_usage": {
+              "initial_mb": 23.09765625,
+              "current_mb": 108.08984375,
+              "increase_mb": 84.9921875,
+              "peak_mb": 108.08984375,
+              "limit_passed": true
+            }
+          }
+        },
+        "screenplay_reconstruction": {
+          "status": "PASSED",
+          "message": "AI剧本重构功能测试通过",
+          "details": {
+            "chinese": {
+              "original_subtitle_count": 8,
+              "original_duration": 24.0,
+              "new_duration": 8.399999999999999,
+              "compression_ratio": 0.65,
+              "optimization_score": 0.4079999999999999,
+              "plot_analysis": {
+                "scenes": [
+                  {
+                    "phase": "beginning",
+                    "subtitle_count": 3,
+                    "start_time": 0.0,
+                    "end_time": 9.0
+                  },
+                  {
+                    "phase": "middle",
+                    "subtitle_count": 3,
+                    "start_time": 9.0,
+                    "end_time": 18.0
+                  },
+                  {
+                    "phase": "end",
+                    "subtitle_count": 2,
+                    "start_time": 18.0,
+                    "end_time": 24.0
+                  }
+                ],
+                "characters": [],
+                "emotions": [],
+                "plot_points": [],
+                "structure": {
+                  "beginning": [
+                    {
+                      "id": 1,
+                      "start_time": 0.0,
+                      "end_time": 3.0,
+                      "text": "今天天气很好"
+                    },
+                    {
+                      "id": 2,
+                      "start_time": 3.0,
+                      "end_time": 6.0,
+                      "text": "我去了公园散步"
+                    },
+                    {
+                      "id": 3,
+                      "start_time": 6.0,
+                      "end_time": 9.0,
+                      "text": "看到了很多花"
+                    }
+                  ],
+                  "middle": [
+                    {
+                      "id": 4,
+                      "start_time": 9.0,
+                      "end_time": 12.0,
+                      "text": "心情变得很愉快"
+                    },
+                    {
+                      "id": 5,
+                      "start_time": 12.0,
+                      "end_time": 15.0,
+                      "text": "遇到了一个朋友"
+                    },
+                    {
+                      "id": 6,
+                      "start_time": 15.0,
+                      "end_time": 18.0,
+                      "text": "我们聊了很久"
+                    }
+                  ],
+                  "end": [
+                    {
+                      "id": 7,
+                      "start_time": 18.0,
+                      "end_time": 21.0,
+                      "text": "时间过得很快"
+                    },
+                    {
+                      "id": 8,
+                      "start_time": 21.0,
+                      "end_time": 24.0,
+                      "text": "最后我们告别了"
+                    }
+                  ]
+                },
+                "total_duration": 24.0,
+                "subtitle_count": 8
+              },
+              "reconstruction_success": true
+            },
+            "english": {
+              "original_subtitle_count": 8,
+              "original_duration": 24.0,
+              "new_duration": 8.399999999999999,
+              "compression_ratio": 0.65,
+              "reconstruction_success": true
+            }
+          }
+        },
+        "generated_viral_srt": {
+          "status": "PASSED",
+          "message": "生成的爆款SRT字幕验证通过",
+          "details": {
+            "chinese": {
+              "subtitle_count": 4,
+              "total_duration": 16.0,
+              "viral_features": {
+                "score": 0.975,
+                "features": [
+                  "关键词: 震撼",
+                  "关键词: 不可思议",
+                  "感叹号强调",
+                  "关键词: 惊呆",
+                  "感叹号强调",
+                  "关键词: 秘密",
+                  "问号悬念",
+                  "关键词: 意外",
+                  "关键词: 改变",
+                  "感叹号强调"
+                ],
+                "feature_count": 10
+              },
+              "has_valid_timecodes": true,
+              "has_content": true
+            },
+            "english": {
+              "subtitle_count": 4,
+              "total_duration": 16.0,
+              "viral_features": {
+                "score": 0.975,
+                "features": [
+                  "关键词: AMAZING",
+                  "关键词: incredible",
+                  "感叹号强调",
+                  "关键词: shocked",
+                  "感叹号强调",
+                  "关键词: secret",
+                  "问号悬念",
+                  "关键词: unexpected",
+                  "关键词: changed",
+                  "感叹号强调"
+                ],
+                "feature_count": 10
+              },
+              "has_valid_timecodes": true,
+              "has_content": true
+            }
+          }
+        },
+        "duration_reasonableness": {
+          "status": "PASSED",
+          "message": "混剪时长合理性检查通过",
+          "details": {
+            "chinese": {
+              "original_duration": 24.0,
+              "viral_duration": 16.0,
+              "compression_ratio": 0.3333333333333333,
+              "duration_reasonable": true,
+              "coherence_ok": true,
+              "original_subtitle_count": 8,
+              "viral_subtitle_count": 4
+            },
+            "english": {
+              "original_duration": 24.0,
+              "viral_duration": 16.0,
+              "compression_ratio": 0.3333333333333333,
+              "duration_reasonable": true,
+              "coherence_ok": true,
+              "original_subtitle_count": 8,
+              "viral_subtitle_count": 4
+            }
+          }
+        }
+      },
+      "end_time": "2025-07-28T15:46:06.279704"
+    },
+    "end_to_end_workflow": {
+      "status": "FAILED",
+      "start_time": "2025-07-28T15:46:06.279704",
+      "subtests": {
+        "complete_workflow": {
+          "status": "PASSED",
+          "message": "完整工作流程测试通过",
+          "details": {
+            "chinese": {
+              "step1_load_srt": true,
+              "step2_reconstruction": true,
+              "step3_viral_srt": true,
+              "step4_video_clips": false,
+              "original_duration": 24.0,
+              "new_duration": 8.399999999999999,
+              "workflow_success": true
+            }
+          }
+        },
+        "video_subtitle_matching": {
+          "status": "PASSED",
+          "message": "视频字幕时间轴匹配验证通过",
+          "details": {
+            "generated_chinese_viral.srt": {
+              "subtitle_count": 4,
+              "time_gaps": [],
+              "valid_timecodes": true,
+              "total_duration": 8.299,
+              "matching_quality": "GOOD"
+            }
+          }
+        },
+        "jianying_export": {
+          "status": "FAILED",
+          "message": "剪映工程文件导出测试失败",
+          "details": {
+            "generated_chinese_viral.srt": {
+              "export_success": false,
+              "error": "'bool' object has no attribute 'get'"
+            }
+          }
+        }
+      },
+      "end_time": "2025-07-28T15:46:09.491177"
+    },
+    "performance_and_stability": {
+      "status": "PASSED",
+      "start_time": "2025-07-28T15:46:09.491177",
+      "subtests": {
+        "memory_usage": {
+          "status": "PASSED",
+          "message": "内存使用监控通过",
+          "details": {
+            "initial_mb": 23.09765625,
+            "current_mb": 350.63671875,
+            "peak_mb": 350.63671875,
+            "increase_mb": 327.5390625,
+            "limit_mb": 3800,
+            "within_limit": true
+          }
+        },
+        "low_spec_stability": {
+          "status": "PASSED",
+          "message": "低配环境稳定性测试通过",
+          "details": {
+            "cpu_percent": 7.9,
+            "memory_mb": 350.63671875,
+            "response_time_seconds": 0.0,
+            "stability_checks": {
+              "cpu_usage_stable": true,
+              "memory_stable": true,
+              "no_crashes": true,
+              "response_time_acceptable": true
+            }
+          }
+        }
+      },
+      "end_time": "2025-07-28T15:46:10.495601"
+    }
+  },
+  "summary": {
+    "total_tests": 4,
+    "passed_tests": 3,
+    "failed_tests": 1,
+    "error_tests": 0,
+    "success_rate": 0.75,
+    "total_subtests": 13,
+    "passed_subtests": 12,
+    "subtest_success_rate": 0.9230769230769231,
+    "overall_status": "FAILED"
+  },
+  "performance_metrics": {
+    "peak_memory_mb": 350.63671875,
+    "final_memory_mb": 350.63671875,
+    "memory_increase_mb": 327.5390625,
+    "memory_limit_respected": true,
+    "test_duration_seconds": 5.463025
+  },
+  "memory_usage": {
+    "initial_mb": 23.09765625,
+    "current_mb": 350.63671875,
+    "peak_mb": 350.63671875,
+    "increase_mb": 327.5390625,
+    "limit_mb": 3800,
+    "within_limit": true
+  },
+  "errors": [],
+  "cleanup_status": "PENDING"
+}

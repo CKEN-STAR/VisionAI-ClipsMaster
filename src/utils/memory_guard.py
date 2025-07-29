@@ -68,6 +68,39 @@ class MemoryManager:
         """强制清理内存"""
         self._trigger_cleanup()
 
+class QuantizationManager:
+    """量化管理器 - 管理模型量化策略"""
+
+    def __init__(self, memory_guard=None):
+        """初始化量化管理器
+
+        Args:
+            memory_guard: 内存守护器实例
+        """
+        self.memory_guard = memory_guard
+        self.current_strategy = "balanced"
+        self.available_strategies = {
+            "aggressive": {"name": "Q2_K", "memory_mb": 2200, "quality": 0.75},
+            "balanced": {"name": "Q4_K_M", "memory_mb": 3200, "quality": 0.88},
+            "quality": {"name": "Q5_K", "memory_mb": 4500, "quality": 0.94},
+            "original": {"name": "FP16", "memory_mb": 16000, "quality": 1.0}
+        }
+
+    def select_strategy(self, available_memory_mb: float) -> str:
+        """根据可用内存选择量化策略"""
+        if available_memory_mb < 3000:
+            return "aggressive"
+        elif available_memory_mb < 5000:
+            return "balanced"
+        elif available_memory_mb < 16000:
+            return "quality"
+        else:
+            return "original"
+
+    def get_strategy_info(self, strategy: str) -> Dict:
+        """获取策略信息"""
+        return self.available_strategies.get(strategy, self.available_strategies["balanced"])
+
 class MemoryGuard(MemoryManager):
     """内存守护器（向后兼容）"""
 
