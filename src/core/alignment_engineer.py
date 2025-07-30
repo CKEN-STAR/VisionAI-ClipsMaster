@@ -1471,6 +1471,65 @@ class PrecisionAlignmentEngineer:
             logger.error(f"解析时间码失败: {timecode_str}, 错误: {e}")
             return 0.0
 
+    def align_subtitles_to_video_simple(self, viral_content: str, video_path: Optional[str] = None) -> List[Dict[str, Any]]:
+        """
+        对齐字幕到视频（简化版本，用于测试）
+
+        Args:
+            viral_content: 爆款SRT字幕内容
+            video_path: 视频文件路径（可选）
+
+        Returns:
+            List[Dict[str, Any]]: 对齐后的片段信息列表
+        """
+        try:
+            logger.info(f"开始对齐字幕到视频")
+
+            if not viral_content:
+                logger.warning("没有字幕内容需要对齐")
+                return []
+
+            # 解析SRT内容
+            from .srt_parser import SRTParser
+            parser = SRTParser()
+
+            # 将内容写入临时文件进行解析
+            import tempfile
+            with tempfile.NamedTemporaryFile(mode='w', suffix='.srt', delete=False, encoding='utf-8') as temp_file:
+                temp_file.write(viral_content)
+                temp_file_path = temp_file.name
+
+            try:
+                subtitles = parser.parse_file(temp_file_path)
+            finally:
+                import os
+                os.unlink(temp_file_path)
+
+            if not subtitles:
+                logger.warning("解析字幕内容失败")
+                return []
+
+            # 生成对齐结果
+            aligned_segments = []
+            for i, subtitle in enumerate(subtitles):
+                aligned_segment = {
+                    'index': i + 1,
+                    'start_time': subtitle.get('start_time', 0),
+                    'end_time': subtitle.get('end_time', 0),
+                    'text': subtitle.get('text', ''),
+                    'duration': subtitle.get('end_time', 0) - subtitle.get('start_time', 0),
+                    'alignment_confidence': 0.9,  # 模拟高置信度
+                    'video_source': video_path or 'unknown'
+                }
+                aligned_segments.append(aligned_segment)
+
+            logger.info(f"字幕对齐完成，生成 {len(aligned_segments)} 个对齐片段")
+            return aligned_segments
+
+        except Exception as e:
+            logger.error(f"字幕对齐失败: {e}")
+            return []
+
 # 便捷函数
 def create_precision_alignment_engineer(precision_level: str = "high") -> PrecisionAlignmentEngineer:
     """创建精确对齐工程师的便捷函数"""

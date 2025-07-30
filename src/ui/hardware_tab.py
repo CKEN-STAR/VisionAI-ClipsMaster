@@ -392,27 +392,8 @@ class HardwareTabWidget(QWidget):
             self.add_table_row("GPU可用", "是")
             self.add_table_row("最佳GPU API", summary.get("best_api", "未知"))
             
-            # 添加各种类型GPU的详细信息
-            for gpu_type in ["nvidia", "amd", "intel", "apple", "external"]:
-                if gpu_type in gpu_info:
-                    type_info = gpu_info[gpu_type]
-                    if type_info.get("available", False):
-                        count = type_info.get("count", 0)
-                        
-                        # 显示GPU名称
-                        if "names" in type_info and type_info["names"]:
-                            for i, name in enumerate(type_info["names"]):
-                                if i == 0:
-                                    # 第一个GPU显示类型
-                                    self.add_table_row(f"{gpu_type.upper()} GPU", name)
-                                else:
-                                    # 其他GPU只显示名称
-                                    self.add_table_row("", name)
-                                
-                                # 显示显存（如果有）
-                                if "memory" in type_info and i < len(type_info["memory"]):
-                                    memory = type_info["memory"][i]
-                                    self.add_table_row("显存", f"{memory:.2f} GB")
+            # GPU详细信息显示已移除 - 恢复UI界面到原始状态
+            # 保留硬件检测后端功能，仅移除UI显示
         else:
             self.add_table_row("GPU可用", "否")
             self.add_table_row("运行模式", "CPU模式")

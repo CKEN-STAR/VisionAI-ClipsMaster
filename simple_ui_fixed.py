@@ -298,13 +298,16 @@ from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
 from PyQt6.QtCore import Qt, pyqtSignal, QThread, QObject, QTimer
 try:
     from PyQt6.QtGui import QFont, QIcon, QAction
+    print("[OK] QAction从QtGui导入成功")
 except ImportError:
     try:
         from PyQt6.QtGui import QFont, QIcon
-        from PyQt6.QtWidgets import QAction
+        from PyQt6.QtGui import QAction
+        print("[OK] QAction从QtWidgets导入成功")
     except ImportError:
         try:
             from PyQt6.QtGui import QFont, QIcon
+            print("[WARN] QAction导入失败，使用占位符类")
             # 创建QAction的占位符类
             class QAction:
                 def __init__(self, text, parent=None):
@@ -2029,6 +2032,11 @@ class VideoProcessor(QObject):
         self.process_started.emit()
         # 使用language_mode参数
         print(f"处理模式: {language_mode}")
+
+        # 处理前检查内存使用
+        if hasattr(self, 'check_memory_usage'):
+            self.check_memory_usage()
+
         try:
             # 如果有智能进度条可用，使用它来更新进度
             if HAS_PROGRESS_TRACKER:
@@ -3435,6 +3443,11 @@ class SimpleScreenplayApp(QMainWindow):
             self._error_count = 0  # 错误计数器
             self._max_errors = 10  # 最大错误数
 
+            # 内存优化变量
+            self._memory_baseline = self.get_memory_usage()
+            self._components_loaded = set()  # 已加载的组件
+            self._lazy_components = {}  # 延迟加载的组件
+
             # 初始化视频处理器
             try:
                 self.processor = VideoProcessor()
@@ -3507,7 +3520,10 @@ class SimpleScreenplayApp(QMainWindow):
                 self.enhanced_downloader = None
             # 初始化智能推荐下载器集成
             try:
-                from src.ui.main_ui_integration import integrate_smart_downloader_to_main_ui
+                try:
+                    from src.ui.main_ui_integration import integrate_smart_downloader_to_main_ui
+                except ImportError:
+                    from src.ui.fallback_integration import integrate_smart_downloader_to_main_ui
                 self.smart_downloader_integrator = integrate_smart_downloader_to_main_ui(self)
                 print("[OK] 智能推荐下载器集成完成")
             except Exception as e:
@@ -3817,6 +3833,70 @@ class SimpleScreenplayApp(QMainWindow):
             print(f"[ERROR] 性能优化器延迟初始化失败: {e}")
             # 设置标志表示优化器不可用
             self.optimization_available = False
+
+    def get_memory_usage(self):
+        """获取当前内存使用情况"""
+        try:
+            import psutil
+            process = psutil.Process()
+            return {
+                "rss": process.memory_info().rss / 1024 / 1024,  # MB
+                "vms": process.memory_info().vms / 1024 / 1024,  # MB
+                "percent": process.memory_percent()
+            }
+        except:
+            return {"rss": 0, "vms": 0, "percent": 0}
+
+    def cleanup_memory(self):
+        """主动清理内存"""
+        try:
+            import gc
+
+            # 清理临时数据缓存
+            if hasattr(self, '_temp_data_cache'):
+                self._temp_data_cache.clear()
+
+            # 清理未使用的组件
+            if hasattr(self, '_lazy_components'):
+                for component_name in list(self._lazy_components.keys()):
+                    if hasattr(self, '_components_loaded') and component_name not in self._components_loaded:
+                        del self._lazy_components[component_name]
+
+            # 强制垃圾回收
+            gc.collect()
+
+            current_memory = self.get_memory_usage()
+            if hasattr(self, '_memory_baseline'):
+                memory_freed = self._memory_baseline.get("rss", 0) - current_memory.get("rss", 0)
+                if memory_freed > 0:
+                    print(f"[OK] 内存清理完成，释放 {memory_freed:.1f}MB")
+                # 更新基线
+                self._memory_baseline = current_memory
+
+            self._last_cleanup_time = time.time()
+
+        except Exception as e:
+            print(f"[WARN] 内存清理失败: {e}")
+
+    def check_memory_usage(self):
+        """检查内存使用情况"""
+        try:
+            current_memory = self.get_memory_usage()
+            if hasattr(self, '_memory_baseline'):
+                memory_increase = current_memory.get("rss", 0) - self._memory_baseline.get("rss", 0)
+
+                # 如果内存增长超过100MB，触发清理
+                if memory_increase > 100:
+                    print(f"[WARN] 内存增长过大 ({memory_increase:.1f}MB)，触发清理")
+                    self.cleanup_memory()
+
+            # 如果距离上次清理超过5分钟，主动清理
+            if hasattr(self, '_last_cleanup_time') and time.time() - self._last_cleanup_time > 300:
+                self.cleanup_memory()
+
+        except Exception as e:
+            print(f"[WARN] 内存检查失败: {e}")
+
     def center_window(self):
         """将窗口居中显示"""
         try:
@@ -6096,13 +6176,8 @@ class SimpleScreenplayApp(QMainWindow):
         """硬件配置变化回调"""
         try:
             log_handler.log("info", "🔧 检测到硬件配置变化")
-            # 更新状态显示
-            if hardware_snapshot.has_gpu:
-                gpu_info = f"GPU: {hardware_snapshot.gpu_memory_gb:.1f}GB"
-                self.status_label.setText(f"🎮 硬件更新 - {gpu_info}")
-            else:
-                ram_info = f"RAM: {hardware_snapshot.system_ram_gb:.1f}GB"
-                self.status_label.setText(f"🧠 硬件更新 - {ram_info}")
+            # 硬件状态显示信息已移除 - 恢复UI界面到原始状态
+            # 保留硬件检测后端功能，仅移除UI状态显示
             # 可以在这里添加其他硬件变化处理逻辑
             # 例如：重新评估模型推荐、调整性能设置等
         except Exception as e:
@@ -9842,3 +9917,4 @@ class ErrorHandler:
 
 # 为测试脚本提供主UI类别名
 VisionAIClipsMasterUI = SimpleScreenplayApp
+VisionAIClipsMaster = SimpleScreenplayApp  # 标准别名

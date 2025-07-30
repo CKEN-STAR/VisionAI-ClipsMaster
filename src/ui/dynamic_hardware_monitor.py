@@ -297,18 +297,8 @@ class RealTimeHardwareInfoWidget(QWidget):
             # 添加硬件信息
             row = 0
             
-            # GPU信息
-            if snapshot.has_gpu:
-                self._add_info_row("🎮 GPU类型", snapshot.gpu_type, row)
-                row += 1
-                self._add_info_row("💾 GPU显存", f"{snapshot.gpu_memory_gb:.1f} GB", row)
-                row += 1
-                if snapshot.gpu_names:
-                    self._add_info_row("🏷️ GPU名称", ", ".join(snapshot.gpu_names), row)
-                    row += 1
-            else:
-                self._add_info_row("🎮 GPU状态", "未检测到独立GPU", row)
-                row += 1
+            # GPU信息显示已移除 - 恢复UI界面到原始状态
+            # 保留硬件检测后端功能，仅移除UI显示
             
             # 内存信息
             self._add_info_row("🧠 系统内存", f"{snapshot.system_ram_gb:.1f} GB", row)

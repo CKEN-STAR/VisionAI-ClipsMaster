@@ -219,7 +219,7 @@ class ScreenplayEngineer:
             logger.error(f"剧情结构分析失败: {e}")
             return {"scenes": [], "characters": [], "emotions": []}
 
-    def reconstruct_screenplay(self, srt_input=None, target_style: str = "viral") -> Dict[str, Any]:
+    def reconstruct_screenplay(self, srt_input=None, target_style: str = "viral"):
         """
         重构剧本为爆款风格 - 核心功能实现
 
@@ -228,7 +228,7 @@ class ScreenplayEngineer:
             target_style: 目标风格，默认为"viral"（爆款）
 
         Returns:
-            重构后的剧本数据
+            List[Dict]: 标准化的重构后字幕列表，每个元素包含 start, end, text, duration 字段
         """
         # 如果提供了输入，先加载字幕数据
         if srt_input is not None:
@@ -251,34 +251,136 @@ class ScreenplayEngineer:
 
         if not self.current_subtitles:
             logger.warning("没有加载字幕数据，无法进行重构")
-            return {}
+            return []
 
         try:
-            # 1. 分析原始剧情结构
-            original_analysis = self.analyze_plot_structure()
+            # 计算总时长
+            total_duration = sum(sub.get("duration", 0) for sub in self.current_subtitles)
 
-            # 2. 提取关键片段
-            key_segments = self._extract_key_segments(self.current_subtitles, original_analysis)
+            # 短视频特殊处理逻辑
+            if total_duration <= 15.0 or len(self.current_subtitles) <= 4:
+                logger.info(f"检测到短视频（{total_duration:.1f}秒，{len(self.current_subtitles)}条字幕），启用特殊处理")
+                reconstructed_segments = self._handle_short_video(self.current_subtitles, total_duration)
+            else:
+                # 1. 分析原始剧情结构
+                original_analysis = self.analyze_plot_structure()
 
-            # 3. 重新排列和优化
-            reconstructed_segments = self._optimize_for_viral_appeal(key_segments)
+                # 2. 提取关键片段
+                key_segments = self._extract_key_segments(self.current_subtitles, original_analysis)
+
+                # 3. 重新排列和优化
+                reconstructed_segments = self._optimize_for_viral_appeal(key_segments)
 
             # 4. 生成新的时间轴
             new_timeline = self._generate_new_timeline(reconstructed_segments)
 
-            # 5. 生成格式化的爆款SRT内容
-            reconstructed_srt = self._generate_viral_srt_content(new_timeline, target_style)
+            # 5. 转换为标准化格式
+            standardized_segments = []
+            for i, segment in enumerate(reconstructed_segments):
+                # 确保每个片段都有标准化的字段
+                standardized_segment = {
+                    "start": float(segment.get("start_time", segment.get("start", 0))),
+                    "end": float(segment.get("end_time", segment.get("end", 0))),
+                    "text": str(segment.get("text", "")),
+                    "duration": float(segment.get("duration", 0))
+                }
 
-            result = {
-                "original_duration": original_analysis.get("total_duration", 0),
-                "new_duration": new_timeline.get("total_duration", 0),
-                "segments": reconstructed_segments,
-                "timeline": new_timeline,
-                "reconstructed_srt": reconstructed_srt,  # 添加格式化的SRT内容
-                "optimization_score": self._calculate_viral_score(reconstructed_segments),
-                "style": target_style,
-                "created_at": time.time()
-            }
+                # 如果duration为0，计算它
+                if standardized_segment["duration"] == 0:
+                    standardized_segment["duration"] = standardized_segment["end"] - standardized_segment["start"]
+
+                standardized_segments.append(standardized_segment)
+
+            logger.info(f"✅ 剧本重构完成，生成 {len(standardized_segments)} 个标准化片段")
+            return standardized_segments
+
+        except Exception as e:
+            logger.error(f"❌ 剧本重构失败: {e}")
+            # 返回原始字幕的标准化格式作为回退
+            fallback_segments = []
+            for i, subtitle in enumerate(self.current_subtitles):
+                fallback_segment = {
+                    "start": float(subtitle.get("start_time", subtitle.get("start", 0))),
+                    "end": float(subtitle.get("end_time", subtitle.get("end", 0))),
+                    "text": str(subtitle.get("text", "")),
+                    "duration": float(subtitle.get("duration", 0))
+                }
+
+                # 如果duration为0，计算它
+                if fallback_segment["duration"] == 0:
+                    fallback_segment["duration"] = fallback_segment["end"] - fallback_segment["start"]
+
+                fallback_segments.append(fallback_segment)
+
+            logger.info(f"🔄 使用原始字幕作为回退，共 {len(fallback_segments)} 个片段")
+            return fallback_segments
+
+    def _handle_short_video(self, subtitles: List[Dict[str, Any]], total_duration: float) -> List[Dict[str, Any]]:
+        """短视频特殊处理逻辑"""
+        try:
+            # 短视频压缩策略：智能删减而非完全保留
+            if len(subtitles) <= 2:
+                # 极短视频：保持原样
+                logger.info("极短视频，保持原有结构")
+                return subtitles
+
+            # 短视频智能压缩：删除最不重要的1-2个片段
+            segments_with_scores = []
+
+            for i, subtitle in enumerate(subtitles):
+                text = subtitle.get("text", "").lower()
+
+                # 计算重要性评分
+                importance_score = 0.5  # 基础分
+
+                # 位置权重
+                if i == 0:  # 开头
+                    importance_score += 0.3
+                elif i == len(subtitles) - 1:  # 结尾
+                    importance_score += 0.4
+                else:  # 中间
+                    importance_score += 0.2
+
+                # 内容权重
+                important_words = ["但是", "然后", "突然", "最后", "结果", "因为", "所以"]
+                for word in important_words:
+                    if word in text:
+                        importance_score += 0.1
+
+                # 情感权重
+                emotion_words = ["爱", "恨", "开心", "难过", "惊讶", "害怕", "愤怒"]
+                for word in emotion_words:
+                    if word in text:
+                        importance_score += 0.15
+
+                segments_with_scores.append({
+                    **subtitle,
+                    "importance_score": importance_score,
+                    "original_index": i
+                })
+
+            # 排序并选择最重要的片段
+            segments_with_scores.sort(key=lambda x: x["importance_score"], reverse=True)
+
+            # 确保压缩比例在30%-70%范围内
+            target_count = max(2, min(len(subtitles) - 1, int(len(subtitles) * 0.6)))
+            selected_segments = segments_with_scores[:target_count]
+
+            # 按原始顺序重新排列
+            selected_segments.sort(key=lambda x: x["original_index"])
+
+            # 清理临时字段
+            for segment in selected_segments:
+                segment.pop("importance_score", None)
+                segment.pop("original_index", None)
+
+            logger.info(f"短视频压缩完成：{len(subtitles)} → {len(selected_segments)} 个片段")
+            return selected_segments
+
+        except Exception as e:
+            logger.error(f"短视频处理失败: {e}")
+            # 回退到保持原样
+            return subtitles
 
             logger.info(f"剧本重构完成: 原时长{result['original_duration']:.1f}s → 新时长{result['new_duration']:.1f}s, 优化评分{result['optimization_score']:.2f}")
             return result
@@ -325,103 +427,238 @@ class ScreenplayEngineer:
             return {"segments": segments, "total_duration": 0.0, "error": str(e)}
 
     def _extract_key_segments(self, subtitles: List[Dict[str, Any]], analysis: Dict[str, Any]) -> List[Dict[str, Any]]:
-        """提取关键片段"""
+        """提取关键片段 - 连贯性优化版本"""
         key_segments = []
 
         try:
-            # 1. 提取情感高潮片段
-            emotions = analysis.get("emotions", [])
-            for emotion in emotions:
-                # 找到对应的字幕
-                for subtitle in subtitles:
-                    if abs(subtitle.get("start_time", 0) - emotion["time"]) < 1.0:  # 1秒误差范围
-                        key_segments.append({
-                            "type": "emotional_peak",
-                            "priority": 0.9,
-                            "subtitle": subtitle,
-                            "reason": f"情感高潮: {emotion['emotion']}"
-                        })
-                        break
+            if not subtitles:
+                return []
 
-            # 2. 提取剧情转折点
-            plot_points = analysis.get("plot_points", [])
-            for point in plot_points:
-                for subtitle in subtitles:
-                    if abs(subtitle.get("start_time", 0) - point["time"]) < 1.0:
-                        key_segments.append({
-                            "type": "plot_twist",
-                            "priority": 0.8,
-                            "subtitle": subtitle,
-                            "reason": "剧情转折点"
-                        })
-                        break
+            total_count = len(subtitles)
 
-            # 3. 提取开头和结尾的关键片段
-            if subtitles:
-                # 开头片段
-                for i in range(min(3, len(subtitles))):
+            # 智能连贯性片段提取策略
+            if total_count <= 6:
+                # 短视频：保留所有片段以确保完整性
+                for i, subtitle in enumerate(subtitles):
+                    key_segments.append({
+                        "type": "complete",
+                        "priority": 1.0,
+                        "start_time": subtitle.get("start_time", subtitle.get("start", 0)),
+                        "end_time": subtitle.get("end_time", subtitle.get("end", 0)),
+                        "text": subtitle.get("text", ""),
+                        "duration": subtitle.get("duration", 0),
+                        "reason": f"短视频完整片段{i+1}",
+                        "sequence_index": i,
+                        "coherence_weight": 1.0
+                    })
+            else:
+                # 长视频：智能选择连贯片段
+
+                # 1. 开头连贯块 (前25%)
+                opening_end = max(2, total_count // 4)
+                for i in range(min(opening_end, total_count)):
+                    subtitle = subtitles[i]
                     key_segments.append({
                         "type": "opening",
-                        "priority": 0.7,
-                        "subtitle": subtitles[i],
-                        "reason": "开头吸引"
+                        "priority": 0.95 - (i * 0.05),
+                        "start_time": subtitle.get("start_time", subtitle.get("start", 0)),
+                        "end_time": subtitle.get("end_time", subtitle.get("end", 0)),
+                        "text": subtitle.get("text", ""),
+                        "duration": subtitle.get("duration", 0),
+                        "reason": f"开头连贯块{i+1}",
+                        "sequence_index": i,
+                        "coherence_weight": 1.0 - (i * 0.1)
                     })
 
-                # 结尾片段
-                for i in range(max(0, len(subtitles) - 3), len(subtitles)):
-                    key_segments.append({
-                        "type": "ending",
-                        "priority": 0.6,
-                        "subtitle": subtitles[i],
-                        "reason": "结尾回味"
-                    })
+                # 2. 中间核心段 (中间50%) - 选择连续的关键片段
+                middle_start = total_count // 4
+                middle_end = 3 * total_count // 4
+                middle_length = middle_end - middle_start
 
-            # 去重并按优先级排序
-            unique_segments = []
-            seen_times = set()
+                # 选择中间段的连续片段，确保逻辑连贯
+                selected_middle_count = min(max(3, middle_length // 2), middle_length)
+                middle_center = (middle_start + middle_end) // 2
+                middle_range_start = max(middle_start, middle_center - selected_middle_count // 2)
 
-            for segment in sorted(key_segments, key=lambda x: x["priority"], reverse=True):
-                start_time = segment["subtitle"].get("start_time", 0)
-                if start_time not in seen_times:
-                    unique_segments.append(segment)
-                    seen_times.add(start_time)
+                for i in range(selected_middle_count):
+                    idx = middle_range_start + i
+                    if idx < len(subtitles) and idx < middle_end:
+                        subtitle = subtitles[idx]
+                        key_segments.append({
+                            "type": "climax",
+                            "priority": 1.0,  # 最高优先级
+                            "start_time": subtitle.get("start_time", subtitle.get("start", 0)),
+                            "end_time": subtitle.get("end_time", subtitle.get("end", 0)),
+                            "text": subtitle.get("text", ""),
+                            "duration": subtitle.get("duration", 0),
+                            "reason": f"核心剧情{i+1}",
+                            "sequence_index": idx,
+                            "coherence_weight": 1.0
+                        })
 
-            logger.info(f"提取关键片段: {len(unique_segments)}个")
-            return unique_segments
+                # 3. 结尾连贯块 (后25%)
+                ending_start = max(middle_end, 3 * total_count // 4)
+                ending_count = min(3, total_count - ending_start)
+
+                for i in range(ending_count):
+                    idx = ending_start + i
+                    if idx < len(subtitles):
+                        subtitle = subtitles[idx]
+                        key_segments.append({
+                            "type": "ending",
+                            "priority": 0.85 + (i * 0.05),
+                            "start_time": subtitle.get("start_time", subtitle.get("start", 0)),
+                            "end_time": subtitle.get("end_time", subtitle.get("end", 0)),
+                            "text": subtitle.get("text", ""),
+                            "duration": subtitle.get("duration", 0),
+                            "reason": f"结尾连贯块{i+1}",
+                            "sequence_index": idx,
+                            "coherence_weight": 0.9 + (i * 0.05)
+                        })
+
+            # 确保按时间顺序排列
+            key_segments.sort(key=lambda x: x.get("sequence_index", 0))
+
+            # 添加连贯性增强标记
+            for i in range(len(key_segments) - 1):
+                current = key_segments[i]
+                next_seg = key_segments[i + 1]
+
+                # 检查时间间隔
+                time_gap = next_seg.get("start_time", 0) - current.get("end_time", 0)
+                if time_gap <= 3.0:  # 3秒内认为是连贯的
+                    current["is_coherent_with_next"] = True
+                    next_seg["is_coherent_with_prev"] = True
+
+            logger.info(f"✅ 提取关键片段完成，共 {len(key_segments)} 个片段（连贯性增强）")
+            return key_segments
 
         except Exception as e:
-            logger.error(f"提取关键片段失败: {e}")
+            logger.error(f"❌ 提取关键片段失败: {e}")
             return []
 
     def _optimize_for_viral_appeal(self, segments: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """优化片段以提升爆款潜力"""
+        """优化片段以提升爆款潜力 - 连贯性优先版本"""
         try:
-            # 爆款视频的特征权重
+            if not segments:
+                return []
+
+            total_segments = len(segments)
+
+            # 短视频特殊处理
+            if total_segments <= 6:
+                # 短视频保持所有片段，确保完整性
+                logger.info(f"✅ 短视频优化完成，保持所有 {total_segments} 个片段（完整性优先）")
+                return segments
+
+            # 连贯性优先的优化策略
             viral_weights = {
-                "emotional_peak": 1.0,
-                "plot_twist": 0.9,
-                "opening": 0.8,
-                "ending": 0.6
+                "complete": 1.0,  # 完整片段最高权重
+                "climax": 0.95,
+                "opening": 0.9,
+                "ending": 0.85
             }
 
-            # 重新计算优先级
-            for segment in segments:
+            # 计算连贯性增强评分
+            for i, segment in enumerate(segments):
                 segment_type = segment.get("type", "")
                 base_priority = segment.get("priority", 0.5)
-                viral_weight = viral_weights.get(segment_type, 0.5)
+                viral_weight = viral_weights.get(segment_type, 0.7)
+                coherence_weight = segment.get("coherence_weight", 0.5)
 
-                # 综合评分
-                segment["viral_score"] = base_priority * viral_weight
+                # 连贯性奖励机制
+                coherence_bonus = 0.0
 
-                # 添加文本特征分析
-                text = segment["subtitle"].get("text", "")
-                text_score = self._analyze_text_viral_potential(text)
-                segment["viral_score"] *= text_score
+                # 1. 相邻片段连贯性奖励
+                if segment.get("is_coherent_with_prev", False):
+                    coherence_bonus += 0.15
+                if segment.get("is_coherent_with_next", False):
+                    coherence_bonus += 0.15
 
-            # 按病毒传播潜力排序
-            optimized_segments = sorted(segments, key=lambda x: x["viral_score"], reverse=True)
+                # 2. 时间连续性奖励
+                if i > 0:
+                    prev_segment = segments[i-1]
+                    time_gap = segment.get("start_time", 0) - prev_segment.get("end_time", 0)
+                    if time_gap <= 2.0:  # 2秒内无缝连接
+                        coherence_bonus += 0.2
+                    elif time_gap <= 5.0:  # 5秒内合理跳跃
+                        coherence_bonus += 0.1
 
-            # 计算目标压缩率 (30%-70%范围)
+                # 3. 类型连续性奖励
+                if i > 0 and segments[i-1].get("type") == segment_type:
+                    coherence_bonus += 0.1
+
+                # 综合评分 = (基础优先级 × 爆款权重 + 连贯性权重) + 连贯性奖励
+                segment["final_score"] = (base_priority * viral_weight + coherence_weight * 0.3) + coherence_bonus
+
+            # 智能选择策略：连贯性优先
+            selected_segments = []
+
+            # 按类型分组
+            segments_by_type = {}
+            for segment in segments:
+                seg_type = segment.get("type", "unknown")
+                if seg_type not in segments_by_type:
+                    segments_by_type[seg_type] = []
+                segments_by_type[seg_type].append(segment)
+
+            # 确保每种类型的连贯性
+            for seg_type, type_segments in segments_by_type.items():
+                type_segments.sort(key=lambda x: x.get("sequence_index", 0))
+
+                if seg_type == "opening":
+                    # 开头：选择前2-3个连续片段
+                    selected_segments.extend(type_segments[:min(3, len(type_segments))])
+                elif seg_type == "climax":
+                    # 高潮：选择评分最高的连续片段
+                    type_segments.sort(key=lambda x: x["final_score"], reverse=True)
+                    selected_segments.extend(type_segments[:min(4, len(type_segments))])
+                elif seg_type == "ending":
+                    # 结尾：选择最后2个片段
+                    selected_segments.extend(type_segments[-min(2, len(type_segments)):])
+                elif seg_type == "complete":
+                    # 完整片段：全部保留
+                    selected_segments.extend(type_segments)
+
+            # 去重并按时间排序
+            seen_indices = set()
+            unique_segments = []
+            for segment in selected_segments:
+                seq_idx = segment.get("sequence_index", -1)
+                if seq_idx not in seen_indices:
+                    unique_segments.append(segment)
+                    seen_indices.add(seq_idx)
+
+            unique_segments.sort(key=lambda x: x.get("sequence_index", 0))
+
+            # 确保压缩比例合理（40%-70%）
+            target_min_count = max(2, int(total_segments * 0.4))
+            target_max_count = int(total_segments * 0.7)
+
+            if len(unique_segments) < target_min_count:
+                # 补充片段以达到最小要求
+                remaining_segments = [s for s in segments if s.get("sequence_index", -1) not in seen_indices]
+                remaining_segments.sort(key=lambda x: x["final_score"], reverse=True)
+                needed_count = target_min_count - len(unique_segments)
+
+                for segment in remaining_segments[:needed_count]:
+                    unique_segments.append(segment)
+                    seen_indices.add(segment.get("sequence_index", -1))
+
+                unique_segments.sort(key=lambda x: x.get("sequence_index", 0))
+
+            elif len(unique_segments) > target_max_count:
+                # 减少片段但保持连贯性
+                unique_segments.sort(key=lambda x: x["final_score"], reverse=True)
+                unique_segments = unique_segments[:target_max_count]
+                unique_segments.sort(key=lambda x: x.get("sequence_index", 0))
+
+            logger.info(f"✅ 爆款优化完成，从 {total_segments} 个片段优化为 {len(unique_segments)} 个（连贯性优先）")
+            return unique_segments
+
+        except Exception as e:
+            logger.error(f"❌ 爆款优化失败: {e}")
+            return segments  # 返回原始片段作为回退
             original_count = len(self.current_subtitles) if self.current_subtitles else len(segments)
             target_compression_ratio = 0.5  # 目标50%压缩率
             target_segments_count = max(
@@ -490,28 +727,26 @@ class ScreenplayEngineer:
             return 1.0
 
     def _generate_new_timeline(self, segments: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """生成新的时间轴 - 修复：改进时长计算逻辑"""
+        """生成新的时间轴"""
         try:
-            timeline = {
-                "segments": [],
-                "total_duration": 0,
-                "transitions": []
-            }
+            if not segments:
+                return {"segments": [], "total_duration": 0}
 
+            timeline_segments = []
             current_time = 0.0
 
             for i, segment in enumerate(segments):
-                original_subtitle = segment["subtitle"]
-
-                # 修复：计算更合理的片段时长
-                original_duration = original_subtitle.get("end_time", 0) - original_subtitle.get("start_time", 0)
+                # 获取原始时长
+                original_duration = segment.get("duration", 0)
+                if original_duration <= 0:
+                    original_duration = segment.get("end_time", 0) - segment.get("start_time", 0)
 
                 # 使用原始时长，但限制在合理范围内（1-5秒）
                 if original_duration > 0:
                     segment_duration = max(1.0, min(5.0, original_duration))
                 else:
                     # 根据文本长度估算时长
-                    text_length = len(original_subtitle.get("text", ""))
+                    text_length = len(segment.get("text", ""))
                     if text_length <= 10:
                         segment_duration = 1.5
                     elif text_length <= 20:
@@ -525,29 +760,28 @@ class ScreenplayEngineer:
 
                 # 创建新的时间轴片段
                 new_segment = {
-                    "index": i,
                     "start_time": start_time,
                     "end_time": end_time,
                     "duration": segment_duration,
-                    "original_start": original_subtitle.get("start_time", 0),
-                    "original_end": original_subtitle.get("end_time", 0),
-                    "original_duration": original_duration,  # 修复：保留原始时长信息
-                    "text": original_subtitle.get("text", ""),
+                    "text": segment.get("text", ""),
                     "type": segment.get("type", ""),
-                    "viral_score": segment.get("viral_score", 0.5)
+                    "priority": segment.get("priority", 0.5)
                 }
 
-                timeline["segments"].append(new_segment)
-                current_time = end_time + 0.1  # 0.1秒间隔
+                timeline_segments.append(new_segment)
+                current_time = end_time
 
-            timeline["total_duration"] = current_time
+            timeline = {
+                "segments": timeline_segments,
+                "total_duration": current_time
+            }
 
-            logger.info(f"生成新时间轴: {len(timeline['segments'])}个片段, 总时长{timeline['total_duration']:.1f}秒")
+            logger.info(f"✅ 新时间轴生成完成，总时长: {current_time:.2f}秒")
             return timeline
 
         except Exception as e:
-            logger.error(f"生成时间轴失败: {e}")
-            return {"segments": [], "total_duration": 0, "transitions": []}
+            logger.error(f"❌ 新时间轴生成失败: {e}")
+            return {"segments": [], "total_duration": 0}
 
     def _generate_viral_srt_content(self, timeline: Dict[str, Any], target_style: str = "viral") -> str:
         """生成格式化的爆款SRT内容"""
@@ -2465,7 +2699,7 @@ if __name__ == "__main__":
                 print(f"生成完成: {len(result['segments'])} 个片段, "
                      f"总时长: {result['total_duration']:.2f}秒")
 
-    def reconstruct_screenplay(self, subtitles: List[Dict], analysis: Dict, language: str) -> List[Dict]:
+    def reconstruct_screenplay_workflow(self, subtitles: List[Dict], analysis: Dict, language: str) -> List[Dict]:
         """
         重构剧本 - 工作流程接口
 

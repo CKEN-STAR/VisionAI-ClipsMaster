@@ -1,0 +1,16 @@
+{
+  "测试完成时间": "2025-07-29T23:58:50.765104",
+  "测试执行摘要": {
+    "total_tests_executed": 12,
+    "tests_passed": 11,
+    "tests_failed": 1,
+    "overall_success_rate": 0.9166666666666666
+  },
+  "功能评估": {
+    "core_functions_working": 3,
+    "total_core_functions": 4,
+    "functionality_score": 0.75
+  },
+  "总体评级": "SATISFACTORY",
+  "详细报告文件": "final_training_test_report_20250729_235542.json"
+}

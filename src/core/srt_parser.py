@@ -50,6 +50,18 @@ class SRTParser:
             logger.error(f"SRTParser解析失败: {file_path}, 错误: {e}")
             raise
 
+    def parse_file(self, file_path: str) -> List[Dict[str, Any]]:
+        """
+        解析SRT字幕文件（标准方法名）
+
+        Args:
+            file_path: SRT文件路径
+
+        Returns:
+            包含字幕信息的字典列表
+        """
+        return self.parse(file_path)
+
     def parse_srt_file(self, file_path: str) -> List[Dict[str, Any]]:
         """
         解析SRT字幕文件（别名方法）
@@ -119,6 +131,82 @@ class SRTParser:
         """解析时间为秒数"""
         hours, minutes, seconds, milliseconds = map(int, time_parts)
         return hours * 3600 + minutes * 60 + seconds + milliseconds / 1000.0
+
+    def get_total_duration(self, subtitles: List[Dict[str, Any]]) -> float:
+        """
+        计算字幕的总时长
+
+        Args:
+            subtitles: 字幕列表，每个字幕包含start_time和end_time
+
+        Returns:
+            总时长（秒）
+        """
+        if not subtitles:
+            return 0.0
+
+        # 找到最早的开始时间和最晚的结束时间
+        start_times = [sub.get('start_time', 0) for sub in subtitles]
+        end_times = [sub.get('end_time', 0) for sub in subtitles]
+
+        if not start_times or not end_times:
+            return 0.0
+
+        earliest_start = min(start_times)
+        latest_end = max(end_times)
+
+        return max(0.0, latest_end - earliest_start)
+
+    def get_subtitle_count(self, subtitles: List[Dict[str, Any]]) -> int:
+        """
+        获取字幕条数
+
+        Args:
+            subtitles: 字幕列表
+
+        Returns:
+            字幕条数
+        """
+        return len(subtitles) if subtitles else 0
+
+    def get_duration_stats(self, subtitles: List[Dict[str, Any]]) -> Dict[str, float]:
+        """
+        获取字幕时长统计信息
+
+        Args:
+            subtitles: 字幕列表
+
+        Returns:
+            包含总时长、平均时长、最短时长、最长时长的字典
+        """
+        if not subtitles:
+            return {
+                'total_duration': 0.0,
+                'average_duration': 0.0,
+                'min_duration': 0.0,
+                'max_duration': 0.0,
+                'subtitle_count': 0
+            }
+
+        durations = [sub.get('duration', 0) for sub in subtitles]
+        durations = [d for d in durations if d > 0]  # 过滤无效时长
+
+        if not durations:
+            return {
+                'total_duration': 0.0,
+                'average_duration': 0.0,
+                'min_duration': 0.0,
+                'max_duration': 0.0,
+                'subtitle_count': len(subtitles)
+            }
+
+        return {
+            'total_duration': self.get_total_duration(subtitles),
+            'average_duration': sum(durations) / len(durations),
+            'min_duration': min(durations),
+            'max_duration': max(durations),
+            'subtitle_count': len(subtitles)
+        }
 
 
 def parse_srt(file_path: str, encoding: str = 'utf-8') -> List[Dict[str, Any]]:

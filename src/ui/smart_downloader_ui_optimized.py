@@ -273,17 +273,11 @@ class RealTimeHardwareInfoWidget(QFrame):
         
         row = 0
         
-        # GPU信息
-        gpu_label = QLabel("GPU类型:")
-        gpu_type = hardware_info.get('gpu_type', 'unknown')
-        gpu_memory = hardware_info.get('gpu_memory_gb', 0)
-        
-        if gpu_type != 'unknown' and gpu_memory > 0:
-            gpu_value = QLabel(f"{gpu_type.upper()} ({gpu_memory:.1f}GB)")
-            gpu_value.setStyleSheet("color: green; font-weight: bold;")
-        else:
-            gpu_value = QLabel("无独立显卡 (使用CPU)")
-            gpu_value.setStyleSheet("color: orange;")
+        # GPU信息显示已移除 - 恢复UI界面到原始状态
+        # 保留硬件检测后端功能，仅移除UI显示
+        gpu_label = QLabel("硬件状态:")
+        gpu_value = QLabel("硬件检测中...")
+        gpu_value.setStyleSheet("color: #666; font-style: italic;")
         
         self.info_grid.addWidget(gpu_label, row, 0)
         self.info_grid.addWidget(gpu_value, row, 1)

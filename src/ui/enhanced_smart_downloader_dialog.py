@@ -196,31 +196,18 @@ class EnhancedSmartDownloaderDialog(QDialog):
             # 更新硬件信息
             self.current_hardware_info = self.hardware_widget.get_hardware_info() or {}
             
-            # 更新硬件状态指示器
-            if self.current_hardware_info.get('has_gpu', False):
-                gpu_memory = self.current_hardware_info.get('gpu_memory_gb', 0)
-                self.hardware_status_label.setText(f"🎮 GPU: {gpu_memory:.1f}GB")
-                self.hardware_status_label.setStyleSheet("""
-                    QLabel {
-                        background-color: #e8f5e8;
-                        border: 1px solid #4caf50;
-                        border-radius: 4px;
-                        padding: 4px 8px;
-                        color: #2e7d32;
-                    }
-                """)
-            else:
-                ram_gb = self.current_hardware_info.get('system_ram_gb', 0)
-                self.hardware_status_label.setText(f"🧠 RAM: {ram_gb:.1f}GB")
-                self.hardware_status_label.setStyleSheet("""
-                    QLabel {
-                        background-color: #fff3e0;
-                        border: 1px solid #ff9800;
-                        border-radius: 4px;
-                        padding: 4px 8px;
-                        color: #f57c00;
-                    }
-                """)
+            # 硬件状态指示器显示已移除 - 恢复UI界面到原始状态
+            # 保留硬件检测后端功能，仅移除UI显示
+            self.hardware_status_label.setText("🔍 硬件检测中...")
+            self.hardware_status_label.setStyleSheet("""
+                QLabel {
+                    background-color: #e3f2fd;
+                    border: 1px solid #2196f3;
+                    border-radius: 4px;
+                    padding: 4px 8px;
+                    color: #1976d2;
+                }
+            """)
             
             # 更新推荐组件
             self.recommendation_widget.update_hardware_info(self.current_hardware_info)

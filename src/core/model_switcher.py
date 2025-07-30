@@ -99,10 +99,12 @@ class ModelSwitcher:
 
     def switch_to_chinese_model(self) -> bool:
         """切换到中文模型"""
+        logger.info("请求切换到中文模型")
         return self.switch_model('zh')
 
     def switch_to_english_model(self) -> bool:
         """切换到英文模型"""
+        logger.info("请求切换到英文模型")
         return self.switch_model('en')
 
     def check_model_availability(self) -> Dict[str, bool]:
@@ -159,13 +161,7 @@ class ModelSwitcher:
             logger.error(f"根据语言选择模型失败: {e}")
             return None
 
-    def switch_to_chinese_model(self) -> bool:
-        """切换到中文模型 - 便捷方法"""
-        return self.switch_model("zh")
 
-    def switch_to_english_model(self) -> bool:
-        """切换到英文模型 - 便捷方法"""
-        return self.switch_model("en")
 
     def get_supported_languages(self) -> list:
         """获取支持的语言列表"""
