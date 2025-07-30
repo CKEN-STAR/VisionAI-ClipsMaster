@@ -1,5 +1,0 @@
-1
-This is missing timestamps
-
-2
-Another line

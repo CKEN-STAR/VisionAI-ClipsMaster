@@ -33,7 +33,7 @@ from typing import Dict, Any, List, Optional
 from PyQt6.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
     QProgressBar, QGroupBox, QGridLayout, QListWidget, QListWidgetItem,
-    QTabWidget, QTextEdit, QFrame, QSplitter, QScrollArea
+    QTabWidget, QTextEdit, QFrame, QSplitter, QScrollArea, QCheckBox
 )
 from PyQt6.QtCore import QObject, pyqtSignal, QTimer, Qt
 from PyQt6.QtGui import QFont, QPalette, QColor, QPixmap, QPainter

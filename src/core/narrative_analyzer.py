@@ -260,6 +260,55 @@ class IntegratedNarrativeAnalyzer:
             }
         }
 
+# 向后兼容的类别名
+class NarrativeAnalyzer(IntegratedNarrativeAnalyzer):
+    """叙事分析器（向后兼容）"""
+
+    def analyze_segments(self, segments: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """
+        分析字幕段的叙事结构
+
+        Args:
+            segments: 字幕段列表
+
+        Returns:
+            叙事分析结果
+        """
+        try:
+            # 提取文本内容
+            texts = []
+            for segment in segments:
+                text = segment.get('text', '') or segment.get('content', '')
+                if text:
+                    texts.append(text)
+
+            if not texts:
+                return {
+                    "narrative_type": "unknown",
+                    "structure": "incomplete",
+                    "emotion_curve": [],
+                    "total_segments": len(segments)
+                }
+
+            # 使用现有的分析方法
+            result = self.analyze_narrative_structure(texts)
+
+            # 添加段落级别的信息
+            result["total_segments"] = len(segments)
+            result["analyzed_texts"] = len(texts)
+
+            return result
+
+        except Exception as e:
+            logger.error(f"段落叙事分析失败: {e}")
+            return {
+                "narrative_type": "unknown",
+                "structure": "error",
+                "emotion_curve": [],
+                "total_segments": len(segments),
+                "error": str(e)
+            }
+
 # 全局实例
 _narrative_analyzer = None
 
@@ -313,6 +362,9 @@ def test_integrated_narrative_analysis():
     else:
         print(f"❌ 分析失败: {result['message']}")
         return False
+
+# 注释掉旧的别名，使用新的类定义
+# NarrativeAnalyzer = IntegratedNarrativeAnalyzer
 
 if __name__ == "__main__":
     test_integrated_narrative_analysis()

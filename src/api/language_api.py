@@ -1,10 +1,10 @@
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse
 import time
 from threading import Lock
 from typing import Dict, Any
 
-app = FastAPI()
+router = APIRouter(tags=["language"])
 
 # 当前语言状态
 current_lang = 'zh'
@@ -12,7 +12,7 @@ current_lang = 'zh'
 switch_log = []
 switch_lock = Lock()
 
-@app.post("/switch_lang")
+@router.post("/switch_lang")
 def force_switch(lang: str) -> Dict[str, str]:
     """强制切换处理语言，安全防护：每分钟最多切换3次"""
     global current_lang, switch_log
@@ -28,7 +28,7 @@ def force_switch(lang: str) -> Dict[str, str]:
         current_lang = lang
     return {"status": f"已强制切换至{lang.upper()}模式"}
 
-@app.get("/current_lang")
+@router.get("/current_lang")
 def get_current_lang() -> Dict[str, Any]:
     """获取当前使用的语言"""
     now = time.time()

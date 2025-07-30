@@ -1,0 +1,84 @@
+{
+  "optimization_summary": {
+    "overall_success_rate": 75.0,
+    "test_completion_time": "2025-07-28T16:10:13.666074",
+    "total_duration": 4.16846,
+    "memory_usage_mb": 367.5
+  },
+  "detailed_results": {
+    "end_to_end_workflow": {
+      "success_rate": 50.0,
+      "results": {
+        "srt_parsing": {
+          "status": "PASSED",
+          "chinese_count": 8,
+          "english_count": 8,
+          "message": "SRT解析测试通过"
+        },
+        "screenplay_reconstruction": {
+          "status": "FAILED",
+          "error": "剧本重构失败"
+        },
+        "video_splicing": {
+          "status": "PASSED",
+          "segments_processed": 8,
+          "total_duration": 24.0,
+          "output_path": "D:\\zancun\\VisionAI-ClipsMaster\\test_data\\output_video.mp4",
+          "message": "视频拼接测试通过"
+        },
+        "jianying_export": {
+          "status": "FAILED",
+          "error": "导出文件格式不正确"
+        }
+      },
+      "status": "FAILED"
+    },
+    "ui_functionality": {
+      "success_rate": 100.0,
+      "results": {
+        "ui_startup": {
+          "status": "PASSED",
+          "message": "UI启动测试通过",
+          "ui_file_exists": true,
+          "has_main_window": true
+        },
+        "ui_components": {
+          "status": "PASSED",
+          "components_tested": [
+            "QMainWindow",
+            "QWidget",
+            "QPushButton",
+            "QLabel",
+            "QProgressBar",
+            "QTextEdit",
+            "QVBoxLayout"
+          ],
+          "message": "UI组件测试通过"
+        },
+        "ui_interaction": {
+          "status": "PASSED",
+          "click_count": 1,
+          "message": "UI交互测试通过"
+        }
+      },
+      "status": "PASSED"
+    }
+  },
+  "recommendations": [
+    {
+      "category": "端到端工作流",
+      "priority": "HIGH",
+      "suggestion": "需要进一步优化工作流程的稳定性和错误处理"
+    },
+    {
+      "category": "性能优化",
+      "priority": "LOW",
+      "suggestion": "考虑实现更高效的内存管理和缓存机制"
+    },
+    {
+      "category": "用户体验",
+      "priority": "MEDIUM",
+      "suggestion": "添加更详细的进度提示和操作指导"
+    }
+  ]
+}

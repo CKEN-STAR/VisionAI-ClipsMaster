@@ -1,44 +1,69 @@
 
-# 安全导入包装 - 自动生成
-import sys
-import os
-
-# 确保PyQt6可用
-try:
-    from PyQt6.QtWidgets import QApplication
-    from PyQt6.QtCore import QThread
-    QT_AVAILABLE = True
-except ImportError:
-    QT_AVAILABLE = False
-    print(f"[WARN] PyQt6不可用，TrainingPanel将使用fallback模式")
-
-# 线程安全检查
-def ensure_main_thread():
-    """确保在主线程中执行"""
-    if QT_AVAILABLE and QApplication.instance():
-        current_thread = QThread.currentThread()
-        main_thread = QApplication.instance().thread()
-        if current_thread != main_thread:
-            print(f"[WARN] TrainingPanel不在主线程中，可能导致问题")
-            return False
-    return True
-
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 训练面板组件
 提供模型训练的可视化界面和实时监控功能
 """
 
+import sys
+import os
 import time
 import threading
 from typing import Dict, Any, Optional, List
-from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, 
-    QProgressBar, QTextEdit, QGroupBox, QGridLayout, QComboBox,
-    QSpinBox, QCheckBox, QFileDialog, QListWidget, QSplitter,
-    QTabWidget, QFrame
-)
-from PyQt6.QtCore import QObject, pyqtSignal, QThread, QTimer
-from PyQt6.QtGui import QFont, QPalette, QColor
+
+# 统一的PyQt6导入和错误处理
+QT_AVAILABLE = False
+QT_ERROR = None
+
+try:
+    from PyQt6.QtWidgets import (
+        QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton,
+        QProgressBar, QTextEdit, QGroupBox, QGridLayout, QComboBox,
+        QSpinBox, QCheckBox, QFileDialog, QListWidget, QSplitter,
+        QTabWidget, QFrame
+    )
+    from PyQt6.QtCore import QObject, pyqtSignal, QThread, QTimer
+    from PyQt6.QtGui import QFont, QPalette, QColor
+    QT_AVAILABLE = True
+    print("✅ PyQt6导入成功")
+except ImportError as e:
+    QT_AVAILABLE = False
+    QT_ERROR = str(e)
+    print(f"❌ PyQt6导入失败: {e}")
+    print("💡 请安装PyQt6: pip install PyQt6")
+
+    # 创建fallback类
+    class QWidget:
+        def __init__(self, *args, **kwargs): pass
+        def show(self): print("Fallback: 显示窗口")
+        def hide(self): print("Fallback: 隐藏窗口")
+        def isVisible(self): return False
+        def setup_ui(self): print("Fallback: 设置UI")
+
+    class QObject:
+        def __init__(self, *args, **kwargs): pass
+
+    # 其他fallback类
+    QVBoxLayout = QHBoxLayout = QLabel = QPushButton = QProgressBar = QWidget
+    QTextEdit = QGroupBox = QGridLayout = QComboBox = QSpinBox = QWidget
+    QCheckBox = QFileDialog = QListWidget = QSplitter = QTabWidget = QWidget
+    QFrame = QFont = QPalette = QColor = QTimer = QThread = QWidget
+    pyqtSignal = lambda *args: lambda f: f
+
+# 线程安全检查
+def ensure_main_thread():
+    """确保在主线程中执行"""
+    if not QT_AVAILABLE:
+        return True  # fallback模式下总是返回True
+
+    if QApplication.instance():
+        current_thread = QThread.currentThread()
+        main_thread = QApplication.instance().thread()
+        if current_thread != main_thread:
+            print(f"⚠️ TrainingPanel不在主线程中，可能导致问题")
+            return False
+    return True
 
 try:
     from ui.components.alert_manager import AlertManager, AlertLevel

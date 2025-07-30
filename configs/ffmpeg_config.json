@@ -1,0 +1,8 @@
+{
+  "ffmpeg_path": "D:\\zancun\\VisionAI-ClipsMaster\\tools\\ffmpeg\\bin\\ffmpeg.exe",
+  "ffprobe_path": "D:\\zancun\\VisionAI-ClipsMaster\\tools\\ffmpeg\\bin\\ffprobe.exe",
+  "version_info": "ffmpeg version 7.1.1-essentials_build-www.gyan.dev Copyright (c) 2000-2025 the FFmpeg developers",
+  "system": "windows",
+  "configured_at": "D:\\zancun\\VisionAI-ClipsMaster",
+  "status": "configured"
+}

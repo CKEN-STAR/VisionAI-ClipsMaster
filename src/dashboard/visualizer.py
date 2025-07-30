@@ -337,7 +337,7 @@ def _generate_html_report(report: Dict[str, Any], output_path: str) -> None:
     <style>
         body {{ font-family: "Segoe UI", Arial, sans-serif; margin: 0; padding: 20px; color: #333; }}
         .container {{ max-width: 1200px; margin: 0 auto; }}
-        .card {{ border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }}
+        .card {{ border: 1px solid #ddd; border-radius: 8px; padding: 20px; margin-bottom: 20px; /* CSS property removed for QSS compatibility */ }}
         .status-bar {{ padding: 10px; border-radius: 4px; margin-bottom: 20px; color: white; font-weight: bold; }}
         .status-healthy {{ background-color: #28a745; }}
         .status-warning {{ background-color: #ffc107; color: #333; }}

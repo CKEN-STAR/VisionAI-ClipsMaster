@@ -26,7 +26,7 @@ except ImportError:
     logger.warning("NLTK未安装，英文节拍分析将使用基础方法")
     NLTK_AVAILABLE = False
 
-from src.nlp.sentiment_analyzer import analyze_text_sentiment
+from src.nlp.sentiment_analyzer import analyze_sentiment as analyze_text_sentiment
 from src.utils.memory_guard import track_memory
 
 # 英文节拍特征词汇和标记

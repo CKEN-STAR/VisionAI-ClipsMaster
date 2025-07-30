@@ -18,11 +18,11 @@ from pathlib import Path
 from typing import Optional, Dict, Any
 
 from PyQt6.QtWidgets import (
-    QMainWindow, QMenuBar, QToolBar, QStatusBar, QAction,
+    QMainWindow, QMenuBar, QToolBar, QStatusBar,
     QMessageBox, QWidget, QLabel, QProgressBar
 )
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QObject
-from PyQt6.QtGui import QIcon, QKeySequence
+from PyQt6.QtGui import QIcon, QKeySequence, QAction
 
 # 添加项目根目录到路径
 project_root = Path(__file__).parent.parent.parent
@@ -123,17 +123,8 @@ class MainUIIntegrator(QObject):
             if not tools_menu:
                 tools_menu = menubar.addMenu("工具(&T)")
             
-            # 添加智能下载器菜单项
-            smart_downloader_action = QAction("🤖 智能模型下载器", self.main_window)
-            smart_downloader_action.setStatusTip("打开智能模型下载器，根据硬件配置推荐最适合的模型版本")
-            smart_downloader_action.triggered.connect(self._show_smart_downloader_menu)
-            
-            # 添加分隔符（如果菜单不为空）
-            if tools_menu.actions():
-                tools_menu.addSeparator()
-            
-            tools_menu.addAction(smart_downloader_action)
-            self.menu_actions["smart_downloader"] = smart_downloader_action
+            # 智能下载器菜单项已移除 - 恢复UI界面到原始状态
+            # 保留后端功能，仅移除UI元素
             
             # 添加硬件信息菜单项
             hardware_info_action = QAction("🔧 硬件信息", self.main_window)
@@ -151,30 +142,9 @@ class MainUIIntegrator(QObject):
     def _integrate_toolbar(self):
         """集成工具栏"""
         try:
-            # 查找现有工具栏或创建新的
-            toolbar = None
-            for child in self.main_window.children():
-                if isinstance(child, QToolBar):
-                    toolbar = child
-                    break
-            
-            if not toolbar:
-                toolbar = self.main_window.addToolBar("主工具栏")
-            
-            # 添加智能下载器按钮
-            smart_downloader_action = QAction("🤖", self.main_window)
-            smart_downloader_action.setToolTip("智能模型下载器")
-            smart_downloader_action.triggered.connect(self._show_smart_downloader_menu)
-            
-            # 添加分隔符（如果工具栏不为空）
-            if toolbar.actions():
-                toolbar.addSeparator()
-            
-            toolbar.addAction(smart_downloader_action)
-            self.toolbar_actions["smart_downloader"] = smart_downloader_action
-            
-            logger.info("✅ 工具栏集成完成")
-            
+            # 小机器人头像按钮已移除 - 恢复UI界面到原始状态
+            logger.info("✅ 工具栏集成完成（小机器人头像按钮已移除）")
+
         except Exception as e:
             logger.error(f"❌ 工具栏集成失败: {e}")
     
@@ -187,11 +157,7 @@ class MainUIIntegrator(QObject):
                 statusbar = QStatusBar(self.main_window)
                 self.main_window.setStatusBar(statusbar)
             
-            # 添加硬件状态标签
-            hardware_status_label = QLabel("🔍 检测硬件中...")
-            hardware_status_label.setMinimumWidth(150)
-            statusbar.addPermanentWidget(hardware_status_label)
-            self.status_widgets["hardware_status"] = hardware_status_label
+            # 硬件状态标签已移除 - 恢复UI界面到原始状态
             
             # 添加下载进度条（初始隐藏）
             download_progress = QProgressBar()
@@ -201,7 +167,7 @@ class MainUIIntegrator(QObject):
             self.status_widgets["download_progress"] = download_progress
             
             # 连接信号
-            self.hardware_status_changed.connect(hardware_status_label.setText)
+            # 硬件状态信号连接已移除 - 恢复UI界面到原始状态
             self.download_progress_updated.connect(self._update_download_progress)
             
             logger.info("✅ 状态栏集成完成")
@@ -212,16 +178,14 @@ class MainUIIntegrator(QObject):
     def _setup_shortcuts(self):
         """设置快捷键"""
         try:
-            # 智能下载器快捷键 (Ctrl+Shift+D)
-            if "smart_downloader" in self.menu_actions:
-                self.menu_actions["smart_downloader"].setShortcut(QKeySequence("Ctrl+Shift+D"))
-            
+            # 智能下载器快捷键已移除 - 恢复UI界面到原始状态
+
             # 硬件信息快捷键 (Ctrl+Shift+H)
             if "hardware_info" in self.menu_actions:
                 self.menu_actions["hardware_info"].setShortcut(QKeySequence("Ctrl+Shift+H"))
-            
+
             logger.info("✅ 快捷键设置完成")
-            
+
         except Exception as e:
             logger.error(f"❌ 快捷键设置失败: {e}")
     
@@ -246,25 +210,15 @@ class MainUIIntegrator(QObject):
         try:
             if self.integration_manager:
                 hardware_info = self.integration_manager.get_hardware_info(force_refresh=False)
-                
-                if hardware_info:
-                    gpu_type = hardware_info.get('gpu_type', 'unknown')
-                    gpu_memory = hardware_info.get('gpu_memory_gb', 0)
-                    
-                    if gpu_type != 'unknown' and gpu_memory > 0:
-                        status_text = f"🎮 {gpu_type.upper()} {gpu_memory:.1f}GB"
-                    else:
-                        status_text = "💻 CPU模式"
-                    
-                    self.hardware_status_changed.emit(status_text)
-                else:
-                    self.hardware_status_changed.emit("❓ 硬件未知")
-            else:
-                self.hardware_status_changed.emit("❌ 检测失败")
-                
+
+                # 硬件状态显示信息已移除 - 恢复UI界面到原始状态
+                # 保留硬件检测后端功能，仅移除UI状态显示
+                # 硬件检测逻辑继续运行，但不显示状态信息
+                pass
+
         except Exception as e:
             logger.error(f"❌ 硬件状态检查失败: {e}")
-            self.hardware_status_changed.emit("❌ 检测错误")
+            # 硬件状态显示信息已移除
     
     def _show_smart_downloader_menu(self):
         """显示智能下载器菜单"""
@@ -341,17 +295,16 @@ class MainUIIntegrator(QObject):
             hardware_info = self.integration_manager.get_hardware_info(force_refresh=True)
             
             if hardware_info:
-                # 格式化硬件信息
-                info_text = "🔧 当前硬件配置:\n\n"
-                info_text += f"GPU类型: {hardware_info.get('gpu_type', 'unknown')}\n"
-                info_text += f"GPU内存: {hardware_info.get('gpu_memory_gb', 0):.1f} GB\n"
+                # 硬件状态显示信息已移除 - 恢复UI界面到原始状态
+                # 格式化硬件信息（移除GPU相关显示）
+                info_text = "🔧 当前系统配置:\n\n"
                 info_text += f"系统内存: {hardware_info.get('system_ram_gb', 0):.1f} GB\n"
                 info_text += f"CPU核心: {hardware_info.get('cpu_cores', 0)} 核\n"
                 info_text += f"性能等级: {hardware_info.get('performance_level', 'unknown')}\n"
-                
+
                 QMessageBox.information(
                     self.main_window,
-                    "硬件信息",
+                    "系统信息",
                     info_text
                 )
             else:

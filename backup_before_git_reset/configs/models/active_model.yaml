@@ -1,8 +1,0 @@
-active_model: qwen2.5-7b-zh
-auto_switch: true  # 启用自动语言检测和模型切换
-fallback_model: mistral-7b-en  # 英文模型配置
-bilingual_support: true  # 启用双语言支持
-model_switching:
-  enabled: true
-  switch_threshold: 0.7  # 语言检测置信度阈值
-  max_switch_time: 1.5  # 最大切换时间(秒)

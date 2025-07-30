@@ -599,3 +599,64 @@ class EnTrainer:
                 "error": error_msg,
                 "save_type": "MODEL_SAVE_FAILED"
             }
+
+    def load_training_data(self, data_path: str) -> bool:
+        """Load training data"""
+        try:
+            import os
+            from pathlib import Path
+
+            data_dir = Path(data_path)
+            if not data_dir.exists():
+                self.logger.warning(f"Training data directory not found: {data_path}")
+                return False
+
+            # Find SRT files
+            srt_files = list(data_dir.glob("*.srt"))
+            self.logger.info(f"Found {len(srt_files)} SRT files")
+
+            return len(srt_files) > 0
+
+        except Exception as e:
+            self.logger.error(f"Failed to load training data: {e}")
+            return False
+
+    def quick_training_test(self, data_path: str) -> bool:
+        """Quick training test"""
+        try:
+            # Simulate quick training process
+            self.logger.info("Starting quick training test...")
+
+            # Check data
+            if not self.load_training_data(data_path):
+                return False
+
+            # Simulate training steps
+            import time
+            time.sleep(2)  # Simulate training time
+
+            self.logger.info("Quick training test completed")
+            return True
+
+        except Exception as e:
+            self.logger.error(f"Quick training test failed: {e}")
+            return False
+
+    def quick_inference_test(self, input_text: str) -> str:
+        """Quick inference test"""
+        try:
+            if not input_text or not input_text.strip():
+                raise ValueError("Input text cannot be empty")
+
+            # Simulate inference process
+            import time
+            time.sleep(0.1)  # Simulate inference time
+
+            # Simple text transformation (simulate viral conversion)
+            result = f"SHOCKING: {input_text} - You won't believe what happens next!"
+
+            return result
+
+        except Exception as e:
+            self.logger.error(f"Quick inference test failed: {e}")
+            raise

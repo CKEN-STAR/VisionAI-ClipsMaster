@@ -1,0 +1,54 @@
+{
+  "system_info": {
+    "platform": "Windows",
+    "platform_version": "10.0.26100",
+    "architecture": "64bit",
+    "python_version": "3.11.11",
+    "total_memory_gb": 15.733024597167969,
+    "available_memory_gb": 3.2482986450195312,
+    "memory_percent": 79.4,
+    "cpu_count": 16,
+    "cpu_count_logical": 16
+  },
+  "pytorch_cuda": {
+    "installed": true,
+    "version": "2.1.2+cpu",
+    "cuda_compiled": false,
+    "cuda_version": null,
+    "cuda_available": false
+  },
+  "nvidia_smi": {
+    "available": false,
+    "error": "命令未找到"
+  },
+  "windows_wmi": {
+    "wmic_available": true,
+    "detected_gpus": [
+      {
+        "name": "Intel(R) Iris(R) Xe Graphics",
+        "memory": "1073741824",
+        "driver": "31.0.101.3358"
+      }
+    ],
+    "wmi_module_available": false
+  },
+  "memory_analysis": {
+    "total_gb": 15.733024597167969,
+    "used_gb": 12.664772033691406,
+    "available_gb": 3.0682525634765625,
+    "percent": 80.5,
+    "high_usage": true,
+    "target_limit_gb": 3.8
+  },
+  "recommendations": [
+    "安装支持CUDA的PyTorch版本: pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118",
+    "nvidia-smi不可用，可能原因：1) 无NVIDIA GPU 2) NVIDIA驱动未安装 3) 驱动版本过旧",
+    "安装WMI模块以增强GPU检测: pip install WMI",
+    "内存使用过高可能与无GPU加速有关，建议：1) 安装GPU驱动 2) 优化CPU模式内存使用",
+    "当前内存使用超出4GB设备限制，需要优化内存管理策略",
+    "🔧 安装支持CUDA的PyTorch: pip uninstall torch && pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118",
+    "🔧 安装NVIDIA驱动: 从NVIDIA官网下载最新驱动程序",
+    "🔧 优化内存使用: 实施更激进的内存清理策略",
+    "🔧 CPU模式优化: 使用OpenVINO或ONNX Runtime加速CPU推理"
+  ]
+}

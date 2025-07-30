@@ -165,6 +165,9 @@ class APIKeyAuth:
                 raise e
             return None
 
+# 创建API密钥验证实例
+api_key_auth = APIKeyAuth()
+
 # 权限验证
 def check_permissions(required_permissions: List[str]):
     """

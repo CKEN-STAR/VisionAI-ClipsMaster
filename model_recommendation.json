@@ -1,9 +1,0 @@
-{
-  "quantization": "Q5_K_M",
-  "model_size": "base",
-  "use_gpu": true,
-  "gpu_type": "Intel Integrated",
-  "gpu_memory": "Unknown",
-  "batch_size": 4,
-  "loading_strategy": "normal"
-}

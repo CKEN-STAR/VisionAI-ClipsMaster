@@ -273,17 +273,11 @@ class RealTimeHardwareInfoWidget(QFrame):
         
         row = 0
         
-        # GPU信息
-        gpu_label = QLabel("GPU类型:")
-        gpu_type = hardware_info.get('gpu_type', 'unknown')
-        gpu_memory = hardware_info.get('gpu_memory_gb', 0)
-        
-        if gpu_type != 'unknown' and gpu_memory > 0:
-            gpu_value = QLabel(f"{gpu_type.upper()} ({gpu_memory:.1f}GB)")
-            gpu_value.setStyleSheet("color: green; font-weight: bold;")
-        else:
-            gpu_value = QLabel("无独立显卡 (使用CPU)")
-            gpu_value.setStyleSheet("color: orange;")
+        # GPU信息显示已移除 - 恢复UI界面到原始状态
+        # 保留硬件检测后端功能，仅移除UI显示
+        gpu_label = QLabel("硬件状态:")
+        gpu_value = QLabel("硬件检测中...")
+        gpu_value.setStyleSheet("color: #666; font-style: italic;")
         
         self.info_grid.addWidget(gpu_label, row, 0)
         self.info_grid.addWidget(gpu_value, row, 1)
@@ -518,6 +512,35 @@ class DynamicRecommendationWidget(QFrame):
         """获取当前推荐信息"""
         return self.recommendation_info.copy()
 
+
+class OptimizedSmartDownloaderDialog(QDialog):
+    """优化的智能推荐下载器对话框"""
+
+    download_requested = pyqtSignal(str, dict)  # 下载请求信号
+
+    def __init__(self, model_name: str, parent=None):
+        super().__init__(parent)
+        self.model_name = model_name
+        self.dialog = SmartDownloaderDialog(model_name, parent)
+
+        # 连接信号
+        self.dialog.download_requested.connect(self.download_requested)
+
+        # 设置窗口属性
+        self.setWindowTitle(f"优化智能下载器 - {model_name}")
+        self.setModal(True)
+
+    def show_intelligent_recommendation(self):
+        """显示智能推荐"""
+        return self.dialog.show_intelligent_recommendation()
+
+    def update_recommendation(self, recommendation):
+        """更新推荐"""
+        return self.dialog.update_recommendation(recommendation)
+
+    def exec(self):
+        """执行对话框"""
+        return self.dialog.exec()
 
 class SmartDownloaderDialog(QDialog):
     """智能推荐下载器对话框 - 优化版本"""

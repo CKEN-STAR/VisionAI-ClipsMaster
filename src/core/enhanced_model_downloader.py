@@ -13,7 +13,7 @@ import time
 import hashlib
 import requests
 from pathlib import Path
-from typing import Dict, List, Optional, Callable
+from typing import Dict, List, Optional, Callable, Any
 from PyQt6.QtCore import QThread, pyqtSignal, QObject
 from PyQt6.QtWidgets import QProgressDialog, QMessageBox, QApplication
 import logging
@@ -265,7 +265,141 @@ class EnhancedModelDownloader(QObject):
                 logger.error(f"❌ 智能选择器强制重新初始化失败: {e}")
 
         logger.info("✅ 增强下载器状态已重置")
-    
+
+    def get_download_status(self) -> Dict[str, Any]:
+        """获取下载状态信息
+
+        Returns:
+            Dict[str, Any]: 包含下载状态的字典
+        """
+        try:
+            status = {
+                "status": "idle",
+                "current_download": None,
+                "progress": 0.0,
+                "speed": 0.0,
+                "eta": 0,
+                "has_intelligent_selector": self.has_intelligent_selector,
+                "last_model": self._last_model_name,
+                "timestamp": time.time()
+            }
+
+            # 检查当前下载状态
+            if self.current_download:
+                status["status"] = "downloading"
+                status["current_download"] = {
+                    "model_name": getattr(self.current_download, 'model_name', 'unknown'),
+                    "started_at": getattr(self.current_download, 'started_at', 0)
+                }
+
+            # 检查进度对话框状态
+            if self.progress_dialog and self.progress_dialog.isVisible():
+                status["status"] = "downloading"
+                if hasattr(self.progress_dialog, 'value'):
+                    status["progress"] = self.progress_dialog.value()
+
+            return status
+
+        except Exception as e:
+            logger.error(f"获取下载状态失败: {e}")
+            return {
+                "status": "error",
+                "error": str(e),
+                "timestamp": time.time()
+            }
+
+    def get_storage_info(self) -> Dict[str, Any]:
+        """获取存储信息
+
+        Returns:
+            Dict[str, Any]: 包含存储信息的字典
+        """
+        try:
+            import os
+            from pathlib import Path
+
+            # 默认模型存储路径
+            models_dir = Path("models")
+            if not models_dir.exists():
+                models_dir.mkdir(parents=True, exist_ok=True)
+
+            # 计算已用空间
+            used_space = 0
+            model_files = []
+
+            if models_dir.exists():
+                for file_path in models_dir.rglob("*"):
+                    if file_path.is_file():
+                        file_size = file_path.stat().st_size
+                        used_space += file_size
+                        model_files.append({
+                            "name": file_path.name,
+                            "path": str(file_path),
+                            "size": file_size,
+                            "size_gb": file_size / (1024**3)
+                        })
+
+            # 获取可用空间
+            try:
+                disk_usage = os.statvfs(str(models_dir)) if hasattr(os, 'statvfs') else None
+                if disk_usage:
+                    available_space = disk_usage.f_bavail * disk_usage.f_frsize
+                else:
+                    # Windows fallback
+                    import shutil
+                    _, _, available_space = shutil.disk_usage(str(models_dir))
+            except Exception:
+                available_space = 0
+
+            return {
+                "models_dir": str(models_dir.absolute()),
+                "used_space_bytes": used_space,
+                "used_space_gb": used_space / (1024**3),
+                "available_space_bytes": available_space,
+                "available_space_gb": available_space / (1024**3),
+                "model_files": model_files,
+                "total_files": len(model_files),
+                "timestamp": time.time()
+            }
+
+        except Exception as e:
+            logger.error(f"获取存储信息失败: {e}")
+            return {
+                "error": str(e),
+                "models_dir": "models",
+                "used_space_gb": 0.0,
+                "available_space_gb": 0.0,
+                "timestamp": time.time()
+            }
+
+    def get_available_models(self) -> List[str]:
+        """获取可用模型列表
+
+        Returns:
+            List[str]: 可用模型名称列表
+        """
+        try:
+            # 从下载配置中获取支持的模型
+            available_models = list(self.download_configs.keys())
+
+            # 如果有智能选择器，也从中获取支持的模型
+            if self.intelligent_selector:
+                try:
+                    from .intelligent_model_selector import IntelligentModelSelector
+                    selector_models = ["mistral-7b", "qwen2.5-7b"]  # 已知支持的模型
+                    available_models.extend(selector_models)
+                except Exception as e:
+                    logger.debug(f"从智能选择器获取模型列表失败: {e}")
+
+            # 去重并排序
+            available_models = sorted(list(set(available_models)))
+
+            return available_models
+
+        except Exception as e:
+            logger.error(f"获取可用模型列表失败: {e}")
+            return ["mistral-7b", "qwen2.5-7b"]  # 返回默认支持的模型
+
     def _load_download_configs(self) -> Dict:
         """加载下载配置"""
         return {

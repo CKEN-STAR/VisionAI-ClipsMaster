@@ -49,14 +49,36 @@ class UIBridge:
             return None
 
         try:
-            # 先加载原始字幕文件
-            success = self.screenplay_engineer.load_original_subtitles([srt_file_path])
-            if not success:
-                logger.error("加载原始字幕失败")
+            # 严格验证输入文件
+            if not os.path.exists(srt_file_path):
+                logger.error(f"SRT文件不存在: {srt_file_path}")
+                return None
+            
+            # 验证文件大小
+            file_size = os.path.getsize(srt_file_path)
+            if file_size == 0:
+                logger.error(f"SRT文件为空: {srt_file_path}")
+                return None
+            
+            # 验证文件扩展名
+            if not srt_file_path.lower().endswith('.srt'):
+                logger.error(f"文件不是SRT格式: {srt_file_path}")
+                return None
+            
+            # 先加载原始字幕文件（使用正确的方法名）
+            subtitles = self.screenplay_engineer.load_subtitles(srt_file_path)
+            if not subtitles or len(subtitles) == 0:
+                logger.error("加载原始字幕失败或文件无有效内容")
+                return None
+            
+            # 验证字幕内容质量
+            valid_subtitles = [s for s in subtitles if s.get("text", "").strip()]
+            if len(valid_subtitles) == 0:
+                logger.error("SRT文件中没有有效的文本内容")
                 return None
 
-            # 调用剧本工程师生成爆款字幕
-            result = self.screenplay_engineer.generate_viral_script(language_mode)
+            # 调用剧本工程师生成爆款字幕（使用正确的方法名）
+            result = self.screenplay_engineer.generate_viral_screenplay(language_mode)
             return result
         except Exception as e:
             logger.error(f"生成爆款SRT失败: {e}")

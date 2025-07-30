@@ -249,16 +249,30 @@ class RealTimeHardwareInfoWidget(QWidget):
         try:
             if self.monitor_worker:
                 self.monitor_worker.stop_monitoring()
-            
-            if self.monitor_thread:
+
+            if self.monitor_thread and self.monitor_thread.isRunning():
                 self.monitor_thread.quit()
-                self.monitor_thread.wait(3000)  # 等待3秒
-                
+                if not self.monitor_thread.wait(3000):  # 等待3秒
+                    logger.warning("线程未能在3秒内正常退出，强制终止")
+                    self.monitor_thread.terminate()
+                    self.monitor_thread.wait(1000)  # 再等待1秒
+
+            # 清理引用
+            self.monitor_worker = None
+            self.monitor_thread = None
+
             logger.info("硬件监控已停止")
-            
+
         except Exception as e:
             logger.error(f"停止硬件监控失败: {e}")
-    
+
+    def __del__(self):
+        """析构函数，确保资源清理"""
+        try:
+            self.stop_monitoring()
+        except:
+            pass  # 析构函数中忽略异常
+
     def force_refresh(self):
         """强制刷新硬件信息"""
         try:
@@ -283,18 +297,8 @@ class RealTimeHardwareInfoWidget(QWidget):
             # 添加硬件信息
             row = 0
             
-            # GPU信息
-            if snapshot.has_gpu:
-                self._add_info_row("🎮 GPU类型", snapshot.gpu_type, row)
-                row += 1
-                self._add_info_row("💾 GPU显存", f"{snapshot.gpu_memory_gb:.1f} GB", row)
-                row += 1
-                if snapshot.gpu_names:
-                    self._add_info_row("🏷️ GPU名称", ", ".join(snapshot.gpu_names), row)
-                    row += 1
-            else:
-                self._add_info_row("🎮 GPU状态", "未检测到独立GPU", row)
-                row += 1
+            # GPU信息显示已移除 - 恢复UI界面到原始状态
+            # 保留硬件检测后端功能，仅移除UI显示
             
             # 内存信息
             self._add_info_row("🧠 系统内存", f"{snapshot.system_ram_gb:.1f} GB", row)

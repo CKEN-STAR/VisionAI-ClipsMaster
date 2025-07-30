@@ -18,6 +18,9 @@ from src.utils.quant_config_loader import get_quant_config
 from src.utils.memory_guard import MemoryGuard, QuantizationManager
 from src.memory.hardware_adapter import HardwareAdapter, get_hardware_adapter
 
+# 内存使用警告阈值（百分比）
+MEMORY_WARNING_THRESHOLD = 80
+
 class QuantDecisionEngine:
     """量化决策引擎：根据内存状态和模型需求做出最佳量化决策"""
     
@@ -188,10 +191,6 @@ class QuantDecisionEngine:
         """
         import time
 
-# 内存使用警告阈值（百分比）
-MEMORY_WARNING_THRESHOLD = 80
-
-        
         # 创建决策记录
         record = {
             "timestamp": time.time(),

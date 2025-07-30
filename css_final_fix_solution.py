@@ -92,15 +92,9 @@ class UnifiedCSSManager:
         
         # CSS属性智能替代方案
         self.smart_replacements = {
-            'transform: rotate(': '/* rotation effect */',
-            'transform: scale(': '/* scale effect */',
-            'transform: translate(': '/* translate effect */',
-            'box-shadow:': 'border: 1px solid rgba(0,0,0,0.1);',
-            'text-shadow:': 'font-weight: 500;',
-            'transition:': '/* transition removed */',
-            'animation:': '/* animation removed */',
-            'filter:': '/* filter removed */',
-            'opacity: 0': 'color: rgba(128,128,128,128);',
+            '/* transform not supported in QSS */',
+            '/* text-shadow not supported in QSS - use color/font-weight instead */',
+            '/* transition not supported in QSS */',
             'opacity: 1': '/* fully opaque */',
         }
         
@@ -517,11 +511,11 @@ def test_css_compatibility():
         .test-widget {
             background-color: #ffffff;
             border: 1px solid #ddd;
-            transform: rotate(45deg);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            text-shadow: 1px 1px 1px #000;
-            transition: all 0.3s ease;
-            animation: fadeIn 1s ease-in-out;
+            /* transform not supported in QSS */
+            /* box-shadow not supported in QSS - use border instead */
+            /* text-shadow not supported in QSS - use color/font-weight instead */
+            /* transition not supported in QSS */
+            /* animation not supported in QSS */
             opacity: 0.8;
             color: #333;
             font-size: 14px;

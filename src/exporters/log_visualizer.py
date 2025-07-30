@@ -529,7 +529,7 @@ class LogVisualizer:
         html += "<script src='https://cdn.plot.ly/plotly-latest.min.js'></script>\n"
         html += "<style>\n"
         html += "body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f5f5f5; }\n"
-        html += ".dashboard { max-width: 1200px; margin: 0 auto; background-color: white; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }\n"
+        html += ".dashboard { max-width: 1200px; margin: 0 auto; background-color: white; padding: 20px; /* CSS property removed for QSS compatibility */ }\n"
         html += "h1 { color: #333; text-align: center; }\n"
         html += ".chart { margin-bottom: 30px; }\n"
         html += ".summary { display: flex; justify-content: space-between; margin-bottom: 20px; }\n"

@@ -16,7 +16,7 @@ import numpy as np
 from typing import List, Dict, Any, Tuple, Optional
 from loguru import logger
 
-from src.nlp.sentiment_analyzer import analyze_text_sentiment
+from src.nlp.sentiment_analyzer import analyze_sentiment as analyze_text_sentiment
 from src.utils.memory_guard import track_memory
 
 # 常量定义

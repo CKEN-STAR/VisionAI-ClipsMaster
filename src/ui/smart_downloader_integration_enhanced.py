@@ -52,43 +52,109 @@ class SmartDownloaderIntegrationManager(QObject):
             "download_manager": False
         }
     
-    def initialize(self, download_callback: Optional[Callable] = None) -> bool:
+    def initialize(self, download_callback: Optional[Callable] = None) -> Dict[str, Any]:
         """初始化集成管理器
-        
+
         Args:
             download_callback: 下载回调函数
-            
+
         Returns:
-            bool: 初始化是否成功
+            Dict[str, Any]: 初始化结果和状态信息
         """
+        result = {
+            "success": False,
+            "status": "initializing",
+            "components": {},
+            "errors": [],
+            "timestamp": time.time()
+        }
+
         try:
             logger.info("🔧 开始初始化智能下载器集成管理器")
-            
+
             self.download_callback = download_callback
-            
+
             # 1. 初始化UI组件
-            self._initialize_ui_components()
-            
+            try:
+                self._initialize_ui_components()
+                result["components"]["ui_components"] = True
+            except Exception as e:
+                result["components"]["ui_components"] = False
+                result["errors"].append(f"UI组件初始化失败: {e}")
+
             # 2. 初始化硬件检测器
-            self._initialize_hardware_detector()
-            
+            try:
+                self._initialize_hardware_detector()
+                result["components"]["hardware_detector"] = True
+            except Exception as e:
+                result["components"]["hardware_detector"] = False
+                result["errors"].append(f"硬件检测器初始化失败: {e}")
+
             # 3. 初始化智能选择器
-            self._initialize_intelligent_selector()
-            
+            try:
+                self._initialize_intelligent_selector()
+                result["components"]["intelligent_selector"] = True
+            except Exception as e:
+                result["components"]["intelligent_selector"] = False
+                result["errors"].append(f"智能选择器初始化失败: {e}")
+
             # 4. 初始化下载管理器
-            self._initialize_download_manager()
-            
-            self.is_initialized = True
-            logger.info("✅ 智能下载器集成管理器初始化完成")
-            self.integration_status_changed.emit("initialized")
-            
-            return True
-            
+            try:
+                self._initialize_download_manager()
+                result["components"]["download_manager"] = True
+            except Exception as e:
+                result["components"]["download_manager"] = False
+                result["errors"].append(f"下载管理器初始化失败: {e}")
+
+            # 检查整体初始化状态
+            successful_components = sum(result["components"].values())
+            total_components = len(result["components"])
+
+            if successful_components == total_components:
+                self.is_initialized = True
+                result["success"] = True
+                result["status"] = "initialized"
+                logger.info("✅ 智能下载器集成管理器初始化完成")
+                self.integration_status_changed.emit("initialized")
+            else:
+                result["status"] = "partially_initialized"
+                logger.warning(f"⚠️ 集成管理器部分初始化成功: {successful_components}/{total_components}")
+                self.integration_status_changed.emit("partially_initialized")
+
+            return result
+
         except Exception as e:
             logger.error(f"❌ 集成管理器初始化失败: {e}")
+            result["success"] = False
+            result["status"] = "failed"
+            result["errors"].append(str(e))
             self.integration_status_changed.emit(f"failed: {e}")
-            return False
-    
+            return result
+
+    def cleanup(self):
+        """清理集成管理器资源"""
+        try:
+            logger.info("🧹 开始清理智能下载器集成管理器")
+
+            # 清理组件缓存
+            self.components.clear()
+            self.hardware_cache.clear()
+            self.recommendation_cache.clear()
+
+            # 重置状态
+            self.is_initialized = False
+            self.download_callback = None
+
+            # 重置集成状态
+            for key in self.integration_status:
+                self.integration_status[key] = False
+
+            logger.info("✅ 智能下载器集成管理器清理完成")
+            self.integration_status_changed.emit("cleaned")
+
+        except Exception as e:
+            logger.error(f"❌ 集成管理器清理失败: {e}")
+
     def _initialize_ui_components(self):
         """初始化UI组件"""
         try:
@@ -395,15 +461,22 @@ def get_integration_manager() -> SmartDownloaderIntegrationManager:
 
 def initialize_smart_downloader_integration(download_callback: Optional[Callable] = None) -> bool:
     """初始化智能下载器集成
-    
+
     Args:
         download_callback: 下载回调函数
-        
+
     Returns:
         bool: 初始化是否成功
     """
     manager = get_integration_manager()
-    return manager.initialize(download_callback)
+    result = manager.initialize(download_callback)
+
+    # 兼容性处理：如果返回字典，提取success字段
+    if isinstance(result, dict):
+        return result.get("success", False)
+
+    # 如果返回布尔值，直接返回
+    return bool(result)
 
 
 def show_smart_downloader_dialog(model_name: str, parent: Optional[QWidget] = None) -> bool:

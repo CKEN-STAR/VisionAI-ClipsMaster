@@ -55,6 +55,14 @@ class IntelligentModelSelector:
         self._hardware_cache = None       # 缓存硬件检测结果
         self._cache_timestamp = None      # 缓存时间戳
 
+        # 质量阈值配置
+        self.quality_thresholds = {
+            "high": 0.95,
+            "medium": 0.85,
+            "low": 0.75,
+            "minimal": 0.65
+        }
+
     def clear_cache(self):
         """清除所有缓存状态，确保状态隔离"""
         logger.info("🔧 清除智能选择器缓存状态")
@@ -344,45 +352,91 @@ class IntelligentModelSelector:
         deployment_target: DeploymentTarget,
         quality_requirement: str
     ) -> float:
-        """计算变体评分（与硬件检测器推荐逻辑保持一致）"""
+        """计算变体评分（增强版本，与硬件检测器推荐逻辑保持一致）"""
         score = 0.0
 
         # 获取硬件信息
-        gpu_memory = getattr(hardware, 'gpu_memory_gb', 0)
-        gpu_type = getattr(hardware, 'gpu_type', None)
-        system_memory = getattr(hardware, 'system_ram_gb', getattr(hardware, 'total_memory_gb', 0))
+        memory_gb = getattr(hardware, 'memory_gb', getattr(hardware, 'system_ram_gb', 0))
+        gpu_available = getattr(hardware, 'gpu_available', getattr(hardware, 'has_gpu', False))
+        gpu_type = getattr(hardware, 'gpu_type', 'Unknown')
+        cpu_cores = getattr(hardware, 'cpu_cores', getattr(hardware, 'cpu_count', 0))
 
-        # 基于硬件检测器的推荐逻辑进行评分
-        variant_quant = variant.quantization.value.upper()
+        # 1. 内存适配性评分 (0-40分)
+        memory_requirement = variant.size_gb * 1.5  # 考虑运行时内存开销
+        if memory_requirement <= memory_gb * 0.6:  # 使用60%以下内存
+            score += 40
+        elif memory_requirement <= memory_gb * 0.8:  # 使用80%以下内存
+            score += 30
+        elif memory_requirement <= memory_gb:  # 刚好够用
+            score += 20
+        else:  # 内存不足
+            score += 0
 
-        # 根据硬件配置确定最适合的量化等级（与硬件检测器保持严格一致）
-        if gpu_type and hasattr(gpu_type, 'value') and gpu_type.value == 'nvidia':
-            if gpu_memory >= 16:
-                preferred_quants = ["Q8_0", "Q5_K_M"]
-            elif gpu_memory >= 12:
-                preferred_quants = ["Q5_K_M", "Q4_K_M"]
-            elif gpu_memory >= 8:
-                preferred_quants = ["Q4_K_M", "Q4_K"]
-            elif gpu_memory >= 6:
-                preferred_quants = ["Q4_K_M", "Q4_K"]
+        # 2. 设备类型适配性评分 (0-30分)
+        quantization = variant.quantization
+        if memory_gb < 8:  # 低内存设备
+            if quantization in ['Q2_K', 'Q4_K_M']:
+                score += 30
+            elif quantization in ['Q5_K_M']:
+                score += 15
             else:
-                preferred_quants = ["Q4_K", "Q2_K"]
-        elif gpu_type and hasattr(gpu_type, 'value') and gpu_type.value == 'intel':
-            # 集成显卡：与硬件检测器保持一致的保守推荐
-            if system_memory >= 16:
-                preferred_quants = ["Q2_K"]  # 更改为Q2_K以与硬件检测器一致
+                score += 0
+        elif memory_gb < 16:  # 中等内存设备
+            if gpu_available and gpu_type in ['CUDA', 'NVIDIA']:
+                if quantization in ['Q5_K_M', 'Q8_0']:
+                    score += 30
+                elif quantization in ['Q4_K_M']:
+                    score += 25
+                else:
+                    score += 10
             else:
-                preferred_quants = ["Q2_K"]
+                if quantization in ['Q4_K_M', 'Q5_K_M']:
+                    score += 30
+                else:
+                    score += 15
+        elif memory_gb < 32:  # 高内存设备
+            if gpu_available and gpu_type in ['CUDA', 'NVIDIA']:
+                if quantization in ['Q8_0', 'FP16']:
+                    score += 30
+                else:
+                    score += 20
+            else:
+                if quantization in ['Q5_K_M', 'Q8_0']:
+                    score += 30
+                else:
+                    score += 20
+        else:  # 超高性能设备
+            if gpu_available and gpu_type in ['CUDA', 'NVIDIA']:
+                if quantization == 'FP16':
+                    score += 30
+                elif quantization == 'Q8_0':
+                    score += 25
+                else:
+                    score += 15
+            else:
+                if quantization in ['Q8_0', 'FP16']:
+                    score += 30
+                else:
+                    score += 20
+        # 3. 质量要求匹配评分 (0-20分)
+        quality_threshold = self.quality_thresholds.get(quality_requirement, 0.85)
+        if variant.quality_retention >= quality_threshold:
+            score += 20
+        elif variant.quality_retention >= quality_threshold - 0.1:
+            score += 15
         else:
-            # 无GPU：最保守配置
-            preferred_quants = ["Q2_K"]
+            score += 5
 
-        # 量化等级匹配评分 (50%)
-        if variant_quant in preferred_quants:
-            quant_score = 1.0 - (preferred_quants.index(variant_quant) * 0.2)  # 首选得分最高
-        else:
-            quant_score = 0.3  # 不匹配的量化等级得分较低
-        score += quant_score * 0.5
+        # 4. 部署目标适配性评分 (0-10分)
+        if deployment_target:
+            if deployment_target.value == 'production' and variant.quality_retention >= 0.9:
+                score += 10
+            elif deployment_target.value == 'development' and variant.quantization in ['Q4_K_M', 'Q5_K_M']:
+                score += 10
+            elif deployment_target.value == 'demo' and variant.size_gb <= 5:
+                score += 10
+            else:
+                score += 5
 
         # 兼容性评分 (25%)
         compatibility = self.detector.assess_compatibility(hardware, variant)
@@ -398,6 +452,7 @@ class IntelligentModelSelector:
 
         # 资源效率评分 (10%)
         # 优先选择资源占用合理的版本
+        system_memory = getattr(hardware, 'system_ram_gb', getattr(hardware, 'total_memory_gb', memory_gb))
         memory_efficiency = max(0, 1 - variant.memory_requirement_gb / max(system_memory * 0.6, 4.0))
         score += memory_efficiency * 0.1
 

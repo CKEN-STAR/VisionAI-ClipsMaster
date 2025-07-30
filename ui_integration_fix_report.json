@@ -1,0 +1,42 @@
+{
+  "timestamp": 1753452936.3976688,
+  "import_report": {
+    "total_modules": 5,
+    "import_errors": [],
+    "success_rate": 100.0
+  },
+  "memory_status": {
+    "initial": {
+      "total_gb": 15.733024597167969,
+      "used_gb": 12.646720886230469,
+      "available_gb": 3.0863037109375,
+      "percent": 80.4,
+      "within_limit": false,
+      "status": "emergency"
+    },
+    "final": {
+      "total_gb": 15.733024597167969,
+      "used_gb": 12.651691436767578,
+      "available_gb": 3.0813331604003906,
+      "percent": 80.4,
+      "within_limit": false,
+      "status": "emergency"
+    },
+    "cleanup_report": {
+      "total_cleanups": 1,
+      "total_freed_mb": -4.4453125,
+      "average_freed_mb": -4.4453125,
+      "last_cleanup": {
+        "timestamp": 1753452936.379731,
+        "method": "emergency",
+        "memory_freed_mb": -4.4453125
+      }
+    }
+  },
+  "adapters": {
+    "screenplay_adapter": true
+  },
+  "recommendations": [
+    "建议进一步优化内存使用"
+  ]
+}

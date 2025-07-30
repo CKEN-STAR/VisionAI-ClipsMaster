@@ -317,14 +317,18 @@ class ThemeSwitcher(QWidget):
     def _do_apply_theme(self):
         """执行主题应用"""
         success = False
-        
+
         try:
-            if self.theme_system and hasattr(self.theme_system, 'apply_theme'):
+            # 首先尝试通过主窗口应用主题
+            main_window = self._find_main_window()
+            if main_window and hasattr(main_window, 'apply_theme_to_window'):
+                success = main_window.apply_theme_to_window(self.current_theme)
+            elif self.theme_system and hasattr(self.theme_system, 'apply_theme'):
                 success = self.theme_system.apply_theme(self.current_theme)
             else:
                 # 使用内置应用方法
                 success = self._apply_builtin_theme(self.current_theme)
-            
+
             if success:
                 # 获取主题显示名称
                 theme_config = self.themes[self.current_theme]
@@ -339,55 +343,222 @@ class ThemeSwitcher(QWidget):
                 self._save_current_theme()
                 self.theme_changed.emit(self.current_theme)
                 self.theme_applied.emit(self.current_theme, True)
+
+                # 显示成功消息
+                print(f"[OK] 主题切换成功: {display_name}")
             else:
                 self.status_label.setText("主题应用失败")
                 self.theme_applied.emit(self.current_theme, False)
-                
+                print(f"[ERROR] 主题切换失败: {self.current_theme}")
+
         except Exception as e:
-            self.status_label.setText(f"主题应用出错: {str(e)}")
+            error_msg = f"主题应用出错: {str(e)}"
+            self.status_label.setText(error_msg)
             self.theme_applied.emit(self.current_theme, False)
-        
+            print(f"[ERROR] {error_msg}")
+
         finally:
             self.apply_button.setEnabled(True)
     
     def _apply_builtin_theme(self, theme_name: str) -> bool:
-        """应用内置主题"""
+        """应用内置主题 - 增强版本"""
         if theme_name not in self.themes:
             return False
-        
+
         try:
             theme_config = self.themes[theme_name]
-            colors = theme_config.get('colors', {})
-            
-            # 生成基本样式表
-            stylesheet = f"""
-            QWidget {{
-                background-color: {colors.get('background', '#FFFFFF')};
-                color: {colors.get('text_primary', '#000000')};
-            }}
-            QPushButton {{
-                background-color: {colors.get('primary', '#2196F3')};
-                color: white;
-                border: none;
-                padding: 8px 16px;
-                border-radius: 4px;
-            }}
-            QPushButton:hover {{
-                background-color: {colors.get('primary', '#2196F3')};
-                opacity: 0.8;
-            }}
-            """
-            
-            # 应用到应用程序
-            app = QApplication.instance()
-            if app:
-                app.setStyleSheet(stylesheet)
-            
-            return True
-            
+
+            # 兼容不同的主题配置格式
+            if hasattr(theme_config, 'colors'):
+                # ThemeConfig对象
+                colors = {
+                    'background': theme_config.colors.background,
+                    'surface': theme_config.colors.surface,
+                    'primary': theme_config.colors.primary,
+                    'text_primary': theme_config.colors.text_primary,
+                    'border': getattr(theme_config.colors, 'border', '#E0E0E0')
+                }
+            elif isinstance(theme_config, dict):
+                # 字典格式
+                colors = theme_config.get('colors', {})
+            else:
+                # 未知格式，使用默认颜色
+                colors = {
+                    'background': '#FFFFFF',
+                    'surface': '#F5F5F5',
+                    'primary': '#2196F3',
+                    'text_primary': '#000000',
+                    'border': '#E0E0E0'
+                }
+
+            # 生成完整的主题样式表
+            stylesheet = self._generate_complete_stylesheet(colors)
+
+            # 应用到主窗口而不是整个应用程序
+            main_window = self._find_main_window()
+            if main_window:
+                # 保存原始样式表
+                if not hasattr(main_window, '_original_stylesheet'):
+                    main_window._original_stylesheet = main_window.styleSheet()
+
+                # 应用新主题样式
+                main_window.setStyleSheet(stylesheet)
+                print(f"[OK] 主题已应用到主窗口: {theme_name}")
+                return True
+            else:
+                # 备用方案：应用到整个应用程序
+                app = QApplication.instance()
+                if app:
+                    app.setStyleSheet(stylesheet)
+                    print(f"[OK] 主题已应用到应用程序: {theme_name}")
+                    return True
+
+            return False
+
         except Exception as e:
             print(f"[ERROR] 应用内置主题失败: {e}")
             return False
+
+    def _find_main_window(self):
+        """查找主窗口"""
+        try:
+            # 从当前组件向上查找主窗口
+            widget = self
+            while widget:
+                if hasattr(widget, 'tabs') and hasattr(widget, 'setup_ui_style'):
+                    return widget
+                widget = widget.parent()
+
+            # 备用方案：查找所有顶级窗口
+            app = QApplication.instance()
+            if app:
+                for widget in app.topLevelWidgets():
+                    if hasattr(widget, 'tabs') and hasattr(widget, 'setup_ui_style'):
+                        return widget
+
+            return None
+        except Exception as e:
+            print(f"[WARN] 查找主窗口失败: {e}")
+            return None
+
+    def _generate_complete_stylesheet(self, colors):
+        """生成完整的主题样式表"""
+        background = colors.get('background', '#FFFFFF')
+        surface = colors.get('surface', '#F5F5F5')
+        primary = colors.get('primary', '#2196F3')
+        text_primary = colors.get('text_primary', '#000000')
+        border = colors.get('border', '#E0E0E0')
+
+        # 生成与现有样式兼容的完整样式表
+        stylesheet = f"""
+        /* 主窗口样式 */
+        QMainWindow {{
+            background-color: {background};
+            color: {text_primary};
+        }}
+
+        /* 基础组件样式 */
+        QWidget {{
+            background-color: {background};
+            color: {text_primary};
+        }}
+
+        /* 按钮样式 */
+        QPushButton {{
+            background-color: {primary};
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-weight: bold;
+        }}
+
+        QPushButton:hover {{
+            background-color: {primary};
+            border: 2px solid {primary};
+        }}
+
+        QPushButton:pressed {{
+            background-color: {primary};
+            border: 2px solid {border};
+        }}
+
+        /* 输入框样式 */
+        QLineEdit, QTextEdit, QComboBox {{
+            background-color: {surface};
+            color: {text_primary};
+            border: 1px solid {border};
+            border-radius: 4px;
+            padding: 4px 8px;
+        }}
+
+        QLineEdit:focus, QTextEdit:focus, QComboBox:focus {{
+            border: 2px solid {primary};
+        }}
+
+        /* 标签页样式 */
+        QTabWidget::pane {{
+            border: 1px solid {border};
+            background-color: {surface};
+        }}
+
+        QTabBar::tab {{
+            background-color: {surface};
+            color: {text_primary};
+            border: 1px solid {border};
+            padding: 8px 16px;
+            margin-right: 2px;
+        }}
+
+        QTabBar::tab:selected {{
+            background-color: {primary};
+            color: white;
+        }}
+
+        QTabBar::tab:hover {{
+            background-color: {primary};
+            color: white;
+        }}
+
+        /* 列表和表格样式 */
+        QListWidget, QTableWidget {{
+            background-color: {surface};
+            color: {text_primary};
+            border: 1px solid {border};
+            alternate-background-color: {background};
+        }}
+
+        /* 分组框样式 */
+        QGroupBox {{
+            color: {text_primary};
+            border: 2px solid {border};
+            border-radius: 5px;
+            margin-top: 10px;
+            font-weight: bold;
+        }}
+
+        QGroupBox::title {{
+            subcontrol-origin: margin;
+            left: 10px;
+            padding: 0 5px 0 5px;
+        }}
+
+        /* 进度条样式 */
+        QProgressBar {{
+            border: 2px solid {border};
+            border-radius: 5px;
+            background-color: {surface};
+            color: {text_primary};
+            text-align: center;
+        }}
+
+        QProgressBar::chunk {{
+            background-color: {primary};
+            border-radius: 3px;
+        }}
+        """
+
+        return stylesheet
     
     def _reset_to_default(self):
         """重置为默认主题"""

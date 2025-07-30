@@ -1,0 +1,287 @@
+{
+  "version": "3.0.0",
+  "type": "draft_content",
+  "platform": "windows",
+  "create_time": 1753694788752697,
+  "update_time": 1753694788752697,
+  "created_time": 1753694788752,
+  "last_modified": 1753694788752,
+  "app_version": "剪映专业版 3.0.0",
+  "id": "e84a64e0-f4a0-45d0-88e3-913ae7c61c2c",
+  "project_id": "e84a64e0-f4a0-45d0-88e3-913ae7c61c2c",
+  "draft_id": "e84a64e0-f4a0-45d0-88e3-913ae7c61c2c",
+  "draft_name": "VisionAI混剪项目",
+  "canvas_config": {
+    "height": 1080,
+    "width": 1920,
+    "duration": 6000,
+    "fps": 30,
+    "ratio": "16:9"
+  },
+  "tracks": [
+    {
+      "id": "7f3656da-1b62-4ee1-83af-d6e489f8f35d",
+      "type": "video",
+      "attribute": 0,
+      "flag": 0,
+      "segments": [
+        {
+          "id": "6a00972f-c977-4f87-ab86-6fc8b7f5824c",
+          "type": "video",
+          "material_id": "video_material_0",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 0,
+            "duration": 3000
+          },
+          "target_timerange": {
+            "start": 0,
+            "duration": 3000
+          },
+          "extra_material_refs": [],
+          "uniform_scale": {
+            "on": true,
+            "value": 1.0
+          },
+          "transform": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 1.0,
+            "height": 1.0
+          },
+          "visible": true,
+          "volume": 1.0
+        },
+        {
+          "id": "a22d0603-5675-4103-b55c-4bb3d193206b",
+          "type": "video",
+          "material_id": "video_material_1",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 4000,
+            "duration": 3000
+          },
+          "target_timerange": {
+            "start": 3000,
+            "duration": 3000
+          },
+          "extra_material_refs": [],
+          "uniform_scale": {
+            "on": true,
+            "value": 1.0
+          },
+          "transform": {
+            "x": 0.0,
+            "y": 0.0,
+            "width": 1.0,
+            "height": 1.0
+          },
+          "visible": true,
+          "volume": 1.0
+        }
+      ]
+    },
+    {
+      "id": "cf1025b5-57c9-41c8-bda6-27d2a87cc6d4",
+      "type": "audio",
+      "attribute": 0,
+      "flag": 0,
+      "segments": [
+        {
+          "id": "4fbdf909-88bd-4b66-a8c5-bb06644a4c02",
+          "type": "audio",
+          "material_id": "audio_material_0",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 0,
+            "duration": 3000
+          },
+          "target_timerange": {
+            "start": 0,
+            "duration": 3000
+          },
+          "extra_material_refs": [],
+          "volume": 1.0,
+          "speed": 1.0,
+          "visible": true
+        },
+        {
+          "id": "b936a8d8-059f-4add-9af8-be781bbba778",
+          "type": "audio",
+          "material_id": "audio_material_1",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 4000,
+            "duration": 3000
+          },
+          "target_timerange": {
+            "start": 3000,
+            "duration": 3000
+          },
+          "extra_material_refs": [],
+          "volume": 1.0,
+          "speed": 1.0,
+          "visible": true
+        }
+      ]
+    },
+    {
+      "id": "fac51c5a-1c83-4e6b-92f8-d45a3b0fa28e",
+      "type": "text",
+      "attribute": 0,
+      "flag": 0,
+      "segments": [
+        {
+          "id": "0fb7121f-8ad5-4ce3-b019-78c34409127e",
+          "type": "text",
+          "material_id": "text_material_0",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 0,
+            "duration": 3000
+          },
+          "target_timerange": {
+            "start": 0,
+            "duration": 3000
+          },
+          "extra_material_refs": [],
+          "content": "场景转换到了乡村小屋，气氛变得轻松愉快。",
+          "style": {
+            "font_size": 24,
+            "font_color": "#FFFFFF",
+            "background_color": "#00000080",
+            "alignment": "center"
+          },
+          "visible": true
+        },
+        {
+          "id": "c19e9d93-92ab-4e40-84bc-102517708e48",
+          "type": "text",
+          "material_id": "text_material_1",
+          "track_render_index": 0,
+          "source_timerange": {
+            "start": 0,
+            "duration": 3000
+          },
+          "target_timerange": {
+            "start": 3000,
+            "duration": 3000
+          },
+          "extra_material_refs": [],
+          "content": "故事情节发展到了关键时刻，意外事件发生。",
+          "style": {
+            "font_size": 24,
+            "font_color": "#FFFFFF",
+            "background_color": "#00000080",
+            "alignment": "center"
+          },
+          "visible": true
+        }
+      ]
+    }
+  ],
+  "materials": {
+    "videos": [
+      {
+        "id": "video_material_0",
+        "type": "video",
+        "path": "",
+        "duration": 3000,
+        "width": 1920,
+        "height": 1080,
+        "fps": 30,
+        "format": "mp4",
+        "codec": "h264",
+        "bitrate": "2000k",
+        "create_time": 1753694788752697,
+        "file_size": 0
+      },
+      {
+        "id": "video_material_1",
+        "type": "video",
+        "path": "",
+        "duration": 3000,
+        "width": 1920,
+        "height": 1080,
+        "fps": 30,
+        "format": "mp4",
+        "codec": "h264",
+        "bitrate": "2000k",
+        "create_time": 1753694788752697,
+        "file_size": 0
+      }
+    ],
+    "audios": [
+      {
+        "id": "audio_material_0",
+        "type": "audio",
+        "path": "",
+        "duration": 3000,
+        "sample_rate": 44100,
+        "channels": 2,
+        "format": "aac",
+        "codec": "aac",
+        "bitrate": "128k",
+        "create_time": 1753694788752697
+      },
+      {
+        "id": "audio_material_1",
+        "type": "audio",
+        "path": "",
+        "duration": 3000,
+        "sample_rate": 44100,
+        "channels": 2,
+        "format": "aac",
+        "codec": "aac",
+        "bitrate": "128k",
+        "create_time": 1753694788752697
+      }
+    ],
+    "texts": [
+      {
+        "id": "text_material_0",
+        "type": "text",
+        "content": "场景转换到了乡村小屋，气氛变得轻松愉快。",
+        "font_family": "Microsoft YaHei",
+        "font_size": 24,
+        "font_color": "#FFFFFF",
+        "background_color": "#00000080",
+        "alignment": "center",
+        "bold": false,
+        "italic": false,
+        "underline": false,
+        "create_time": 1753694788752697
+      },
+      {
+        "id": "text_material_1",
+        "type": "text",
+        "content": "故事情节发展到了关键时刻，意外事件发生。",
+        "font_family": "Microsoft YaHei",
+        "font_size": 24,
+        "font_color": "#FFFFFF",
+        "background_color": "#00000080",
+        "alignment": "center",
+        "bold": false,
+        "italic": false,
+        "underline": false,
+        "create_time": 1753694788752697
+      }
+    ],
+    "effects": [],
+    "stickers": [],
+    "images": [],
+    "sounds": []
+  },
+  "extra_info": {
+    "export_range": {
+      "start": 0,
+      "end": 6000
+    },
+    "fps": 30,
+    "audio_sample_rate": 44100,
+    "video_codec": "h264",
+    "audio_codec": "aac"
+  },
+  "keyframes": [],
+  "relations": []
+}

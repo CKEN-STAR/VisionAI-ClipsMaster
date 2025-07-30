@@ -1,0 +1,126 @@
+{
+  "python_interpreter": {
+    "executable_path": "C:\\Users\\13075\\Miniconda3\\python.exe",
+    "version": "3.11.11",
+    "implementation": "CPython",
+    "architecture": "64bit",
+    "prefix": "C:\\Users\\13075\\Miniconda3",
+    "base_prefix": "C:\\Users\\13075\\Miniconda3",
+    "is_virtual_env": false,
+    "executable": true,
+    "version_output": "Python 3.11.11"
+  },
+  "site_packages": {
+    "paths": [
+      {
+        "path": "C:\\Users\\13075\\Miniconda3\\Lib\\site-packages",
+        "exists": true,
+        "readable": true,
+        "package_count": 470
+      },
+      {
+        "path": "C:\\Users\\13075\\Miniconda3\\Lib\\site-packages\\win32",
+        "exists": true,
+        "readable": true,
+        "package_count": 7
+      },
+      {
+        "path": "C:\\Users\\13075\\Miniconda3\\Lib\\site-packages\\win32\\lib",
+        "exists": true,
+        "readable": true,
+        "package_count": 1
+      },
+      {
+        "path": "C:\\Users\\13075\\Miniconda3\\Lib\\site-packages\\Pythonwin",
+        "exists": true,
+        "readable": true,
+        "package_count": 1
+      }
+    ],
+    "wmi_locations": [
+      {
+        "type": "file",
+        "path": "C:\\Users\\13075\\Miniconda3\\Lib\\site-packages\\wmi.py",
+        "size": 55814
+      }
+    ],
+    "total_packages": 0,
+    "accessible": true
+  },
+  "wmi_module": {
+    "import_success": true,
+    "module_file": "C:\\Users\\13075\\Miniconda3\\Lib\\site-packages\\wmi.py",
+    "module_version": "1.5.1",
+    "module_attributes": [
+      "Dispatch",
+      "GetObject",
+      "ProvideConstants",
+      "Registry",
+      "SelfDeprecatingDict",
+      "WMI",
+      "connect",
+      "connect_server",
+      "construct_moniker",
+      "from_1601"
+    ],
+    "instance_creation": true,
+    "gpu_detection": true,
+    "error_details": null,
+    "detected_gpus": [
+      "Intel(R) Iris(R) Xe Graphics"
+    ]
+  },
+  "ide_recommendations": [
+    {
+      "type": "success",
+      "title": "Python解释器配置正确",
+      "description": "IDE应该使用解释器路径: C:\\Users\\13075\\Miniconda3\\python.exe",
+      "action": "在IDE中确认Python解释器路径设置正确"
+    },
+    {
+      "type": "success",
+      "title": "WMI模块位置正确",
+      "description": "WMI模块位于: C:\\Users\\13075\\Miniconda3\\Lib\\site-packages\\wmi.py",
+      "action": "IDE应该能够在site-packages中找到WMI模块"
+    },
+    {
+      "type": "success",
+      "title": "WMI模块功能正常",
+      "description": "WMI模块版本 1.5.1 工作正常",
+      "action": "IDE显示错误是缓存问题，建议重启IDE或清理缓存"
+    }
+  ],
+  "fix_suggestions": [
+    {
+      "priority": 1,
+      "method": "重启IDE",
+      "description": "最简单有效的解决方案",
+      "steps": [
+        "保存所有文件",
+        "完全关闭IDE",
+        "重新启动IDE",
+        "重新打开项目"
+      ]
+    },
+    {
+      "priority": 2,
+      "method": "清理IDE缓存",
+      "description": "清理IDE的模块索引缓存",
+      "steps": [
+        "使用IDE的 'Invalidate Caches' 功能",
+        "重启IDE",
+        "等待重新索引完成"
+      ]
+    },
+    {
+      "priority": 3,
+      "method": "重新配置Python解释器",
+      "description": "确保IDE使用正确的Python环境",
+      "steps": [
+        "设置解释器路径为: C:\\Users\\13075\\Miniconda3\\python.exe",
+        "验证site-packages路径包含WMI模块",
+        "重新索引项目"
+      ]
+    }
+  ]
+}

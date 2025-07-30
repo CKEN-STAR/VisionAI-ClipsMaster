@@ -1,0 +1,177 @@
+{
+  "wmi_import_fixes": [
+    "wmic命令验证成功",
+    "WMI错误信息已清理"
+  ],
+  "functionality_tests": {
+    "language_detection": {
+      "success": true,
+      "zh_result": "zh",
+      "en_result": "en"
+    },
+    "model_switching": {
+      "success": true,
+      "zh_switch": true,
+      "en_switch": true,
+      "zh_model": "qwen2.5-7b-zh",
+      "en_model": "mistral-7b-en"
+    },
+    "screenplay_engineering": {
+      "success": true,
+      "original_count": 3,
+      "reconstructed_count": 1,
+      "analysis_type": "dict"
+    },
+    "training": {
+      "success": true,
+      "trainer_type": "ModelTrainer",
+      "status": {
+        "active": false
+      }
+    },
+    "jianying_export": {
+      "success": true,
+      "exporter_type": "JianyingProExporter",
+      "export_settings": {
+        "resolution": "1920x1080",
+        "fps": 30,
+        "audio_sample_rate": 44100,
+        "video_codec": "h264",
+        "audio_codec": "aac"
+      }
+    }
+  },
+  "ui_tests": {
+    "pyqt6": {
+      "success": true,
+      "version": "PyQt6可用"
+    },
+    "training_panel": {
+      "success": true,
+      "components": [
+        "TrainingMonitorWorker",
+        "TrainingPanel"
+      ]
+    },
+    "progress_dashboard": {
+      "success": true,
+      "component": "ProgressDashboard"
+    },
+    "realtime_charts": {
+      "success": true,
+      "component": "RealtimeCharts"
+    },
+    "alert_manager": {
+      "success": true,
+      "component": "AlertManager"
+    }
+  },
+  "workflow_tests": {
+    "file_upload": {
+      "success": true,
+      "file_path": "C:\\Users\\13075\\AppData\\Local\\Temp\\tmpk30j9rmf.srt"
+    },
+    "language_detection": {
+      "success": true,
+      "detected_language": "zh"
+    },
+    "model_switching": {
+      "success": true,
+      "current_model": "qwen2.5-7b-zh"
+    },
+    "screenplay_reconstruction": {
+      "success": true,
+      "original_count": 3,
+      "reconstructed_count": 3
+    },
+    "jianying_export": {
+      "success": true,
+      "export_config": {
+        "video_path": "test_video.mp4",
+        "subtitles": [
+          {
+            "type": "opening",
+            "priority": 0.7,
+            "subtitle": {
+              "id": 1,
+              "start_time": 1.0,
+              "end_time": 5.0,
+              "text": "这是一个测试短剧字幕"
+            },
+            "reason": "开头吸引",
+            "viral_score": 0.616
+          },
+          {
+            "type": "opening",
+            "priority": 0.7,
+            "subtitle": {
+              "id": 2,
+              "start_time": 5.0,
+              "end_time": 10.0,
+              "text": "用于测试完整工作流程"
+            },
+            "reason": "开头吸引",
+            "viral_score": 0.616
+          },
+          {
+            "type": "opening",
+            "priority": 0.7,
+            "subtitle": {
+              "id": 3,
+              "start_time": 10.0,
+              "end_time": 15.0,
+              "text": "验证系统功能完整性"
+            },
+            "reason": "开头吸引",
+            "viral_score": 0.5599999999999999
+          }
+        ],
+        "output_path": "test_project.jyp"
+      },
+      "exporter_available": true
+    },
+    "overall_workflow": {
+      "success": true,
+      "completed_steps": 5,
+      "total_steps": 5
+    }
+  },
+  "stability_tests": {
+    "memory_usage": {
+      "total_gb": 15.733024597167969,
+      "used_gb": 13.050899505615234,
+      "available_gb": 2.6821250915527344,
+      "percent": 83.0,
+      "within_target": true
+    },
+    "gpu_detection_consistency": {
+      "success": true,
+      "detection_count": 3,
+      "results": [
+        {
+          "available": false,
+          "gpu_type": "none",
+          "name": "未检测到独立显卡"
+        },
+        {
+          "available": false,
+          "gpu_type": "none",
+          "name": "未检测到独立显卡"
+        },
+        {
+          "available": false,
+          "gpu_type": "none",
+          "name": "未检测到独立显卡"
+        }
+      ],
+      "consistent": true
+    },
+    "intel_integrated_adaptation": {
+      "success": true,
+      "gpu_available": false,
+      "gpu_type": "none",
+      "gpu_name": "未检测到独立显卡",
+      "correctly_identified": true
+    }
+  }
+}

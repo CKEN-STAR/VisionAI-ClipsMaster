@@ -1,0 +1,15 @@
+1
+00:00:01,000 --> 00:00:03,000
+John walked into the room slowly.
+
+2
+00:00:04,000 --> 00:00:06,000
+He looked around nervously.
+
+3
+00:00:07,000 --> 00:00:09,000
+Something was definitely wrong here.
+
+4
+00:00:10,000 --> 00:00:12,000
+He decided to investigate further.
