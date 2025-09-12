@@ -14,8 +14,8 @@ from datetime import datetime, timedelta
 from collections import deque
 
 try:
-    from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton, 
-                               QLabel, QTextEdit, QProgressBar, QGroupBox, 
+    from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
+                               QLabel, QTextEdit, QProgressBar, QGroupBox,
                                QSplitter, QTabWidget, QComboBox, QCheckBox,
                                QFrame, QGridLayout)
     from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QThread, QObject, QRect
@@ -23,12 +23,34 @@ try:
     QT_AVAILABLE = True
 except ImportError:
     QT_AVAILABLE = False
+    # 创建占位符类
+    class QWidget:
+        def __init__(self, parent=None):
+            pass
+    class QObject:
+        def __init__(self, parent=None):
+            pass
+    class QColor:
+        def __init__(self, *args):
+            pass
+    class QTimer:
+        def __init__(self):
+            pass
+        def timeout(self):
+            return None
+        def start(self, interval):
+            pass
+        def stop(self):
+            pass
+    def pyqtSignal(*args):
+        return None
 
-class ChartWidget(QWidget):
+class ChartWidget:
     """基础图表组件"""
-    
+
     def __init__(self, title: str = "", max_points: int = 100, parent=None):
-        super().__init__(parent)
+        if QT_AVAILABLE:
+            super().__init__(parent)
         self.title = title
         self.max_points = max_points
         self.data_series = {}  # 存储多个数据系列
@@ -162,11 +184,17 @@ class ChartWidget(QWidget):
                 
                 legend_x += len(series_name) * 8 + 30
 
-class SystemMonitorWorker(QObject):
+class SystemMonitorWorker:
     """系统监控工作线程"""
-    
-    # 信号定义
-    data_updated = pyqtSignal(dict)
+
+    def __init__(self, parent=None):
+        if QT_AVAILABLE:
+            super().__init__(parent)
+        # 信号定义
+        if QT_AVAILABLE:
+            self.data_updated = pyqtSignal(dict)
+        else:
+            self.data_updated = None
     
     def __init__(self):
         super().__init__()
@@ -209,11 +237,12 @@ class SystemMonitorWorker(QObject):
         
         self.data_updated.emit(data)
 
-class RealtimeCharts(QWidget):
+class RealtimeCharts:
     """实时图表主组件"""
-    
+
     def __init__(self, parent=None):
-        super().__init__(parent)
+        if QT_AVAILABLE:
+            super().__init__(parent)
         
         # 监控工作线程
         self.monitor_worker = None

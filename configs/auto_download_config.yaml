@@ -2,9 +2,9 @@
 # 此文件用于控制模型自动下载行为
 
 auto_download:
-  enabled: true  # 设置为true启用自动下载
-  show_download_prompts: true  # 设置为true启用下载提示对话框
-  use_mock_ai_when_missing: false  # 设置为false在模型缺失时不使用Mock AI
+  enabled: false  # 设置为false禁用自动下载
+  show_download_prompts: false  # 设置为false禁用下载提示对话框
+  use_mock_ai_when_missing: true  # 设置为true在模型缺失时使用Mock AI
 
 # Mock AI 配置
 mock_ai:

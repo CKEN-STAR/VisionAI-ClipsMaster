@@ -48,6 +48,23 @@
 - **内存**: 4GB+ RAM (推荐8GB+，实测415MB运行内存)
 - **存储**: 2GB+ 可用磁盘空间 (项目体积1.46GB)
 - **显卡**: 可选，支持NVIDIA/AMD GPU加速
+
+### 🏗️ 项目结构
+```
+VisionAI-ClipsMaster/
+├── src/                    # 核心源代码目录
+│   ├── core/              # 核心功能模块
+│   ├── ui/                # 用户界面组件
+│   ├── utils/             # 工具函数和辅助模块
+│   ├── training/          # 模型训练相关
+│   └── exporters/         # 导出功能模块
+├── simple_ui_fixed.py     # 主程序入口
+├── models/                # AI模型存储目录
+├── configs/               # 配置文件目录
+├── data/                  # 数据文件目录
+├── docs/                  # 文档目录
+└── requirements.txt       # 依赖包列表
+```
 - **性能**: 启动时间≤5秒，响应时间≤2秒
 
 ### ⚡ 一键安装
@@ -61,7 +78,7 @@ cd VisionAI-ClipsMaster
 pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/
 
 # 3. 启动应用
-python optimized_quick_launcher.py  # 推荐使用优化启动器
+python simple_ui_fixed.py  # 主程序入口
 ```
 
 > 📋 **详细安装指南**: [📥 INSTALLATION.md](INSTALLATION.md) - 包含Windows/Linux/macOS完整安装步骤
@@ -70,13 +87,13 @@ python optimized_quick_launcher.py  # 推荐使用优化启动器
 
 ```bash
 # 使用系统Python解释器 (更稳定)
-C:\Users\[用户名]\AppData\Local\Programs\Python\Python313\python.exe optimized_quick_launcher.py
+C:\Users\[用户名]\AppData\Local\Programs\Python\Python313\python.exe simple_ui_fixed.py
 
 # 或者创建虚拟环境 (推荐开发者)
 python -m venv venv
 venv\Scripts\activate
 pip install -r requirements.txt
-python optimized_quick_launcher.py
+python simple_ui_fixed.py
 ```
 
 > 🔧 **开发者安装**: [👨‍💻 DEVELOPMENT.md](DEVELOPMENT.md#开发环境设置) - 包含开发环境配置和工具设置

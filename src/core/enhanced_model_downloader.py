@@ -202,24 +202,37 @@ class ModelDownloadThread(QThread):
         return f"{size_bytes:.1f} TB"
 
 class EnhancedModelDownloader(QObject):
-    """增强模型下载器"""
+    """增强模型下载器 - 彻底重构版本"""
+
+    # 版本标识符 - 用于确保新代码被加载
+    VERSION = "v3.0_rebuild_20250905_final"
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        logger.info(f"🔧 初始化增强模型下载器 - {self.VERSION}")
+
         self.download_configs = self._load_download_configs()
         self.current_download = None
         self.progress_dialog = None
         self._last_model_name = None  # 添加状态跟踪
+
+        # 初始化对话框管理器
+        from .dialog_manager import DialogManager
+        self.dialog_manager = DialogManager.get_instance()
+        logger.info("✅ 对话框管理器已初始化")
 
         # 导入智能选择器
         try:
             from .intelligent_model_selector import IntelligentModelSelector, SelectionStrategy
             self.intelligent_selector = IntelligentModelSelector()
             self.has_intelligent_selector = True
+            logger.info("✅ 智能模型选择器已加载")
         except ImportError:
             self.intelligent_selector = None
             self.has_intelligent_selector = False
             logger.warning("智能模型选择器不可用，将使用基础下载功能")
+
+        logger.info(f"✅ 增强模型下载器初始化完成 - {self.VERSION}")
 
     def _clear_internal_state(self):
         """清除内部状态，防止状态污染"""
@@ -233,6 +246,14 @@ class EnhancedModelDownloader(QObject):
             delattr(self, '_cached_model_name')
         if hasattr(self, '_last_dialog_model'):
             delattr(self, '_last_dialog_model')
+
+        # 新增：清除跨标签页状态污染源
+        if hasattr(self, '_last_tab_context'):
+            delattr(self, '_last_tab_context')
+        if hasattr(self, '_dialog_context_map'):
+            delattr(self, '_dialog_context_map')
+        if hasattr(self, '_request_source'):
+            delattr(self, '_request_source')
 
         if self.intelligent_selector:
             # 使用智能选择器的清除缓存方法
@@ -252,6 +273,10 @@ class EnhancedModelDownloader(QObject):
     def reset_state(self):
         """重置下载器状态，确保状态隔离（公共接口）"""
         logger.info("🔧 重置增强下载器状态")
+
+        # 强制重新加载模块，确保代码修改生效
+        self._force_reload_modules()
+
         self._clear_internal_state()
 
         # 额外的强制重置措施
@@ -265,6 +290,50 @@ class EnhancedModelDownloader(QObject):
                 logger.error(f"❌ 智能选择器强制重新初始化失败: {e}")
 
         logger.info("✅ 增强下载器状态已重置")
+
+    def _force_reload_modules(self):
+        """强制重新加载相关模块，确保代码修改生效"""
+        try:
+            import sys
+            import importlib
+            import gc
+
+            logger.info("🔄 开始强制重新加载模块，清除旧版本代码缓存")
+
+            # 需要重新加载的模块列表
+            modules_to_reload = [
+                'src.core.enhanced_model_downloader',
+                'src.core.intelligent_model_selector',
+                'src.ui.enhanced_download_dialog',
+                'src.core.dialog_manager'
+            ]
+
+            # 强制清除模块缓存
+            for module_name in modules_to_reload:
+                if module_name in sys.modules:
+                    try:
+                        # 删除模块引用
+                        del sys.modules[module_name]
+                        logger.info(f"🗑️ 已删除模块缓存: {module_name}")
+                    except Exception as e:
+                        logger.warning(f"⚠️ 删除模块缓存失败: {module_name} - {e}")
+
+            # 强制垃圾回收
+            gc.collect()
+
+            # 重新导入关键模块
+            try:
+                from .dialog_manager import DialogManager
+                logger.info("✅ DialogManager 重新导入成功")
+            except Exception as e:
+                logger.error(f"❌ DialogManager 重新导入失败: {e}")
+
+            logger.info("✅ 模块强制重新加载完成")
+
+        except Exception as e:
+            logger.error(f"❌ 强制重新加载模块失败: {e}")
+
+
 
     def get_download_status(self) -> Dict[str, Any]:
         """获取下载状态信息
@@ -491,9 +560,9 @@ class EnhancedModelDownloader(QObject):
             }
         }
     
-    def download_model(self, model_name: str, parent_widget=None, auto_select: bool = True) -> bool:
+    def download_model(self, model_name: str, parent_widget=None, auto_select: bool = True, tab_context: str = None) -> bool:
         """下载指定模型（支持智能版本选择）"""
-        logger.info(f"🚀 开始下载模型: {model_name}, auto_select={auto_select}")
+        logger.info(f"🚀 开始下载模型: {model_name}, auto_select={auto_select}, 标签页上下文: {tab_context}")
         logger.info(f"🔧 智能选择器状态: {self.has_intelligent_selector}")
 
         # 重要修复：检查模型名称变化，如果变化则清除状态
@@ -501,8 +570,19 @@ class EnhancedModelDownloader(QObject):
             logger.info(f"🔄 检测到模型名称变化: {self._last_model_name} -> {model_name}，清除状态")
             self._clear_internal_state()
 
-        # 记录当前模型名称
+        # 新增：检查标签页上下文变化
+        current_tab_context = tab_context or "unknown"
+        if hasattr(self, '_last_tab_context') and self._last_tab_context != current_tab_context:
+            logger.info(f"🔄 检测到标签页上下文变化: {self._last_tab_context} -> {current_tab_context}，清除状态")
+            self._clear_internal_state()
+
+        # 存储当前标签页上下文
+        self._current_tab_context = current_tab_context
+        self._last_tab_context = current_tab_context
+
+        # 记录当前模型名称和标签页上下文
         self._last_model_name = model_name
+        self._last_tab_context = current_tab_context
 
         # 额外验证：确保智能选择器状态与当前请求一致
         if self.intelligent_selector and hasattr(self.intelligent_selector, '_last_model_name'):
@@ -512,14 +592,14 @@ class EnhancedModelDownloader(QObject):
 
         if auto_select and self.has_intelligent_selector:
             logger.info("✅ 使用智能下载模式")
-            return self._intelligent_download(model_name, parent_widget)
+            return self._intelligent_download(model_name, parent_widget, tab_context)
         else:
             logger.info("⚠️ 使用基础下载模式")
             return self._basic_download(model_name, parent_widget)
 
-    def _intelligent_download(self, model_name: str, parent_widget=None) -> bool:
+    def _intelligent_download(self, model_name: str, parent_widget=None, tab_context: str = None) -> bool:
         """智能下载（自动选择最佳版本）"""
-        logger.info(f"🤖 开始智能下载: {model_name}")
+        logger.info(f"🤖 开始智能下载: {model_name}, 标签页上下文: {tab_context}")
 
         try:
             from .intelligent_model_selector import SelectionStrategy, DeploymentTarget
@@ -529,11 +609,12 @@ class EnhancedModelDownloader(QObject):
             logger.info("🔄 强制刷新硬件配置...")
             self.intelligent_selector.force_refresh_hardware()
 
-            # 获取智能推荐
+            # 获取智能推荐（传递标签页上下文）
             logger.info("🔍 正在获取智能推荐...")
             recommendation = self.intelligent_selector.recommend_model_version(
                 model_name=model_name,
-                strategy=SelectionStrategy.AUTO_RECOMMEND
+                strategy=SelectionStrategy.AUTO_RECOMMEND,
+                tab_context=tab_context
             )
 
             if recommendation:
@@ -598,10 +679,7 @@ class EnhancedModelDownloader(QObject):
 
         if reply != QMessageBox.StandardButton.Yes:
             # 用户取消基础下载确认对话框时返回 None
-            # 记录用户取消时间，防止短时间内重复弹窗
-            import time
-            if parent_widget:
-                parent_widget._last_model_dialog_cancel_time = time.time()
+            logger.info("ℹ️ 用户取消基础下载确认")
             return None
         
         # 创建进度对话框
@@ -685,59 +763,55 @@ class EnhancedModelDownloader(QObject):
             self.current_download = None
 
     def _show_recommendation_dialog(self, recommendation, parent_widget) -> bool:
-        """显示智能推荐对话框"""
-        logger.info("🎨 开始显示智能推荐对话框")
+        """显示智能推荐对话框 - 架构重构版本 v4.0 - 20250905"""
+        # 版本标识符 - 确保新代码被执行
+        version_id = "ARCH_REBUILD_v4.0_20250905_FINAL"
+        logger.info(f"🎨 开始显示智能推荐对话框 - {version_id}")
 
-        # 强化防重复弹窗逻辑：多重检查机制
-        # 1. 检查是否有实际的对话框窗口在显示
-        if hasattr(parent_widget, '_dialog_instance') and parent_widget._dialog_instance is not None:
-            logger.info("⚠️ 检测到实际对话框窗口已在显示中，跳过重复弹窗")
-            return None  # 返回 None 表示用户取消，避免触发回退
-
-        # 2. 检查全局对话框标志位（但允许enhanced_downloader管理的对话框）
-        # 注意：我们不在这里检查_global_model_dialog_showing，因为这会阻止正常的第一次显示
-        # enhanced_downloader会在内部设置这个标志位来管理自己的对话框生命周期
-
-        # 3. 检查是否有任何模态对话框在显示
-        from PyQt6.QtWidgets import QApplication
-        active_modal_widget = QApplication.activeModalWidget()
-        if active_modal_widget is not None:
-            logger.info("⚠️ 检测到其他模态对话框正在显示，跳过重复弹窗")
-            return None  # 返回 None 表示用户取消，避免触发回退
-
-        # 4. 检查最近的用户取消时间（防止短时间内重复弹窗）
-        import time
-        current_time = time.time()
-        last_cancel_time = getattr(parent_widget, '_last_model_dialog_cancel_time', 0)
-        if current_time - last_cancel_time < 0.5:  # 改为0.5秒，进一步减少误触发
-            logger.info("⚠️ 检测到用户最近刚取消过下载，跳过重复弹窗")
-            return None
-        elif last_cancel_time > 0:
-            # 如果超过0.5秒，清除取消时间记录
-            delattr(parent_widget, '_last_model_dialog_cancel_time')
-            logger.info("✅ 清除过期的用户取消时间记录")
-
+        # 完全移除旧的防重复弹窗逻辑，使用新的DialogManager
         try:
-            # 设置防重复标志，表示正在创建对话框
-            parent_widget._global_model_dialog_showing = True
-            logger.info("🔧 设置对话框标志位，防止重复弹窗")
+            # 导入DialogManager（每次都重新导入，避免缓存问题）
+            import importlib
+            import sys
 
-            # 优化：直接在主线程中创建对话框，避免不必要的线程检查延迟
-            logger.info("✅ 在主线程中，直接创建对话框")
-            return self._create_dialog_sync(recommendation, parent_widget)
+            # 强制重新加载DialogManager模块
+            dialog_manager_module_name = 'src.core.dialog_manager'
+            if dialog_manager_module_name in sys.modules:
+                importlib.reload(sys.modules[dialog_manager_module_name])
+
+            from .dialog_manager import DialogManager
+            dialog_manager = DialogManager.get_instance()
+
+            # 获取标签页上下文
+            tab_context = getattr(self, '_current_tab_context', 'unknown')
+            logger.info(f"🔍 {version_id} - 检查对话框权限: model={recommendation.model_name}, tab={tab_context}")
+
+            # 检查是否可以显示对话框
+            if not dialog_manager.can_show_dialog(recommendation.model_name, parent_widget, tab_context):
+                logger.info(f"⚠️ {version_id} - DialogManager阻止在 {tab_context} 中重复弹窗 {recommendation.model_name}")
+                return False
+
+            # 直接在主线程中创建对话框
+            logger.info(f"✅ {version_id} - 在主线程中创建对话框")
+            result = self._create_dialog_sync(recommendation, parent_widget, tab_context)
+
+            # 通知对话框管理器对话框已关闭
+            dialog_manager.mark_dialog_closed(
+                recommendation.model_name,
+                tab_context,
+                'success' if result else 'cancelled'
+            )
+
+            logger.info(f"✅ {version_id} - 对话框处理完成: result={result}")
+            return result
 
         except Exception as e:
-            logger.error(f"❌ 对话框显示失败: {e}")
+            logger.error(f"❌ {version_id} - 对话框显示失败: {e}")
             import traceback
             logger.error(f"详细错误: {traceback.format_exc()}")
             return False
-        finally:
-            # 清除防重复标志
-            if hasattr(parent_widget, '_global_model_dialog_showing'):
-                parent_widget._global_model_dialog_showing = False
-                logger.info("🔧 清除对话框显示标志位")
 
-    def _create_dialog_sync(self, recommendation, parent_widget) -> bool:
+    def _create_dialog_sync(self, recommendation, parent_widget, tab_context: str = None) -> bool:
         """同步创建对话框（确保在主线程中执行）"""
         try:
             # 修复导入路径 - 使用安全的路径解析方式
@@ -807,11 +881,12 @@ class EnhancedModelDownloader(QObject):
                         raise ImportError(f"所有导入方式都失败: {path_error}")
 
             # 创建增强对话框
-            logger.info(f"🔧 创建对话框: model={recommendation.model_name}, variant={recommendation.variant.name}")
+            logger.info(f"🔧 创建对话框: model={recommendation.model_name}, variant={recommendation.variant.name}, context={tab_context}")
             dialog = EnhancedDownloadDialog(
                 model_name=recommendation.model_name,
                 recommendation=recommendation,
-                parent=parent_widget
+                parent=parent_widget,
+                tab_context=tab_context
             )
             logger.info("✅ 增强对话框创建成功")
 
@@ -859,10 +934,6 @@ class EnhancedModelDownloader(QObject):
                     logger.warning("⚠️ 用户未选择版本")
             else:
                 logger.info("ℹ️ 用户取消下载")
-                # 记录用户取消时间，防止短时间内重复弹窗
-                import time
-                if parent_widget:
-                    parent_widget._last_model_dialog_cancel_time = time.time()
 
             # 用户取消时返回特殊值 None，而不是 False
             # False 表示下载失败，None 表示用户取消
@@ -986,10 +1057,7 @@ class EnhancedModelDownloader(QObject):
             return self._download_recommended_variant(recommendation, parent_widget)
 
         # 用户取消基础推荐对话框时也返回 None
-        # 记录用户取消时间，防止短时间内重复弹窗
-        import time
-        if parent_widget:
-            parent_widget._last_model_dialog_cancel_time = time.time()
+        logger.info("ℹ️ 用户取消基础推荐对话框")
         return None
 
     def _download_selected_variant(self, selected_variant: Dict, model_name: str, parent_widget) -> bool:

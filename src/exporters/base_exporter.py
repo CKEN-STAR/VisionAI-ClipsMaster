@@ -10,7 +10,10 @@ from typing import List, Dict, Any, Optional
 from pathlib import Path
 import json
 import os
-from ..utils.log_handler import get_logger
+try:
+    from ..utils.log_handler import get_logger
+except ImportError:
+    from utils.log_handler import get_logger
 
 logger = get_logger(__name__)
 

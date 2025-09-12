@@ -160,7 +160,7 @@ if (-not $stagedFiles) {
     $stagedFiles | ForEach-Object { Write-Host "  - $_" -ForegroundColor Gray }
     
     # 创建提交信息
-    $commitMessage = @"
+    $commitMessage = @""
 feat: initial release of VisionAI-ClipsMaster v1.0.0
 
 🎬 AI-powered short drama intelligent remixing tool
@@ -190,8 +190,7 @@ Documentation:
 - Project roadmap and future plans
 
 BREAKING CHANGE: This is the initial release
-"@
-    
+"@"
     try {
         git commit -m $commitMessage
         Write-Host "✓ 初始提交创建完成" -ForegroundColor Green
@@ -233,7 +232,7 @@ try {
 # 创建并推送标签
 Write-Host "`n🏷️ 创建版本标签..." -ForegroundColor Yellow
 
-$tagMessage = @"
+$tagMessage = @""
 Release v1.0.0: Initial stable release
 
 🎉 VisionAI-ClipsMaster首个稳定版本发布
@@ -257,7 +256,7 @@ Release v1.0.0: Initial stable release
 - 内存峰值: 3.2GB-5.1GB (根据量化级别)
 
 This release marks the first stable version of VisionAI-ClipsMaster.
-"@
+"@"
 
 try {
     git tag -a "v1.0.0" -m $tagMessage

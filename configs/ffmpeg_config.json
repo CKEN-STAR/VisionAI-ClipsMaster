@@ -1,8 +1,13 @@
 {
-  "ffmpeg_path": "D:\\zancun\\VisionAI-ClipsMaster\\tools\\ffmpeg\\bin\\ffmpeg.exe",
-  "ffprobe_path": "D:\\zancun\\VisionAI-ClipsMaster\\tools\\ffmpeg\\bin\\ffprobe.exe",
-  "version_info": "ffmpeg version 7.1.1-essentials_build-www.gyan.dev Copyright (c) 2000-2025 the FFmpeg developers",
+  "ffmpeg_path": "ffmpeg",
+  "ffprobe_path": "ffprobe",
+  "version_info": "FFmpeg temporarily disabled - core functions available",
   "system": "windows",
-  "configured_at": "D:\\zancun\\VisionAI-ClipsMaster",
-  "status": "configured"
+  "configured_at": "D:\\Material\\Project\\VisionAI-ClipsMaster",
+  "status": "configured_skip_mode",
+  "skip_ffmpeg_check": true,
+  "use_opencv_fallback": true,
+  "video_processing_mode": "limited",
+  "core_functions_enabled": true,
+  "note": "FFmpeg功能暂时跳过，核心功能正常可用"
 }

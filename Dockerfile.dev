@@ -1,0 +1,110 @@
+# VisionAI-ClipsMaster Development Dockerfile
+# Optimized for development with hot reload and debugging capabilities
+
+FROM python:3.11-slim
+
+# Set environment variables for development
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PYTHONPATH="/app:$PYTHONPATH" \
+    DISPLAY=:99 \
+    QT_QPA_PLATFORM=offscreen \
+    MPLBACKEND=Agg \
+    DEVELOPMENT=1
+
+# Install system dependencies for development
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    cmake \
+    pkg-config \
+    libopencv-dev \
+    libavcodec-dev \
+    libavformat-dev \
+    libswscale-dev \
+    libv4l-dev \
+    libxvidcore-dev \
+    libx264-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libtiff-dev \
+    libatlas-base-dev \
+    gfortran \
+    libhdf5-dev \
+    libprotobuf-dev \
+    protobuf-compiler \
+    libgoogle-glog-dev \
+    libgflags-dev \
+    libgtest-dev \
+    libeigen3-dev \
+    libopenblas-dev \
+    liblapack-dev \
+    python3-dev \
+    ffmpeg \
+    xvfb \
+    x11vnc \
+    fluxbox \
+    wget \
+    curl \
+    git \
+    vim \
+    nano \
+    htop \
+    tree \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create app user
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements and install Python dependencies
+COPY requirements.txt /tmp/requirements.txt
+
+# Install PyTorch with CPU support
+RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+
+# Install dependencies
+RUN pip install -r /tmp/requirements.txt
+
+# Install development dependencies
+RUN pip install \
+    jupyter \
+    jupyterlab \
+    ipython \
+    ipdb \
+    pytest \
+    pytest-cov \
+    pytest-qt \
+    black \
+    flake8 \
+    mypy \
+    isort \
+    pre-commit \
+    watchdog \
+    gunicorn \
+    uvicorn[standard] \
+    fastapi \
+    websockets \
+    redis \
+    celery
+
+# Create necessary directories
+RUN mkdir -p /app/models /app/data /app/output /app/logs /app/cache && \
+    chown -R appuser:appuser /app
+
+# Set cache directories
+ENV TORCH_HOME=/app/cache/torch \
+    TRANSFORMERS_CACHE=/app/cache/transformers \
+    HF_HOME=/app/cache/huggingface
+
+# Expose ports for development
+EXPOSE 8000 8080 5000 8888 8889
+
+# Switch to app user
+USER appuser
+
+# Default command for development (with hot reload)
+CMD ["python", "simple_ui_fixed.py"]

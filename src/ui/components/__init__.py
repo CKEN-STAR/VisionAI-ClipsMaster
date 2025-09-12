@@ -5,13 +5,20 @@ VisionAI-ClipsMaster UI组件模块初始化文件
 """
 
 # 导入UI组件
+RealtimeCharts = None
+AlertManager = None
+
 try:
     from .realtime_charts import RealtimeCharts
-    from .alert_manager import AlertManager
+    print("[OK] RealtimeCharts imported successfully")
 except ImportError as e:
-    print(f"Warning: Some UI components not available: {e}")
-    RealtimeCharts = None
-    AlertManager = None
+    print(f"Warning: RealtimeCharts not available: {e}")
+
+try:
+    from .alert_manager import AlertManager
+    print("[OK] AlertManager imported successfully")
+except ImportError as e:
+    print(f"Warning: AlertManager not available: {e}")
 
 # 导入现有组件（仅导入实际存在的组件）
 ColorHelper = None

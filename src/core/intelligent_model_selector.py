@@ -79,6 +79,14 @@ class IntelligentModelSelector:
         if hasattr(self, '_recommendation_cache'):
             delattr(self, '_recommendation_cache')
 
+        # 新增：清除跨标签页状态污染源
+        if hasattr(self, '_last_tab_context'):
+            delattr(self, '_last_tab_context')
+        if hasattr(self, '_dialog_context'):
+            delattr(self, '_dialog_context')
+        if hasattr(self, '_request_context'):
+            delattr(self, '_request_context')
+
         logger.info("✅ 智能选择器状态已清除")
     
     def _initialize_selection_rules(self) -> Dict:
@@ -110,19 +118,27 @@ class IntelligentModelSelector:
         strategy: SelectionStrategy = SelectionStrategy.AUTO_RECOMMEND,
         deployment_target: Optional[DeploymentTarget] = None,
         quality_requirement: str = "production",
-        hardware_override: Optional[HardwareProfile] = None
+        hardware_override: Optional[HardwareProfile] = None,
+        tab_context: str = None  # 新增：标签页上下文标识
     ) -> ModelRecommendation:
         """推荐模型版本"""
 
-        logger.info(f"🤖 开始推荐模型版本: {model_name}")
+        logger.info(f"🤖 开始推荐模型版本: {model_name}, 标签页上下文: {tab_context}")
 
         # 重要修复：检查模型名称变化，如果变化则清除缓存
         if self._last_model_name and self._last_model_name != model_name:
             logger.info(f"🔄 检测到模型名称变化: {self._last_model_name} -> {model_name}，清除缓存")
             self.clear_cache()
 
-        # 记录当前模型名称
+        # 新增：检查标签页上下文变化
+        current_tab_context = tab_context or "unknown"
+        if hasattr(self, '_last_tab_context') and self._last_tab_context != current_tab_context:
+            logger.info(f"🔄 检测到标签页上下文变化: {self._last_tab_context} -> {current_tab_context}，清除缓存")
+            self.clear_cache()
+
+        # 记录当前模型名称和标签页上下文
         self._last_model_name = model_name
+        self._last_tab_context = current_tab_context
 
         # 额外验证：确保请求的模型名称有效
         if model_name not in ["mistral-7b", "qwen2.5-7b"]:

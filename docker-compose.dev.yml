@@ -1,0 +1,146 @@
+# VisionAI-ClipsMaster Development Docker Compose
+# Optimized for development with hot reload and debugging
+
+version: '3.8'
+
+services:
+  # ============================================
+  # Development Application Service
+  # ============================================
+  visionai-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: visionai-clipsmaster-dev
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+      - "8080:8080"
+      - "5000:5000"
+      - "8888:8888"  # Jupyter Lab
+      - "8889:8889"  # Jupyter Notebook
+    volumes:
+      # Mount source code for hot reload
+      - .:/app
+      - ./models:/app/models
+      - ./data:/app/data
+      - ./output:/app/output
+      - ./logs:/app/logs
+      - ./cache:/app/cache
+      # Development tools
+      - dev-jupyter:/home/appuser/.jupyter
+      - dev-ipython:/home/appuser/.ipython
+    environment:
+      - PYTHONPATH=/app
+      - DISPLAY=:99
+      - QT_QPA_PLATFORM=offscreen
+      - MPLBACKEND=Agg
+      - DEVELOPMENT=1
+      - DEBUG=1
+      - TORCH_HOME=/app/cache/torch
+      - TRANSFORMERS_CACHE=/app/cache/transformers
+      - HF_HOME=/app/cache/huggingface
+      - REDIS_URL=redis://redis-dev:6379/0
+    depends_on:
+      - redis-dev
+    networks:
+      - visionai-dev-network
+    stdin_open: true
+    tty: true
+    command: >
+      sh -c "
+        echo 'Starting VisionAI-ClipsMaster Development Environment...' &&
+        echo 'Available services:' &&
+        echo '  - Main App: http://localhost:8000' &&
+        echo '  - Jupyter Lab: http://localhost:8888' &&
+        echo '  - Jupyter Notebook: http://localhost:8889' &&
+        python simple_ui_fixed.py
+      "
+
+  # ============================================
+  # Development Redis Service
+  # ============================================
+  redis-dev:
+    image: redis:7-alpine
+    container_name: visionai-redis-dev
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis-dev-data:/data
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    networks:
+      - visionai-dev-network
+
+  # ============================================
+  # Jupyter Lab Service
+  # ============================================
+  jupyter:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: visionai-jupyter
+    restart: unless-stopped
+    ports:
+      - "8888:8888"
+    volumes:
+      - .:/app
+      - ./notebooks:/app/notebooks
+      - ./cache:/app/cache
+      - dev-jupyter:/home/appuser/.jupyter
+    environment:
+      - PYTHONPATH=/app
+      - JUPYTER_ENABLE_LAB=yes
+      - TORCH_HOME=/app/cache/torch
+      - TRANSFORMERS_CACHE=/app/cache/transformers
+      - HF_HOME=/app/cache/huggingface
+    networks:
+      - visionai-dev-network
+    command: >
+      sh -c "
+        mkdir -p /app/notebooks &&
+        jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root 
+        --NotebookApp.token='' --NotebookApp.password=''
+      "
+
+  # ============================================
+  # Code Quality Service (Optional)
+  # ============================================
+  code-quality:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: visionai-code-quality
+    volumes:
+      - .:/app
+    networks:
+      - visionai-dev-network
+    profiles:
+      - tools
+    command: >
+      sh -c "
+        echo 'Running code quality checks...' &&
+        black --check . &&
+        flake8 . &&
+        isort --check-only . &&
+        mypy src/ &&
+        echo 'Code quality checks completed!'
+      "
+
+# ============================================
+# Development Network
+# ============================================
+networks:
+  visionai-dev-network:
+    driver: bridge
+
+# ============================================
+# Development Volumes
+# ============================================
+volumes:
+  redis-dev-data:
+    driver: local
+  dev-jupyter:
+    driver: local
+  dev-ipython:
+    driver: local

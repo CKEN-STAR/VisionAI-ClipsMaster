@@ -15,8 +15,8 @@ from datetime import datetime
 from enum import Enum
 
 try:
-    from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton, 
-                               QLabel, QTextEdit, QMessageBox, QDialog, 
+    from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QPushButton,
+                               QLabel, QTextEdit, QMessageBox, QDialog,
                                QDialogButtonBox, QFrame, QListWidget, QListWidgetItem,
                                QGroupBox, QCheckBox, QComboBox, QSpinBox,
                                QProgressDialog, QInputDialog, QFileDialog)
@@ -25,6 +25,12 @@ try:
     QT_AVAILABLE = True
 except ImportError:
     QT_AVAILABLE = False
+    # 创建占位符类
+    class QWidget:
+        def __init__(self, parent=None):
+            pass
+    def pyqtSignal(*args):
+        return None
 
 class AlertType(Enum):
     """警告类型枚举"""
@@ -178,14 +184,18 @@ class ConfirmationDialog(QDialog):
         """是否确认"""
         return self.confirmed
 
-class AlertManager(QWidget):
+class AlertManager:
     """异常处理管理器主类"""
-    
-    # 信号定义
-    alert_triggered = pyqtSignal(str, str, str)  # level, title, message
-    confirmation_requested = pyqtSignal(str, str)  # title, message
-    
+
     def __init__(self, parent=None):
+        if QT_AVAILABLE:
+            super().__init__(parent)
+            # 信号定义
+            self.alert_triggered = pyqtSignal(str, str, str)  # level, title, message
+            self.confirmation_requested = pyqtSignal(str, str)  # title, message
+        else:
+            self.alert_triggered = None
+            self.confirmation_requested = None
         super().__init__(parent)
         
         # 警告历史记录

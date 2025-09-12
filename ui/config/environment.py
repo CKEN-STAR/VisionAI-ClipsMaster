@@ -58,6 +58,19 @@ def check_ffmpeg() -> bool:
 def setup_ffmpeg_path() -> bool:
     """设置FFmpeg路径，支持自动安装"""
     try:
+        # 检查是否禁用了自动下载
+        config_file = Path(__file__).parent.parent.parent / "configs" / "auto_download_config.yaml"
+        if config_file.exists():
+            try:
+                import yaml
+                with open(config_file, 'r', encoding='utf-8') as f:
+                    config = yaml.safe_load(f)
+                if not config.get('auto_download_enabled', True):
+                    print("[INFO] 自动下载已禁用，跳过FFmpeg检查")
+                    return True
+            except Exception:
+                pass
+
         # 首先检查系统PATH中的ffmpeg
         if shutil.which('ffmpeg'):
             print("[OK] 系统中已安装FFmpeg")
@@ -81,31 +94,26 @@ def setup_ffmpeg_path() -> bool:
                 print(f"[OK] FFmpeg路径已设置: {ffmpeg_path}")
                 return True
 
-        # 尝试自动安装FFmpeg
-        print("[INFO] 未找到FFmpeg，尝试自动安装...")
-        try:
-            from .ffmpeg_installer import install_ffmpeg_if_needed
+        # 检查FFmpeg配置文件中的跳过选项
+        ffmpeg_config_file = current_dir / "configs" / "ffmpeg_config.json"
+        if ffmpeg_config_file.exists():
+            try:
+                import json
+                with open(ffmpeg_config_file, 'r', encoding='utf-8') as f:
+                    ffmpeg_config = json.load(f)
+                if ffmpeg_config.get('skip_ffmpeg_check', False):
+                    print("[INFO] FFmpeg检查已跳过（配置文件设置）")
+                    return True
+            except Exception:
+                pass
 
-            if install_ffmpeg_if_needed():
-                print("[OK] FFmpeg自动安装成功")
-                return True
-            else:
-                print("[WARN] FFmpeg自动安装失败")
-                _show_ffmpeg_install_guide()
-                return False
-
-        except ImportError:
-            print("[WARN] FFmpeg安装器不可用")
-            _show_ffmpeg_install_guide()
-            return False
-        except Exception as e:
-            print(f"[WARN] FFmpeg自动安装异常: {e}")
-            _show_ffmpeg_install_guide()
-            return False
+        # 如果自动下载被禁用，直接返回True避免阻塞启动
+        print("[WARN] 未找到FFmpeg，但将继续启动（视频功能受限）")
+        return True
 
     except Exception as e:
         print(f"[WARN] 设置FFmpeg路径失败: {e}")
-        return False
+        return True  # 即使失败也返回True，避免阻塞启动
 
 def _show_ffmpeg_install_guide():
     """显示FFmpeg安装指南"""

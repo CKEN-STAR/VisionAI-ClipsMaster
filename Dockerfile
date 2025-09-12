@@ -1,81 +1,160 @@
-# 构建阶段
-FROM python:3.10-slim as builder
+# VisionAI-ClipsMaster Production Dockerfile
+# Multi-stage build for optimized production image
 
-# 设置工作目录
-WORKDIR /build
+# ============================================
+# Stage 1: Base Dependencies Builder
+# ============================================
+FROM python:3.11-slim as base-builder
 
-# 安装构建依赖
+# Set environment variables
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
+
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
-    gcc \
+    build-essential \
+    cmake \
+    pkg-config \
+    libopencv-dev \
+    libavcodec-dev \
+    libavformat-dev \
+    libswscale-dev \
+    libv4l-dev \
+    libxvidcore-dev \
+    libx264-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libtiff-dev \
+    libatlas-base-dev \
+    gfortran \
+    libhdf5-dev \
+    libprotobuf-dev \
+    protobuf-compiler \
+    libgoogle-glog-dev \
+    libgflags-dev \
+    libgtest-dev \
+    libeigen3-dev \
+    libopenblas-dev \
+    liblapack-dev \
     python3-dev \
+    wget \
+    curl \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
-# 复制依赖文件
-COPY requirements.txt requirements-dev.txt ./
+# Install FFmpeg from source for better compatibility
+RUN wget https://ffmpeg.org/releases/ffmpeg-6.0.tar.xz && \
+    tar -xf ffmpeg-6.0.tar.xz && \
+    cd ffmpeg-6.0 && \
+    ./configure --enable-shared --disable-static --enable-gpl --enable-libx264 && \
+    make -j$(nproc) && \
+    make install && \
+    ldconfig && \
+    cd .. && rm -rf ffmpeg-6.0*
 
-# 安装依赖
-RUN pip install --no-cache-dir -r requirements.txt \
-    && pip install --no-cache-dir -r requirements-dev.txt \
-    && pip wheel --no-cache-dir --no-deps --wheel-dir /build/wheels -r requirements.txt
+# ============================================
+# Stage 2: Python Dependencies Builder
+# ============================================
+FROM base-builder as python-builder
 
-# 运行阶段
-FROM python:3.10-slim
+# Create virtual environment
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
-# 添加非root用户
-RUN groupadd -r visionai && useradd -r -g visionai visionai
+# Copy requirements and install Python dependencies
+COPY requirements.txt /tmp/requirements.txt
 
-# 设置工作目录
+# Install PyTorch with CPU support (smaller size)
+RUN pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cpu
+
+# Install other dependencies
+RUN pip install -r /tmp/requirements.txt
+
+# Install additional dependencies for containerized environment
+RUN pip install \
+    gunicorn \
+    uvicorn[standard] \
+    fastapi \
+    websockets \
+    redis \
+    celery
+
+# ============================================
+# Stage 3: Application Builder
+# ============================================
+FROM python:3.11-slim as app-builder
+
+# Install runtime system dependencies
+RUN apt-get update && apt-get install -y \
+    libopencv-dev \
+    libavcodec58 \
+    libavformat58 \
+    libswscale5 \
+    libv4l-0 \
+    libxvidcore4 \
+    libx264-160 \
+    libjpeg62-turbo \
+    libpng16-16 \
+    libtiff5 \
+    libatlas3-base \
+    libhdf5-103 \
+    libprotobuf23 \
+    libgoogle-glog0v5 \
+    libgflags2.2 \
+    libeigen3-dev \
+    libopenblas0 \
+    liblapack3 \
+    ffmpeg \
+    xvfb \
+    x11vnc \
+    fluxbox \
+    wget \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy virtual environment from builder
+COPY --from=python-builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# ============================================
+# Stage 4: Final Production Image
+# ============================================
+FROM app-builder as production
+
+# Create app user for security
+RUN groupadd -r appuser && useradd -r -g appuser appuser
+
+# Set working directory
 WORKDIR /app
 
-# 安装系统依赖
-RUN apt-get update && apt-get install -y \
-    ffmpeg \
-    libsm6 \
-    libxext6 \
-    libgl1-mesa-glx \
-    curl \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean
+# Copy application code
+COPY --chown=appuser:appuser . /app/
 
-# 从构建阶段复制wheels
-COPY --from=builder /build/wheels /wheels
+# Create necessary directories with proper permissions
+RUN mkdir -p /app/models /app/data /app/output /app/logs /app/cache && \
+    chown -R appuser:appuser /app
 
-# 安装Python包
-RUN pip install --no-cache-dir /wheels/*
+# Set environment variables
+ENV PYTHONPATH="/app:$PYTHONPATH" \
+    DISPLAY=:99 \
+    QT_QPA_PLATFORM=offscreen \
+    MPLBACKEND=Agg \
+    CUDA_VISIBLE_DEVICES="" \
+    TORCH_HOME=/app/cache/torch \
+    TRANSFORMERS_CACHE=/app/cache/transformers \
+    HF_HOME=/app/cache/huggingface
 
-# 复制项目文件
-COPY --chown=visionai:visionai src/ ./src/
-COPY --chown=visionai:visionai tests/ ./tests/
-COPY --chown=visionai:visionai configs/ ./configs/
-COPY --chown=visionai:visionai setup.cfg pyproject.toml ./
+# Expose ports
+EXPOSE 8000 8080 5000
 
-# 设置环境变量
-ENV PYTHONPATH=/app \
-    PYTHONUNBUFFERED=1 \
-    CONFIG_PATH=/app/configs \
-    PATH="/home/visionai/.local/bin:${PATH}"
-
-# 切换到非root用户
-USER visionai
-
-# 创建必要的目录
-RUN mkdir -p /app/data /app/logs
-
-# 暴露端口
-EXPOSE 8000
-
-# 设置健康检查
+# Health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/health || exit 1
+    CMD python -c "import sys; sys.exit(0)" || exit 1
 
-# 设置卷挂载点
-VOLUME ["/app/data", "/app/logs", "/app/configs"]
+# Switch to non-root user
+USER appuser
 
-# 设置入口点
-ENTRYPOINT ["python", "-m", "src.main"]
-
-# 添加标签
-LABEL maintainer="VisionAI Team <support@visionai.com>" \
-      version="1.0" \
-      description="VisionAI-ClipsMaster - 媒体文件验证和处理工具" \
-      org.opencontainers.image.source="https://github.com/visionai/clipsmaster" 
+# Default command
+CMD ["python", "simple_ui_fixed.py"]

@@ -75,7 +75,7 @@ if ($lfsCheck) {
         Write-Host "✓ .gitattributes文件存在" -ForegroundColor Green
     } else {
         Write-Host "⚠ .gitattributes文件不存在，创建基本配置..." -ForegroundColor Yellow
-        @"
+        $gitattributes = @"
 # Git LFS配置
 *.gguf filter=lfs diff=lfs merge=lfs -text
 *.bin filter=lfs diff=lfs merge=lfs -text
@@ -100,7 +100,8 @@ if ($lfsCheck) {
 *.ico binary
 *.zip binary
 *.tar.gz binary
-"@ | Out-File -FilePath ".gitattributes" -Encoding UTF8
+"@
+        $gitattributes | Out-File -FilePath ".gitattributes" -Encoding UTF8
         Write-Host "✓ .gitattributes文件已创建" -ForegroundColor Green
     }
 } else {
@@ -205,7 +206,8 @@ if ($autoCommit -eq "y" -or $autoCommit -eq "Y") {
     & git add .
     Write-Host "✓ 文件已添加到暂存区" -ForegroundColor Green
     
-    $commitMsg = "feat: initial release of VisionAI-ClipsMaster v1.0.0
+    $commitMsg = @"
+feat: initial release of VisionAI-ClipsMaster v1.0.0
 
 🎬 AI-powered short drama intelligent remixing tool
 
@@ -215,7 +217,8 @@ Features:
 - ⚡ Precise video splicing with zero loss
 - 💾 4GB memory optimization
 - 🚀 Pure CPU inference, no GPU required
-- 🌍 Cross-platform support"
+- 🌍 Cross-platform support
+"@
 
     & git commit -m "$commitMsg"
     Write-Host "✓ 初始提交已创建" -ForegroundColor Green

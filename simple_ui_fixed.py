@@ -1,18 +1,8 @@
-#!/usr/bin/env python
+#/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-VisionAI-ClipsMaster 简化UI
-此脚本创建一个简化的UI界面，整合了基本功能和模型训练组件
+VisionAI-ClipsMaster 这是主ui
 
-UI整合测试状态：
-- 文件上传模块：✓ 已实现
-- 语言检测器集成：✓ 已实现
-- 双模型切换界面：✓ 已实现
-- 剧本重构进度显示：✓ 已实现
-- 训练面板集成：✓ 已实现
-- 剪映导出功能：✓ 已实现
-- 内存监控：✓ 已实现
-- 错误处理：✓ 已实现
 """
 import sys
 import time
@@ -66,7 +56,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent
 sys.path.append(str(PROJECT_ROOT))
 # 导入UI桥接模块
 try:
-    from ui_bridge import ui_bridge
+    from src.ui.ui_bridge import ui_bridge
     UI_BRIDGE_AVAILABLE = True
     print("UI桥接模块导入成功")
 except ImportError as e:
@@ -75,7 +65,7 @@ except ImportError as e:
     ui_bridge = None
 # 导入启动优化模块
 try:
-    from startup_optimizer import (
+    from src.utils.startup_optimizer import (
         initialize_startup_optimizer, register_component,
         start_optimized_startup
     )
@@ -85,62 +75,101 @@ except ImportError as e:
     STARTUP_OPTIMIZER_AVAILABLE = False
     print(f"[WARN] 启动优化器导入失败: {e}")
     # 定义空函数以保持兼容性
-    def initialize_startup_optimizer(*args): return None
-    def register_component(*args, **kwargs): pass
-    def start_optimized_startup(): pass
-    def get_startup_report(): return {}
-    def get_lazy_module(name): return __import__(name)
+    def initialize_startup_optimizer(*args, **kwargs):
+        del args, kwargs  # 忽略未使用的参数
+        return None
+    def register_component(*args, **kwargs):
+        del args, kwargs  # 忽略未使用的参数
+        pass
+    def start_optimized_startup():
+        pass
+    def get_startup_report():
+        return {}
+    def get_lazy_module(name):
+        return __import__(name)
 # 导入增强响应时间监控模块
 try:
-    from response_monitor_enhanced import (
-        initialize_enhanced_response_monitor, start_response_monitoring,
-        record_operation, track_ui_operation
+    from src.utils.response_monitor_enhanced import (
+        initialize_enhanced_response_monitor, start_response_monitoring
     )
+    # 这些函数将在需要时使用
+    record_operation = None
+    track_ui_operation = None
+    try:
+        from src.utils.response_monitor_enhanced import record_operation, track_ui_operation
+    except ImportError:
+        pass
+
     ENHANCED_RESPONSE_MONITOR_AVAILABLE = True
     print("[OK] 增强响应时间监控器导入成功")
 except ImportError as e:
     ENHANCED_RESPONSE_MONITOR_AVAILABLE = False
     print(f"[WARN] 增强响应时间监控器导入失败: {e}")
     # 定义空函数以保持兼容性
-    def initialize_enhanced_response_monitor(*args): return None
-    def start_response_monitoring(): pass
-    def stop_response_monitoring(): pass
+    def initialize_enhanced_response_monitor(*args, **kwargs):
+        del args, kwargs  # 忽略未使用的参数
+        return None
+    def start_response_monitoring():
+        pass
+    def stop_response_monitoring():
+        pass
     def record_operation(name):
+        del name  # 忽略未使用的参数
         class DummyTimer:
-            def __enter__(self): return self
-            def __exit__(self, *args): pass
-            def finish(self): return 0
+            def __enter__(self):
+                return self
+            def __exit__(self, *args):
+                del args  # 忽略未使用的参数
+                pass
+            def finish(self):
+                return 0
         return DummyTimer()
-    def get_response_report(): return {}
+    def get_response_report():
+        return {}
     def track_ui_operation(name):
-        def dummy_decorator(func): return func
+        del name  # 忽略未使用的参数
+        def dummy_decorator(func):
+            return func
         return dummy_decorator
 # 导入CSS优化模块
 try:
-    from css_optimizer import apply_optimized_styles
+    from ui.utils.unified_css_manager import apply_qt_compatible_css as apply_optimized_styles
     CSS_OPTIMIZER_AVAILABLE = True
     print("[OK] CSS优化器导入成功")
 except ImportError as e:
+    # 创建占位符函数
+    def apply_optimized_styles(*args, **kwargs):
+        pass
     CSS_OPTIMIZER_AVAILABLE = False
     print(f"[WARN] CSS优化器导入失败: {e}")
     # 定义空函数以保持兼容性
     def optimize_stylesheet(stylesheet): return stylesheet
-    def apply_optimized_styles(widget): pass
+    def apply_optimized_styles(widget, css=""):
+        del widget, css  # 忽略未使用的参数
+        pass
     def get_css_optimization_report(): return {}
     def clear_css_cache(): pass
 # 导入用户体验增强模块
 try:
-    from user_experience_enhancer import initialize_user_experience_enhancer
+    from src.ui.user_experience_enhancer import initialize_user_experience_enhancer
     USER_EXPERIENCE_ENHANCER_AVAILABLE = True
     print("[OK] 用户体验增强器导入成功")
 except ImportError as e:
     USER_EXPERIENCE_ENHANCER_AVAILABLE = False
     print(f"[WARN] 用户体验增强器导入失败: {e}")
     # 定义空函数以保持兼容性
-    def initialize_user_experience_enhancer(window): pass
-    def show_operation_preview(name, data): return True
-    def diagnose_and_show_error(message): pass
-    def start_user_guide(guide_type="basic"): pass
+    def initialize_user_experience_enhancer(window):
+        del window  # 忽略未使用的参数
+        pass
+    def show_operation_preview(name, data):
+        del name, data  # 忽略未使用的参数
+        return True
+    def diagnose_and_show_error(message):
+        del message  # 忽略未使用的参数
+        pass
+    def start_user_guide(guide_type="basic"):
+        del guide_type  # 忽略未使用的参数
+        pass
     def get_shortcuts_info(): return {}
 # 导入增强模型下载器
 try:
@@ -150,16 +179,30 @@ try:
 except ImportError as e:
     HAS_ENHANCED_DOWNLOADER = False
     print(f"[WARN] 增强模型下载器导入失败: {e}")
-    # 定义空类以保持兼容性
+    # 🔧 修复：定义功能完整的空类以保持兼容性
 
     class EnhancedModelDownloader:
-        def __init__(self, parent=None): pass
-        def download_model(self, model_name, parent_widget=None, auto_select=True): return False
+        def __init__(self, parent=None):
+            self.parent = parent
+
+        def download_model(self, model_name, parent_widget=None, auto_select=True, tab_context=None):
+            print(f"[WARN] 增强下载器不可用，跳过下载: {model_name}")
+            return False
+
+        def reset_state(self):
+            print("[WARN] 增强下载器不可用，跳过状态重置")
+            pass
 
 # 导入智能下载管理器
 try:
     from src.core.intelligent_download_manager import IntelligentDownloadManager
-    from src.utils.network_connectivity_checker import NetworkConnectivityChecker, NetworkStatus
+    from src.utils.network_connectivity_checker import NetworkConnectivityChecker
+    # NetworkStatus 将在需要时使用
+    NetworkStatus = None
+    try:
+        from src.utils.network_connectivity_checker import NetworkStatus
+    except ImportError:
+        pass
     HAS_INTELLIGENT_DOWNLOAD = True
     print("[OK] 智能下载管理器导入成功")
 except ImportError as e:
@@ -215,8 +258,8 @@ except ImportError as e:
         def show_theme_dialog(parent=None): return None
 # 导入编码修复和智能模块加载器
 try:
-    from encoding_fix import safe_logger
-    from smart_module_loader import create_module_loader
+    from src.utils.enhanced_error_handler import safe_logger
+    from src.utils.smart_module_loader import create_module_loader
     SMART_LOADER_AVAILABLE = True
     safe_logger.success("智能模块加载器导入成功")
 except ImportError as e:
@@ -239,7 +282,7 @@ def _lazy_import_optimization_modules():
     try:
 
         from ui_async_optimizer import initialize_optimizers, optimize_tab_switch, get_optimization_stats
-        from memory_manager_enhanced import initialize_memory_manager, get_memory_report
+        from src.utils.memory_manager_enhanced import initialize_memory_manager, get_memory_report
         from optimization_integration import initialize_safe_optimizer, apply_optimizations_safely
         OPTIMIZATION_MODULES_AVAILABLE = True
         print("[OK] 优化模块延迟导入成功")
@@ -257,20 +300,29 @@ def _lazy_import_optimization_modules():
         print(f"[WARN] 优化模块延迟导入失败: {e}")
         return None
 # 定义空函数以保持兼容性
+def initialize_optimizers(*args, **kwargs):
+    del args, kwargs  # 忽略未使用的参数
+    pass
 
-def initialize_optimizers(*args): pass
+def optimize_tab_switch(*args, **kwargs):
+    del args, kwargs  # 忽略未使用的参数
+    pass
 
-def optimize_tab_switch(*args): pass
+def get_optimization_stats():
+    return {}
 
-def get_optimization_stats(): return {}
+def initialize_memory_manager():
+    return None
 
-def initialize_memory_manager(): return None
+def get_memory_report():
+    return {}
 
-def get_memory_report(): return {}
+def initialize_safe_optimizer(*args, **kwargs):
+    del args, kwargs  # 忽略未使用的参数
+    return None
 
-def initialize_safe_optimizer(*args): return None
-
-def apply_optimizations_safely(): return {}
+def apply_optimizations_safely():
+    return {}
 # 导入递归深度配置模块，解决递归深度超出问题
 try:
 
@@ -296,42 +348,7 @@ from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
                            QComboBox, QGroupBox, QRadioButton, QButtonGroup, QProgressDialog, QDialog, QFrame, QSlider,
                            QTableWidget, QTableWidgetItem, QHeaderView, QLineEdit, QSpinBox, QFormLayout, QScrollArea)
 from PyQt6.QtCore import Qt, pyqtSignal, QThread, QObject, QTimer
-try:
-    from PyQt6.QtGui import QFont, QIcon, QAction
-    print("[OK] QAction从QtGui导入成功")
-except ImportError:
-    try:
-        from PyQt6.QtGui import QFont, QIcon
-        from PyQt6.QtGui import QAction
-        print("[OK] QAction从QtWidgets导入成功")
-    except ImportError:
-        try:
-            from PyQt6.QtGui import QFont, QIcon
-            print("[WARN] QAction导入失败，使用占位符类")
-            # 创建QAction的占位符类
-            class QAction:
-                def __init__(self, text, parent=None):
-                    self.text = text
-                    self.parent = parent
-                    self._triggered_callbacks = []
-                
-                def triggered(self):
-                    class TriggerSignal:
-                        def connect(self, callback):
-                            pass
-                    return TriggerSignal()
-                
-                def setShortcut(self, shortcut): 
-                    pass
-                
-                def setText(self, text):
-                    self.text = text
-                
-                def setEnabled(self, enabled):
-                    pass
-        except ImportError:
-            from PyQt6.QtGui import QFont, QIcon
-            # QAction类已在上面定义，无需重复定义
+from PyQt6.QtGui import QFont, QIcon, QAction
 
 class SimpleAlertManager:
 
@@ -393,7 +410,7 @@ class ProcessStabilityMonitor(QObject):
             else:
                 # 如果不在主线程，延迟启动
                 print("[WARN] 不在主线程中，延迟启动监控")
-                from PyQt6.QtCore import QTimer
+                # QTimer已在顶部导入
                 timer = QTimer()
                 timer.singleShot(100, self._delayed_start_monitoring)
 
@@ -469,8 +486,9 @@ class ProcessStabilityMonitor(QObject):
             for _ in range(3):
                 gc.collect()
             # 清理Python内部缓存
-            if hasattr(sys, '_clear_type_cache'):
-                sys._clear_type_cache()
+            if hasattr(sys, '_clear_internal_caches'):
+                sys._clear_internal_caches()
+            # 注意：_clear_type_cache 在 Python 3.13+ 中已弃用，使用 _clear_internal_caches 替代
             # 清理性能数据历史，只保留最近的数据
             if hasattr(self, 'performance_data') and len(self.performance_data) > 20:
                 self.performance_data = self.performance_data[-20:]
@@ -1041,25 +1059,48 @@ except ImportError as e:
         return MemoryWatcher()
 # 导入磁盘缓存管理器
 try:
-    from ui.hardware.disk_cache import DiskCacheManager, get_disk_cache_manager, setup_cache, clear_cache, get_cache_stats
+    from ui.hardware.disk_cache import get_disk_cache_manager, setup_cache, clear_cache, get_cache_stats
+    # DiskCacheManager 将在需要时使用
+    DiskCacheManager = None
+    try:
+        from ui.hardware.disk_cache import DiskCacheManager
+    except ImportError:
+        pass
     HAS_DISK_CACHE = True
 except ImportError:
     print("警告: 无法导入磁盘缓存管理器，将使用默认缓存设置")
     HAS_DISK_CACHE = False
+    DiskCacheManager = None
+
 # 导入输入延迟优化器
 try:
-    from ui.hardware.input_latency import InputOptimizer, get_input_optimizer, optimize_input_latency, optimize_input_field, get_input_latency_stats
+    from ui.hardware.input_latency import get_input_optimizer, optimize_input_latency, optimize_input_field, get_input_latency_stats
+    # InputOptimizer 将在需要时使用
+    InputOptimizer = None
+    try:
+        from ui.hardware.input_latency import InputOptimizer
+    except ImportError:
+        pass
     HAS_INPUT_OPTIMIZER = True
 except ImportError:
     print("警告: 无法导入输入延迟优化器，将使用默认输入设置")
     HAS_INPUT_OPTIMIZER = False
+    InputOptimizer = None
+
 # 导入电源管理模块
 try:
-    from ui.hardware.power_manager import PowerAwareUI, PowerWatcher, get_power_manager, optimize_for_power_source, get_power_status, enable_power_saving
+    from ui.hardware.power_manager import PowerWatcher, get_power_manager, optimize_for_power_source, get_power_status, enable_power_saving
+    # PowerAwareUI 将在需要时使用
+    PowerAwareUI = None
+    try:
+        from ui.hardware.power_manager import PowerAwareUI
+    except ImportError:
+        pass
     HAS_POWER_MANAGER = True
 except ImportError:
     print("警告: 无法导入电源管理模块，将使用默认电源设置")
     HAS_POWER_MANAGER = False
+    PowerAwareUI = None
 # 安全导入核心模块
 CORE_MODULES_AVAILABLE = False
 ClipGenerator = None
@@ -1085,7 +1126,6 @@ try:
 except ImportError as e:
     print(f"[WARN] ModelTrainer 导入失败: {e}")
     # 创建占位符类
-
     class ModelTrainer:
         def __init__(self, *args, **kwargs):
             pass
@@ -1100,6 +1140,13 @@ try:
     HAS_PROGRESS_TRACKER = True
 except ImportError:
     print("警告: 无法导入进度追踪器，将使用基本进度显示")
+    HAS_PROGRESS_TRACKER = False
+    # 创建占位符类
+    class ProgressTracker:
+        def __init__(self):
+            pass
+        def update_progress(self, value):
+            pass
 # UI组件 - TrainingFeeder import removed as SimplifiedTrainingFeeder is used instead
 sys.path.append(os.path.join(os.path.dirname(__file__), 'ui', 'components'))
 # GPU检测工具
@@ -2479,9 +2526,9 @@ class SimplifiedTrainingFeeder(QWidget):
         lang_btn_group = QButtonGroup(self)
         lang_btn_group.addButton(self.lang_zh_radio)
         lang_btn_group.addButton(self.lang_en_radio)
-        # 连接信号
-        self.lang_zh_radio.toggled.connect(lambda: self.switch_training_language("zh"))
-        self.lang_en_radio.toggled.connect(lambda: self.switch_training_language("en"))
+        # 🔧 重构：使用新的信号处理方式
+        self.lang_zh_radio.clicked.connect(lambda: self.switch_training_language("zh"))
+        self.lang_en_radio.clicked.connect(lambda: self.switch_training_language("en"))
         # 添加到布局
         lang_layout.addWidget(self.lang_zh_radio)
         lang_layout.addWidget(self.lang_en_radio)
@@ -2732,20 +2779,85 @@ class SimplifiedTrainingFeeder(QWidget):
         unified_group.setLayout(unified_layout)
         main_layout.addWidget(unified_group)
 
-    def switch_training_language(self, lang_mode):
-        """切换训练的语言模式
-        Args:
+    # ========================================
+    # 🏗️ 新的智能推荐下载器交互架构
+    # ========================================
 
+    def switch_training_language(self, lang_mode):
+        """重构版本：切换训练的语言模式
+
+        Args:
             lang_mode: 语言模式，"zh"或"en"
         """
+        # 防止重复切换
         if self.language_mode == lang_mode:
+            log_handler.log("debug", f"训练页面语言模式已经是 {lang_mode}，跳过切换")
             return
+
+        log_handler.log("info", f"🔄 训练页面开始切换语言模式: {self.language_mode} -> {lang_mode}")
+
+        # 🔧 根源修复：保存当前按钮的事件绑定状态
+        zh_connected = self.lang_zh_radio.receivers(self.lang_zh_radio.clicked) > 0
+        en_connected = self.lang_en_radio.receivers(self.lang_en_radio.clicked) > 0
+
+        # 更新语言模式
         self.language_mode = lang_mode
-        # 更新UI
+
+        # 更新UI显示
+        self._update_training_ui_for_language(lang_mode)
+
+        # 🔧 根源修复：确保按钮状态正确且事件绑定完整
+        self._ensure_button_bindings()
+
+        # 🔧 根源修复：记录按钮绑定状态用于调试
+        zh_receivers = self.lang_zh_radio.receivers(self.lang_zh_radio.clicked)
+        en_receivers = self.lang_en_radio.receivers(self.lang_en_radio.clicked)
+        log_handler.log("debug", f"按钮事件绑定状态 - 中文: {zh_receivers}, 英文: {en_receivers}")
+
+        # 清空已加载的数据
+        self.original_srt_list.clear()
+        self.viral_srt.clear()
+
+        log_handler.log("info", f"✅ 训练页面语言切换完成: {lang_mode}")
+
+        # 检查模型状态（仅在用户直接切换时）
+        main_window = self.window()
+        is_from_main = hasattr(main_window, '_is_changing_language_from_main') and main_window._is_changing_language_from_main
+
+        if not is_from_main:
+            log_handler.log("info", f"🔍 用户直接切换语言，检查 {lang_mode} 模型状态")
+            # 延迟检查，避免UI阻塞
+            QTimer.singleShot(200, lambda: self._check_and_handle_model(lang_mode))
+
+    def _ensure_button_bindings(self):
+        """确保按钮事件绑定完整"""
+        try:
+            # 检查中文按钮绑定
+            zh_receivers = self.lang_zh_radio.receivers(self.lang_zh_radio.clicked)
+            if zh_receivers == 0:
+                log_handler.log("warning", "🔧 检测到中文按钮事件绑定丢失，重新绑定")
+                self.lang_zh_radio.clicked.connect(lambda: self.switch_training_language("zh"))
+
+            # 检查英文按钮绑定
+            en_receivers = self.lang_en_radio.receivers(self.lang_en_radio.clicked)
+            if en_receivers == 0:
+                log_handler.log("warning", "🔧 检测到英文按钮事件绑定丢失，重新绑定")
+                self.lang_en_radio.clicked.connect(lambda: self.switch_training_language("en"))
+
+            log_handler.log("debug", f"✅ 按钮绑定检查完成 - 中文: {zh_receivers}, 英文: {en_receivers}")
+
+        except Exception as e:
+            log_handler.log("error", f"确保按钮绑定失败: {e}")
+
+    def _update_training_ui_for_language(self, lang_mode):
+        """更新训练页面UI以反映语言模式"""
         if lang_mode == "zh":
             self.training_mode_label.setText("当前训练: 中文模型")
             self.status_label.setText("已切换到中文模型训练模式")
-            # 更新统一面板中的模型状态
+            # 🔧 根源修复：确保单选按钮状态正确
+            if not self.lang_zh_radio.isChecked():
+                self.lang_zh_radio.setChecked(True)
+            # 更新统一面板状态
             if hasattr(self, 'current_model_label'):
                 self.current_model_label.setText("模型: Qwen2.5-7B 中文")
             if hasattr(self, 'training_status_label'):
@@ -2753,22 +2865,149 @@ class SimplifiedTrainingFeeder(QWidget):
         else:
             self.training_mode_label.setText("当前训练: 英文模型")
             self.status_label.setText("已切换到英文模型训练模式")
-            # 更新统一面板中的模型状态
+            # 🔧 根源修复：确保单选按钮状态正确
+            if not self.lang_en_radio.isChecked():
+                self.lang_en_radio.setChecked(True)
+            # 更新统一面板状态
             if hasattr(self, 'current_model_label'):
                 self.current_model_label.setText("模型: Mistral-7B 英文")
             if hasattr(self, 'training_status_label'):
                 self.training_status_label.setText("状态: 英文模式就绪")
-        # 清空已加载的数据
-        self.original_srt_list.clear()
-        self.viral_srt.clear()
-        log_handler.log("info", f"训练组件切换语言模式: {lang_mode}")
-        # 检查是否是从主窗口发起的语言切换
-        main_window = self.window()
-        is_from_main = hasattr(main_window, '_is_changing_language_from_main') and main_window._is_changing_language_from_main
-        # 如果不是从主窗口发起的切换，才检查模型是否存在
-        # 这样避免了主窗口切换语言时重复检查
-        if not is_from_main:
-            self.check_model_exists(lang_mode)
+
+    def _check_and_handle_model(self, lang_mode):
+        """检查模型状态并处理下载"""
+        try:
+            model_exists = self._check_model_files(lang_mode)
+
+            if not model_exists:
+                log_handler.log("info", f"🚨 {lang_mode} 模型不存在，启动智能推荐下载器")
+                self._launch_smart_downloader(lang_mode)
+            else:
+                log_handler.log("info", f"✅ {lang_mode} 模型已存在，无需下载")
+
+        except Exception as e:
+            log_handler.log("error", f"模型检查失败: {e}")
+
+    def _check_model_files(self, lang_mode):
+        """纯粹的模型文件检查，不涉及UI交互"""
+        if lang_mode == "zh":
+            model_paths = [
+                os.path.join(Path(__file__).resolve().parent, "models/qwen/quantized/Q4_K_M.gguf"),
+                os.path.join(Path(__file__).resolve().parent, "models/qwen/base/qwen2.5-7b.bin"),
+                os.path.join(Path(__file__).resolve().parent, "models/qwen/base/qwen2.5-7b"),
+                os.path.join(Path(__file__).resolve().parent, "models/qwen/finetuned")
+            ]
+            check_dir = os.path.join(Path(__file__).resolve().parent, "models/qwen")
+        else:
+            model_paths = [
+                os.path.join(Path(__file__).resolve().parent, "models/mistral/quantized/Q4_K_M.gguf"),
+                os.path.join(Path(__file__).resolve().parent, "models/mistral/base/mistral-7b.bin"),
+                os.path.join(Path(__file__).resolve().parent, "models/mistral/base/mistral-7b"),
+                os.path.join(Path(__file__).resolve().parent, "models/mistral/finetuned")
+            ]
+            check_dir = os.path.join(Path(__file__).resolve().parent, "models/mistral")
+
+        # 检查具体文件
+        for path in model_paths:
+            if os.path.exists(path):
+                if os.path.isfile(path) and os.path.getsize(path) > 100 * 1024 * 1024:  # 100MB
+                    return True
+                elif os.path.isdir(path) and self._has_large_files(path, 100):
+                    return True
+
+        # 检查模型目录
+        if self._has_large_files(check_dir, 100):
+            return True
+
+        return False
+
+    def _has_large_files(self, directory, min_size_mb=10):
+        """检查目录中是否有大文件"""
+        if not os.path.exists(directory):
+            return False
+        min_size = min_size_mb * 1024 * 1024
+        for root, _, files in os.walk(directory):
+            for file in files:
+                file_path = os.path.join(root, file)
+                try:
+                    if os.path.getsize(file_path) > min_size:
+                        return True
+                except (OSError, IOError):
+                    continue
+        return False
+
+    def _launch_smart_downloader(self, lang_mode):
+        """启动智能推荐下载器"""
+        try:
+            main_window = self.window()
+
+            # 确定模型名称
+            model_name = "qwen2.5-7b" if lang_mode == "zh" else "mistral-7b"
+
+            # 创建唯一的上下文标识符
+            context_id = f"training_tab_{lang_mode}_{int(time.time())}"
+
+            log_handler.log("info", f"🚀 启动智能推荐下载器: {model_name}, 上下文: {context_id}")
+
+            # 使用增强下载器
+            if hasattr(main_window, 'enhanced_downloader') and main_window.enhanced_downloader:
+                # 重置下载器状态
+                main_window.enhanced_downloader.reset_state()
+
+                # 启动下载
+                success = main_window.enhanced_downloader.download_model(
+                    model_name,
+                    main_window,
+                    auto_select=True,
+                    tab_context=context_id
+                )
+
+                if success:
+                    log_handler.log("info", f"✅ {lang_mode} 模型下载启动成功")
+                else:
+                    log_handler.log("warning", f"⚠️ {lang_mode} 模型下载被取消或失败")
+            else:
+                # 回退到简单对话框
+                self._fallback_simple_download_dialog(lang_mode)
+
+        except Exception as e:
+            log_handler.log("error", f"启动智能推荐下载器失败: {e}")
+            # 回退到简单对话框
+            self._fallback_simple_download_dialog(lang_mode)
+
+    def _fallback_simple_download_dialog(self, lang_mode):
+        """回退到简单下载对话框"""
+        model_desc = "中文模型" if lang_mode == "zh" else "英文模型"
+
+        reply = QMessageBox.question(
+            self,
+            f"{model_desc}未安装",
+            f"{model_desc}尚未下载，是否现在下载？\n(约4GB，需要较长时间)",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.Yes
+        )
+
+        if reply == QMessageBox.StandardButton.Yes:
+            main_window = self.window()
+            if lang_mode == "zh" and hasattr(main_window, 'download_zh_model'):
+                main_window.download_zh_model()
+            elif lang_mode == "en" and hasattr(main_window, 'download_en_model'):
+                main_window.download_en_model()
+            else:
+                QMessageBox.warning(self, "下载失败", "无法启动模型下载，请在主界面手动下载")
+
+    # 兼容性方法
+    def check_model_exists(self, lang_mode):
+        """兼容性方法：检查模型是否存在"""
+        return self._check_model_files(lang_mode)
+
+    def check_zh_model(self):
+        """兼容性方法：检查中文模型"""
+        return self._check_model_files("zh")
+
+    def check_en_model(self):
+        """兼容性方法：检查英文模型"""
+        return self._check_model_files("en")
     def import_original_srt(self):
         """导入原始SRT"""
         print("🔍 [DEBUG] import_original_srt 函数被调用")
@@ -2878,154 +3117,8 @@ class SimplifiedTrainingFeeder(QWidget):
         # 使用统一的弹窗显示
         show_gpu_detection_dialog(self, gpu_info)
 
-    def check_model_exists(self, lang_mode):
-
-        """检查对应语言的模型是否存在
-        Args:
-            lang_mode: 语言模式，"zh"或"en"
-        Returns:
-            bool: 模型是否存在
-        """
-        # 中文模型可能路径
-        zh_model_paths = [
-            os.path.join(Path(__file__).resolve().parent, "models/qwen/quantized/Q4_K_M.gguf"),
-            os.path.join(Path(__file__).resolve().parent, "models/qwen/base/qwen2.5-7b.bin"),
-            os.path.join(Path(__file__).resolve().parent, "models/qwen/base/qwen2.5-7b"),
-            os.path.join(Path(__file__).resolve().parent, "models/qwen/finetuned")
-        ]
-        # 英文模型可能路径
-        en_model_paths = [
-            os.path.join(Path(__file__).resolve().parent, "models/mistral/quantized/Q4_K_M.gguf"),
-            os.path.join(Path(__file__).resolve().parent, "models/mistral/base/mistral-7b.bin"),
-            os.path.join(Path(__file__).resolve().parent, "models/mistral/base/mistral-7b"),
-            os.path.join(Path(__file__).resolve().parent, "models/mistral/finetuned")
-        ]
-
-        def _has_large_files(directory, min_size_mb=10):
-            """递归检查目录中是否有大于指定大小的文件"""
-            if not os.path.exists(directory):
-                return False
-            min_size = min_size_mb * 1024 * 1024  # 转换为字节
-            for root, _, files in os.walk(directory):
-                for file in files:
-                    file_path = os.path.join(root, file)
-                    try:
-                        if os.path.getsize(file_path) > min_size:
-                            return True
-                    except (OSError, IOError):
-                        continue
-            return False
-        if lang_mode == "zh":
-            # 检查任何一个中文模型路径是否存在
-            model_exists = any(os.path.exists(path) for path in zh_model_paths)
-            # 检查models/qwen目录是否存在并有大文件
-            qwen_dir = os.path.join(Path(__file__).resolve().parent, "models/qwen")
-            if _has_large_files(qwen_dir):
-                model_exists = True
-            log_handler.log("info", f"中文模型检测结果: {'存在' if model_exists else '不存在'}")
-            if not model_exists:
-                # 获取主窗口引用
-                main_window = getattr(self, 'main_window', None) or self.window()
-                # 优先使用主窗口的智能推荐下载器
-                if hasattr(main_window, 'enhanced_downloader') and main_window.enhanced_downloader:
-                    # 重要修复：强制清除下载器状态，确保状态隔离
-                    log_handler.log("info", "🔧 训练页面中文模型检查：强制清除下载器状态")
-                    main_window.enhanced_downloader.reset_state()
-                    log_handler.log("info", "训练页面：使用智能推荐下载器下载中文模型")
-                    result = main_window.enhanced_downloader.download_model("qwen2.5-7b", main_window)
-                    if result is None:
-                        log_handler.log("info", "训练页面：用户取消了中文模型下载")
-                        # 用户取消，不进行任何操作
-                        return
-                    elif result is False:
-                        log_handler.log("warning", "训练页面：智能下载器失败，尝试传统方式")
-                        # 真正的下载失败，继续执行后续的回退逻辑
-                    else:
-                        # 下载成功，直接返回
-                        return
-                elif hasattr(main_window, 'download_zh_model'):
-                    # 回退到传统方式
-                    reply = QMessageBox.question(
-                        self,
-                        "中文模型未安装",
-                        "中文模型尚未下载，是否现在下载？",
-                        QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-                        QMessageBox.StandardButton.Yes
-                    )
-                    if reply == QMessageBox.StandardButton.Yes:
-                        main_window.download_zh_model()
-                else:
-                    QMessageBox.warning(
-                        self,
-                        "模型安装",
-                        "请在主界面进行模型安装"
-                    )
-        else:
-            # 检查任何一个英文模型路径是否存在并且是大文件
-            model_exists = False
-            for path in en_model_paths:
-                if os.path.exists(path):
-                    try:
-                        # 检查文件大小，模型文件应该至少100MB
-                        if os.path.isfile(path) and os.path.getsize(path) > 100 * 1024 * 1024:
-                            model_exists = True
-                            break
-                        elif os.path.isdir(path) and _has_large_files(path, min_size_mb=100):
-                            model_exists = True
-                            break
-                    except (OSError, IOError):
-                        continue
-            # 检查models/mistral目录是否存在并有大文件
-            mistral_dir = os.path.join(Path(__file__).resolve().parent, "models/mistral")
-            if _has_large_files(mistral_dir, min_size_mb=100):
-                model_exists = True
-            log_handler.log("info", f"英文模型检测结果: {'存在' if model_exists else '不存在'}")
-            if not model_exists:
-                # 获取主窗口引用
-                main_window = getattr(self, 'main_window', None) or self.window()
-                # 优先使用主窗口的智能推荐下载器
-                if hasattr(main_window, 'enhanced_downloader') and main_window.enhanced_downloader:
-                    # 重要修复：强制清除下载器状态，确保状态隔离
-                    log_handler.log("info", "🔧 训练页面英文模型检查：强制清除下载器状态")
-                    main_window.enhanced_downloader.reset_state()
-                    log_handler.log("info", "训练页面：使用智能推荐下载器下载英文模型")
-                    result = main_window.enhanced_downloader.download_model("mistral-7b", main_window)
-                    if result is None:
-                        log_handler.log("info", "训练页面：用户取消了英文模型下载")
-                        # 用户取消，不进行任何操作
-                        return
-                    elif result is False:
-                        log_handler.log("warning", "训练页面：智能下载器失败，尝试传统方式")
-                        # 真正的下载失败，继续执行后续的回退逻辑
-                    else:
-                        # 下载成功，直接返回
-                        return
-                elif hasattr(main_window, 'download_en_model'):
-                    # 回退到传统方式
-                    reply = QMessageBox.question(
-                        self,
-                        "英文模型未安装",
-                        "英文模型尚未下载，是否现在下载？\n(约4GB，需要较长时间)",
-                        QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-                        QMessageBox.StandardButton.Yes
-                    )
-                    if reply == QMessageBox.StandardButton.Yes:
-                        main_window.download_en_model()
-                else:
-                    QMessageBox.warning(
-                        self,
-                        "模型安装",
-                        "请在主界面进行模型安装"
-                    )
-        return model_exists
-    def check_zh_model(self):
-        """检查中文模型是否存在"""
-        return self.check_model_exists("zh")
-
-    def check_en_model(self):
-
-        """检查英文模型是否存在"""
-        return self.check_model_exists("en")
+    # 🗑️ 旧的check_model_exists方法已移除，将被新的重构版本替代
+    # 🗑️ 旧的check_zh_model和check_en_model方法已移除，将被新的重构版本替代
     def learn_data_pair(self):
         """学习数据对"""
         # 获取原始SRT路径
@@ -5936,37 +6029,49 @@ class SimpleScreenplayApp(QMainWindow):
         except Exception as e:
             print(f"[ERROR] 显示日志查看器失败: {e}")
             QMessageBox.critical(self, "错误", f"无法打开日志查看器: {str(e)}")
-    def check_en_model(self):
+    def check_and_download_en_model(self, tab_context="main_window"):
         """检查英文模型是否存在，不存在则提示下载"""
-        # 避免重复弹窗，使用一个标志位表示弹窗状态
-        if hasattr(self, '_showing_model_dialog') and self._showing_model_dialog:
+        # 避免重复弹窗，使用全局对话框管理器
+        from src.core.dialog_manager import DialogManager
+        dialog_manager = DialogManager.get_instance()
 
-            return
-        # 设置弹窗标志
-        self._showing_model_dialog = True
+        # 🔧 修复：构建唯一的对话框标识符
+        dialog_key = f"mistral-7b_{tab_context}"
+
+        # 检查是否可以显示对话框
+        if not dialog_manager.can_show_dialog(dialog_key, self):
+            log_handler.log("info", f"⚠️ 对话框管理器阻止在 {tab_context} 中重复弹窗")
+            return False
 
         try:
-
             if not self.en_model_exists:
-
                 # 优先使用增强模型下载器
                 if hasattr(self, 'enhanced_downloader') and self.enhanced_downloader:
+                    # 🔧 修复：强制清除下载器状态，确保状态隔离
+                    log_handler.log("info", f"🔧 {tab_context} 英文模型检查：强制清除下载器状态")
+                    try:
+                        self.enhanced_downloader.reset_state()
+                        # 🔧 修复：清理对话框管理器状态
+                        dialog_manager.cleanup_expired_dialogs()
+                    except Exception as e:
+                        log_handler.log("warning", f"清理下载器状态失败: {e}")
 
-                    # 重要修复：强制清除下载器状态，确保状态隔离
-                    log_handler.log("info", "🔧 主窗口英文模型检查：强制清除下载器状态")
-                    self.enhanced_downloader.reset_state()
-                    success = self.enhanced_downloader.download_model("mistral-7b", self)
+                    # 🔧 修复：传递正确的模型名称和标签页上下文，确保状态隔离
+                    success = self.enhanced_downloader.download_model("mistral-7b", self, tab_context=tab_context)
 
                     if not success:
-
                         # 用户取消了智能推荐下载器，记录日志但不启动传统下载
-                        log_handler.log("info", "用户取消了英文模型下载")
-                        # 不调用回退方法，尊重用户的取消选择
+                        log_handler.log("info", f"用户在 {tab_context} 中取消了英文模型下载")
+                        # 通知对话框管理器对话框已关闭
+                        dialog_manager.mark_dialog_closed(dialog_key, "cancelled")
+                        return False
+                    else:
+                        # 下载成功
+                        dialog_manager.mark_dialog_closed(dialog_key, "success")
+                        return True
                 else:
-
                     # 使用传统下载方式
                     reply = QMessageBox.question(
-
                         self,
                         "英文模型未安装",
                         "英文模型尚未下载，是否现在下载？\n(约4GB，需要较长时间)",
@@ -5974,33 +6079,60 @@ class SimpleScreenplayApp(QMainWindow):
                         QMessageBox.StandardButton.Yes
                     )
                     if reply == QMessageBox.StandardButton.Yes:
-
                         self.download_en_model()
-        finally:
+                        dialog_manager.mark_dialog_closed(dialog_key, "traditional_download")
+                        return True
+                    else:
+                        dialog_manager.mark_dialog_closed(dialog_key, "cancelled")
+                        return False
+            else:
+                # 模型已存在
+                return True
+        except Exception as e:
+            log_handler.log("error", f"检查英文模型时发生错误: {e}")
+            # 发生异常时也要通知对话框管理器
+            dialog_manager.mark_dialog_closed(dialog_key, "error")
+            return False
 
-            # 清除弹窗标志
-            self._showing_model_dialog = False
-
-    def check_zh_model(self):
-
+    def check_and_download_zh_model(self, tab_context="main_window"):
         """检查中文模型是否存在，不存在则提示下载"""
-        # 避免重复弹窗，使用一个标志位表示弹窗状态
-        if hasattr(self, '_showing_model_dialog') and self._showing_model_dialog:
-            return
-        # 设置弹窗标志
-        self._showing_model_dialog = True
+        # 避免重复弹窗，使用全局对话框管理器
+        from src.core.dialog_manager import DialogManager
+        dialog_manager = DialogManager.get_instance()
+
+        # 🔧 修复：构建唯一的对话框标识符
+        dialog_key = f"qwen2.5-7b_{tab_context}"
+
+        # 检查是否可以显示对话框
+        if not dialog_manager.can_show_dialog(dialog_key, self):
+            log_handler.log("info", f"⚠️ 对话框管理器阻止在 {tab_context} 中重复弹窗")
+            return False
+
         try:
             if not self.zh_model_exists:
                 # 优先使用增强模型下载器
                 if hasattr(self, 'enhanced_downloader') and self.enhanced_downloader:
-                    # 重要修复：强制清除下载器状态，确保状态隔离
-                    log_handler.log("info", "🔧 主窗口中文模型检查：强制清除下载器状态")
-                    self.enhanced_downloader.reset_state()
-                    success = self.enhanced_downloader.download_model("qwen2.5-7b", self)
+                    # 🔧 修复：强制清除下载器状态，确保状态隔离
+                    log_handler.log("info", f"🔧 {tab_context} 中文模型检查：强制清除下载器状态")
+                    try:
+                        self.enhanced_downloader.reset_state()
+                        # 🔧 修复：清理对话框管理器状态
+                        dialog_manager.cleanup_expired_dialogs()
+                    except Exception as e:
+                        log_handler.log("warning", f"清理下载器状态失败: {e}")
+
+                    # 🔧 修复：传递正确的模型名称和标签页上下文，确保状态隔离
+                    success = self.enhanced_downloader.download_model("qwen2.5-7b", self, tab_context=tab_context)
                     if not success:
                         # 用户取消了智能推荐下载器，记录日志但不启动传统下载
-                        log_handler.log("info", "用户取消了中文模型下载")
-                        # 不调用回退方法，尊重用户的取消选择
+                        log_handler.log("info", f"用户在 {tab_context} 中取消了中文模型下载")
+                        # 通知对话框管理器对话框已关闭
+                        dialog_manager.mark_dialog_closed(dialog_key, "cancelled")
+                        return False
+                    else:
+                        # 下载成功
+                        dialog_manager.mark_dialog_closed(dialog_key, "success")
+                        return True
                 else:
                     # 使用传统下载方式
                     reply = QMessageBox.question(
@@ -6012,9 +6144,19 @@ class SimpleScreenplayApp(QMainWindow):
                     )
                     if reply == QMessageBox.StandardButton.Yes:
                         self.download_zh_model()
-        finally:
-            # 清除弹窗标志
-            self._showing_model_dialog = False
+                        dialog_manager.mark_dialog_closed(dialog_key, "traditional_download")
+                        return True
+                    else:
+                        dialog_manager.mark_dialog_closed(dialog_key, "cancelled")
+                        return False
+            else:
+                # 模型已存在
+                return True
+        except Exception as e:
+            log_handler.log("error", f"检查中文模型时发生错误: {e}")
+            # 发生异常时也要通知对话框管理器
+            dialog_manager.mark_dialog_closed(dialog_key, "error")
+            return False
     def download_en_model(self):
         """下载英文模型"""
         log_handler.log("info", "用户请求下载英文模型")
@@ -6042,7 +6184,8 @@ class SimpleScreenplayApp(QMainWindow):
             # 重要修复：强制清除下载器状态，确保状态隔离
             log_handler.log("info", "🔧 主窗口英文模型下载：强制清除下载器状态")
             self.enhanced_downloader.reset_state()
-            result = self.enhanced_downloader.download_model("mistral-7b", self)
+            # 修复：传递标签页上下文，确保状态隔离
+            result = self.enhanced_downloader.download_model("mistral-7b", self, tab_context="main_window")
 
             if result is None:
 
@@ -6106,7 +6249,8 @@ class SimpleScreenplayApp(QMainWindow):
             # 重要修复：强制清除下载器状态，确保状态隔离
             log_handler.log("info", "🔧 主窗口中文模型下载：强制清除下载器状态")
             self.enhanced_downloader.reset_state()
-            result = self.enhanced_downloader.download_model("qwen2.5-7b", self)
+            # 修复：传递标签页上下文，确保状态隔离
+            result = self.enhanced_downloader.download_model("qwen2.5-7b", self, tab_context="main_window")
 
             if result is None:
 
@@ -6504,57 +6648,66 @@ CPU模式下处理速度可能较慢，但功能完整。
     def change_language_mode(self, mode):
         """切换语言模式"""
         if mode == self.language_mode:
-
             return
+
+        # 🔧 修复：在切换语言模式前，先清理所有下载器状态
+        if hasattr(self, 'enhanced_downloader') and self.enhanced_downloader:
+            try:
+                self.enhanced_downloader.reset_state()
+                log_handler.log("info", f"🔧 主窗口语言切换前：已清理下载器状态")
+            except Exception as e:
+                log_handler.log("warning", f"清理下载器状态失败: {e}")
+
         self.language_mode = mode
         mode_names = {
-
             "auto": "自动检测",
             "zh": "中文模式",
             "en": "英文模式"
         }
         # 明确告知用户当前使用的是哪种语言模型
         if mode == "zh":
-
             model_info = "Qwen2.5-7B 中文模型"
         elif mode == "en":
-
             model_info = "Mistral-7B 英文模型"
-
         else:
-
             model_info = "自动检测模型"
+
+        # 🔧 修复：设置标志，避免训练页面重复检查
+        self._is_changing_language_from_main = True
+
         # 如果选择了英文模式，检查英文模型是否已下载
         if mode == "en":
-
             if not self.en_model_exists:
-
-                self.check_en_model()
+                self.check_and_download_en_model("language_mode_change")
                 # 如果在训练页面，也更新训练页面的语言选择
                 if hasattr(self, 'train_feeder'):
-
                     self.train_feeder.switch_training_language("en")
+                # 🔧 修复：清除标志
+                self._is_changing_language_from_main = False
                 return  # 在下载对话框中用户可能会切换回其他模式，此处直接返回
 
         # 如果选择了中文模式，检查中文模型是否已下载
         if mode == "zh":
-
             if not self.zh_model_exists:
-
-                self.check_zh_model()
+                self.check_and_download_zh_model("language_mode_change")
                 # 如果在训练页面，也更新训练页面的语言选择
                 if hasattr(self, 'train_feeder'):
-
                     self.train_feeder.switch_training_language("zh")
+                # 🔧 修复：清除标志
+                self._is_changing_language_from_main = False
                 return  # 在下载对话框中用户可能会切换回其他模式，此处直接返回
 
         # 记录切换并更新状态栏
         self.statusBar().showMessage(f"已切换到{mode_names.get(mode, '未知')}，使用{model_info}")
         log_handler.log("info", f"语言模式切换为: {mode_names.get(mode, '未知')} ({model_info})")
+
         # 如果在训练页面，也更新训练页面的语言选择
         if hasattr(self, 'train_feeder'):
 
             self.train_feeder.switch_training_language(mode)
+
+        # 🔧 修复：清除标志
+        self._is_changing_language_from_main = False
         # 设置界面方向
         if HAS_TEXT_DIRECTION:
 
@@ -6719,7 +6872,7 @@ CPU模式下处理速度可能较慢，但功能完整。
     def upload_files(self):
         """上传文件功能"""
         try:
-            from PyQt6.QtWidgets import QFileDialog
+            # QFileDialog已在顶部导入
 
             # 创建文件选择对话框
             file_dialog = QFileDialog(self)
@@ -7184,7 +7337,7 @@ CPU模式下处理速度可能较慢，但功能完整。
         """
         if not hasattr(self, 'viral_preview_dialog'):
             # 创建预览对话框
-            from PyQt6.QtWidgets import QDialog, QVBoxLayout, QTextEdit, QPushButton
+            # QDialog, QVBoxLayout, QTextEdit, QPushButton已在顶部导入
             self.viral_preview_dialog = QDialog(self)
             self.viral_preview_dialog.setWindowTitle("预览")
             self.viral_preview_dialog.setMinimumSize(800, 600)
@@ -8006,24 +8159,39 @@ CPU模式下处理速度可能较慢，但功能完整。
         except Exception as e:
             log_handler.log("warning", f"内存管理器初始化失败: {str(e)}")
             # 不影响主程序运行
-    def on_memory_warning(self, message, severity):
-        """处理内存警告"""
+    def on_memory_warning(self, memory_usage):
+        """处理内存警告
+
+        Args:
+            memory_usage: 内存使用量（MB或百分比）
+        """
         try:
+            # 根据内存使用量确定严重程度
+            if isinstance(memory_usage, (int, float)):
+                if memory_usage > 90:  # 90%以上或900MB以上
+                    severity = 2  # 危急
+                    message = f"内存使用危急: {memory_usage:.1f}MB"
+                elif memory_usage > 70:  # 70%以上或700MB以上
+                    severity = 1  # 警告
+                    message = f"内存使用较高: {memory_usage:.1f}MB"
+                else:
+                    severity = 0  # 提示
+                    message = f"内存使用: {memory_usage:.1f}MB"
+            else:
+                severity = 1
+                message = str(memory_usage)
 
             if hasattr(self, 'alert_manager'):
-
                 # 根据严重程度设置警告等级
                 if severity == 2:  # 危急
                     self.alert_manager.error(message, timeout=10000)
                     # 执行紧急内存清理
                     if hasattr(self, 'memory_manager'):
-
                         self.memory_manager.perform_emergency_cleanup()
                 elif severity == 1:  # 警告
                     self.alert_manager.warning(message, timeout=5000)
                     # 执行积极清理
                     if hasattr(self, 'memory_manager'):
-
                         self.memory_manager.perform_cleanup("aggressive")
                 else:  # 提示
                     self.alert_manager.info(message, timeout=3000)
@@ -8043,11 +8211,16 @@ CPU模式下处理速度可能较慢，但功能完整。
     def on_memory_status_changed(self, status):
 
         """处理内存状态变化"""
-        # 可以在状态栏显示内存使用情况
-        if status["used_percent"] > 80:
-            # 高内存占用，更新状态栏
-            memory_text = f"内存: {status['used_percent']:.1f}% ({status['app_used_mb']:.1f} MB)"
-            self.statusBar().showMessage(memory_text, 3000)
+        try:
+            # 可以在状态栏显示内存使用情况
+            used_percent = status.get("used_percent", 0)
+            if used_percent > 80:
+                # 高内存占用，更新状态栏
+                app_used_mb = status.get("app_used_mb", 0)
+                memory_text = f"内存: {used_percent:.1f}% ({app_used_mb:.1f} MB)"
+                self.statusBar().showMessage(memory_text, 3000)
+        except Exception as e:
+            print(f"[ERROR] 内存状态回调失败: {e}")
     def cleanup_resources(self, cleanup_percent=0.5):
         """清理资源
         Args:
@@ -9046,7 +9219,7 @@ CPU模式下处理速度可能较慢，但功能完整。
                 # 如果已经有标签页组件，直接返回
                 return
 
-            from PyQt6.QtWidgets import QTabWidget, QWidget
+            # QTabWidget, QWidget已在顶部导入
 
             # 创建标签页组件
             self.tab_widget = QTabWidget()
@@ -9076,7 +9249,7 @@ CPU模式下处理速度可能较慢，但功能完整。
                 self.progress_bar.setVisible(True)
                 return
 
-            from PyQt6.QtWidgets import QProgressBar
+            # QProgressBar已在顶部导入
 
             # 创建进度条
             self.progress_bar = QProgressBar()
@@ -9110,7 +9283,7 @@ CPU模式下处理速度可能较慢，但功能完整。
         try:
             if not hasattr(self, 'memory_monitor'):
                 # 如果没有内存监控组件，创建一个
-                from PyQt6.QtWidgets import QLabel
+                # QLabel已在顶部导入
                 self.memory_monitor = QLabel("内存: 0 MB")
                 self.memory_monitor.setStyleSheet("""
                     QLabel {
@@ -9871,7 +10044,7 @@ class ErrorHandler:
     def show_error_message(parent, title, message):
         """显示错误消息"""
         try:
-            from PyQt6.QtWidgets import QMessageBox
+            # QMessageBox已在顶部导入
             msg_box = QMessageBox(parent)
             msg_box.setIcon(QMessageBox.Icon.Critical)
             msg_box.setWindowTitle(title)
@@ -9887,7 +10060,7 @@ class ErrorHandler:
     def show_warning_message(parent, title, message):
         """显示警告消息"""
         try:
-            from PyQt6.QtWidgets import QMessageBox
+            # QMessageBox已在顶部导入
             msg_box = QMessageBox(parent)
             msg_box.setIcon(QMessageBox.Icon.Warning)
             msg_box.setWindowTitle(title)
@@ -9903,7 +10076,7 @@ class ErrorHandler:
     def show_info_message(parent, title, message):
         """显示信息消息"""
         try:
-            from PyQt6.QtWidgets import QMessageBox
+            # QMessageBox已在顶部导入
             msg_box = QMessageBox(parent)
             msg_box.setIcon(QMessageBox.Icon.Information)
             msg_box.setWindowTitle(title)

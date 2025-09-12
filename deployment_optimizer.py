@@ -1,545 +1,540 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-VisionAI-ClipsMaster 部署包优化器
-优化项目打包策略，减小分发包体积，实现按需下载和轻量化部署
+VisionAI-ClipsMaster 部署优化器
+提供部署环境检测、配置优化、依赖验证和性能调优功能
 """
 
 import os
 import sys
 import json
-import shutil
-import zipfile
+import yaml
 import time
+import psutil
+import platform
+import subprocess
 from pathlib import Path
-from typing import Dict, List, Any, Set
+from typing import Dict, List, Any, Optional, Tuple
 import logging
 
+# 配置日志
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('logs/deployment_optimizer.log', encoding='utf-8'),
+        logging.StreamHandler(sys.stdout)
+    ]
+)
 logger = logging.getLogger(__name__)
 
 class DeploymentOptimizer:
-    """部署包优化器"""
+    """部署优化器主类"""
     
-    def __init__(self):
-        self.project_root = Path('.')
-        self.build_dir = self.project_root / 'build'
-        self.dist_dir = self.project_root / 'dist'
+    def __init__(self, project_root: Optional[str] = None):
+        """初始化部署优化器
         
-    def analyze_project_structure(self) -> Dict[str, Any]:
-        """分析项目结构"""
-        print("📊 分析项目结构...")
+        Args:
+            project_root: 项目根目录路径
+        """
+        self.project_root = Path(project_root) if project_root else Path.cwd()
+        self.config_dir = self.project_root / "configs"
+        self.logs_dir = self.project_root / "logs"
+        self.temp_dir = self.project_root / "temp"
         
-        analysis = {
-            "core_files": [],
-            "optional_files": [],
-            "large_files": [],
-            "total_size_mb": 0,
-            "file_categories": {
-                "python": 0,
-                "config": 0,
-                "models": 0,
-                "tests": 0,
-                "docs": 0,
-                "assets": 0,
-                "other": 0
-            }
+        # 确保必要目录存在
+        for directory in [self.logs_dir, self.temp_dir]:
+            directory.mkdir(exist_ok=True)
+        
+        # 系统信息
+        self.system_info = self._collect_system_info()
+        
+        # 优化结果
+        self.optimization_results = {
+            'timestamp': time.time(),
+            'system_info': self.system_info,
+            'optimizations_applied': [],
+            'performance_metrics': {},
+            'issues_found': [],
+            'recommendations': []
         }
         
-        # 核心文件列表
-        core_patterns = [
-            'src/**/*.py',
-            'ui/**/*.py',
-            'configs/*.json',
-            'configs/*.yaml',
-            'requirements.txt',
-            'main.py',
-            'simple_ui_fixed.py',
-            'optimized_launcher.py'
-        ]
-        
-        # 可选文件列表
-        optional_patterns = [
-            'tests/**/*',
-            'docs/**/*',
-            'examples/**/*',
-            'scripts/**/*',
-            '*.md',
-            '*.txt'
-        ]
-        
-        # 扫描所有文件
-        for file_path in self.project_root.rglob('*'):
-            if file_path.is_file() and not self._should_exclude(file_path):
-                file_size = file_path.stat().st_size
-                analysis["total_size_mb"] += file_size / 1024**2
-                
-                # 分类文件
-                category = self._categorize_file(file_path)
-                analysis["file_categories"][category] += 1
-                
-                # 识别大文件
-                if file_size > 10 * 1024 * 1024:  # 大于10MB
-                    analysis["large_files"].append({
-                        "path": str(file_path.relative_to(self.project_root)),
-                        "size_mb": file_size / 1024**2
-                    })
-                
-                # 分类为核心或可选
-                is_core = any(file_path.match(pattern) for pattern in core_patterns)
-                is_optional = any(file_path.match(pattern) for pattern in optional_patterns)
-                
-                if is_core:
-                    analysis["core_files"].append(str(file_path.relative_to(self.project_root)))
-                elif is_optional:
-                    analysis["optional_files"].append(str(file_path.relative_to(self.project_root)))
-        
-        print(f"✅ 项目总大小: {analysis['total_size_mb']:.2f} MB")
-        print(f"   核心文件: {len(analysis['core_files'])} 个")
-        print(f"   可选文件: {len(analysis['optional_files'])} 个")
-        print(f"   大文件: {len(analysis['large_files'])} 个")
-        
-        return analysis
+        logger.info("部署优化器初始化完成")
     
-    def create_lightweight_package(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
-        """创建轻量化部署包"""
-        print("\n📦 创建轻量化部署包...")
-        
-        # 创建构建目录
-        self.build_dir.mkdir(exist_ok=True)
-        lightweight_dir = self.build_dir / 'lightweight'
-        if lightweight_dir.exists():
-            shutil.rmtree(lightweight_dir)
-        lightweight_dir.mkdir()
-        
-        # 复制核心文件
-        copied_files = 0
-        total_size = 0
-        
-        for core_file in analysis["core_files"]:
-            src_path = self.project_root / core_file
-            dst_path = lightweight_dir / core_file
-            
-            if src_path.exists():
-                dst_path.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copy2(src_path, dst_path)
-                copied_files += 1
-                total_size += src_path.stat().st_size
-        
-        # 创建启动脚本
-        self._create_launcher_script(lightweight_dir)
-        
-        # 创建依赖下载器
-        self._create_dependency_downloader(lightweight_dir)
-        
-        # 创建配置文件
-        self._create_deployment_config(lightweight_dir, analysis)
-        
-        package_size_mb = total_size / 1024**2
-        
-        print(f"✅ 轻量化包创建完成")
-        print(f"   文件数量: {copied_files}")
-        print(f"   包大小: {package_size_mb:.2f} MB")
-        print(f"   压缩率: {(1 - package_size_mb / analysis['total_size_mb']) * 100:.1f}%")
-        
-        return {
-            "package_path": str(lightweight_dir),
-            "file_count": copied_files,
-            "size_mb": package_size_mb,
-            "compression_ratio": (1 - package_size_mb / analysis['total_size_mb']) * 100
-        }
-    
-    def create_modular_packages(self, analysis: Dict[str, Any]) -> Dict[str, Any]:
-        """创建模块化部署包"""
-        print("\n🧩 创建模块化部署包...")
-        
-        modular_dir = self.build_dir / 'modular'
-        if modular_dir.exists():
-            shutil.rmtree(modular_dir)
-        modular_dir.mkdir()
-        
-        # 定义模块
-        modules = {
-            "core": {
-                "description": "核心功能模块",
-                "patterns": [
-                    'src/core/**/*.py',
-                    'src/exporters/**/*.py',
-                    'main.py',
-                    'simple_ui_fixed.py'
-                ]
-            },
-            "ui": {
-                "description": "用户界面模块",
-                "patterns": [
-                    'ui/**/*.py',
-                    'src/ui/**/*.py'
-                ]
-            },
-            "models": {
-                "description": "AI模型模块",
-                "patterns": [
-                    'models/**/*',
-                    'src/models/**/*.py'
-                ]
-            },
-            "configs": {
-                "description": "配置文件模块",
-                "patterns": [
-                    'configs/**/*'
-                ]
-            }
-        }
-        
-        module_info = {}
-        
-        for module_name, module_config in modules.items():
-            module_path = modular_dir / f"{module_name}_module"
-            module_path.mkdir()
-            
-            module_size = 0
-            file_count = 0
-            
-            for pattern in module_config["patterns"]:
-                for file_path in self.project_root.glob(pattern):
-                    if file_path.is_file():
-                        rel_path = file_path.relative_to(self.project_root)
-                        dst_path = module_path / rel_path
-                        dst_path.parent.mkdir(parents=True, exist_ok=True)
-                        shutil.copy2(file_path, dst_path)
-                        
-                        module_size += file_path.stat().st_size
-                        file_count += 1
-            
-            module_info[module_name] = {
-                "description": module_config["description"],
-                "path": str(module_path),
-                "size_mb": module_size / 1024**2,
-                "file_count": file_count
-            }
-            
-            print(f"   {module_name}: {file_count} 文件, {module_size / 1024**2:.2f} MB")
-        
-        print("✅ 模块化包创建完成")
-        
-        return module_info
-    
-    def create_installer_script(self) -> Dict[str, Any]:
-        """创建安装脚本"""
-        print("\n🔧 创建安装脚本...")
-        
-        installer_script = '''#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""
-VisionAI-ClipsMaster 智能安装器
-自动检测系统环境并安装所需组件
-"""
-
-import os
-import sys
-import subprocess
-import platform
-import json
-from pathlib import Path
-
-class VisionAIInstaller:
-    """VisionAI-ClipsMaster 安装器"""
-    
-    def __init__(self):
-        self.system_info = self._detect_system()
-        self.install_log = []
-        
-    def _detect_system(self):
-        """检测系统信息"""
-        return {
-            "os": platform.system(),
-            "arch": platform.machine(),
-            "python_version": sys.version,
-            "memory_gb": self._get_memory_info()
-        }
-    
-    def _get_memory_info(self):
-        """获取内存信息"""
+    def _collect_system_info(self) -> Dict[str, Any]:
+        """收集系统信息"""
         try:
-            import psutil
-            return psutil.virtual_memory().total / 1024**3
-        except ImportError:
-            return 0
+            return {
+                'platform': platform.platform(),
+                'system': platform.system(),
+                'machine': platform.machine(),
+                'processor': platform.processor(),
+                'python_version': platform.python_version(),
+                'cpu_count': psutil.cpu_count(),
+                'memory_total': psutil.virtual_memory().total,
+                'memory_available': psutil.virtual_memory().available,
+                'disk_usage': psutil.disk_usage(str(self.project_root)),
+                'architecture': platform.architecture()[0]
+            }
+        except Exception as e:
+            logger.error(f"收集系统信息失败: {e}")
+            return {}
     
-    def install_dependencies(self):
-        """安装依赖"""
-        print("📦 安装Python依赖...")
+    def detect_deployment_environment(self) -> Dict[str, Any]:
+        """检测部署环境"""
+        logger.info("开始检测部署环境...")
         
-        requirements = [
-            "PyQt6>=6.4.0",
-            "torch>=1.13.0",
-            "transformers>=4.21.0",
-            "psutil>=5.9.0",
-            "requests>=2.28.0"
-        ]
+        environment = {
+            'type': 'unknown',
+            'container': False,
+            'virtual_env': False,
+            'gpu_available': False,
+            'performance_tier': 'medium',
+            'memory_tier': 'medium',
+            'storage_tier': 'medium'
+        }
         
-        for req in requirements:
+        try:
+            # 检测容器环境
+            if os.path.exists('/.dockerenv') or os.environ.get('DOCKER_CONTAINER'):
+                environment['type'] = 'docker'
+                environment['container'] = True
+            
+            # 检测虚拟环境
+            if hasattr(sys, 'real_prefix') or (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix):
+                environment['virtual_env'] = True
+            
+            # 检测GPU
             try:
-                subprocess.check_call([sys.executable, "-m", "pip", "install", req])
-                print(f"✅ {req} 安装成功")
-                self.install_log.append(f"SUCCESS: {req}")
-            except subprocess.CalledProcessError as e:
-                print(f"❌ {req} 安装失败: {e}")
-                self.install_log.append(f"FAILED: {req} - {e}")
+                import torch
+                if torch.cuda.is_available():
+                    environment['gpu_available'] = True
+                    environment['gpu_count'] = torch.cuda.device_count()
+                    environment['gpu_name'] = torch.cuda.get_device_name(0)
+            except ImportError:
+                pass
+            
+            # 性能分级
+            memory_gb = self.system_info.get('memory_total', 0) / (1024**3)
+            cpu_count = self.system_info.get('cpu_count', 1)
+            
+            if memory_gb >= 16 and cpu_count >= 8:
+                environment['performance_tier'] = 'high'
+                environment['memory_tier'] = 'high'
+            elif memory_gb >= 8 and cpu_count >= 4:
+                environment['performance_tier'] = 'medium'
+                environment['memory_tier'] = 'medium'
+            else:
+                environment['performance_tier'] = 'low'
+                environment['memory_tier'] = 'low'
+            
+            # 存储分级
+            disk_usage = self.system_info.get('disk_usage')
+            disk_free_gb = disk_usage.free / (1024**3) if disk_usage else 0
+            if disk_free_gb >= 50:
+                environment['storage_tier'] = 'high'
+            elif disk_free_gb >= 20:
+                environment['storage_tier'] = 'medium'
+            else:
+                environment['storage_tier'] = 'low'
+            
+            logger.info(f"环境检测完成: {environment}")
+            return environment
+            
+        except Exception as e:
+            logger.error(f"环境检测失败: {e}")
+            return environment
     
-    def download_models(self):
-        """下载AI模型"""
-        print("🤖 准备AI模型...")
+    def validate_dependencies(self) -> Dict[str, Any]:
+        """验证依赖项"""
+        logger.info("开始验证依赖项...")
         
-        models_dir = Path("models")
-        models_dir.mkdir(exist_ok=True)
-        
-        # 创建模型下载配置
-        model_config = {
-            "mistral-7b": {
-                "url": "https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.1",
-                "size_gb": 13.5,
-                "required": True
-            },
-            "qwen2.5-7b": {
-                "url": "https://huggingface.co/Qwen/Qwen2.5-7B-Instruct",
-                "size_gb": 14.2,
-                "required": True
-            }
+        validation_results = {
+            'python_packages': {},
+            'system_dependencies': {},
+            'missing_packages': [],
+            'version_conflicts': [],
+            'recommendations': []
         }
         
-        with open(models_dir / "download_config.json", "w") as f:
-            json.dump(model_config, f, indent=2)
-        
-        print("✅ 模型配置已准备，请运行模型下载器")
+        try:
+            # 检查Python包
+            requirements_files = [
+                'requirements.txt',
+                'requirements/requirements.txt',
+                'requirements_minimal.txt'
+            ]
+            
+            for req_file in requirements_files:
+                req_path = self.project_root / req_file
+                if req_path.exists():
+                    validation_results['python_packages'][req_file] = self._validate_requirements_file(req_path)
+            
+            # 检查系统依赖
+            system_deps = ['ffmpeg', 'git']
+            for dep in system_deps:
+                validation_results['system_dependencies'][dep] = self._check_system_dependency(dep)
+            
+            logger.info("依赖项验证完成")
+            return validation_results
+            
+        except Exception as e:
+            logger.error(f"依赖项验证失败: {e}")
+            return validation_results
     
-    def setup_environment(self):
-        """设置环境"""
-        print("⚙️ 配置环境...")
+    def _validate_requirements_file(self, req_file: Path) -> Dict[str, Any]:
+        """验证requirements文件"""
+        result = {'status': 'unknown', 'packages': [], 'issues': []}
         
-        # 创建启动脚本
-        if self.system_info["os"] == "Windows":
-            start_script = "start_visionai.bat"
-            script_content = "@echo off\\necho Starting VisionAI-ClipsMaster...\\npython optimized_launcher.py\\npause\\n"
-        else:
-            start_script = "start_visionai.sh"
-            script_content = "#!/bin/bash\\necho \\"Starting VisionAI-ClipsMaster...\\"\\npython3 optimized_launcher.py\\n"
+        try:
+            with open(req_file, 'r', encoding='utf-8') as f:
+                lines = f.readlines()
+            
+            for line in lines:
+                line = line.strip()
+                if line and not line.startswith('#'):
+                    package_name = line.split('==')[0].split('>=')[0].split('<=')[0]
+                    try:
+                        __import__(package_name.replace('-', '_'))
+                        result['packages'].append({'name': package_name, 'status': 'installed'})
+                    except ImportError:
+                        result['packages'].append({'name': package_name, 'status': 'missing'})
+                        result['issues'].append(f"缺少包: {package_name}")
+            
+            result['status'] = 'validated'
+            
+        except Exception as e:
+            result['status'] = 'error'
+            result['issues'].append(f"验证失败: {e}")
         
-        with open(start_script, "w") as f:
-            f.write(script_content)
-        
-        if self.system_info["os"] != "Windows":
-            os.chmod(start_script, 0o755)
-        
-        print(f"✅ 启动脚本已创建: {start_script}")
+        return result
     
-    def run_installation(self):
-        """运行完整安装"""
-        print("=== VisionAI-ClipsMaster 安装器 ===")
-        print(f"系统: {self.system_info['os']} {self.system_info['arch']}")
-        print(f"内存: {self.system_info['memory_gb']:.1f} GB")
-        print()
+    def _check_system_dependency(self, dependency: str) -> Dict[str, Any]:
+        """检查系统依赖"""
+        result = {'status': 'unknown', 'version': None, 'path': None}
         
-        self.install_dependencies()
-        self.download_models()
-        self.setup_environment()
+        try:
+            # 尝试运行命令检查版本
+            if dependency == 'ffmpeg':
+                cmd = ['ffmpeg', '-version']
+            elif dependency == 'git':
+                cmd = ['git', '--version']
+            else:
+                cmd = [dependency, '--version']
+            
+            process = subprocess.run(cmd, capture_output=True, text=True, timeout=10)
+            
+            if process.returncode == 0:
+                result['status'] = 'available'
+                result['version'] = process.stdout.split('\n')[0]
+                result['path'] = subprocess.run(['which', dependency], capture_output=True, text=True).stdout.strip()
+            else:
+                result['status'] = 'missing'
+                
+        except (subprocess.TimeoutExpired, FileNotFoundError):
+            result['status'] = 'missing'
+        except Exception as e:
+            result['status'] = 'error'
+            result['error'] = str(e)
         
-        print("\\n🎉 安装完成！")
-        print("使用以下命令启动应用:")
-        if self.system_info["os"] == "Windows":
-            print("   start_visionai.bat")
-        else:
-            print("   ./start_visionai.sh")
-
-if __name__ == "__main__":
-    installer = VisionAIInstaller()
-    installer.run_installation()
-'''
-        
-        installer_file = self.build_dir / 'install.py'
-        with open(installer_file, 'w', encoding='utf-8') as f:
-            f.write(installer_script)
-        
-        print("✅ 安装脚本已创建")
-        
-        return {"installer_created": True, "installer_path": str(installer_file)}
+        return result
     
-    def _should_exclude(self, file_path: Path) -> bool:
-        """判断是否应该排除文件"""
-        exclude_patterns = [
-            '__pycache__',
-            '.git',
-            '.pytest_cache',
-            '*.pyc',
-            '*.pyo',
-            '.DS_Store',
-            'Thumbs.db',
-            '*.tmp',
-            'crash_log.txt'
-        ]
+    def optimize_configuration(self, environment: Dict[str, Any]) -> Dict[str, Any]:
+        """根据环境优化配置"""
+        logger.info("开始优化配置...")
         
-        return any(pattern in str(file_path) for pattern in exclude_patterns)
-    
-    def _categorize_file(self, file_path: Path) -> str:
-        """文件分类"""
-        if file_path.suffix == '.py':
-            return 'python'
-        elif file_path.suffix in ['.json', '.yaml', '.yml', '.ini']:
-            return 'config'
-        elif 'model' in str(file_path).lower():
-            return 'models'
-        elif 'test' in str(file_path).lower():
-            return 'tests'
-        elif file_path.suffix in ['.md', '.txt', '.rst']:
-            return 'docs'
-        elif file_path.suffix in ['.png', '.jpg', '.svg', '.ico']:
-            return 'assets'
-        else:
-            return 'other'
-    
-    def _create_launcher_script(self, target_dir: Path):
-        """创建启动脚本"""
-        launcher_content = '''#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""
-VisionAI-ClipsMaster 轻量化启动器
-"""
-
-import sys
-import os
-from pathlib import Path
-
-def main():
-    """主函数"""
-    print("🚀 启动 VisionAI-ClipsMaster...")
-    
-    # 检查依赖
-    try:
-        from simple_ui_fixed import main as ui_main
-        ui_main()
-    except ImportError as e:
-        print(f"❌ 缺少依赖: {e}")
-        print("请运行 python install.py 安装依赖")
-        sys.exit(1)
-
-if __name__ == "__main__":
-    main()
-'''
+        optimization_results = {
+            'config_files_updated': [],
+            'optimizations_applied': [],
+            'performance_improvements': []
+        }
         
-        launcher_file = target_dir / 'launcher.py'
-        with open(launcher_file, 'w', encoding='utf-8') as f:
-            f.write(launcher_content)
+        try:
+            # 根据性能分级优化配置
+            tier = environment.get('performance_tier', 'medium')
+            
+            # 更新系统设置
+            system_config = self._generate_optimized_system_config(environment)
+            self._save_config('system_settings.yaml', system_config)
+            optimization_results['config_files_updated'].append('system_settings.yaml')
+            
+            # 更新模型配置
+            model_config = self._generate_optimized_model_config(environment)
+            self._save_config('model_config.yaml', model_config)
+            optimization_results['config_files_updated'].append('model_config.yaml')
+            
+            # 更新优化配置
+            opt_config = self._generate_optimization_config(environment)
+            self._save_config('optimization.json', opt_config)
+            optimization_results['config_files_updated'].append('optimization.json')
+            
+            logger.info("配置优化完成")
+            return optimization_results
+            
+        except Exception as e:
+            logger.error(f"配置优化失败: {e}")
+            return optimization_results
     
-    def _create_dependency_downloader(self, target_dir: Path):
-        """创建依赖下载器"""
-        downloader_content = '''#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""
-VisionAI-ClipsMaster 依赖下载器
-按需下载所需组件
-"""
-
-import os
-import sys
-import requests
-import json
-from pathlib import Path
-
-def download_component(component_name: str, url: str, target_path: Path):
-    """下载组件"""
-    print(f"📥 下载 {component_name}...")
-    
-    try:
-        response = requests.get(url, stream=True)
-        response.raise_for_status()
+    def _generate_optimized_system_config(self, environment: Dict[str, Any]) -> Dict[str, Any]:
+        """生成优化的系统配置"""
+        tier = environment.get('performance_tier', 'medium')
+        memory_gb = self.system_info.get('memory_total', 0) / (1024**3)
         
-        with open(target_path, 'wb') as f:
-            for chunk in response.iter_content(chunk_size=8192):
-                f.write(chunk)
-        
-        print(f"✅ {component_name} 下载完成")
-        return True
-        
-    except Exception as e:
-        print(f"❌ {component_name} 下载失败: {e}")
-        return False
-
-def main():
-    """主函数"""
-    print("📦 VisionAI-ClipsMaster 组件下载器")
-    
-    # 这里可以添加具体的下载逻辑
-    print("✅ 所有组件已准备就绪")
-
-if __name__ == "__main__":
-    main()
-'''
-        
-        downloader_file = target_dir / 'download_components.py'
-        with open(downloader_file, 'w', encoding='utf-8') as f:
-            f.write(downloader_content)
-    
-    def _create_deployment_config(self, target_dir: Path, analysis: Dict[str, Any]):
-        """创建部署配置"""
         config = {
-            "version": "1.0.0",
-            "build_time": time.strftime('%Y-%m-%d %H:%M:%S'),
-            "package_type": "lightweight",
-            "original_size_mb": analysis["total_size_mb"],
-            "compressed_size_mb": sum(f["size_mb"] for f in analysis["large_files"]),
-            "components": {
-                "core": {"required": True, "size_mb": 50},
-                "ui": {"required": True, "size_mb": 20},
-                "models": {"required": False, "size_mb": 500},
-                "docs": {"required": False, "size_mb": 10}
+            'hardware': {
+                'auto_detect': True,
+                'performance_tier': tier,
+                'min_memory_mb': 1024,
+                'min_storage_mb': 5120,
+                'gpu_acceleration': environment.get('gpu_available', False)
+            },
+            'optimization': {}
+        }
+        
+        if tier == 'low':
+            config['optimization']['low_tier'] = {
+                'model_quantization': 'Q2_K',
+                'batch_size': 1,
+                'dynamic_unload': True,
+                'worker_threads': 1,
+                'chunk_size': 256,
+                'offload_to_disk': True,
+                'compute_device': 'cpu',
+                'realtime_preview': False,
+                'execution_mode': 'efficiency'
+            }
+        elif tier == 'medium':
+            config['optimization']['medium_tier'] = {
+                'model_quantization': 'Q4_K_M',
+                'batch_size': 2,
+                'dynamic_unload': False,
+                'worker_threads': min(4, self.system_info.get('cpu_count', 2)),
+                'chunk_size': 512,
+                'offload_to_disk': False,
+                'compute_device': 'auto',
+                'realtime_preview': True,
+                'execution_mode': 'balanced'
+            }
+        else:  # high
+            config['optimization']['high_tier'] = {
+                'model_quantization': 'Q5_K',
+                'batch_size': 4,
+                'dynamic_unload': False,
+                'worker_threads': min(8, self.system_info.get('cpu_count', 4)),
+                'chunk_size': 1024,
+                'offload_to_disk': False,
+                'compute_device': 'gpu' if environment.get('gpu_available') else 'cpu',
+                'realtime_preview': True,
+                'execution_mode': 'performance'
+            }
+        
+        return config
+    
+    def _generate_optimized_model_config(self, environment: Dict[str, Any]) -> Dict[str, Any]:
+        """生成优化的模型配置"""
+        tier = environment.get('performance_tier', 'medium')
+        
+        config = {
+            'active_models': {
+                'chinese': 'qwen2.5-7b-zh',
+                'english': 'mistral-7b-en'
+            },
+            'quantization': {
+                'default': 'Q4_K_M' if tier != 'low' else 'Q2_K',
+                'low_memory': 'Q2_K',
+                'high_performance': 'Q5_K' if tier == 'high' else 'Q4_K_M'
+            },
+            'performance': {
+                'max_threads': min(self.system_info.get('cpu_count', 2), 8 if tier == 'high' else 4),
+                'batch_size': 4 if tier == 'high' else (2 if tier == 'medium' else 1),
+                'use_gpu': environment.get('gpu_available', False) and tier != 'low'
             }
         }
         
-        config_file = target_dir / 'deployment_config.json'
-        with open(config_file, 'w', encoding='utf-8') as f:
-            json.dump(config, f, indent=2, ensure_ascii=False)
+        return config
     
-    def run_all_optimizations(self) -> Dict[str, Any]:
-        """运行所有部署优化"""
-        print("=== VisionAI-ClipsMaster 部署包优化 ===")
-        print(f"开始时间: {time.strftime('%Y-%m-%d %H:%M:%S')}")
-        print()
+    def _generate_optimization_config(self, environment: Dict[str, Any]) -> Dict[str, Any]:
+        """生成优化配置"""
+        tier = environment.get('performance_tier', 'medium')
+        cpu_count = self.system_info.get('cpu_count', 2)
         
-        results = {}
+        config = {
+            'optimization_path': 'avx2' if tier != 'low' else 'sse4',
+            'cpu_features': {
+                'sse': True,
+                'sse2': True,
+                'ssse3': True,
+                'sse4_1': True,
+                'sse4_2': True,
+                'avx': tier != 'low',
+                'avx2': tier == 'high',
+                'fma': tier != 'low',
+                'f16c': tier != 'low',
+                'aes': True
+            },
+            'details': {
+                'name': 'AVX2' if tier == 'high' else ('SSE4' if tier == 'low' else 'AVX'),
+                'description': f'{tier.title()} 优化 ({min(cpu_count, 8 if tier == "high" else 4)}线程)',
+                'parallel_threads': min(cpu_count, 8 if tier == 'high' else (4 if tier == 'medium' else 2)),
+                'simd_width': 256 if tier != 'low' else 128,
+                'performance_rating': 90 if tier == 'high' else (70 if tier == 'medium' else 50),
+                'simd_type': 'avx2' if tier == 'high' else ('avx' if tier == 'medium' else 'sse4'),
+                'active': True
+            }
+        }
         
-        # 分析项目结构
-        analysis = self.analyze_project_structure()
-        results["analysis"] = analysis
+        return config
+    
+    def _save_config(self, filename: str, config: Dict[str, Any]):
+        """保存配置文件"""
+        config_path = self.config_dir / filename
         
-        # 创建轻量化包
-        lightweight_package = self.create_lightweight_package(analysis)
-        results["lightweight_package"] = lightweight_package
+        try:
+            if filename.endswith('.json'):
+                with open(config_path, 'w', encoding='utf-8') as f:
+                    json.dump(config, f, indent=2, ensure_ascii=False)
+            elif filename.endswith('.yaml') or filename.endswith('.yml'):
+                with open(config_path, 'w', encoding='utf-8') as f:
+                    yaml.dump(config, f, allow_unicode=True, sort_keys=False)
+            
+            logger.info(f"配置文件已保存: {config_path}")
+            
+        except Exception as e:
+            logger.error(f"保存配置文件失败 {filename}: {e}")
+    
+    def perform_integrity_check(self) -> Dict[str, Any]:
+        """执行完整性检查"""
+        logger.info("开始执行完整性检查...")
         
-        # 创建模块化包
-        modular_packages = self.create_modular_packages(analysis)
-        results["modular_packages"] = modular_packages
+        check_results = {
+            'file_integrity': {},
+            'configuration_validity': {},
+            'dependency_status': {},
+            'performance_baseline': {},
+            'issues_found': [],
+            'overall_status': 'unknown'
+        }
         
-        # 创建安装脚本
-        installer = self.create_installer_script()
-        results["installer"] = installer
+        try:
+            # 检查关键文件
+            critical_files = [
+                'simple_ui_fixed.py',
+                'src/core/language_detector.py',
+                'src/utils/memory_guard.py',
+                'configs/system_settings.yaml'
+            ]
+            
+            for file_path in critical_files:
+                full_path = self.project_root / file_path
+                check_results['file_integrity'][file_path] = {
+                    'exists': full_path.exists(),
+                    'readable': full_path.exists() and os.access(full_path, os.R_OK),
+                    'size': full_path.stat().st_size if full_path.exists() else 0
+                }
+            
+            # 检查配置有效性
+            config_files = ['system_settings.yaml', 'model_config.yaml', 'optimization.json']
+            for config_file in config_files:
+                config_path = self.config_dir / config_file
+                if config_path.exists():
+                    try:
+                        if config_file.endswith('.json'):
+                            with open(config_path, 'r', encoding='utf-8') as f:
+                                json.load(f)
+                        else:
+                            with open(config_path, 'r', encoding='utf-8') as f:
+                                yaml.safe_load(f)
+                        check_results['configuration_validity'][config_file] = 'valid'
+                    except Exception as e:
+                        check_results['configuration_validity'][config_file] = f'invalid: {e}'
+                        check_results['issues_found'].append(f"配置文件无效: {config_file}")
+                else:
+                    check_results['configuration_validity'][config_file] = 'missing'
+                    check_results['issues_found'].append(f"配置文件缺失: {config_file}")
+            
+            # 确定整体状态
+            if len(check_results['issues_found']) == 0:
+                check_results['overall_status'] = 'healthy'
+            elif len(check_results['issues_found']) <= 2:
+                check_results['overall_status'] = 'warning'
+            else:
+                check_results['overall_status'] = 'critical'
+            
+            logger.info(f"完整性检查完成，状态: {check_results['overall_status']}")
+            return check_results
+            
+        except Exception as e:
+            logger.error(f"完整性检查失败: {e}")
+            check_results['overall_status'] = 'error'
+            return check_results
+    
+    def run_full_optimization(self) -> Dict[str, Any]:
+        """运行完整的部署优化流程"""
+        logger.info("开始运行完整部署优化...")
         
-        print("\n=== 部署优化完成 ===")
-        print("🎉 所有部署优化措施已实施完成！")
-        print("\n📋 优化总结:")
-        print(f"- 原始项目大小: {analysis['total_size_mb']:.2f} MB")
-        print(f"- 轻量化包大小: {lightweight_package['size_mb']:.2f} MB")
-        print(f"- 压缩率: {lightweight_package['compression_ratio']:.1f}%")
-        print(f"- 模块化包数量: {len(modular_packages)}")
+        start_time = time.time()
         
-        print("\n📦 部署包位置:")
-        print(f"   轻量化包: {lightweight_package['package_path']}")
-        print(f"   安装脚本: {installer['installer_path']}")
+        try:
+            # 1. 环境检测
+            environment = self.detect_deployment_environment()
+            self.optimization_results['environment'] = environment
+            
+            # 2. 依赖验证
+            dependencies = self.validate_dependencies()
+            self.optimization_results['dependencies'] = dependencies
+            
+            # 3. 配置优化
+            config_optimization = self.optimize_configuration(environment)
+            self.optimization_results['configuration'] = config_optimization
+            
+            # 4. 完整性检查
+            integrity_check = self.perform_integrity_check()
+            self.optimization_results['integrity'] = integrity_check
+            
+            # 5. 生成报告
+            elapsed_time = time.time() - start_time
+            self.optimization_results['execution_time'] = elapsed_time
+            self.optimization_results['status'] = 'completed'
+            
+            # 保存结果
+            self._save_optimization_report()
+            
+            logger.info(f"部署优化完成，耗时: {elapsed_time:.2f}秒")
+            return self.optimization_results
+            
+        except Exception as e:
+            logger.error(f"部署优化失败: {e}")
+            self.optimization_results['status'] = 'failed'
+            self.optimization_results['error'] = str(e)
+            return self.optimization_results
+    
+    def _save_optimization_report(self):
+        """保存优化报告"""
+        report_path = self.logs_dir / f"deployment_optimization_{int(time.time())}.json"
         
-        return results
+        try:
+            with open(report_path, 'w', encoding='utf-8') as f:
+                json.dump(self.optimization_results, f, indent=2, ensure_ascii=False, default=str)
+            
+            logger.info(f"优化报告已保存: {report_path}")
+            
+        except Exception as e:
+            logger.error(f"保存优化报告失败: {e}")
 
 def main():
     """主函数"""
+    print("=" * 60)
+    print("🚀 VisionAI-ClipsMaster 部署优化器")
+    print("=" * 60)
+    
     optimizer = DeploymentOptimizer()
-    return optimizer.run_all_optimizations()
+    results = optimizer.run_full_optimization()
+    
+    print(f"\n✅ 优化完成，状态: {results.get('status', 'unknown')}")
+    if results.get('execution_time'):
+        print(f"⏱️  执行时间: {results['execution_time']:.2f}秒")
+    
+    return results
 
 if __name__ == "__main__":
     main()

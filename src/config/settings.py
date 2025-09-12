@@ -1,3 +1,5 @@
+import os
+
 # 服务配置
 http_host = os.getenv("HTTP_HOST", "0.0.0.0")
 http_port = int(os.getenv("HTTP_PORT", "8000"))

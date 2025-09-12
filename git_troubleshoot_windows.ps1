@@ -161,7 +161,7 @@ Write-Host "    git pull origin main --allow-unrelated-histories" -ForegroundCol
 Write-Host "    git push origin main" -ForegroundColor Gray
 
 Write-Host "`n🔧 大文件问题:" -ForegroundColor White
-Write-Host "  问题: remote: error: File ... is ... MB; this exceeds GitHub's file size limit" -ForegroundColor Red
+Write-Host "  问题: remote: error: File ... is ... MB; this exceeds GitHub's file size limit" -ForegroundColor Red'
 Write-Host "  解决方案:" -ForegroundColor Yellow
 Write-Host "    1. 使用Git LFS: git lfs track `"*.模型文件扩展名`"" -ForegroundColor Gray
 Write-Host "    2. 添加到.gitignore忽略大文件" -ForegroundColor Gray

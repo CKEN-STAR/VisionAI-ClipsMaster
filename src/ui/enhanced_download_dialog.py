@@ -274,11 +274,16 @@ class ModelVariantWidget(QFrame):
 class EnhancedDownloadDialog(QDialog):
     """增强下载对话框"""
     
-    def __init__(self, model_name: str, recommendation: Dict, parent=None):
+    def __init__(self, model_name: str, recommendation: Dict, parent=None, tab_context: str = None):
         super().__init__(parent)
         self.model_name = model_name
         self.recommendation = recommendation
         self.selected_variant = None
+
+        # 🔧 修复：添加对话框标识属性，用于对话框管理器检查
+        self._model_name = model_name
+        self._tab_context = tab_context or 'default'
+        self._dialog_finished = False
 
         # 最强防护：多层验证机制
         logger.info(f"🔍 创建下载对话框: 请求模型={model_name}")
@@ -744,9 +749,13 @@ class EnhancedDownloadDialog(QDialog):
         """安全的接受处理"""
         try:
             print("🔍 [DEBUG] 用户点击下载按钮")
+            # 🔧 修复：标记对话框已完成
+            self._dialog_finished = True
             self.accept()
         except Exception as e:
             print(f"❌ [ERROR] 接受对话框时出错: {e}")
+            # 🔧 修复：即使出错也要标记完成
+            self._dialog_finished = True
             # 即使出错也要关闭对话框
             try:
                 self.close()
@@ -757,9 +766,13 @@ class EnhancedDownloadDialog(QDialog):
         """安全的拒绝处理"""
         try:
             print("🔍 [DEBUG] 用户点击取消按钮")
+            # 🔧 修复：标记对话框已完成
+            self._dialog_finished = True
             self.reject()
         except Exception as e:
             print(f"❌ [ERROR] 拒绝对话框时出错: {e}")
+            # 🔧 修复：即使出错也要标记完成
+            self._dialog_finished = True
             # 即使出错也要关闭对话框
             try:
                 self.close()
@@ -770,6 +783,10 @@ class EnhancedDownloadDialog(QDialog):
         """重写关闭事件，确保安全关闭"""
         try:
             print("🔍 [DEBUG] 对话框关闭事件触发")
+
+            # 🔧 修复：标记对话框已完成
+            self._dialog_finished = True
+
             # 清理资源
             if hasattr(self, 'recommendation_tab'):
                 self.recommendation_tab = None
@@ -781,5 +798,7 @@ class EnhancedDownloadDialog(QDialog):
             print("🔍 [DEBUG] 对话框关闭完成")
         except Exception as e:
             print(f"❌ [ERROR] 关闭对话框时出错: {e}")
+            # 🔧 修复：即使出错也要标记完成
+            self._dialog_finished = True
             # 强制接受关闭事件
             event.accept()

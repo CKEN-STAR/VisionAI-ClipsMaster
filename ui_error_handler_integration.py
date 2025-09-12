@@ -7,6 +7,7 @@ VisionAI-ClipsMaster UI错误处理集成
 
 import sys
 import os
+import time
 from pathlib import Path
 from PyQt6.QtWidgets import QMessageBox, QDialog, QVBoxLayout, QHBoxLayout, QPushButton, QLabel, QTextEdit
 from PyQt6.QtCore import Qt, pyqtSignal, QObject
@@ -17,7 +18,7 @@ PROJECT_ROOT = Path(__file__).resolve().parent
 sys.path.append(str(PROJECT_ROOT))
 
 try:
-    from src.utils.enhanced_error_handler import EnhancedErrorHandler, ErrorCategory, ErrorSeverity
+    from src.utils.enhanced_error_handler import EnhancedErrorHandler, ErrorCategory, ErrorSeverity       
     ENHANCED_ERROR_HANDLER_AVAILABLE = True
 except ImportError:
     ENHANCED_ERROR_HANDLER_AVAILABLE = False
@@ -25,27 +26,27 @@ except ImportError:
 
 class UIErrorDialog(QDialog):
     """用户友好的错误对话框"""
-    
+
     def __init__(self, error_details, parent=None):
         super().__init__(parent)
         self.error_details = error_details
         self.init_ui()
-    
+
     def init_ui(self):
         """初始化UI"""
         self.setWindowTitle("错误处理")
         self.setModal(True)
         self.resize(500, 400)
-        
+
         layout = QVBoxLayout()
-        
+
         # 用户友好的错误消息
         user_message = self.error_details.get("user_friendly_message", "发生了一个错误")
         message_label = QLabel(user_message)
         message_label.setWordWrap(True)
         message_label.setFont(QFont("Microsoft YaHei UI", 10))
         layout.addWidget(message_label)
-        
+
         # 恢复信息
         if self.error_details.get("recovery_successful", False):
             recovery_label = QLabel("✅ 问题已自动修复，您可以继续操作。")
@@ -53,9 +54,9 @@ class UIErrorDialog(QDialog):
         else:
             recovery_label = QLabel("❌ 请根据提示解决问题后重试。")
             recovery_label.setStyleSheet("color: red; font-weight: bold;")
-        
+
         layout.addWidget(recovery_label)
-        
+
         # 详细信息（可展开）
         details_text = QTextEdit()
         details_text.setMaximumHeight(150)
@@ -72,35 +73,35 @@ class UIErrorDialog(QDialog):
         """.strip())
         details_text.setReadOnly(True)
         layout.addWidget(details_text)
-        
+
         # 按钮
         button_layout = QHBoxLayout()
-        
+
         ok_button = QPushButton("确定")
         ok_button.clicked.connect(self.accept)
         button_layout.addWidget(ok_button)
-        
+
         if not self.error_details.get("recovery_successful", False):
             retry_button = QPushButton("重试")
             retry_button.clicked.connect(self.retry)
             button_layout.addWidget(retry_button)
-        
+
         layout.addLayout(button_layout)
         self.setLayout(layout)
-    
+
     def retry(self):
         """重试操作"""
         self.done(2)  # 返回重试代码
 
 class UIErrorHandlerIntegration(QObject):
     """UI错误处理集成器"""
-    
+
     error_occurred = pyqtSignal(dict)  # 错误发生信号
-    
+
     def __init__(self, parent=None):
         super().__init__(parent)
         self.parent_widget = parent
-        
+
         # 初始化增强错误处理器
         if ENHANCED_ERROR_HANDLER_AVAILABLE:
             try:
@@ -117,8 +118,8 @@ class UIErrorHandlerIntegration(QObject):
         else:
             self.error_handler = None
             self.enhanced_available = False
-    
-    def handle_ui_error(self, error, category=None, severity=None, context=None, show_dialog=True):
+
+    def handle_ui_error(self, error, category=None, severity=None, context=None, show_dialog=True):       
         """处理UI错误"""
         try:
             # 确定错误类别和严重程度
@@ -126,7 +127,7 @@ class UIErrorHandlerIntegration(QObject):
                 category = self._determine_error_category(error)
             if severity is None:
                 severity = self._determine_error_severity(error)
-            
+
             # 使用增强错误处理器处理
             if self.enhanced_available and self.error_handler:
                 error_details = self.error_handler.handle_error(
@@ -139,27 +140,27 @@ class UIErrorHandlerIntegration(QObject):
             else:
                 # 降级到基础错误处理
                 error_details = self._basic_error_handling(error, category, severity, context)
-            
+
             # 发送错误信号
             self.error_occurred.emit(error_details)
-            
+
             # 显示错误对话框
             if show_dialog and self.parent_widget:
                 self._show_error_dialog(error_details)
-            
+
             return error_details
-            
+
         except Exception as e:
             print(f"错误处理失败: {e}")
             return {"error": str(e)}
-    
+
     def _determine_error_category(self, error):
         """确定错误类别"""
         if not ENHANCED_ERROR_HANDLER_AVAILABLE:
             return "system"
-        
+
         error_type = type(error).__name__
-        
+
         if error_type in ["FileNotFoundError", "PermissionError", "OSError"]:
             return ErrorCategory.FILESYSTEM
         elif error_type in ["ConnectionError", "TimeoutError", "URLError"]:
@@ -172,14 +173,14 @@ class UIErrorHandlerIntegration(QObject):
             return ErrorCategory.SRT_SUBTITLE
         else:
             return ErrorCategory.SYSTEM
-    
+
     def _determine_error_severity(self, error):
         """确定错误严重程度"""
         if not ENHANCED_ERROR_HANDLER_AVAILABLE:
             return "medium"
-        
+
         error_type = type(error).__name__
-        
+
         if error_type in ["MemoryError", "SystemExit", "KeyboardInterrupt"]:
             return ErrorSeverity.CRITICAL
         elif error_type in ["FileNotFoundError", "ConnectionError", "TimeoutError"]:
@@ -188,7 +189,7 @@ class UIErrorHandlerIntegration(QObject):
             return ErrorSeverity.MEDIUM
         else:
             return ErrorSeverity.LOW
-    
+
     def _basic_error_handling(self, error, category, severity, context):
         """基础错误处理（降级方案）"""
         error_details = {
@@ -203,21 +204,21 @@ class UIErrorHandlerIntegration(QObject):
             "recovery_successful": False,
             "user_friendly_message": f"发生了一个错误: {str(error)}"
         }
-        
+
         return error_details
-    
+
     def _show_error_dialog(self, error_details):
         """显示错误对话框"""
         try:
             dialog = UIErrorDialog(error_details, self.parent_widget)
             result = dialog.exec()
-            
+
             if result == 2:  # 重试
                 print("用户选择重试")
                 return "retry"
             else:
                 return "ok"
-                
+
         except Exception as e:
             print(f"显示错误对话框失败: {e}")
             # 降级到简单消息框
@@ -226,7 +227,7 @@ class UIErrorHandlerIntegration(QObject):
                 "错误",
                 error_details.get("user_friendly_message", "发生了一个错误")
             )
-    
+
     def get_error_statistics(self):
         """获取错误统计"""
         if self.enhanced_available and self.error_handler:
@@ -264,27 +265,25 @@ def ui_error_handler(category=None, severity=None, show_dialog=True):
 
 # 示例使用
 if __name__ == "__main__":
-    import time
-    
     # 测试错误处理集成
     print("测试UI错误处理集成...")
-    
+
     handler = UIErrorHandlerIntegration()
-    
+
     # 测试不同类型的错误
     test_errors = [
         (FileNotFoundError("测试文件未找到"), "文件系统错误"),
         (MemoryError("测试内存不足"), "内存错误"),
         (ValueError("测试值错误"), "一般错误")
     ]
-    
+
     for error, description in test_errors:
         print(f"\n测试 {description}:")
         result = handler.handle_ui_error(error, show_dialog=False)
         print(f"处理结果: {result.get('user_friendly_message', 'N/A')}")
-    
+
     # 获取统计信息
     stats = handler.get_error_statistics()
     print(f"\n错误统计: {stats}")
-    
+
     print("UI错误处理集成测试完成")

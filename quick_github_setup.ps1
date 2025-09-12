@@ -86,15 +86,15 @@ function Main {
         Write-Info "步骤4: 创建缺失的文件"
         
         if ("README.md" -in $missingFiles) {
-            Create-README
+            New-README
         }
         
         if ("LICENSE" -in $missingFiles) {
-            Create-LICENSE
+            New-LICENSE
         }
         
         if (".gitignore" -in $missingFiles) {
-            Create-GitIgnore
+            New-GitIgnore
         }
     }
     
@@ -139,7 +139,7 @@ function Main {
     
     # 创建提交
     Write-Info "创建提交..."
-    $commitMessage = @"
+    $commitMessage = @""
 🎉 Initial release: VisionAI-ClipsMaster v1.0
 
 ✨ Core Features:
@@ -173,8 +173,7 @@ function Main {
 👨‍💻 Author: $GitHubUsername
 📅 Date: $(Get-Date -Format 'yyyy-MM-dd')
 🏷️ Version: v1.0-production
-"@
-    
+"@"
     git commit -m $commitMessage
     Write-Success "提交创建完成"
     
@@ -202,8 +201,8 @@ function Main {
 }
 
 # 创建README.md
-function Create-README {
-    $readmeContent = @"
+function New-README {
+    $readmeContent = @""
 # VisionAI-ClipsMaster
 
 **基于本地大模型的智能短剧混剪工具**
@@ -273,15 +272,15 @@ python VisionAI-ClipsMaster-Core/simple_ui_fixed.py
 ---
 
 **如果这个项目对您有帮助，请给我们一个 ⭐ Star！**
-"@
+"@"
     
     $readmeContent | Out-File -FilePath "README.md" -Encoding UTF8
     Write-Success "README.md 创建完成"
 }
 
 # 创建LICENSE
-function Create-LICENSE {
-    $licenseContent = @"
+function New-LICENSE {
+    $licenseContent = @""
 MIT License
 
 Copyright (c) 2025 $GitHubUsername
@@ -303,15 +302,14 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-"@
-    
+"@"
     $licenseContent | Out-File -FilePath "LICENSE" -Encoding UTF8
     Write-Success "LICENSE 创建完成"
 }
 
 # 创建.gitignore
-function Create-GitIgnore {
-    $gitignoreContent = @"
+function New-GitIgnore {
+    $gitignoreContent = @""
 # Python
 __pycache__/
 *.py[cod]
@@ -346,7 +344,7 @@ test_output/
 *.gguf
 models/*/base/
 models/*/quantized/
-"@
+"@"
     
     $gitignoreContent | Out-File -FilePath ".gitignore" -Encoding UTF8
     Write-Success ".gitignore 创建完成"

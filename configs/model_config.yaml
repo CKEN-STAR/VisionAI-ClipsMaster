@@ -1,28 +1,11 @@
-# VisionAI-ClipsMaster 优化模型配置
-# 针对3.8GB内存限制进行优化
-
-available_models:
-  - name: "qwen2.5-7b-zh-optimized"
-    language: "zh"
-    quantization: "Q2_K"  # 更激进的量化
-    memory_requirement_mb: 2800  # 优化后内存需求
-    description: "中文模型 - 超级量化版本"
-    
-  - name: "mistral-7b-en-optimized"
-    language: "en"
-    quantization: "Q3_K_M"  # 平衡量化
-    memory_requirement_mb: 3200  # 优化后内存需求
-    description: "英文模型 - 优化量化版本"
-
-# 内存管理策略
-memory_management:
-  max_memory_mb: 3800
-  enable_dynamic_loading: true
-  enable_model_sharding: true
-  cache_strategy: "lru"
-  
-# 量化策略
-quantization_strategy:
-  emergency_mode: "Q2_K"    # 内存危急时
-  normal_mode: "Q4_K_M"     # 正常模式
-  performance_mode: "Q5_K"  # 高性能模式
+active_models:
+  chinese: qwen2.5-7b-zh
+  english: mistral-7b-en
+quantization:
+  default: Q4_K_M
+  low_memory: Q2_K
+  high_performance: Q4_K_M
+performance:
+  max_threads: 4
+  batch_size: 2
+  use_gpu: false

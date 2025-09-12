@@ -1,0 +1,235 @@
+# VisionAI-ClipsMaster Docker Ignore File
+# Exclude unnecessary files from Docker build context
+
+# ============================================
+# Python
+# ============================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# ============================================
+# Virtual Environments
+# ============================================
+.venv/
+venv/
+ENV/
+env/
+.env
+
+# ============================================
+# IDE and Editor Files
+# ============================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ============================================
+# Git
+# ============================================
+.git/
+.gitignore
+.gitattributes
+
+# ============================================
+# Docker
+# ============================================
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# ============================================
+# Documentation
+# ============================================
+README.md
+docs/
+*.md
+LICENSE
+
+# ============================================
+# Testing
+# ============================================
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+.hypothesis/
+
+# ============================================
+# Jupyter Notebooks
+# ============================================
+.ipynb_checkpoints/
+*.ipynb
+
+# ============================================
+# Logs and Temporary Files
+# ============================================
+logs/
+*.log
+tmp/
+temp/
+.tmp/
+
+# ============================================
+# Cache Directories
+# ============================================
+.cache/
+cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# ============================================
+# Model Files (Large)
+# ============================================
+models/*.gguf
+models/*.bin
+models/*.safetensors
+models/*.pt
+models/*.pth
+*.model
+*.weights
+
+# ============================================
+# Data Files (Large)
+# ============================================
+data/raw/
+data/processed/
+data/external/
+*.csv
+*.json
+*.parquet
+*.h5
+*.hdf5
+
+# ============================================
+# Output Files
+# ============================================
+output/
+results/
+exports/
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+
+# ============================================
+# System Files
+# ============================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ============================================
+# Package Manager Files
+# ============================================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ============================================
+# Environment Variables
+# ============================================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ============================================
+# Backup Files
+# ============================================
+*.bak
+*.backup
+*.old
+*~
+
+# ============================================
+# Compiled Files
+# ============================================
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# ============================================
+# Archive Files
+# ============================================
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# ============================================
+# Development Tools
+# ============================================
+.pre-commit-config.yaml
+.flake8
+.isort.cfg
+mypy.ini
+pytest.ini
+setup.cfg
+pyproject.toml
+
+# ============================================
+# CI/CD
+# ============================================
+.github/
+.gitlab-ci.yml
+.travis.yml
+.circleci/
+Jenkinsfile
+
+# ============================================
+# Deployment
+# ============================================
+k8s/
+kubernetes/
+helm/
+terraform/
+ansible/
+
+# ============================================
+# Monitoring and Profiling
+# ============================================
+.prof
+*.prof
+.coverage.*
+profile_*
