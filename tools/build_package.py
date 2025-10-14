@@ -120,10 +120,10 @@ def main():
     
     # 复制打包相关文件
     packaging_files = [
-        ("packaging/model_path_manager.py", "model_path_manager.py"),
-        ("packaging/startup_validator.py", "startup_validator.py"), 
-        ("packaging/launcher.py", "launcher.py"),
-        ("packaging/启动VisionAI-ClipsMaster.bat", "启动VisionAI-ClipsMaster.bat"),
+        ("scripts/deployment/model_path_manager.py", "model_path_manager.py"),
+        ("scripts/deployment/startup_validator.py", "startup_validator.py"),
+        ("scripts/deployment/launcher.py", "launcher.py"),
+        ("scripts/deployment/启动VisionAI-ClipsMaster.bat", "启动VisionAI-ClipsMaster.bat"),
     ]
     
     for src, dst in packaging_files:

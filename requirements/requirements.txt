@@ -2,6 +2,8 @@
 torch>=2.1.0
 transformers>=4.36.0
 huggingface-hub>=0.20.3
+peft>=0.4.0  # LoRA/QLoRA微调支持
+datasets>=2.14.0  # 训练数据集处理
 pyyaml>=6.0.1
 logging>=0.5.1.2
 

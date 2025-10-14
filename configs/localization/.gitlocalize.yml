@@ -1,0 +1,30 @@
+# GitLocalize配置文件
+
+# 源语言
+source_language: zh-CN
+
+# 目标语言
+target_languages:
+  - en-US
+
+# 自动同步路径
+paths:
+  -
+    source: docs/zh_CN
+    translation: docs/%locale%
+  -
+    source: docs/USER_GUIDE.md
+    translation: docs/%locale%/USER_GUIDE.md
+  -
+    source: docs/API_REFERENCE.md
+    translation: docs/%locale%/API_REFERENCE.md
+
+# 翻译设置
+settings:
+  preserve_tags: true
+  preserve_code_blocks: true
+  include_html: true
+  include_md_syntax: true
+  line_breaks: true
+  git_repo: VisionAI-ClipsMaster
+  git_branch: main 

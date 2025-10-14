@@ -11,11 +11,13 @@
 import sys
 import time
 import logging
+import math
 from typing import Dict, List, Optional, Any, Tuple
 from datetime import datetime, timedelta
 from collections import OrderedDict, deque
 from threading import Lock, Thread
 import os
+import psutil
 
 try:
     from PyQt6.QtWidgets import (
@@ -24,13 +26,22 @@ try:
         QTableWidgetItem, QHeaderView, QProgressBar, QTabWidget,
         QApplication, QMainWindow
     )
-    from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QSize
+    from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QSize, QPoint
     from PyQt6.QtGui import QPainter, QPen, QColor, QFont, QBrush, QPixmap, QRadialGradient
-    import pyqtgraph as pg
     HAS_QT = True
+
+    # 尝试导入pyqtgraph,如果失败则使用基础PyQt6组件
+    try:
+        import pyqtgraph as pg
+        HAS_PYQTGRAPH = True
+    except ImportError:
+        HAS_PYQTGRAPH = False
+        logging.warning("pyqtgraph未安装，将使用基础PyQt6组件绘制图表")
+
 except ImportError:
     HAS_QT = False
-    logging.warning("PyQt6 或 pyqtgraph 未安装，可视化看板将不可用")
+    HAS_PYQTGRAPH = False
+    logging.warning("PyQt6未安装，可视化看板将不可用")
 
 # 导入监控组件
 from src.monitoring import (
@@ -152,64 +163,153 @@ class GaugeChart(QWidget):
         
         # 绘制指针
         painter.setPen(QPen(color, 2, Qt.PenStyle.SolidLine))
-        angle_rad = angle * 3.14159 / 180
+        angle_rad = angle * math.pi / 180
         pointer_length = radius * 0.7
-        px = cx + pointer_length * -1 * (-1 * (angle_rad + 3.14159 / 2)).cos()
-        py = cy + pointer_length * -1 * (-1 * (angle_rad + 3.14159 / 2)).sin()
+        px = cx + pointer_length * math.cos(angle_rad - math.pi / 2)
+        py = cy + pointer_length * math.sin(angle_rad - math.pi / 2)
         painter.drawLine(int(cx), int(cy), int(px), int(py))
         
         # 绘制标题
         painter.setPen(QPen(Qt.GlobalColor.black))
         painter.setFont(QFont("Arial", 12, QFont.Weight.Bold))
-        painter.drawText(0, 0, w, h - radius / 2, Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignBottom, self.title)
-        
+        painter.drawText(0, 0, w, int(h - radius / 2), Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignBottom, self.title)
+
         # 绘制值
         painter.setFont(QFont("Arial", 16, QFont.Weight.Bold))
         painter.setPen(QPen(color))
         text = f"{self.value:.1f}{self.unit}"
-        painter.drawText(0, h - radius / 2, w, radius / 2, Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignCenter, text)
+        painter.drawText(0, int(h - radius / 2), w, int(radius / 2), Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignCenter, text)
 
 
-class LineChart(QWidget):
-    """折线图组件"""
-    
+class SimpleLineChart(QWidget):
+    """简化版折线图组件 - 不依赖pyqtgraph"""
+
     def __init__(self, title: str, parent=None):
         """初始化折线图
-        
+
         Args:
             title: 折线图标题
             parent: 父窗口
         """
         super().__init__(parent)
         self.title = title
-        
-        # 创建pyqtgraph图表
-        self.plot_widget = pg.PlotWidget()
-        self.plot_widget.setBackground('w')
-        self.plot_widget.setTitle(title, color="k", size="12pt")
-        self.plot_widget.showGrid(x=True, y=True, alpha=0.3)
-        self.plot_widget.setLabel('left', '使用率', units='%')
-        self.plot_widget.setLabel('bottom', '时间 (分:秒)')
-        
-        # 创建曲线
-        self.curve = self.plot_widget.plot(pen=pg.mkPen(color=(76, 114, 176), width=2))
-        
-        # 设置布局
-        layout = QVBoxLayout()
-        layout.addWidget(self.plot_widget)
-        self.setLayout(layout)
-        
+        self.timestamps = []
+        self.values = []
+        self.start_time = time.time()
+        self.max_points = 300
+        self.setMinimumSize(400, 250)
+
+    def add_point(self, value: float) -> None:
+        """添加数据点"""
+        current_time = time.time()
+        if not self.timestamps:
+            self.start_time = current_time
+
+        self.timestamps.append(current_time - self.start_time)
+        self.values.append(value)
+
+        if len(self.timestamps) > self.max_points:
+            self.timestamps.pop(0)
+            self.values.pop(0)
+
+        self.update()
+
+    def paintEvent(self, event):
+        """绘制折线图"""
+        if not self.values:
+            return
+
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+
+        w, h = self.width(), self.height()
+        margin = 40
+        chart_w = w - 2 * margin
+        chart_h = h - 2 * margin
+
+        # 绘制背景
+        painter.fillRect(0, 0, w, h, QColor(255, 255, 255))
+
+        # 绘制标题
+        painter.setPen(QPen(Qt.GlobalColor.black))
+        painter.setFont(QFont("Arial", 10, QFont.Weight.Bold))
+        painter.drawText(0, 0, w, 30, Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignTop, self.title)
+
+        # 绘制网格
+        painter.setPen(QPen(QColor(200, 200, 200), 1))
+        for i in range(5):
+            y = margin + i * chart_h / 4
+            painter.drawLine(margin, int(y), w - margin, int(y))
+
+        # 绘制折线
+        if len(self.values) > 1:
+            painter.setPen(QPen(QColor(76, 114, 176), 2))
+            max_val = max(self.values) if self.values else 100
+            min_val = min(self.values) if self.values else 0
+            val_range = max_val - min_val if max_val > min_val else 1
+
+            for i in range(len(self.values) - 1):
+                x1 = margin + (i / max(len(self.values) - 1, 1)) * chart_w
+                y1 = h - margin - ((self.values[i] - min_val) / val_range) * chart_h
+                x2 = margin + ((i + 1) / max(len(self.values) - 1, 1)) * chart_w
+                y2 = h - margin - ((self.values[i + 1] - min_val) / val_range) * chart_h
+                painter.drawLine(int(x1), int(y1), int(x2), int(y2))
+
+        # 绘制Y轴标签
+        painter.setPen(QPen(Qt.GlobalColor.black))
+        painter.setFont(QFont("Arial", 8))
+        max_val = max(self.values) if self.values else 100
+        for i in range(5):
+            y = margin + i * chart_h / 4
+            val = max_val * (1 - i / 4)
+            painter.drawText(0, int(y) - 10, margin - 5, 20, Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter, f"{val:.0f}%")
+
+
+class LineChart(QWidget):
+    """折线图组件 - 根据pyqtgraph可用性选择实现"""
+
+    def __init__(self, title: str, parent=None):
+        """初始化折线图
+
+        Args:
+            title: 折线图标题
+            parent: 父窗口
+        """
+        super().__init__(parent)
+        self.title = title
+
+        if HAS_PYQTGRAPH:
+            # 使用pyqtgraph实现
+            self.plot_widget = pg.PlotWidget()
+            self.plot_widget.setBackground('w')
+            self.plot_widget.setTitle(title, color="k", size="12pt")
+            self.plot_widget.showGrid(x=True, y=True, alpha=0.3)
+            self.plot_widget.setLabel('left', '使用率', units='%')
+            self.plot_widget.setLabel('bottom', '时间 (分:秒)')
+            self.curve = self.plot_widget.plot(pen=pg.mkPen(color=(76, 114, 176), width=2))
+
+            layout = QVBoxLayout()
+            layout.addWidget(self.plot_widget)
+            self.setLayout(layout)
+        else:
+            # 使用简化版实现
+            self.simple_chart = SimpleLineChart(title, self)
+            layout = QVBoxLayout()
+            layout.addWidget(self.simple_chart)
+            self.setLayout(layout)
+
+        # 设置最小尺寸，确保图表清晰可见
+        self.setMinimumSize(400, 250)
+
         # 初始化数据
         self.timestamps = []
         self.values = []
         self.start_time = time.time()
-        
-        # 设置最大显示点数（5分钟，采样间隔1秒）
         self.max_points = 300
     
     def add_point(self, value: float) -> None:
         """添加数据点
-        
+
         Args:
             value: Y轴值
         """
@@ -217,32 +317,35 @@ class LineChart(QWidget):
         current_time = time.time()
         if not self.timestamps:
             self.start_time = current_time
-            
+
         self.timestamps.append(current_time - self.start_time)
         self.values.append(value)
-        
+
         # 限制数据点数量
         if len(self.timestamps) > self.max_points:
             self.timestamps.pop(0)
             self.values.pop(0)
-        
-        # 更新图表
-        self.curve.setData(self.timestamps, self.values)
-        
-        # 自动调整X轴范围
-        self.plot_widget.setXRange(
-            max(0, self.timestamps[-1] - 300),  # 显示最近5分钟
-            self.timestamps[-1]
-        )
-        
-        # 自定义X轴标签格式
-        def format_time(x):
-            seconds = int(x)
-            minutes = seconds // 60
-            seconds = seconds % 60
-            return f"{minutes:02d}:{seconds:02d}"
-        
-        self.plot_widget.getAxis('bottom').setTicks([[(i, format_time(i)) for i in range(0, int(self.timestamps[-1]) + 60, 60)]])
+
+        if HAS_PYQTGRAPH:
+            # 使用pyqtgraph更新
+            self.curve.setData(self.timestamps, self.values)
+            self.plot_widget.setXRange(
+                max(0, self.timestamps[-1] - 300),
+                self.timestamps[-1]
+            )
+
+            def format_time(x):
+                seconds = int(x)
+                minutes = seconds // 60
+                seconds = seconds % 60
+                return f"{minutes:02d}:{seconds:02d}"
+
+            self.plot_widget.getAxis('bottom').setTicks([[(i, format_time(i)) for i in range(0, int(self.timestamps[-1]) + 60, 60)]])
+        else:
+            # 使用简化版更新
+            self.simple_chart.timestamps = self.timestamps
+            self.simple_chart.values = self.values
+            self.simple_chart.update()
 
 
 class ComponentTable(QTableWidget):
@@ -264,10 +367,15 @@ class ComponentTable(QTableWidget):
         header = self.horizontalHeader()
         header.setSectionResizeMode(0, QHeaderView.ResizeMode.Stretch)
         header.setSectionResizeMode(1, QHeaderView.ResizeMode.ResizeToContents)
-        
+
         # 设置排序
         self.setSortingEnabled(True)
-        
+
+        # 设置表格属性，确保内容完整显示
+        self.setMinimumHeight(250)  # 最小高度
+        self.verticalHeader().setDefaultSectionSize(30)  # 行高
+        self.setAlternatingRowColors(True)  # 交替行颜色
+
         # 初始化数据
         self.components = {}
     
@@ -438,19 +546,23 @@ class MemoryDashboard(QWidget):
             gauges_layout.addWidget(gauge)
         
         overview_layout.addWidget(gauges_widget)
-        
+
         # 内存趋势图
         self.trend = LineChart(title="内存趋势")
-        overview_layout.addWidget(self.trend)
-        
+        # 设置趋势图最小高度，确保图表清晰可见
+        self.trend.setMinimumHeight(280)
+        overview_layout.addWidget(self.trend, stretch=2)  # 添加拉伸因子，给趋势图更多空间
+
         # 组件内存排行
         components_group = QGroupBox("组件内存占用排行")
         components_layout = QVBoxLayout(components_group)
-        
+
         self.components_table = ComponentTable()
+        # 设置最小高度，确保至少能显示10行数据
+        self.components_table.setMinimumHeight(300)
         components_layout.addWidget(self.components_table)
-        
-        overview_layout.addWidget(components_group)
+
+        overview_layout.addWidget(components_group, stretch=1)  # 添加拉伸因子
         
         # === 预警标签页 ===
         alerts_tab = QWidget()
@@ -478,42 +590,41 @@ class MemoryDashboard(QWidget):
         control_layout.addWidget(self.pause_button)
         
         main_layout.addWidget(control_widget)
-        
+
         self.setLayout(main_layout)
-        self.resize(800, 600)
+        # 增大窗口尺寸，确保组件内存占用排行列表完整显示
+        self.resize(1000, 800)
         self.setWindowTitle("内存监控仪表盘")
     
     def update_dashboard(self):
         """更新仪表盘数据"""
         try:
-            # 获取系统内存使用率
-            system_memory = self.metrics_collector.collect_on_demand("system_metrics.total_memory")
-            if system_memory is not None:
-                self.gauges['system'].set(system_memory)
-            
-            # 获取进程内存使用
-            process_memory = self.metrics_collector.collect_on_demand("system_metrics.process_rss")
-            if process_memory is not None:
-                self.gauges['process'].set(process_memory)
-            
+            # 直接使用psutil获取系统内存使用率
+            mem = psutil.virtual_memory()
+            system_memory = mem.percent  # 系统内存使用率(%)
+
+            # 获取进程内存使用(MB)
+            process = psutil.Process()
+            process_memory = process.memory_info().rss / (1024 * 1024)  # 转换为MB
+
+            # 更新仪表盘
+            self.gauges['system'].set(system_memory)
+            self.gauges['process'].set(process_memory)
+
             # 更新内存趋势图
-            if system_memory is not None:
-                self.trend.add_point(system_memory)
-            
+            self.trend.add_point(system_memory)
+
             # 更新组件内存排行
             self.update_components_table()
-            
+
             # 更新预警列表
             self.update_alerts()
-            
+
             # 检查内存使用预警（集成预警系统）
-            if system_memory is not None:
-                check_memory_usage(system_memory, {
-                    "source": "memory_dashboard",
-                    "details": "内存仪表盘检测",
-                    "process_memory_mb": process_memory
-                })
-        
+            memory_status = check_memory_usage()
+            if memory_status.get("status") in ["warning", "critical"]:
+                logger.warning(f"内存使用率: {memory_status.get('percent')}%, 状态: {memory_status.get('status')}")
+
         except Exception as e:
             logger.error(f"更新仪表盘出错: {e}")
     
@@ -544,10 +655,10 @@ class MemoryDashboard(QWidget):
     def update_alerts(self):
         """更新预警列表"""
         try:
-            # 获取最近20条预警
-            alerts = self.alert_manager.get_history(limit=20)
+            # 获取最近20条预警 (使用get_alerts方法)
+            alerts = self.alert_manager.get_alerts(count=20)
             self.alert_widget.update_alerts(alerts)
-        
+
         except Exception as e:
             logger.error(f"更新预警列表出错: {e}")
     

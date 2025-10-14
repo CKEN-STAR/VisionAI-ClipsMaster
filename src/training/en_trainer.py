@@ -12,14 +12,17 @@ import time
 import logging
 import torch
 from datetime import datetime
-
+from pathlib import Path
 import re
-from datetime import datetime
 from typing import Dict, List, Any, Optional, Callable
 
 # 添加项目路径
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, PROJECT_ROOT)
+
+# 导入版本管理器和转换器
+from src.training.model_version_manager import ModelVersionManager
+from models.converters.model_converter import ModelConverter
 
 class EnTrainer:
     """英文训练器 - Mistral-7B模型"""
@@ -51,6 +54,10 @@ class EnTrainer:
 
         # 设置日志
         self.logger = logging.getLogger(f"EnTrainer")
+
+        # 初始化版本管理器和转换器
+        self.version_manager = ModelVersionManager(base_dir="models/mistral", max_versions=5)
+        self.model_converter = ModelConverter()
 
         print(f"🇺🇸 英文训练器初始化完成: {self.model_name}")
         print(f"📊 配置: {self.config['quantization']}量化, GPU={'启用' if use_gpu else '禁用'}")
@@ -163,29 +170,23 @@ class EnTrainer:
             # 1. 加载模型和分词器 - 使用较小的模型以适配4GB内存
             model_name = "microsoft/DialoGPT-medium"  # 使用medium版本以适配内存限制
 
-            try:
-                # 尝试加载本地缓存的模型
-                tokenizer = AutoTokenizer.from_pretrained(
-                    model_name,
-                    cache_dir="./models/cache",
-                    local_files_only=True  # 只使用本地文件
-                )
+            # 加载本地缓存的模型
+            tokenizer = AutoTokenizer.from_pretrained(
+                model_name,
+                cache_dir="./models/cache",
+                local_files_only=True  # 只使用本地文件
+            )
 
-                model = AutoModelForCausalLM.from_pretrained(
-                    model_name,
-                    torch_dtype=torch.float16 if self.use_gpu and torch.cuda.is_available() else torch.float32,
-                    device_map="auto" if self.use_gpu and torch.cuda.is_available() else None,
-                    cache_dir="./models/cache",
-                    local_files_only=True  # 只使用本地文件
-                )
+            model = AutoModelForCausalLM.from_pretrained(
+                model_name,
+                torch_dtype=torch.float16 if self.use_gpu and torch.cuda.is_available() else torch.float32,
+                device_map="auto" if self.use_gpu and torch.cuda.is_available() else None,
+                cache_dir="./models/cache",
+                local_files_only=True  # 只使用本地文件
+            )
 
-                if tokenizer.pad_token is None:
-                    tokenizer.pad_token = tokenizer.eos_token
-
-            except Exception as e:
-                # 如果模型加载失败，使用模拟训练
-                print(f"⚠️ 模型加载失败，使用模拟训练: {str(e)}")
-                return self._simulate_training(training_data, progress_callback)
+            if tokenizer.pad_token is None:
+                tokenizer.pad_token = tokenizer.eos_token
             
             if progress_callback:
                 progress_callback(0.2, "Configuring LoRA fine-tuning...")
@@ -295,19 +296,45 @@ class EnTrainer:
             
             if progress_callback:
                 progress_callback(0.9, "Saving trained model...")
-            
+
             # 6. 保存模型
             try:
                 os.makedirs("./results_en", exist_ok=True)
                 trainer.save_model()
                 tokenizer.save_pretrained("./results_en")
-                
+
             except Exception as e:
                 return {"success": False, "error": f"Model saving failed: {str(e)}"}
+
+            # 7. 训练后自动转换为GGUF格式并注册版本
+            gguf_path = None
+            version_id = None
+
+            try:
+                if progress_callback:
+                    progress_callback(0.95, "Registering model version...")
+
+                version_id = self._register_trained_version(
+                    "./results_en",
+                    None,  # Don't auto-convert to GGUF, user can manually convert in UI
+                    {
+                        "training_type": "REAL_ML_TRAINING",
+                        "dataset_size": len(training_data) if 'training_data' in locals() else 0,
+                        "training_args": {
+                            "num_epochs": self.config["epochs"],
+                            "batch_size": self.config["batch_size"],
+                            "learning_rate": self.config["learning_rate"]
+                        }
+                    }
+                )
+
+            except Exception as e:
+                self.logger.warning(f"Post-training processing failed: {e}")
+                # 不影响训练成功的返回
             
             end_time = time.time()
-            
-            # 7. 生成训练结果
+
+            # 8. 生成训练结果
             result = {
                 "success": True,
                 "training_type": "REAL_ML_TRAINING",
@@ -323,14 +350,17 @@ class EnTrainer:
                     "lora_alpha": 32,
                     "target_modules": ["c_attn"]
                 },
-                "created_at": datetime.now().isoformat()
+                "created_at": datetime.now().isoformat(),
+                "model_path": "./results_en",
+                "gguf_path": gguf_path,
+                "version_id": version_id
             }
-            
+
             if progress_callback:
                 progress_callback(1.0, "English model training completed!")
-            
+
             self.logger.info(f"English model training completed: loss={train_result.training_loss:.4f}, steps={train_result.global_step}")
-            
+
             return result
             
         except Exception as e:
@@ -403,70 +433,6 @@ class EnTrainer:
         )
 
         return validation_result
-
-    def _simulate_training(self, training_data: List[Dict[str, Any]],
-                          progress_callback: Optional[Callable] = None) -> Dict[str, Any]:
-        """
-        模拟训练过程 - 当真实模型不可用时使用
-
-        Args:
-            training_data: 训练数据
-            progress_callback: 进度回调函数
-
-        Returns:
-            模拟的训练结果
-        """
-        import time
-        import random
-
-        start_time = time.time()
-
-        if progress_callback:
-            progress_callback(0.1, "Starting simulated English training...")
-
-        # 模拟数据处理
-        processed_data = self.preprocess_data(training_data)
-        sample_count = len(processed_data["samples"])
-
-        if progress_callback:
-            progress_callback(0.3, f"Processing {sample_count} English samples...")
-
-        # 模拟训练过程
-        epochs = 3
-        for epoch in range(epochs):
-            if progress_callback:
-                progress = 0.3 + (epoch / epochs) * 0.6
-                progress_callback(progress, f"Simulated training epoch {epoch + 1}/{epochs}...")
-
-            # 模拟训练延迟
-            time.sleep(0.5)
-
-        if progress_callback:
-            progress_callback(0.9, "Finalizing simulated training...")
-
-        # 生成模拟结果
-        simulated_accuracy = random.uniform(0.85, 0.95)  # 85-95%准确率
-        simulated_loss = random.uniform(0.1, 0.3)        # 0.1-0.3损失
-
-        end_time = time.time()
-        training_duration = end_time - start_time
-
-        if progress_callback:
-            progress_callback(1.0, "Simulated English training completed!")
-
-        return {
-            "success": True,
-            "accuracy": simulated_accuracy,
-            "loss": simulated_loss,
-            "training_duration": training_duration,
-            "samples_processed": sample_count,
-            "epochs": epochs,
-            "model_type": "simulated_english_model",
-            "language": "en",
-            "simulation": True,
-            "statistics": processed_data.get("statistics", {}),
-            "message": "Training completed successfully (simulated mode)"
-        }
 
     def preprocess_data(self, training_data: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
@@ -660,3 +626,360 @@ class EnTrainer:
         except Exception as e:
             self.logger.error(f"Quick inference test failed: {e}")
             raise
+
+    def _convert_to_gguf_after_training(self, model_path: str) -> Optional[str]:
+        """
+        训练后转换为GGUF格式
+
+        Args:
+            model_path: HuggingFace格式模型路径
+
+        Returns:
+            GGUF格式模型路径
+        """
+        try:
+            self.logger.info("🔄 Converting to GGUF format...")
+
+            # 创建量化目录
+            quant_dir = Path("models/mistral/quantized/trained")
+            quant_dir.mkdir(parents=True, exist_ok=True)
+
+            # 生成GGUF文件名
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            gguf_path = quant_dir / f"trained_{timestamp}_Q5_K.gguf"
+
+            self.logger.info(f"   Source path: {model_path}")
+            self.logger.info(f"   Target path: {gguf_path}")
+
+            # 执行转换
+            self.model_converter.convert_format(
+                str(model_path),
+                "gguf",
+                str(gguf_path),
+                "Q5_K"  # 英文模型使用Q5_K量化
+            )
+
+            # 验证转换结果
+            if gguf_path.exists():
+                self.logger.info(f"✅ GGUF conversion successful: {gguf_path}")
+
+                # 创建符号链接指向最新版本
+                latest_link = quant_dir / "latest.gguf"
+                if latest_link.exists() or latest_link.is_symlink():
+                    latest_link.unlink()
+
+                # 在Windows上创建副本而不是符号链接
+                import shutil
+                shutil.copy2(gguf_path, latest_link)
+                self.logger.info(f"✅ Updated latest version link: {latest_link}")
+
+                return str(gguf_path)
+            else:
+                self.logger.error("❌ GGUF conversion failed, file does not exist")
+                return None
+
+        except Exception as e:
+            self.logger.error(f"❌ GGUF conversion failed: {e}")
+            import traceback
+            self.logger.error(traceback.format_exc())
+            return None
+
+    def _register_trained_version(
+        self,
+        model_path: str,
+        gguf_path: Optional[str],
+        training_info: Dict
+    ) -> Optional[str]:
+        """
+        注册训练后的模型版本
+
+        Args:
+            model_path: HuggingFace格式模型路径
+            gguf_path: GGUF格式模型路径
+            training_info: 训练信息
+
+        Returns:
+            版本ID
+        """
+        try:
+            self.logger.info("📝 Registering model version...")
+
+            version_id = self.version_manager.register_new_version(
+                model_path=model_path,
+                gguf_path=gguf_path,
+                training_info=training_info
+            )
+
+            if version_id:
+                self.logger.info(f"✅ Version registration successful: {version_id}")
+
+                # 显示存储使用情况
+                storage = self.version_manager.get_storage_usage()
+                self.logger.info(f"   Total storage: {storage['total_gb']:.2f}GB")
+                self.logger.info(f"   Version count: {len(storage['versions'])}")
+
+                # 🎯 性能评估和自动切换（仅在有GGUF模型时执行）
+                if gguf_path:
+                    try:
+                        self.logger.info("=" * 70)
+                        self.logger.info("📊 Starting performance evaluation...")
+                        self.logger.info("=" * 70)
+
+                        from src.training.performance_evaluator import PerformanceEvaluator
+                        evaluator = PerformanceEvaluator()
+
+                        # 评估新模型性能（使用默认验证数据）
+                        new_model_score = evaluator.evaluate_model(
+                            model_path=gguf_path,
+                            model_type="gguf"
+                        )
+
+                        self.logger.info(f"   New model performance score: {new_model_score:.2%}")
+
+                        # 更新版本信息中的性能分数
+                        self.version_manager.update_version_performance(version_id, new_model_score)
+
+                        # 获取当前激活版本的性能
+                        active_version = self.version_manager.get_active_version()
+                        should_switch = False
+
+                        if active_version and active_version['version_id'] != version_id:
+                            current_score = active_version.get('performance_score', 0)
+                            self.logger.info(f"   Current active model performance: {current_score:.2%}")
+
+                            # 只有新模型性能更好时才切换
+                            if new_model_score > current_score:
+                                improvement = new_model_score - current_score
+                                self.logger.info(f"   ✅ New model performs better (improvement: {improvement:.2%})")
+                                should_switch = True
+                            else:
+                                decline = current_score - new_model_score
+                                self.logger.info(f"   ⚠️ New model underperforms (decline: {decline:.2%})")
+                                self.logger.info(f"   Keeping current active model: {active_version['version_id']}")
+                        else:
+                            # 没有激活版本或新版本就是激活版本，直接激活
+                            should_switch = True
+                            self.logger.info("   This is the first trained model, activating automatically")
+
+                        # 执行切换
+                        if should_switch:
+                            self.version_manager.set_active_version(version_id)
+                            self.logger.info(f"   🎯 Switched to new model: {version_id}")
+
+                        self.logger.info("=" * 70)
+
+                    except Exception as e:
+                        self.logger.warning(f"⚠️ Performance evaluation failed: {e}")
+                else:
+                    self.logger.info("💡 Training complete! Please manually convert to GGUF format in UI for inference")
+
+                return version_id
+            else:
+                self.logger.error("❌ Version registration failed")
+                return None
+
+        except Exception as e:
+            self.logger.error(f"❌ Version registration failed: {e}")
+            import traceback
+            self.logger.error(traceback.format_exc())
+            return None
+
+    def continue_training(
+        self,
+        training_data: List[Dict[str, Any]],
+        version_id: Optional[str] = None,
+        progress_callback: Optional[Callable] = None,
+        num_epochs: int = 2,
+        batch_size: int = 2,
+        learning_rate: float = 1e-5
+    ) -> Dict[str, Any]:
+        """
+        增量训练：在已训练模型基础上继续训练
+
+        Args:
+            training_data: 新的训练数据
+            version_id: 要继续训练的版本ID（None表示使用激活版本）
+            progress_callback: 进度回调
+            num_epochs: 训练轮数
+            batch_size: 批次大小
+            learning_rate: 学习率（通常比初始训练更小）
+
+        Returns:
+            训练结果
+        """
+        try:
+            self.logger.info("=" * 70)
+            self.logger.info("🔄 Starting incremental training...")
+            self.logger.info("=" * 70)
+
+            # 1. 获取要继续训练的版本
+            if version_id:
+                version_info = self.version_manager.get_version_info(version_id)
+            else:
+                version_info = self.version_manager.get_active_version()
+
+            if not version_info:
+                return {
+                    "success": False,
+                    "error": "No available training version found"
+                }
+
+            self.logger.info(f"   Based on version: {version_info['version_id']}")
+            self.logger.info(f"   Created at: {version_info['created_at']}")
+
+            # 2. 获取HuggingFace格式模型路径
+            hf_path = version_info.get("hf_path")
+            if not hf_path or not Path(hf_path).exists():
+                return {
+                    "success": False,
+                    "error": f"HuggingFace format model does not exist: {hf_path}"
+                }
+
+            self.logger.info(f"   Model path: {hf_path}")
+
+            if progress_callback:
+                progress_callback(0.1, "Loading trained model...")
+
+            # 3. 加载已训练的模型
+            try:
+                from transformers import (
+                    AutoTokenizer, AutoModelForCausalLM,
+                    Trainer, TrainingArguments, DataCollatorForLanguageModeling
+                )
+                from peft import LoraConfig, get_peft_model, TaskType
+                from datasets import Dataset
+                import torch
+            except ImportError as e:
+                return {"success": False, "error": f"Missing required dependencies: {e}"}
+
+            # 加载tokenizer和模型
+            tokenizer = AutoTokenizer.from_pretrained(hf_path)
+            model = AutoModelForCausalLM.from_pretrained(
+                hf_path,
+                torch_dtype=torch.float16 if self.use_gpu else torch.float32,
+                device_map="auto" if self.use_gpu else None
+            )
+
+            self.logger.info("✅ Model loaded successfully")
+
+            if progress_callback:
+                progress_callback(0.2, "Preparing training data...")
+
+            # 4. 准备训练数据
+            def tokenize_function(examples):
+                texts = [
+                    f"Original script: {item['original']}\nViral script: {item['viral']}{tokenizer.eos_token}"
+                    for item in examples['data']
+                ]
+                return tokenizer(
+                    texts,
+                    truncation=True,
+                    max_length=2048,
+                    padding="max_length"
+                )
+
+            dataset = Dataset.from_dict({"data": training_data})
+            tokenized_dataset = dataset.map(
+                tokenize_function,
+                batched=True,
+                remove_columns=dataset.column_names
+            )
+
+            self.logger.info(f"✅ Data preparation complete, samples: {len(tokenized_dataset)}")
+
+            if progress_callback:
+                progress_callback(0.3, "Configuring incremental training...")
+
+            # 5. 配置LoRA（增量训练使用更小的学习率）
+            lora_config = LoraConfig(
+                r=16,
+                lora_alpha=32,
+                target_modules=["c_attn"],
+                lora_dropout=0.1,
+                bias="none",
+                task_type=TaskType.CAUSAL_LM
+            )
+
+            model = get_peft_model(model, lora_config)
+            model.print_trainable_parameters()
+
+            # 6. 配置训练参数
+            training_args = TrainingArguments(
+                output_dir="./results_en_incremental",
+                num_train_epochs=num_epochs,
+                per_device_train_batch_size=batch_size,
+                learning_rate=learning_rate,  # 增量训练使用更小的学习率
+                logging_steps=10,
+                save_strategy="epoch",
+                fp16=self.use_gpu,
+                gradient_checkpointing=True,
+                optim="adamw_torch"
+            )
+
+            # 7. 创建Trainer
+            data_collator = DataCollatorForLanguageModeling(
+                tokenizer=tokenizer,
+                mlm=False
+            )
+
+            trainer = Trainer(
+                model=model,
+                args=training_args,
+                train_dataset=tokenized_dataset,
+                data_collator=data_collator
+            )
+
+            if progress_callback:
+                progress_callback(0.4, "Starting incremental training...")
+
+            # 8. 执行训练
+            self.logger.info("🚀 Starting incremental training...")
+            train_result = trainer.train()
+
+            if progress_callback:
+                progress_callback(0.9, "Saving incremental training model...")
+
+            # 9. 保存模型
+            os.makedirs("./results_en_incremental", exist_ok=True)
+            trainer.save_model()
+            tokenizer.save_pretrained("./results_en_incremental")
+
+            # 10. 注册新版本（不自动转换GGUF）
+            new_version_id = self._register_trained_version(
+                "./results_en_incremental",
+                None,  # Don't auto-convert to GGUF, user can manually convert in UI
+                {
+                    "training_type": "INCREMENTAL_TRAINING",
+                    "base_version": version_info["version_id"],
+                    "dataset_size": len(training_data),
+                    "training_args": {
+                        "num_epochs": num_epochs,
+                        "batch_size": batch_size,
+                        "learning_rate": learning_rate
+                    }
+                }
+            )
+
+            self.logger.info("=" * 70)
+            self.logger.info("✅ Incremental training complete!")
+            self.logger.info("=" * 70)
+
+            return {
+                "success": True,
+                "message": "Incremental training complete",
+                "training_type": "INCREMENTAL_TRAINING",
+                "base_version": version_info["version_id"],
+                "new_version": new_version_id,
+                "model_path": "./results_en_incremental",
+                "gguf_path": gguf_path
+            }
+
+        except Exception as e:
+            self.logger.error(f"❌ Incremental training failed: {e}")
+            import traceback
+            self.logger.error(traceback.format_exc())
+            return {
+                "success": False,
+                "error": str(e),
+                "training_type": "INCREMENTAL_TRAINING_FAILED"
+            }

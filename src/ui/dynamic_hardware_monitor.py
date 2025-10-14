@@ -175,7 +175,8 @@ class HardwareMonitorWorker(QObject):
 
 class RealTimeHardwareInfoWidget(QWidget):
     """实时硬件信息显示组件"""
-    
+
+    hardware_detected = pyqtSignal(object)  # 硬件检测完成信号（包括初始检测）
     hardware_changed = pyqtSignal(object)  # 硬件变化信号
     refresh_requested = pyqtSignal()  # 刷新请求信号
     
@@ -289,42 +290,56 @@ class RealTimeHardwareInfoWidget(QWidget):
         """更新硬件信息显示"""
         try:
             self.current_snapshot = snapshot
-            
-            # 清除现有信息
+
+            # 🔧 修复：确保UI更新在主线程中执行,避免闪退
+            # 清除现有信息时使用deleteLater()而不是直接删除
             for i in reversed(range(self.info_layout.count())):
-                self.info_layout.itemAt(i).widget().setParent(None)
-            
+                widget = self.info_layout.itemAt(i).widget()
+                if widget:
+                    widget.setParent(None)
+                    widget.deleteLater()  # 延迟删除,避免崩溃
+
             # 添加硬件信息
             row = 0
-            
+
             # GPU信息显示已移除 - 恢复UI界面到原始状态
             # 保留硬件检测后端功能，仅移除UI显示
-            
+
             # 内存信息
             self._add_info_row("🧠 系统内存", f"{snapshot.system_ram_gb:.1f} GB", row)
             row += 1
             self._add_info_row("💿 可用内存", f"{snapshot.available_ram_gb:.1f} GB", row)
             row += 1
-            
+
             # CPU信息
             self._add_info_row("⚡ CPU核心", f"{snapshot.cpu_cores} 核", row)
             row += 1
             if snapshot.cpu_freq_mhz > 0:
                 self._add_info_row("🔄 CPU频率", f"{snapshot.cpu_freq_mhz:.0f} MHz", row)
                 row += 1
-            
+
             # 性能等级
             self._add_info_row("📊 性能等级", snapshot.performance_level, row)
             row += 1
             self._add_info_row("🎯 推荐量化", snapshot.recommended_quantization, row)
-            
+
             # 更新状态
             timestamp = datetime.fromtimestamp(snapshot.detection_timestamp)
             self.status_label.setText(f"✅ 最后更新: {timestamp.strftime('%H:%M:%S')}")
-            
+
+            # 🔧 关键修复：发射hardware_detected信号
+            # 这样初始检测时也能触发推荐更新
+            logger.info("📤 发射 hardware_detected 信号")
+            self.hardware_detected.emit(snapshot)
+
         except Exception as e:
             logger.error(f"更新硬件信息失败: {e}")
-            self.status_label.setText(f"❌ 更新失败: {e}")
+            import traceback
+            logger.error(f"详细错误: {traceback.format_exc()}")
+            try:
+                self.status_label.setText(f"❌ 更新失败: {e}")
+            except:
+                pass  # 忽略setText可能的异常
     
     def _add_info_row(self, label: str, value: str, row: int):
         """添加信息行"""

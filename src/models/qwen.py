@@ -27,14 +27,15 @@ class QwenLLM(BaseLLM):
     def __init__(self, config: ModelConfig):
         """
         初始化Qwen模型
-        
+
         Args:
             config: 模型配置
         """
         super().__init__(config)
-        self.model_name = config.model_info.get("name", "qwen2.5-7b-zh")
+        # 默认使用Qwen2.5-0.5B（入门级模型）
+        self.model_name = config.model_info.get("name", "qwen2.5-0.5b-zh")
         self.quantization = config.quantization
-        
+
         # 模拟实现，实际项目中会真正加载模型
         self.temperature = 0.7
         self.top_p = 0.9

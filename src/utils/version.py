@@ -5,12 +5,12 @@ VisionAI-ClipsMaster 版本信息
 """
 
 # 版本信息
-__version__ = "1.0.1"
-__version_info__ = (1, 0, 1)
+__version__ = "1.1.0"
+__version_info__ = (1, 1, 0)
 
 # 发布信息
-__release_date__ = "2025-07-24"
-__release_name__ = "稳定优化版"
+__release_date__ = "2025-10-06"
+__release_name__ = "智能下载器优化版"
 __build_type__ = "stable"
 
 # 兼容性信息
@@ -18,10 +18,10 @@ __min_python_version__ = "3.8"
 __supported_platforms__ = ["Windows", "Linux", "macOS"]
 
 # 功能版本
-__ui_version__ = "1.0.1"
-__core_version__ = "1.0.1"
-__training_version__ = "1.0.1"
-__export_version__ = "1.0.1"
+__ui_version__ = "1.1.0"
+__core_version__ = "1.1.0"
+__training_version__ = "1.1.0"
+__export_version__ = "1.1.0"
 
 # 模型版本
 __mistral_model_version__ = "7B-v1.0"

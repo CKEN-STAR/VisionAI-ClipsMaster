@@ -4,6 +4,10 @@
 剪映导出器模块
 
 导出为剪映应用可导入的项目格式
+
+重构说明：
+- 使用新的JianyingExporterAdapter（基于pyCapCut实现）
+- 保持向后兼容性
 """
 
 import os
@@ -17,6 +21,14 @@ from datetime import datetime
 
 from src.export.base_exporter import BaseExporter
 from src.utils.log_handler import get_logger
+
+# 导入新的导出器适配器
+try:
+    from src.exporters.jianying_exporter_adapter import JianyingExporterAdapter
+    HAS_NEW_EXPORTER = True
+except ImportError:
+    HAS_NEW_EXPORTER = False
+    print("警告: 无法导入新的剪映导出器适配器")
 
 class JianyingExporter(BaseExporter):
     """
@@ -51,51 +63,100 @@ class JianyingExporter(BaseExporter):
     def export(self, version: Dict[str, Any], output_path: str) -> str:
         """
         将版本数据导出为剪映格式
-        
+
         Args:
-            version: 版本数据，包含场景和剪辑信息
+            version: 版本数据，包含场景和剪辑信息或segments信息
             output_path: 输出文件路径
-            
+
         Returns:
             生成的文件路径
         """
+        # 优先使用新的导出器（不需要严格的版本验证）
+        if HAS_NEW_EXPORTER:
+            self.logger.info("使用新的剪映导出器（基于pyCapCut实现）")
+            try:
+                # 提取segments数据
+                segments = version.get('segments', [])
+                if not segments:
+                    # 尝试从scenes中提取
+                    scenes = version.get('scenes', [])
+                    segments = []
+                    for scene in scenes:
+                        clips = scene.get('clips', [])
+                        segments.extend(clips)
+
+                # 如果还是没有segments，记录警告但继续
+                if not segments:
+                    self.logger.warning("未找到segments或scenes数据，将生成空项目")
+
+                # 创建适配器
+                canvas = self.draft_template.get('canvas_setting', {})
+                adapter = JianyingExporterAdapter(
+                    width=canvas.get('width', 1920),
+                    height=canvas.get('height', 1080),
+                    fps=canvas.get('fps', 30)
+                )
+
+                # 构建项目数据
+                project_data = {
+                    "project_name": version.get('project_name') or version.get('version_id', 'VisionAI_Project'),
+                    "segments": segments
+                }
+
+                # 导出
+                actual_path = adapter.export_project(project_data, output_path)
+
+                if actual_path:
+                    self.logger.info(f"已导出剪映项目文件: {actual_path}")
+                    return actual_path
+                else:
+                    self.logger.warning("新导出器导出失败，尝试使用旧导出器")
+                    # 继续使用旧导出器
+            except Exception as e:
+                self.logger.error(f"新导出器出错: {e}，尝试使用旧导出器")
+                # 继续使用旧导出器
+        else:
+            self.logger.warning("新导出器不可用，使用旧导出器")
+
+        # 使用旧导出器时才进行严格验证
         if not self._validate_version(version):
             raise ValueError("无效的版本数据")
-        
+
         self._ensure_output_directory(output_path)
-        
+
+        # 使用旧的导出器（向后兼容）
         # 获取版本信息
         scenes = version.get('scenes', [])
         version_id = version.get('version_id', 'unknown')
-        
+
         # 创建临时目录 - 使用uuid确保唯一性
         temp_dir = os.path.join(self.temp_dir, f"jianying_export_{uuid.uuid4().hex}")
         os.makedirs(temp_dir, exist_ok=True)
-        
+
         try:
             # 创建草稿文件
             draft_path = os.path.join(temp_dir, "draft_content.json")
             self._create_draft_file(version, draft_path)
-            
+
             # 如果导出的是压缩包
             if output_path.endswith('.zip'):
                 # 创建压缩文件
                 with zipfile.ZipFile(output_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
                     zipf.write(draft_path, arcname="draft_content.json")
-                    
+
                 self.logger.info(f"已导出剪映项目压缩包: {output_path}")
-                
+
             else:
                 # 复制文件
                 shutil.copy2(draft_path, output_path)
                 self.logger.info(f"已导出剪映项目文件: {output_path}")
-            
+
             return output_path
-            
+
         except Exception as e:
             self.logger.error(f"导出剪映项目失败: {str(e)}")
             raise
-            
+
         finally:
             # 清理临时目录
             if os.path.exists(temp_dir):

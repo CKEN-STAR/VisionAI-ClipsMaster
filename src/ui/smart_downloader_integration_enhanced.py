@@ -158,19 +158,18 @@ class SmartDownloaderIntegrationManager(QObject):
     def _initialize_ui_components(self):
         """初始化UI组件"""
         try:
-            from src.ui.smart_downloader_ui_optimized import (
-                SmartDownloaderDialog,
-                RealTimeHardwareInfoWidget,
-                DynamicRecommendationWidget
-            )
-            
-            self.components["SmartDownloaderDialog"] = SmartDownloaderDialog
+            # 使用新的超快速智能推荐对话框
+            from src.ui.ultrafast_smart_downloader_dialog import UltraFastSmartDownloaderDialog
+            from src.ui.dynamic_hardware_monitor import RealTimeHardwareInfoWidget
+            from src.ui.dynamic_model_recommendation import DynamicModelRecommendationWidget
+
+            self.components["SmartDownloaderDialog"] = UltraFastSmartDownloaderDialog
             self.components["RealTimeHardwareInfoWidget"] = RealTimeHardwareInfoWidget
-            self.components["DynamicRecommendationWidget"] = DynamicRecommendationWidget
-            
+            self.components["DynamicRecommendationWidget"] = DynamicModelRecommendationWidget
+
             self.integration_status["ui_components"] = True
             logger.info("✅ UI组件初始化成功")
-            
+
         except ImportError as e:
             logger.error(f"❌ UI组件导入失败: {e}")
             self.integration_status["ui_components"] = False

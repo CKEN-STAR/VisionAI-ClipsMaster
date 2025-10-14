@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "visionai-clipsmaster"
-version = "1.0.1"
+version = "1.1.0"
 description = "AI驱动的短剧视频混剪大师"
 authors = [{name = "VisionAI Team"}]
 license = {text = "MIT"}

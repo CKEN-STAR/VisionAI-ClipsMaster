@@ -29,10 +29,17 @@ except ImportError:
     HAS_TRANSFORMERS = False
 
 try:
-    from peft import LoraConfig, get_peft_model, TaskType
+    from peft import LoraConfig, get_peft_model, TaskType, prepare_model_for_kbit_training
     HAS_PEFT = True
 except ImportError:
     HAS_PEFT = False
+
+# 尝试导入量化工具
+try:
+    from src.core.bnb_quantizer import BnBQuantizer, create_4bit_config, create_8bit_config
+    HAS_BNB_QUANTIZER = True
+except ImportError:
+    HAS_BNB_QUANTIZER = False
 
 logger = logging.getLogger(__name__)
 
@@ -68,13 +75,13 @@ class ModelFineTuner:
         default_config = {
             "models": {
                 "zh": {
-                    "base_model": "Qwen/Qwen2.5-7B-Instruct",
+                    "base_model": "Qwen/Qwen3-0.6B-Instruct",
                     "model_path": "models/qwen/base",
                     "output_dir": "models/qwen/finetuned"
                 },
                 "en": {
-                    "base_model": "mistralai/Mistral-7B-Instruct-v0.1",
-                    "model_path": "models/mistral/base", 
+                    "base_model": "mistralai/Mistral-7B-Instruct-v0.3",
+                    "model_path": "models/mistral/base",
                     "output_dir": "models/mistral/finetuned"
                 }
             },
@@ -96,6 +103,14 @@ class ModelFineTuner:
                 "lora_alpha": 32,
                 "lora_dropout": 0.1,
                 "target_modules": ["q_proj", "v_proj", "k_proj", "o_proj"]
+            },
+            "quantization": {
+                "enabled": False,  # 是否启用量化
+                "load_in_8bit": False,  # 8bit量化
+                "load_in_4bit": False,  # 4bit量化(QLoRA)
+                "bnb_4bit_compute_dtype": "float16",  # 4bit计算类型
+                "bnb_4bit_quant_type": "nf4",  # 量化类型
+                "bnb_4bit_use_double_quant": True  # 双重量化
             },
             "memory_optimization": {
                 "use_gradient_checkpointing": True,
@@ -380,45 +395,89 @@ class ModelFineTuner:
             return None, None
     
     def _load_model_and_tokenizer(self, language: str, config: Dict[str, Any]) -> tuple:
-        """加载模型和tokenizer"""
+        """加载模型和tokenizer(支持量化)"""
         try:
             model_config = config["models"][language]
             model_name = model_config["base_model"]
-            
+            quant_config = config.get("quantization", {})
+
             self._log(f"加载模型: {model_name}")
-            
+
+            # 检查是否启用量化
+            use_quantization = quant_config.get("enabled", False)
+            load_in_8bit = quant_config.get("load_in_8bit", False)
+            load_in_4bit = quant_config.get("load_in_4bit", False)
+
             # 加载tokenizer
             tokenizer = AutoTokenizer.from_pretrained(
                 model_name,
                 trust_remote_code=True,
                 padding_side="right"
             )
-            
+
             if tokenizer.pad_token is None:
                 tokenizer.pad_token = tokenizer.eos_token
-            
-            # 加载模型
-            model = AutoModelForCausalLM.from_pretrained(
-                model_name,
-                torch_dtype=torch.float16 if self.device == "cuda" else torch.float32,
-                device_map="auto" if self.device == "cuda" else None,
-                trust_remote_code=True,
-                low_cpu_mem_usage=True
-            )
-            
-            if self.device == "cpu":
-                model = model.to("cpu")
-            
+
+            # 加载模型(支持量化)
+            if use_quantization and HAS_BNB_QUANTIZER:
+                self._log(f"使用量化加载: 8bit={load_in_8bit}, 4bit={load_in_4bit}")
+                quantizer = BnBQuantizer()
+
+                if load_in_4bit:
+                    # 4bit量化(QLoRA)
+                    model, _ = quantizer.load_model_4bit(
+                        model_name,
+                        device_map="auto",
+                        compute_dtype=quant_config.get("bnb_4bit_compute_dtype", "float16"),
+                        use_double_quant=quant_config.get("bnb_4bit_use_double_quant", True),
+                        quant_type=quant_config.get("bnb_4bit_quant_type", "nf4")
+                    )
+                    # 准备模型用于k-bit训练
+                    if HAS_PEFT:
+                        model = prepare_model_for_kbit_training(model)
+                        self._log("✅ 模型已准备用于4bit训练(QLoRA)")
+                elif load_in_8bit:
+                    # 8bit量化
+                    model, _ = quantizer.load_model_8bit(
+                        model_name,
+                        device_map="auto"
+                    )
+                    # 准备模型用于k-bit训练
+                    if HAS_PEFT:
+                        model = prepare_model_for_kbit_training(model)
+                        self._log("✅ 模型已准备用于8bit训练")
+                else:
+                    # 普通加载
+                    model = self._load_model_normal(model_name, config)
+            else:
+                # 普通加载
+                model = self._load_model_normal(model_name, config)
+
             # 启用梯度检查点（内存优化）
             if config["memory_optimization"]["use_gradient_checkpointing"]:
                 model.gradient_checkpointing_enable()
             
             self._log("模型和tokenizer加载完成")
             return model, tokenizer
-            
+
         except Exception as e:
             self._log(f"加载模型失败: {str(e)}")
             return None, None
+
+    def _load_model_normal(self, model_name: str, config: Dict[str, Any]):
+        """普通方式加载模型(无量化)"""
+        model = AutoModelForCausalLM.from_pretrained(
+            model_name,
+            torch_dtype=torch.float16 if self.device == "cuda" else torch.float32,
+            device_map="auto" if self.device == "cuda" else None,
+            trust_remote_code=True,
+            low_cpu_mem_usage=True
+        )
+
+        if self.device == "cpu":
+            model = model.to("cpu")
+
+        return model
 
     def _setup_lora(self, model, lora_config: Dict[str, Any]):
         """设置LoRA配置"""

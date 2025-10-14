@@ -8,14 +8,32 @@
 4. 视觉-文本内容一致性验证
 """
 
-from src.alignment.multimodal_sync import AudioVisualAligner
-from src.alignment.scene_analyzer import SceneAnalyzer
-from src.alignment.keyframe_extractor import extract_keyframes
-
 __version__ = "0.1.0"
+
+# 延迟导入,避免cv2循环导入问题
+def __getattr__(name):
+    """延迟导入模块属性"""
+    if name == 'AudioVisualAligner':
+        from src.alignment.multimodal_sync import AudioVisualAligner
+        return AudioVisualAligner
+    elif name == 'SceneAnalyzer':
+        from src.alignment.scene_analyzer import SceneAnalyzer
+        return SceneAnalyzer
+    elif name == 'extract_keyframes':
+        from src.alignment.keyframe_extractor import extract_keyframes
+        return extract_keyframes
+    elif name == 'SceneCacheManager':
+        from src.alignment.scene_cache_manager import SceneCacheManager
+        return SceneCacheManager
+    elif name == 'get_cache_manager':
+        from src.alignment.scene_cache_manager import get_cache_manager
+        return get_cache_manager
+    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
 
 __all__ = [
     'AudioVisualAligner',
     'SceneAnalyzer',
     'extract_keyframes',
+    'SceneCacheManager',
+    'get_cache_manager',
 ]

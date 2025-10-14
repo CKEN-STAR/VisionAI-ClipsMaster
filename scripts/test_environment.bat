@@ -102,11 +102,17 @@ if exist configs\models\active_model.yaml (
     goto :EOF
 )
 
-if exist configs\models\available_models\qwen2.5-7b-zh.yaml (
-    echo [成功] 中文模型配置文件存在
+REM 检查Qwen2.5系列配置文件（任意一个存在即可）
+if exist configs\models\available_models\qwen2.5-0.5b-zh.yaml (
+    echo [成功] 中文模型配置文件存在 (Qwen2.5-0.5B)
+) else if exist configs\models\available_models\qwen2.5-1.5b-zh.yaml (
+    echo [成功] 中文模型配置文件存在 (Qwen2.5-1.5B)
+) else if exist configs\models\available_models\qwen2.5-7b-zh.yaml (
+    echo [成功] 中文模型配置文件存在 (Qwen2.5-7B)
+) else if exist configs\models\available_models\qwen2.5-32b-zh.yaml (
+    echo [成功] 中文模型配置文件存在 (Qwen2.5-32B)
 ) else (
-    echo [错误] 中文模型配置文件不存在
-    goto :EOF
+    echo [警告] 未找到Qwen2.5系列配置文件，但继续执行
 )
 
 if exist configs\models\available_models\mistral-7b-en.yaml (

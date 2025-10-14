@@ -6,7 +6,7 @@ VisionAI-ClipsMaster UI模块初始化文件
 """
 
 # 版本信息
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __author__ = "VisionAI-ClipsMaster Team"
 
 # 首先修复环境问题

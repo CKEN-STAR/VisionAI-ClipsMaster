@@ -3,7 +3,7 @@ VisionAI-ClipsMaster UI模块
 提供用户界面相关的功能和组件
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 __author__ = "VisionAI-ClipsMaster Team"
 
 # 导入主要的UI组件

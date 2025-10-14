@@ -118,6 +118,7 @@ class SettingsPanel(QWidget if PYQT_AVAILABLE else object):
         # 添加设置选项卡
         self._add_appearance_tab()
         self._add_performance_tab()
+        self._add_model_management_tab()  # 新增：模型管理选项卡
         self._add_export_tab()
         self._add_advanced_tab()
         

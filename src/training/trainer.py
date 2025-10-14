@@ -348,63 +348,46 @@ class ModelTrainer:
             训练结果
         """
         try:
-            # 检查是否为测试模式（空数据）
-            is_test_mode = len(self.training_data) == 0
+            # 验证训练数据
+            if len(self.training_data) == 0:
+                raise ValueError("训练数据为空，无法执行训练")
 
-            if is_test_mode:
-                # 测试模式：模拟训练过程
-                if progress_callback:
-                    progress_callback(0.2, "测试模式：模拟训练数据准备...")
-                    progress_callback(0.4, "测试模式：模拟训练器初始化...")
-                    progress_callback(0.6, "测试模式：模拟训练执行...")
-                    progress_callback(0.8, "测试模式：模拟训练完成...")
+            if progress_callback:
+                progress_callback(0.2, "准备训练数据...")
 
-                # 返回模拟的训练结果
-                training_result = {
-                    "success": True,
-                    "message": "测试模式训练完成",
-                    "epochs_completed": 1,
-                    "final_loss": 0.1,
-                    "test_mode": True
-                }
+            # 检测语言并选择合适的训练器
+            language = self._detect_primary_language()
+
+            if progress_callback:
+                progress_callback(0.3, f"检测到主要语言: {'中文' if language == 'zh' else '英文'}")
+
+            # 导入对应的训练器
+            if language == "zh":
+                from .zh_trainer import ZhTrainer
+                trainer = ZhTrainer(use_gpu=self.use_gpu)
             else:
-                # 正常模式：实际训练
+                from .en_trainer import EnTrainer
+                trainer = EnTrainer(use_gpu=self.use_gpu)
+
+            if progress_callback:
+                progress_callback(0.4, f"初始化{language}训练器...")
+
+            # 执行训练
+            def training_progress_callback(progress, message):
+                # 将训练器进度映射到总体进度 (40%-95%)
+                overall_progress = 0.4 + progress * 0.55
                 if progress_callback:
-                    progress_callback(0.2, "准备训练数据...")
+                    return progress_callback(overall_progress, message)
+                return True
 
-                # 检测语言并选择合适的训练器
-                language = self._detect_primary_language()
+            # 内存监控
+            self.memory_manager.auto_cleanup_if_needed()
 
-                if progress_callback:
-                    progress_callback(0.3, f"检测到主要语言: {'中文' if language == 'zh' else '英文'}")
-
-                # 导入对应的训练器
-                if language == "zh":
-                    from .zh_trainer import ZhTrainer
-                    trainer = ZhTrainer(use_gpu=self.use_gpu)
-                else:
-                    from .en_trainer import EnTrainer
-                    trainer = EnTrainer(use_gpu=self.use_gpu)
-
-                if progress_callback:
-                    progress_callback(0.4, f"初始化{language}训练器...")
-
-                # 执行训练
-                def training_progress_callback(progress, message):
-                    # 将训练器进度映射到总体进度 (40%-95%)
-                    overall_progress = 0.4 + progress * 0.55
-                    if progress_callback:
-                        return progress_callback(overall_progress, message)
-                    return True
-
-                # 内存监控
-                self.memory_manager.auto_cleanup_if_needed()
-
-                # 执行实际训练
-                training_result = trainer.train(
-                    training_data=self.training_data,
-                    progress_callback=training_progress_callback
-                )
+            # 执行实际训练
+            training_result = trainer.train(
+                training_data=self.training_data,
+                progress_callback=training_progress_callback
+            )
 
             if progress_callback:
                 progress_callback(0.95, "保存训练结果...")

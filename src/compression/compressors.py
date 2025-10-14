@@ -335,11 +335,19 @@ def register_default_compressors():
 def register_compressor(compressor: CompressorBase) -> None:
     """
     注册压缩器
-    
+
     Args:
         compressor: 压缩器实例
     """
-    _COMPRESSORS[compressor.name] = compressor
+    # 如果压缩器有level属性,使用"算法-级别"作为key
+    if hasattr(compressor, 'level'):
+        key = f"{compressor.name}-{compressor.level}"
+    elif hasattr(compressor, 'preset'):
+        key = f"{compressor.name}-{compressor.preset}"
+    else:
+        key = compressor.name
+
+    _COMPRESSORS[key] = compressor
 
 
 def get_compressor(name: str) -> Optional[CompressorBase]:

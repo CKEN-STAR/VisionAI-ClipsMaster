@@ -24,7 +24,9 @@ logger = logging.getLogger("HardwareAccel")
 
 # 导入核心压缩模块
 from src.compression.compressors import CompressorBase, register_compressor
-from src.compression.core import compress, decompress
+# from src.compression.core import compress, decompress  # core.py不存在,注释掉
+compress = None
+decompress = None
 
 # 全局变量
 HAS_CUDA = False
@@ -42,20 +44,24 @@ try:
     import torch
     HAS_TORCH = True
     if torch.cuda.is_available():
-        HAS_CUDA = True
         CUDA_DEVICE_COUNT = torch.cuda.device_count()
-        HARDWARE_INFO["cuda"]["available"] = True
-        HARDWARE_INFO["cuda"]["version"] = torch.version.cuda
-        HARDWARE_INFO["cuda"]["devices"] = [
-            {
-                "index": i,
-                "name": torch.cuda.get_device_name(i),
-                "memory": torch.cuda.get_device_properties(i).total_memory
-            }
-            for i in range(CUDA_DEVICE_COUNT)
-        ]
-        logger.info(f"检测到CUDA: {HARDWARE_INFO['cuda']['version']}, "
-                   f"设备数量: {CUDA_DEVICE_COUNT}")
+        # 只有在有可用设备时才启用CUDA
+        if CUDA_DEVICE_COUNT > 0:
+            HAS_CUDA = True
+            HARDWARE_INFO["cuda"]["available"] = True
+            HARDWARE_INFO["cuda"]["version"] = torch.version.cuda
+            HARDWARE_INFO["cuda"]["devices"] = [
+                {
+                    "index": i,
+                    "name": torch.cuda.get_device_name(i),
+                    "memory": torch.cuda.get_device_properties(i).total_memory
+                }
+                for i in range(CUDA_DEVICE_COUNT)
+            ]
+            logger.info(f"检测到CUDA: {HARDWARE_INFO['cuda']['version']}, "
+                       f"设备数量: {CUDA_DEVICE_COUNT}")
+        else:
+            logger.info("CUDA可用但没有检测到GPU设备")
 except ImportError:
     logger.info("未找到PyTorch，GPU加速将使用替代方法")
 

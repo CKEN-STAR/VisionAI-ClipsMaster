@@ -1,4 +1,4 @@
-active_model: qwen2.5-7b-zh
+active_model: qwen2.5-0.5b-zh
 auto_switch: true  # 启用自动语言检测和模型切换
 fallback_model: mistral-7b-en  # 英文模型配置
 bilingual_support: true  # 启用双语言支持

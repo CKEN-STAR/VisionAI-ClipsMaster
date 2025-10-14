@@ -140,15 +140,24 @@ class IntelligentModelSelector:
         self._last_model_name = model_name
         self._last_tab_context = current_tab_context
 
-        # 额外验证：确保请求的模型名称有效
-        if model_name not in ["mistral-7b", "qwen2.5-7b"]:
+        # 额外验证：确保请求的模型名称有效（包含新增模型）
+        valid_models = [
+            "qwen2.5-0.5b", "qwen2.5-1.5b", "qwen2.5-3b", "qwen2.5-7b", "qwen2.5-14b", "qwen2.5-32b",  # Qwen2.5系列
+            "mistral-7b", "mistral-12b-nemo", "mistral-24b-small", "mistral-large2"
+        ]
+
+        if model_name not in valid_models:
             logger.warning(f"⚠️ 检测到非标准模型名称: {model_name}")
             # 标准化模型名称
             if "mistral" in model_name.lower():
-                model_name = "mistral-7b"
+                # 根据硬件配置推荐合适的Mistral模型
+                hardware = hardware_override or self._get_hardware_with_cache()
+                model_name = self._select_mistral_variant(hardware)
                 logger.info(f"🔄 标准化为英文模型: {model_name}")
             elif "qwen" in model_name.lower():
-                model_name = "qwen2.5-7b"
+                # 根据硬件配置推荐合适的Qwen模型
+                hardware = hardware_override or self._get_hardware_with_cache()
+                model_name = self._select_qwen_variant(hardware)
                 logger.info(f"🔄 标准化为中文模型: {model_name}")
             else:
                 logger.error(f"❌ 无法识别的模型名称: {model_name}")
@@ -167,6 +176,10 @@ class IntelligentModelSelector:
 
         variants = self.analyzer.model_variants[model_name]
         logger.info(f"📋 找到 {len(variants)} 个模型变体: {[v.name for v in variants]}")
+
+        # 计算硬件评分，用于智能推荐
+        hardware_score = self.calculate_hardware_score(hardware)
+        logger.info(f"💯 硬件综合评分: {hardware_score:.1f}/100")
 
         # 根据策略选择
         recommendation = None
@@ -187,11 +200,15 @@ class IntelligentModelSelector:
         # 最终验证：确保推荐内容与模型名称严格匹配
         if recommendation:
             variant_name = recommendation.variant.name.lower()
-            if model_name == "mistral-7b" and "mistral" not in variant_name:
-                logger.error(f"❌ 英文模型推荐错误: 请求=mistral-7b, 推荐变体={recommendation.variant.name}")
+
+            # 检查Mistral系列模型
+            if "mistral" in model_name and "mistral" not in variant_name:
+                logger.error(f"❌ 英文模型推荐错误: 请求={model_name}, 推荐变体={recommendation.variant.name}")
                 raise ValueError(f"推荐结果与请求模型不匹配: {model_name} vs {recommendation.variant.name}")
-            elif model_name == "qwen2.5-7b" and "qwen" not in variant_name:
-                logger.error(f"❌ 中文模型推荐错误: 请求=qwen2.5-7b, 推荐变体={recommendation.variant.name}")
+
+            # 检查Qwen系列模型
+            elif "qwen" in model_name and "qwen" not in variant_name:
+                logger.error(f"❌ 中文模型推荐错误: 请求={model_name}, 推荐变体={recommendation.variant.name}")
                 raise ValueError(f"推荐结果与请求模型不匹配: {model_name} vs {recommendation.variant.name}")
 
             logger.info(f"✅ 推荐结果验证通过: {model_name} -> {recommendation.variant.name}")
@@ -298,6 +315,84 @@ class IntelligentModelSelector:
         logger.info("🔄 强制刷新硬件配置")
         self._hardware_cache = None
         self._cache_timestamp = None
+
+    def calculate_hardware_score(self, hardware: HardwareProfile) -> float:
+        """计算硬件综合评分（0-100分）
+
+        基于多维硬件参数的连续评分系统，替代原有的5级离散分级。
+
+        评分维度：
+        - GPU显存：40%权重
+        - 系统内存：30%权重
+        - CPU核心数：15%权重
+        - 存储空间：15%权重
+
+        Returns:
+            float: 硬件综合评分（0-100）
+        """
+        score = 0.0
+
+        # GPU显存权重：40%
+        if hardware.has_gpu:
+            # GPU模式：基于显存大小评分
+            # 32GB显存 = 满分40分
+            vram_score = min(hardware.gpu_memory_gb / 32.0 * 40, 40)
+            score += vram_score
+        else:
+            # CPU模式：使用系统内存的一半权重
+            # 32GB内存 = 20分（最高）
+            ram_score = min(hardware.system_ram_gb / 32.0 * 20, 20)
+            score += ram_score
+
+        # 系统内存权重：30%
+        # 64GB内存 = 满分30分
+        ram_score = min(hardware.system_ram_gb / 64.0 * 30, 30)
+        score += ram_score
+
+        # CPU核心数权重：15%
+        # 16核心 = 满分15分
+        cpu_score = min(hardware.cpu_cores / 16.0 * 15, 15)
+        score += cpu_score
+
+        # 存储空间权重：15%
+        # 500GB存储 = 满分15分
+        storage_score = min(hardware.storage_available_gb / 500.0 * 15, 15)
+        score += storage_score
+
+        logger.info(f"💯 硬件评分: {score:.1f}/100 (GPU:{hardware.gpu_memory_gb:.1f}GB, RAM:{hardware.system_ram_gb:.1f}GB, CPU:{hardware.cpu_cores}核)")
+        return score
+
+    def _select_qwen_variant(self, hardware: HardwareProfile) -> str:
+        """根据硬件配置选择合适的Qwen模型变体（基于连续评分）"""
+        score = self.calculate_hardware_score(hardware)
+
+        # 基于硬件评分的连续匹配规则
+        if score >= 85:
+            return "qwen2.5-32b"      # 85-100分：旗舰级
+        elif score >= 75:
+            return "qwen2.5-14b"      # 75-85分：高级
+        elif score >= 65:
+            return "qwen2.5-7b"       # 65-75分：中高级
+        elif score >= 55:
+            return "qwen2.5-3b"       # 55-65分：中级
+        elif score >= 35:
+            return "qwen2.5-1.5b"     # 35-55分：进阶级
+        else:
+            return "qwen2.5-0.5b"     # 0-35分：入门级
+
+    def _select_mistral_variant(self, hardware: HardwareProfile) -> str:
+        """根据硬件配置选择合适的Mistral模型变体（基于连续评分）"""
+        score = self.calculate_hardware_score(hardware)
+
+        # 基于硬件评分的连续匹配规则
+        if score >= 85:
+            return "mistral-large2"     # 85-100分：旗舰级
+        elif score >= 65:
+            return "mistral-24b-small"  # 65-85分：中高级
+        elif score >= 45:
+            return "mistral-12b-nemo"   # 45-65分：进阶级
+        else:
+            return "mistral-7b"         # 0-45分：入门级
     
     def _auto_recommend(
         self, 
@@ -368,72 +463,79 @@ class IntelligentModelSelector:
         deployment_target: DeploymentTarget,
         quality_requirement: str
     ) -> float:
-        """计算变体评分（增强版本，与硬件检测器推荐逻辑保持一致）"""
+        """计算变体评分（增强版本，基于连续硬件评分的智能匹配）"""
         score = 0.0
 
         # 获取硬件信息
         memory_gb = getattr(hardware, 'memory_gb', getattr(hardware, 'system_ram_gb', 0))
         gpu_available = getattr(hardware, 'gpu_available', getattr(hardware, 'has_gpu', False))
-        gpu_type = getattr(hardware, 'gpu_type', 'Unknown')
+        gpu_memory_gb = getattr(hardware, 'gpu_memory_gb', 0)
         cpu_cores = getattr(hardware, 'cpu_cores', getattr(hardware, 'cpu_count', 0))
 
-        # 1. 内存适配性评分 (0-40分)
-        memory_requirement = variant.size_gb * 1.5  # 考虑运行时内存开销
-        if memory_requirement <= memory_gb * 0.6:  # 使用60%以下内存
-            score += 40
-        elif memory_requirement <= memory_gb * 0.8:  # 使用80%以下内存
-            score += 30
-        elif memory_requirement <= memory_gb:  # 刚好够用
-            score += 20
-        else:  # 内存不足
-            score += 0
+        # 计算硬件综合评分
+        hardware_score = self.calculate_hardware_score(hardware)
 
-        # 2. 设备类型适配性评分 (0-30分)
-        quantization = variant.quantization
-        if memory_gb < 8:  # 低内存设备
-            if quantization in ['Q2_K', 'Q4_K_M']:
+        # 1. 内存适配性评分 (0-40分)
+        memory_requirement = variant.memory_requirement_gb
+        if gpu_available and gpu_memory_gb > 0:
+            # GPU模式：检查GPU显存
+            if memory_requirement <= gpu_memory_gb * 0.6:  # 使用60%以下显存
+                score += 40
+            elif memory_requirement <= gpu_memory_gb * 0.8:  # 使用80%以下显存
                 score += 30
-            elif quantization in ['Q5_K_M']:
-                score += 15
-            else:
+            elif memory_requirement <= gpu_memory_gb:  # 刚好够用
+                score += 20
+            else:  # 显存不足
                 score += 0
-        elif memory_gb < 16:  # 中等内存设备
-            if gpu_available and gpu_type in ['CUDA', 'NVIDIA']:
-                if quantization in ['Q5_K_M', 'Q8_0']:
-                    score += 30
-                elif quantization in ['Q4_K_M']:
-                    score += 25
-                else:
-                    score += 10
+        else:
+            # CPU模式：检查系统内存
+            if memory_requirement <= memory_gb * 0.6:  # 使用60%以下内存
+                score += 40
+            elif memory_requirement <= memory_gb * 0.8:  # 使用80%以下内存
+                score += 30
+            elif memory_requirement <= memory_gb:  # 刚好够用
+                score += 20
+            else:  # 内存不足
+                score += 0
+
+        # 2. 量化配置适配性评分 (0-30分) - 基于硬件评分的连续匹配
+        quantization = variant.quantization
+
+        if hardware_score >= 85:  # 旗舰级设备（85-100分）
+            # 优先选择高精度GPTQ量化
+            if quantization in [QuantizationType.INT8_PERCHANNEL, QuantizationType.INT8]:
+                score += 30
+            elif quantization in [QuantizationType.INT4_PERCHANNEL, QuantizationType.INT4]:
+                score += 20
             else:
-                if quantization in ['Q4_K_M', 'Q5_K_M']:
-                    score += 30
-                else:
-                    score += 15
-        elif memory_gb < 32:  # 高内存设备
-            if gpu_available and gpu_type in ['CUDA', 'NVIDIA']:
-                if quantization in ['Q8_0', 'FP16']:
-                    score += 30
-                else:
-                    score += 20
+                score += 10
+
+        elif hardware_score >= 65:  # 中高级设备（65-85分）
+            # 平衡精度和性能
+            if quantization in [QuantizationType.INT4_PERCHANNEL, QuantizationType.INT4]:
+                score += 30
+            elif quantization in [QuantizationType.INT8_PERCHANNEL, QuantizationType.INT8]:
+                score += 25
             else:
-                if quantization in ['Q5_K_M', 'Q8_0']:
-                    score += 30
-                else:
-                    score += 20
-        else:  # 超高性能设备
-            if gpu_available and gpu_type in ['CUDA', 'NVIDIA']:
-                if quantization == 'FP16':
-                    score += 30
-                elif quantization == 'Q8_0':
-                    score += 25
-                else:
-                    score += 15
+                score += 15
+
+        elif hardware_score >= 45:  # 进阶级设备（45-65分）
+            # 优先选择INT4 GPTQ量化
+            if quantization in [QuantizationType.INT4, QuantizationType.INT4_PERCHANNEL]:
+                score += 30
+            elif quantization == QuantizationType.INT8:
+                score += 20
             else:
-                if quantization in ['Q8_0', 'FP16']:
-                    score += 30
-                else:
-                    score += 20
+                score += 10
+
+        else:  # 入门级设备（0-45分）
+            # 优先选择最轻量的GPTQ量化
+            if quantization == QuantizationType.INT4:
+                score += 30
+            elif quantization == QuantizationType.INT4_PERCHANNEL:
+                score += 25
+            else:
+                score += 10
         # 3. 质量要求匹配评分 (0-20分)
         quality_threshold = self.quality_thresholds.get(quality_requirement, 0.85)
         if variant.quality_retention >= quality_threshold:
@@ -447,7 +549,7 @@ class IntelligentModelSelector:
         if deployment_target:
             if deployment_target.value == 'production' and variant.quality_retention >= 0.9:
                 score += 10
-            elif deployment_target.value == 'development' and variant.quantization in ['Q4_K_M', 'Q5_K_M']:
+            elif deployment_target.value == 'development' and variant.quantization in [QuantizationType.INT4, QuantizationType.INT4_PERCHANNEL]:
                 score += 10
             elif deployment_target.value == 'demo' and variant.size_gb <= 5:
                 score += 10
@@ -687,35 +789,50 @@ class IntelligentModelSelector:
         return auto_recommendation
 
 def create_multi_tier_download_config() -> Dict:
-    """创建多层级下载配置"""
+    """创建多层级下载配置（仅GPTQ格式，支持LoRA/QLoRA微调）"""
     return {
-        "qwen2.5-7b": {
+        "qwen3-4b": {
             "fp16": {
-                "name": "Qwen2.5-7B-Instruct-FP16",
-                "size_gb": 14.4,
-                "urls": ["https://modelscope.cn/models/qwen/Qwen2.5-7B-Instruct"],
-                "target_dir": "models/models/qwen/fp16"
+                "name": "Qwen3-4B-Instruct-FP16",
+                "size_gb": 8.0,
+                "urls": ["https://modelscope.cn/models/qwen/Qwen3-4B-Instruct"],
+                "target_dir": "models/qwen/qwen3-4b/fp16"
             },
-            "q8": {
-                "name": "Qwen2.5-7B-Instruct-Q8",
-                "size_gb": 7.6,
-                "urls": ["https://modelscope.cn/models/qwen/Qwen2.5-7B-Instruct-GGUF"],
-                "target_dir": "models/models/qwen/q8",
-                "filename": "qwen2.5-7b-instruct-q8_0.gguf"
+            "int8": {
+                "name": "Qwen3-4B-Instruct-INT8-GPTQ",
+                "size_gb": 4.0,
+                "urls": ["https://modelscope.cn/models/qwen/Qwen3-4B-Instruct-GPTQ-Int8"],
+                "target_dir": "models/qwen/qwen3-4b/int8",
+                "filename": "model.safetensors"
             },
-            "q5": {
-                "name": "Qwen2.5-7B-Instruct-Q5",
-                "size_gb": 5.1,
-                "urls": ["https://modelscope.cn/models/qwen/Qwen2.5-7B-Instruct-GGUF"],
-                "target_dir": "models/models/qwen/q5",
-                "filename": "qwen2.5-7b-instruct-q5_k_m.gguf"
+            "int4": {
+                "name": "Qwen3-4B-Instruct-INT4-GPTQ",
+                "size_gb": 2.0,
+                "urls": ["https://modelscope.cn/models/qwen/Qwen3-4B-Instruct-GPTQ-Int4"],
+                "target_dir": "models/qwen/qwen3-4b/int4",
+                "filename": "model.safetensors"
+            }
+        },
+        "qwen3-8b": {
+            "fp16": {
+                "name": "Qwen3-8B-Instruct-FP16",
+                "size_gb": 16.0,
+                "urls": ["https://modelscope.cn/models/qwen/Qwen3-8B-Instruct"],
+                "target_dir": "models/qwen/qwen3-8b/fp16"
             },
-            "q4": {
-                "name": "Qwen2.5-7B-Instruct-Q4",
-                "size_gb": 4.1,
-                "urls": ["https://modelscope.cn/models/qwen/Qwen2.5-7B-Instruct-GGUF"],
-                "target_dir": "models/models/qwen/q4",
-                "filename": "qwen2.5-7b-instruct-q4_k_m.gguf"
+            "int8": {
+                "name": "Qwen3-8B-Instruct-INT8-GPTQ",
+                "size_gb": 8.0,
+                "urls": ["https://modelscope.cn/models/qwen/Qwen3-8B-Instruct-GPTQ-Int8"],
+                "target_dir": "models/qwen/qwen3-8b/int8",
+                "filename": "model.safetensors"
+            },
+            "int4": {
+                "name": "Qwen3-8B-Instruct-INT4-GPTQ",
+                "size_gb": 4.0,
+                "urls": ["https://modelscope.cn/models/qwen/Qwen3-8B-Instruct-GPTQ-Int4"],
+                "target_dir": "models/qwen/qwen3-8b/int4",
+                "filename": "model.safetensors"
             }
         },
         "mistral-7b": {
@@ -723,28 +840,21 @@ def create_multi_tier_download_config() -> Dict:
                 "name": "Mistral-7B-Instruct-FP16",
                 "size_gb": 13.5,
                 "urls": ["https://hf-mirror.com/mistralai/Mistral-7B-Instruct-v0.1"],
-                "target_dir": "models/mistral/fp16"
+                "target_dir": "models/mistral/mistral-7b/fp16"
             },
-            "q8": {
-                "name": "Mistral-7B-Instruct-Q8",
-                "size_gb": 7.2,
-                "urls": ["https://hf-mirror.com/TheBloke/Mistral-7B-Instruct-v0.1-GGUF"],
-                "target_dir": "models/mistral/q8",
-                "filename": "mistral-7b-instruct-v0.1.q8_0.gguf"
+            "int8": {
+                "name": "Mistral-7B-Instruct-INT8-GPTQ",
+                "size_gb": 7.0,
+                "urls": ["https://hf-mirror.com/TheBloke/Mistral-7B-Instruct-v0.3-GPTQ"],
+                "target_dir": "models/mistral/mistral-7b/int8",
+                "filename": "model.safetensors"
             },
-            "q5": {
-                "name": "Mistral-7B-Instruct-Q5",
-                "size_gb": 4.8,
-                "urls": ["https://hf-mirror.com/TheBloke/Mistral-7B-Instruct-v0.1-GGUF"],
-                "target_dir": "models/mistral/q5",
-                "filename": "mistral-7b-instruct-v0.1.q5_k_m.gguf"
-            },
-            "q4": {
-                "name": "Mistral-7B-Instruct-Q4",
-                "size_gb": 4.1,
-                "urls": ["https://hf-mirror.com/TheBloke/Mistral-7B-Instruct-v0.1-GGUF"],
-                "target_dir": "models/mistral/q4",
-                "filename": "mistral-7b-instruct-v0.1.q4_k_m.gguf"
+            "int4": {
+                "name": "Mistral-7B-Instruct-INT4-GPTQ",
+                "size_gb": 3.5,
+                "urls": ["https://hf-mirror.com/TheBloke/Mistral-7B-Instruct-v0.3-GPTQ"],
+                "target_dir": "models/mistral/mistral-7b/int4",
+                "filename": "model.safetensors"
             }
         }
     }

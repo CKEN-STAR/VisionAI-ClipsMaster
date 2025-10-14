@@ -3,11 +3,13 @@
 """
 模型管理器
 统一管理模型加载、切换和设备检测
+支持Qwen3和Mistral系列模型
 """
 
 import os
 import sys
 import json
+import yaml
 import logging
 from typing import Dict, Any, Optional, List
 from pathlib import Path
@@ -36,48 +38,119 @@ class ModelManager:
         logger.info("模型管理器初始化完成")
     
     def load_model_configs(self) -> Dict[str, Any]:
-        """加载模型配置"""
+        """从configs/model_config.yaml动态加载模型配置"""
         try:
-            # 默认模型配置
-            default_configs = {
-                "qwen2.5-7b-zh": {
-                    "name": "Qwen2.5-7B-Instruct",
-                    "language": "zh",
-                    "memory_required": 8000,  # MB
-                    "device_requirements": {
-                        "min_vram": 8000,
-                        "min_ram": 16000
-                    },
-                    "path": "models/qwen2.5-7b-instruct",
-                    "type": "LLM"
-                },
-                "mistral-7b-en": {
-                    "name": "Mistral-7B-Instruct",
-                    "language": "en", 
-                    "memory_required": 7000,  # MB
-                    "device_requirements": {
-                        "min_vram": 7000,
-                        "min_ram": 14000
-                    },
-                    "path": "models/mistral-7b-instruct",
-                    "type": "LLM"
-                }
-            }
-            
-            # 如果有配置文件，尝试加载
-            if self.config_path and os.path.exists(self.config_path):
-                with open(self.config_path, 'r', encoding='utf-8') as f:
-                    file_configs = json.load(f)
-                    default_configs.update(file_configs)
-            
-            self.model_configs = default_configs
+            # 加载全局配置
+            config_file = project_root / "configs" / "model_config.yaml"
+            if not config_file.exists():
+                logger.warning(f"配置文件不存在: {config_file}")
+                return self._get_fallback_configs()
+
+            with open(config_file, 'r', encoding='utf-8') as f:
+                global_config = yaml.safe_load(f)
+
+            # 提取可用模型列表
+            available_models = global_config.get('available_models', {})
+            model_configs = {}
+
+            # 加载中文模型配置
+            for model_name in available_models.get('chinese', []):
+                config = self._load_single_model_config(model_name)
+                if config:
+                    model_configs[model_name] = config
+
+            # 加载英文模型配置
+            for model_name in available_models.get('english', []):
+                config = self._load_single_model_config(model_name)
+                if config:
+                    model_configs[model_name] = config
+
+            self.model_configs = model_configs
             logger.info(f"已加载 {len(self.model_configs)} 个模型配置")
             return self.model_configs
-            
+
         except Exception as e:
             logger.error(f"加载模型配置失败: {e}")
-            self.model_configs = {}
-            return {}
+            return self._get_fallback_configs()
+
+    def _load_single_model_config(self, model_name: str) -> Optional[Dict[str, Any]]:
+        """加载单个模型的配置文件"""
+        try:
+            config_file = project_root / "configs" / "models" / "available_models" / f"{model_name}.yaml"
+            if not config_file.exists():
+                logger.warning(f"模型配置文件不存在: {config_file}")
+                return None
+
+            with open(config_file, 'r', encoding='utf-8') as f:
+                config = yaml.safe_load(f)
+
+            # 提取关键信息
+            model_info = config.get('model', {})
+            hw_req = config.get('hardware_requirements', {})
+
+            # 获取第一个设备等级的硬件要求
+            first_tier = None
+            for key in hw_req.keys():
+                if key.endswith('_tier'):
+                    first_tier = hw_req[key]
+                    break
+
+            return {
+                "name": model_info.get('display_name', model_name),
+                "language": model_info.get('language', 'unknown'),
+                "memory_required": self._parse_memory(first_tier.get('min_vram') if first_tier else '4GB'),
+                "device_requirements": {
+                    "min_vram": self._parse_memory(first_tier.get('min_vram') if first_tier else '4GB'),
+                    "min_ram": self._parse_memory(first_tier.get('min_memory') if first_tier else '4GB')
+                },
+                "path": config.get('paths', {}).get('base', f"models/{model_name}"),
+                "type": "LLM"
+            }
+
+        except Exception as e:
+            logger.error(f"加载模型配置失败 {model_name}: {e}")
+            return None
+
+    def _parse_memory(self, memory_str: str) -> int:
+        """解析内存字符串为MB"""
+        if not memory_str:
+            return 4000
+
+        memory_str = str(memory_str).upper().replace(' ', '')
+        if 'GB' in memory_str:
+            return int(float(memory_str.replace('GB', '')) * 1024)
+        elif 'MB' in memory_str:
+            return int(memory_str.replace('MB', ''))
+        else:
+            return 4000
+
+    def _get_fallback_configs(self) -> Dict[str, Any]:
+        """获取回退配置（当配置文件加载失败时使用）"""
+        logger.warning("使用回退配置")
+        return {
+            "qwen3-0.6b-zh": {
+                "name": "Qwen3-0.6B-Instruct",
+                "language": "zh",
+                "memory_required": 3000,
+                "device_requirements": {
+                    "min_vram": 3000,
+                    "min_ram": 3000
+                },
+                "path": "models/qwen/qwen3-0.6b",
+                "type": "LLM"
+            },
+            "mistral-7b-en": {
+                "name": "Mistral-7B-Instruct",
+                "language": "en",
+                "memory_required": 3500,
+                "device_requirements": {
+                    "min_vram": 3000,
+                    "min_ram": 3000
+                },
+                "path": "models/mistral/mistral-7b",
+                "type": "LLM"
+            }
+        }
     
     def load_model_config(self) -> Dict[str, Any]:
         """获取模型配置"""

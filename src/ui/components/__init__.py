@@ -26,7 +26,8 @@ KeyboardNavigationHelper = None
 ScreenReaderHelper = None
 AnimationManager = None
 FallbackNotification = None
-MemoryVisualization = None
+MemoryWidget = None
+MemoryStatusIndicator = None
 TutorialManager = None
 VersionSuggestionPanel = None
 VideoProcessor = None
@@ -38,7 +39,8 @@ existing_components = [
     ('accessibility_helper', 'ScreenReaderHelper'),
     ('animation_manager', 'AnimationManager'),
     ('fallback_notification', 'FallbackNotification'),
-    ('memory_visualization', 'MemoryVisualization'),
+    ('memory_visualization', 'MemoryWidget'),
+    ('memory_visualization', 'MemoryStatusIndicator'),
     ('tutorial_manager', 'TutorialManager'),
     ('version_suggestion_panel', 'VersionSuggestionPanel'),
     ('video_processor', 'VideoProcessor')
@@ -59,7 +61,7 @@ __all__ = ['RealtimeCharts', 'AlertManager']
 
 # 动态添加可用的现有组件到__all__
 for class_name in ['ColorHelper', 'KeyboardNavigationHelper', 'ScreenReaderHelper',
-                   'AnimationManager', 'FallbackNotification', 'MemoryVisualization',
+                   'AnimationManager', 'FallbackNotification', 'MemoryWidget', 'MemoryStatusIndicator',
                    'TutorialManager', 'VersionSuggestionPanel', 'VideoProcessor']:
     if globals().get(class_name) is not None:
         __all__.append(class_name)

@@ -332,7 +332,7 @@ pip install -r requirements.txt --force-reinstall
 **Solution**:
 ```bash
 # Install FFmpeg
-python tools/ffmpeg_installer.py
+python scripts/tools/ffmpeg_installer.py
 # Or manually add to PATH
 export PATH=$PATH:/path/to/ffmpeg/bin
 ```

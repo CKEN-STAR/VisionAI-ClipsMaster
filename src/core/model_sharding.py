@@ -99,6 +99,63 @@ class ModelSharding:
     
     async def merge_shards(self,
                           shard_dir: str,
+                          output_path: str,
+                          verify: bool = True) -> str:
+        """异步合并分片文件
+
+        Args:
+            shard_dir: 分片目录
+            output_path: 输出文件路径
+            verify: 是否验证合并完整性
+
+        Returns:
+            str: 合并后的文件路径
+        """
+        shard_dir = Path(shard_dir)
+        if not shard_dir.exists():
+            raise FileNotFoundError(f"分片目录不存在: {shard_dir}")
+
+        output_path = Path(output_path)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+
+        # 获取所有分片文件(按序号排序)
+        shard_files = sorted(shard_dir.glob("*_part_*.bin"))
+        if not shard_files:
+            raise FileNotFoundError(f"未找到分片文件: {shard_dir}")
+
+        logger.info(f"开始合并 {len(shard_files)} 个分片文件")
+
+        # 读取校验和(如果存在)
+        checksums = []
+        checksum_file = shard_dir / f"{shard_dir.stem}_checksums.txt"
+        if verify and checksum_file.exists():
+            async with aiofiles.open(checksum_file, 'r') as f:
+                content = await f.read()
+                checksums = content.strip().split('\n')
+
+        # 合并分片
+        async with aiofiles.open(output_path, 'wb') as out_f:
+            for i, shard_path in enumerate(shard_files):
+                logger.info(f"合并分片 {i+1}/{len(shard_files)}: {shard_path.name}")
+
+                # 读取分片数据
+                async with aiofiles.open(shard_path, 'rb') as shard_f:
+                    chunk = await shard_f.read()
+
+                    # 验证校验和
+                    if verify and i < len(checksums):
+                        actual_checksum = hashlib.sha256(chunk).hexdigest()
+                        if actual_checksum != checksums[i]:
+                            raise ValueError(f"分片 {i} 校验和不匹配")
+
+                    # 写入合并文件
+                    await out_f.write(chunk)
+
+        logger.info(f"分片合并完成: {output_path}")
+        return str(output_path)
+
+    async def load_sharded_model(self,
+                          shard_dir: str,
                           output_path: Optional[str] = None,
                           verify: bool = True) -> str:
         """异步合并模型分片

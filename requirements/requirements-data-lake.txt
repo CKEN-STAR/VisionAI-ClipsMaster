@@ -1,0 +1,16 @@
+# 数据湖所需依赖
+pandas>=1.3.0
+pyarrow>=5.0.0
+numpy>=1.20.0
+pyyaml>=6.0
+loguru>=0.6.0
+chardet>=4.0.0
+
+# 可选依赖，用于高级功能
+fsspec>=2022.1.0  # 文件系统抽象
+s3fs>=2022.1.0    # S3兼容存储支持
+fastparquet>=0.8.0  # 备选Parquet引擎
+pyrsistent>=0.18.0  # 不可变数据结构
+tqdm>=4.62.0      # 进度条
+ujson>=5.1.0      # 快速JSON处理
+dask>=2022.1.0    # 分布式计算支持 

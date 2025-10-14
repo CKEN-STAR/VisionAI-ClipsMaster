@@ -21,21 +21,86 @@ import logging
 # 配置日志
 logger = logging.getLogger(__name__)
 
+class EnhancedProgressDialog(QProgressDialog):
+    """增强的进度对话框（显示详细下载信息）"""
+
+    def __init__(self, title: str, parent=None):
+        super().__init__(title, "取消", 0, 100, parent)
+        self.setWindowTitle("模型下载")
+        self.setModal(True)
+        self.setMinimumWidth(500)
+        self.setAutoClose(False)
+        self.setAutoReset(False)
+
+        # 下载信息
+        self.current_file = ""
+        self.download_speed = 0.0
+        self.eta_seconds = 0
+        self.downloaded_mb = 0.0
+        self.total_mb = 0.0
+
+    def update_enhanced_progress(self, progress: int, downloaded_mb: float,
+                                total_mb: float, speed_mb: float,
+                                eta_seconds: int, filename: str):
+        """更新增强的进度信息"""
+        self.setValue(progress)
+        self.current_file = filename
+        self.download_speed = speed_mb
+        self.eta_seconds = eta_seconds
+        self.downloaded_mb = downloaded_mb
+        self.total_mb = total_mb
+
+        # 格式化剩余时间
+        if eta_seconds > 0:
+            hours = eta_seconds // 3600
+            minutes = (eta_seconds % 3600) // 60
+            seconds = eta_seconds % 60
+
+            if hours > 0:
+                eta_str = f"{hours}小时{minutes}分钟"
+            elif minutes > 0:
+                eta_str = f"{minutes}分{seconds}秒"
+            else:
+                eta_str = f"{seconds}秒"
+        else:
+            eta_str = "计算中..."
+
+        # 更新标签文本
+        label_text = f"""下载文件: {filename}
+进度: {downloaded_mb:.1f} MB / {total_mb:.1f} MB ({progress}%)
+速度: {speed_mb:.2f} MB/s
+剩余时间: {eta_str}"""
+
+        self.setLabelText(label_text)
+
 class ModelDownloadThread(QThread):
-    """模型下载线程"""
-    
+    """模型下载线程（增强版：支持速度显示、剩余时间、自动清理）"""
+
     # 信号定义
     progress_updated = pyqtSignal(int, str)  # 进度百分比, 状态信息
     download_completed = pyqtSignal(str, bool)  # 模型名称, 是否成功
     error_occurred = pyqtSignal(str, str)  # 错误类型, 错误信息
-    
+    # 新增：增强的进度信号（进度%, 已下载MB, 总大小MB, 速度MB/s, 剩余秒数, 文件名）
+    enhanced_progress_updated = pyqtSignal(int, float, float, float, int, str)
+
     def __init__(self, model_name: str, download_config: Dict, parent=None):
         super().__init__(parent)
         self.model_name = model_name
         self.download_config = download_config
         self.is_cancelled = False
+        self.is_paused = False  # 新增：暂停标志
         self.session = requests.Session()
-        
+
+        # 下载速度跟踪
+        self.start_time = 0
+        self.last_update_time = 0
+        self.last_downloaded_bytes = 0
+        self.download_speeds = []  # 用于平滑速度计算
+
+        # 下载文件跟踪（用于清理）
+        self.downloaded_files = []  # 已下载的文件路径
+        self.target_directory = None  # 目标目录
+
         # 设置请求头
         self.session.headers.update({
             'User-Agent': 'VisionAI-ClipsMaster/1.0 (Model Downloader)',
@@ -44,54 +109,79 @@ class ModelDownloadThread(QThread):
         })
     
     def cancel_download(self):
-        """取消下载"""
+        """取消下载（会触发清理）"""
         self.is_cancelled = True
         logger.info(f"用户取消下载: {self.model_name}")
+
+    def pause_download(self):
+        """暂停下载（不清理，支持断点续传）"""
+        self.is_paused = True
+        logger.info(f"用户暂停下载: {self.model_name}")
+
+    def resume_download(self):
+        """继续下载"""
+        self.is_paused = False
+        logger.info(f"用户继续下载: {self.model_name}")
     
     def run(self):
         """执行下载"""
         try:
             logger.info(f"开始下载模型: {self.model_name}")
             self.progress_updated.emit(0, f"准备下载 {self.model_name}...")
-            
+            self.start_time = time.time()
+
             # 创建目标目录
             target_dir = Path(self.download_config['target_dir'])
             target_dir.mkdir(parents=True, exist_ok=True)
-            
+            self.target_directory = target_dir
+
             # 下载所有文件
             total_files = len(self.download_config['files'])
             for i, file_info in enumerate(self.download_config['files']):
                 if self.is_cancelled:
+                    logger.warning(f"下载被取消，开始清理: {self.model_name}")
+                    self.cleanup_incomplete_download()
                     return
-                
+
                 file_name = file_info['name']
                 file_url = file_info['url']
                 file_size = file_info.get('size', 0)
-                
+
                 self.progress_updated.emit(
                     int((i / total_files) * 100),
                     f"下载文件 {i+1}/{total_files}: {file_name}"
                 )
-                
+
                 success = self._download_file(file_url, target_dir / file_name, file_size)
                 if not success:
-                    self.error_occurred.emit("下载失败", f"文件 {file_name} 下载失败")
+                    if self.is_cancelled:
+                        logger.warning(f"下载被取消，开始清理: {self.model_name}")
+                        self.cleanup_incomplete_download()
+                    else:
+                        logger.error(f"下载失败，开始清理: {file_name}")
+                        self.cleanup_incomplete_download()
+                        self.error_occurred.emit("下载失败", f"文件 {file_name} 下载失败")
                     return
-            
+
             # 验证下载完整性
             self.progress_updated.emit(95, "验证文件完整性...")
             if self._verify_download():
                 self.progress_updated.emit(100, "下载完成!")
                 self.download_completed.emit(self.model_name, True)
+                logger.info(f"下载成功完成: {self.model_name}")
             else:
+                logger.error(f"文件完整性验证失败，开始清理: {self.model_name}")
+                self.cleanup_incomplete_download()
                 self.error_occurred.emit("验证失败", "下载的文件不完整或损坏")
-                
+
         except Exception as e:
             logger.error(f"下载过程中发生错误: {str(e)}")
+            logger.warning(f"异常导致下载中断，开始清理: {self.model_name}")
+            self.cleanup_incomplete_download()
             self.error_occurred.emit("下载错误", str(e))
     
     def _download_file(self, url: str, target_path: Path, expected_size: int = 0) -> bool:
-        """下载单个文件"""
+        """下载单个文件（增强版：支持速度显示、剩余时间）"""
         try:
             # 检查是否支持断点续传
             resume_pos = 0
@@ -99,18 +189,19 @@ class ModelDownloadThread(QThread):
                 resume_pos = target_path.stat().st_size
                 if resume_pos == expected_size and expected_size > 0:
                     logger.info(f"文件已存在且完整: {target_path.name}")
+                    self.downloaded_files.append(target_path)
                     return True
-            
+
             # 设置请求头支持断点续传
             headers = {}
             if resume_pos > 0:
                 headers['Range'] = f'bytes={resume_pos}-'
                 logger.info(f"断点续传: {target_path.name} 从 {resume_pos} 字节开始")
-            
+
             # 发起下载请求
             response = self.session.get(url, headers=headers, stream=True, timeout=30)
             response.raise_for_status()
-            
+
             # 获取文件总大小
             if 'content-length' in response.headers:
                 total_size = int(response.headers['content-length'])
@@ -118,31 +209,73 @@ class ModelDownloadThread(QThread):
                     total_size += resume_pos
             else:
                 total_size = expected_size
-            
+
             # 下载文件
             mode = 'ab' if resume_pos > 0 else 'wb'
             downloaded = resume_pos
-            
+            self.last_downloaded_bytes = downloaded
+            self.last_update_time = time.time()
+
             with open(target_path, mode) as f:
                 for chunk in response.iter_content(chunk_size=8192):
                     if self.is_cancelled:
+                        logger.info(f"下载被取消: {target_path.name}")
                         return False
-                    
+
+                    # 支持暂停
+                    while self.is_paused and not self.is_cancelled:
+                        time.sleep(0.1)
+
                     if chunk:
                         f.write(chunk)
                         downloaded += len(chunk)
-                        
-                        # 更新进度
-                        if total_size > 0:
-                            progress = int((downloaded / total_size) * 100)
-                            self.progress_updated.emit(
-                                progress,
-                                f"下载 {target_path.name}: {self._format_size(downloaded)}/{self._format_size(total_size)}"
-                            )
-            
+
+                        # 计算下载速度和剩余时间
+                        current_time = time.time()
+                        time_diff = current_time - self.last_update_time
+
+                        if time_diff >= 0.5:  # 每0.5秒更新一次
+                            bytes_diff = downloaded - self.last_downloaded_bytes
+                            speed = bytes_diff / time_diff if time_diff > 0 else 0
+
+                            # 平滑速度计算（使用最近10次的平均值）
+                            self.download_speeds.append(speed)
+                            if len(self.download_speeds) > 10:
+                                self.download_speeds.pop(0)
+                            avg_speed = sum(self.download_speeds) / len(self.download_speeds)
+
+                            # 计算剩余时间
+                            remaining_bytes = total_size - downloaded
+                            eta_seconds = int(remaining_bytes / avg_speed) if avg_speed > 0 else 0
+
+                            # 更新进度
+                            if total_size > 0:
+                                progress = int((downloaded / total_size) * 100)
+
+                                # 发送增强的进度信号
+                                self.enhanced_progress_updated.emit(
+                                    progress,
+                                    downloaded / (1024 * 1024),  # MB
+                                    total_size / (1024 * 1024),   # MB
+                                    avg_speed / (1024 * 1024),    # MB/s
+                                    eta_seconds,
+                                    target_path.name
+                                )
+
+                                # 发送旧的进度信号（向后兼容）
+                                speed_mb = avg_speed / (1024 * 1024)
+                                self.progress_updated.emit(
+                                    progress,
+                                    f"下载 {target_path.name}: {self._format_size(downloaded)}/{self._format_size(total_size)} ({speed_mb:.1f} MB/s)"
+                                )
+
+                            self.last_downloaded_bytes = downloaded
+                            self.last_update_time = current_time
+
             logger.info(f"文件下载完成: {target_path.name}")
+            self.downloaded_files.append(target_path)
             return True
-            
+
         except requests.exceptions.RequestException as e:
             logger.error(f"网络请求错误: {str(e)}")
             return False
@@ -192,7 +325,85 @@ class ModelDownloadThread(QThread):
             for chunk in iter(lambda: f.read(4096), b""):
                 sha256_hash.update(chunk)
         return sha256_hash.hexdigest()
-    
+
+    def cleanup_incomplete_download(self):
+        """清理不完整的下载文件
+
+        触发场景：
+        1. 用户手动取消下载
+        2. 网络连接中断
+        3. 下载过程中发生错误
+        4. 文件完整性验证失败
+        """
+        try:
+            logger.info(f"开始清理不完整的下载: {self.model_name}")
+
+            if not self.target_directory:
+                logger.warning("目标目录未设置，跳过清理")
+                return
+
+            target_dir = Path(self.target_directory)
+            if not target_dir.exists():
+                logger.info("目标目录不存在，无需清理")
+                return
+
+            cleaned_files = []
+
+            # 清理所有配置中的文件
+            for file_info in self.download_config['files']:
+                file_path = target_dir / file_info['name']
+
+                if file_path.exists():
+                    try:
+                        # 检查文件是否完整
+                        expected_size = file_info.get('size', 0)
+                        actual_size = file_path.stat().st_size
+
+                        # 如果文件不完整，删除它
+                        if expected_size > 0 and abs(actual_size - expected_size) > expected_size * 0.05:
+                            file_path.unlink()
+                            cleaned_files.append(str(file_path))
+                            logger.info(f"已删除不完整文件: {file_path.name} (期望={expected_size}, 实际={actual_size})")
+                        else:
+                            logger.info(f"文件完整，保留: {file_path.name}")
+                    except Exception as e:
+                        logger.error(f"删除文件失败: {file_path}, 错误: {e}")
+
+            # 清理临时文件（.tmp, .part等）
+            for temp_file in target_dir.glob("*.tmp"):
+                try:
+                    temp_file.unlink()
+                    cleaned_files.append(str(temp_file))
+                    logger.info(f"已删除临时文件: {temp_file.name}")
+                except Exception as e:
+                    logger.error(f"删除临时文件失败: {temp_file}, 错误: {e}")
+
+            for part_file in target_dir.glob("*.part"):
+                try:
+                    part_file.unlink()
+                    cleaned_files.append(str(part_file))
+                    logger.info(f"已删除临时文件: {part_file.name}")
+                except Exception as e:
+                    logger.error(f"删除临时文件失败: {part_file}, 错误: {e}")
+
+            # 如果目录为空，删除目录
+            if target_dir.exists() and not any(target_dir.iterdir()):
+                try:
+                    target_dir.rmdir()
+                    logger.info(f"已删除空目录: {target_dir}")
+                except Exception as e:
+                    logger.error(f"删除空目录失败: {target_dir}, 错误: {e}")
+
+            if cleaned_files:
+                logger.info(f"清理完成，共删除 {len(cleaned_files)} 个文件")
+            else:
+                logger.info("没有需要清理的文件")
+
+        except Exception as e:
+            logger.error(f"清理不完整下载失败: {e}")
+            import traceback
+            logger.error(f"详细错误: {traceback.format_exc()}")
+
     def _format_size(self, size_bytes: int) -> str:
         """格式化文件大小"""
         for unit in ['B', 'KB', 'MB', 'GB']:
@@ -231,6 +442,9 @@ class EnhancedModelDownloader(QObject):
             self.intelligent_selector = None
             self.has_intelligent_selector = False
             logger.warning("智能模型选择器不可用，将使用基础下载功能")
+
+        # 启动时检查并清理残留的不完整下载
+        self.check_and_cleanup_incomplete_downloads()
 
         logger.info(f"✅ 增强模型下载器初始化完成 - {self.VERSION}")
 
@@ -290,6 +504,38 @@ class EnhancedModelDownloader(QObject):
                 logger.error(f"❌ 智能选择器强制重新初始化失败: {e}")
 
         logger.info("✅ 增强下载器状态已重置")
+
+    def download_specific_variant(self, model_name: str, variant_info, parent_widget=None):
+        """下载指定的模型变体
+
+        Args:
+            model_name: 模型名称(如"qwen"或"mistral")
+            variant_info: ModelVariantInfo对象
+            parent_widget: 父窗口
+
+        Returns:
+            bool: 下载是否成功
+        """
+        try:
+            logger.info(f"🚀 开始下载指定变体: {model_name} - {variant_info.name}")
+
+            # TODO: 实现实际的下载逻辑
+            # 这里需要调用下载管理器来下载指定的模型文件
+
+            from PyQt6.QtWidgets import QMessageBox
+            QMessageBox.information(
+                parent_widget,
+                "下载",
+                f"将下载:\n模型: {model_name}\n变体: {variant_info.name}\n大小: {variant_info.size_gb:.1f} GB"
+            )
+
+            return True
+
+        except Exception as e:
+            logger.error(f"❌ 下载指定变体失败: {e}")
+            import traceback
+            logger.error(f"详细错误: {traceback.format_exc()}")
+            return False
 
     def _force_reload_modules(self):
         """强制重新加载相关模块，确保代码修改生效"""
@@ -441,6 +687,80 @@ class EnhancedModelDownloader(QObject):
                 "timestamp": time.time()
             }
 
+    def check_and_cleanup_incomplete_downloads(self):
+        """检查并清理残留的不完整下载
+
+        在程序启动时调用，清理上次未完成的下载
+        """
+        try:
+            logger.info("🔍 检查残留的不完整下载...")
+
+            models_dir = Path("models")
+            if not models_dir.exists():
+                logger.info("模型目录不存在，无需清理")
+                return
+
+            cleaned_count = 0
+
+            # 遍历所有下载配置
+            for model_name, config in self.download_configs.items():
+                target_dir = Path(config['target_dir'])
+
+                if not target_dir.exists():
+                    continue
+
+                # 检查每个文件
+                for file_info in config['files']:
+                    file_path = target_dir / file_info['name']
+
+                    if file_path.exists():
+                        expected_size = file_info.get('size', 0)
+                        actual_size = file_path.stat().st_size
+
+                        # 如果文件不完整（大小差异超过5%），删除它
+                        if expected_size > 0 and abs(actual_size - expected_size) > expected_size * 0.05:
+                            try:
+                                file_path.unlink()
+                                cleaned_count += 1
+                                logger.info(f"已清理残留文件: {file_path.name} (期望={expected_size}, 实际={actual_size})")
+                            except Exception as e:
+                                logger.error(f"清理残留文件失败: {file_path}, 错误: {e}")
+
+                # 清理临时文件
+                for temp_file in target_dir.glob("*.tmp"):
+                    try:
+                        temp_file.unlink()
+                        cleaned_count += 1
+                        logger.info(f"已清理临时文件: {temp_file.name}")
+                    except Exception as e:
+                        logger.error(f"清理临时文件失败: {temp_file}, 错误: {e}")
+
+                for part_file in target_dir.glob("*.part"):
+                    try:
+                        part_file.unlink()
+                        cleaned_count += 1
+                        logger.info(f"已清理临时文件: {part_file.name}")
+                    except Exception as e:
+                        logger.error(f"清理临时文件失败: {part_file}, 错误: {e}")
+
+                # 如果目录为空，删除目录
+                if target_dir.exists() and not any(target_dir.iterdir()):
+                    try:
+                        target_dir.rmdir()
+                        logger.info(f"已删除空目录: {target_dir}")
+                    except Exception as e:
+                        logger.error(f"删除空目录失败: {target_dir}, 错误: {e}")
+
+            if cleaned_count > 0:
+                logger.info(f"✅ 清理完成，共清理 {cleaned_count} 个残留文件")
+            else:
+                logger.info("✅ 没有发现残留文件")
+
+        except Exception as e:
+            logger.error(f"检查残留下载失败: {e}")
+            import traceback
+            logger.error(f"详细错误: {traceback.format_exc()}")
+
     def get_available_models(self) -> List[str]:
         """获取可用模型列表
 
@@ -455,7 +775,11 @@ class EnhancedModelDownloader(QObject):
             if self.intelligent_selector:
                 try:
                     from .intelligent_model_selector import IntelligentModelSelector
-                    selector_models = ["mistral-7b", "qwen2.5-7b"]  # 已知支持的模型
+                    # 支持的模型列表（Qwen3和Mistral系列）
+                    selector_models = [
+                        "qwen3-0.6b", "qwen3-1.7b", "qwen3-8b", "qwen3-32b",
+                        "mistral-7b", "mistral-12b-nemo", "mistral-24b-small", "mistral-large2"
+                    ]
                     available_models.extend(selector_models)
                 except Exception as e:
                     logger.debug(f"从智能选择器获取模型列表失败: {e}")
@@ -467,14 +791,23 @@ class EnhancedModelDownloader(QObject):
 
         except Exception as e:
             logger.error(f"获取可用模型列表失败: {e}")
-            return ["mistral-7b", "qwen2.5-7b"]  # 返回默认支持的模型
+            # 返回默认支持的模型（Qwen3和Mistral系列）
+            return ["qwen3-0.6b", "qwen3-1.7b", "qwen3-8b", "qwen3-32b",
+                    "mistral-7b", "mistral-12b-nemo", "mistral-24b-small", "mistral-large2"]
 
     def _load_download_configs(self) -> Dict:
-        """加载下载配置"""
+        """
+        加载下载配置（已废弃 - 仅作为回退方案）
+
+        注意：此配置仅在智能推荐系统不可用时使用。
+        实际下载应通过IntelligentModelSelector自动选择合适的模型变体。
+
+        保留qwen2.5-7b配置仅为向后兼容，实际会映射到Qwen3系列。
+        """
         return {
             "qwen2.5-7b": {
-                "name": "Qwen2.5-7B-Instruct",
-                "description": "通义千问2.5-7B指令模型（中文优化）",
+                "name": "Qwen2.5-7B-Instruct (已废弃，映射到Qwen3-0.6B)",
+                "description": "通义千问2.5-7B指令模型（已废弃，请使用智能推荐系统）",
                 "total_size": 15463424000,  # 约14.4GB
                 "target_dir": "models/models/qwen/base",
                 "files": [
@@ -531,24 +864,24 @@ class EnhancedModelDownloader(QObject):
                 ]
             },
             "mistral-7b": {
-                "name": "Mistral-7B-Instruct-v0.1",
-                "description": "Mistral-7B指令模型（英文优化）",
-                "total_size": 4200000000,  # 约4.2GB (GGUF量化版本)
-                "target_dir": "models/mistral/base",
+                "name": "Mistral-7B-Instruct-v0.3-GPTQ-INT4",
+                "description": "Mistral-7B指令模型（英文优化，GPTQ格式）",
+                "total_size": 3500000000,  # 约3.5GB (GPTQ INT4量化版本)
+                "target_dir": "models/mistral/mistral-7b/int4",
                 "files": [
                     {
-                        "name": "mistral-7b-instruct-v0.1.q4_k_m.gguf",
-                        "url": "https://modelscope.cn/models/LLM-Research/Mistral-7B-Instruct-v0.1-GGUF/resolve/main/mistral-7b-instruct-v0.1.q4_k_m.gguf",
-                        "size": 4200000000
+                        "name": "model.safetensors",
+                        "url": "https://hf-mirror.com/TheBloke/Mistral-7B-Instruct-v0.3-GPTQ/resolve/main/model.safetensors",
+                        "size": 3500000000
                     },
                     {
                         "name": "config.json",
-                        "url": "https://modelscope.cn/models/AI-ModelScope/Mistral-7B-Instruct-v0.1/resolve/main/config.json",
+                        "url": "https://hf-mirror.com/TheBloke/Mistral-7B-Instruct-v0.3-GPTQ/resolve/main/config.json",
                         "size": 1024
                     },
                     {
                         "name": "tokenizer.json",
-                        "url": "https://modelscope.cn/models/AI-ModelScope/Mistral-7B-Instruct-v0.1/resolve/main/tokenizer.json",
+                        "url": "https://hf-mirror.com/TheBloke/Mistral-7B-Instruct-v0.3-GPTQ/resolve/main/tokenizer.json",
                         "size": 2048
                     },
                     {
@@ -618,25 +951,30 @@ class EnhancedModelDownloader(QObject):
             )
 
             if recommendation:
-                # 重要修复：验证推荐结果与请求的模型名称一致性
-                if recommendation.model_name != model_name:
-                    logger.error(f"❌ 推荐结果模型名称不一致: 请求={model_name}, 推荐={recommendation.model_name}")
-                    logger.info("🔄 清除状态并重新获取推荐...")
-                    self._clear_internal_state()
-                    # 重新获取推荐
-                    recommendation = self.intelligent_selector.recommend_model_version(
-                        model_name=model_name,
-                        strategy=SelectionStrategy.AUTO_RECOMMEND
-                    )
+                # 🔧 修复：验证推荐结果与请求的模型系列一致性
+                # 通用名称(qwen/mistral)会被智能推荐系统转换为具体模型名称(qwen3-0.6b/mistral-7b)
+                # 这是正常的,不应该视为错误
+                requested_series = model_name.lower().replace("-", "").replace("_", "")
+                recommended_series = recommendation.model_name.lower().replace("-", "").replace("_", "")
 
-                    # 再次验证
-                    if recommendation and recommendation.model_name != model_name:
-                        logger.error(f"❌ 重新获取后仍然不一致，回退到基础下载")
-                        return self._basic_download(model_name, parent_widget)
+                # 检查是否属于同一系列
+                is_same_series = False
+                if "qwen" in requested_series and "qwen" in recommended_series:
+                    is_same_series = True
+                elif "mistral" in requested_series and "mistral" in recommended_series:
+                    is_same_series = True
+                elif requested_series == recommended_series:
+                    is_same_series = True
+
+                if not is_same_series:
+                    logger.error(f"❌ 推荐结果模型系列不一致: 请求={model_name}, 推荐={recommendation.model_name}")
+                    logger.error(f"   这可能是智能推荐系统的bug,回退到基础下载")
+                    return self._basic_download(model_name, parent_widget)
 
                 # 记录推荐详情
                 logger.info(f"✅ 获取推荐成功:")
-                logger.info(f"  模型: {recommendation.model_name}")
+                logger.info(f"  请求模型: {model_name}")
+                logger.info(f"  推荐模型: {recommendation.model_name}")
                 logger.info(f"  变体: {recommendation.variant.name}")
                 logger.info(f"  量化: {recommendation.variant.quantization.value}")
                 logger.info(f"  大小: {recommendation.variant.size_gb:.1f}GB")
@@ -655,49 +993,54 @@ class EnhancedModelDownloader(QObject):
             logger.error(f"详细错误: {traceback.format_exc()}")
             return self._basic_download(model_name, parent_widget)
 
-    def _basic_download(self, model_name: str, parent_widget=None) -> bool:
-        """基础下载（原有逻辑）"""
+    def _basic_download(self, model_name: str, parent_widget=None, skip_confirmation: bool = False) -> bool:
+        """基础下载（原有逻辑）
+
+        Args:
+            model_name: 模型名称
+            parent_widget: 父窗口
+            skip_confirmation: 是否跳过确认对话框（智能下载时为True）
+        """
         if model_name not in self.download_configs:
             QMessageBox.critical(parent_widget, "错误", f"未知模型: {model_name}")
             return False
 
         config = self.download_configs[model_name]
 
-        # 显示确认对话框
-        total_size_gb = config['total_size'] / (1024**3)
-        reply = QMessageBox.question(
-            parent_widget,
-            "确认下载",
-            f"即将下载 {config['name']}\n\n"
-            f"描述: {config['description']}\n"
-            f"大小: {total_size_gb:.1f} GB\n"
-            f"文件数量: {len(config['files'])} 个\n\n"
-            f"下载可能需要较长时间，确认继续？",
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-            QMessageBox.StandardButton.No
-        )
+        # 如果不跳过确认，显示确认对话框
+        if not skip_confirmation:
+            total_size_gb = config['total_size'] / (1024**3)
+            reply = QMessageBox.question(
+                parent_widget,
+                "确认下载",
+                f"即将下载 {config['name']}\n\n"
+                f"描述: {config['description']}\n"
+                f"大小: {total_size_gb:.1f} GB\n"
+                f"文件数量: {len(config['files'])} 个\n\n"
+                f"下载可能需要较长时间，确认继续？",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                QMessageBox.StandardButton.No
+            )
 
-        if reply != QMessageBox.StandardButton.Yes:
-            # 用户取消基础下载确认对话框时返回 None
-            logger.info("ℹ️ 用户取消基础下载确认")
-            return None
+            if reply != QMessageBox.StandardButton.Yes:
+                logger.info("ℹ️ 用户取消基础下载确认")
+                return None
+        else:
+            logger.info(f"📥 准备下载（跳过确认）: {config['name']}")
         
-        # 创建进度对话框
-        self.progress_dialog = QProgressDialog(
+        # 创建增强的进度对话框
+        self.progress_dialog = EnhancedProgressDialog(
             f"下载 {config['name']}...",
-            "取消",
-            0, 100,
             parent_widget
         )
-        self.progress_dialog.setWindowTitle("模型下载")
-        self.progress_dialog.setModal(True)
         self.progress_dialog.show()
-        
+
         # 创建下载线程
         self.current_download = ModelDownloadThread(model_name, config, self)
-        
+
         # 连接信号
         self.current_download.progress_updated.connect(self._on_progress_updated)
+        self.current_download.enhanced_progress_updated.connect(self._on_enhanced_progress_updated)
         self.current_download.download_completed.connect(self._on_download_completed)
         self.current_download.error_occurred.connect(self._on_error_occurred)
         self.progress_dialog.canceled.connect(self.current_download.cancel_download)
@@ -708,10 +1051,19 @@ class EnhancedModelDownloader(QObject):
         return True
     
     def _on_progress_updated(self, progress: int, status: str):
-        """更新进度"""
-        if self.progress_dialog:
+        """更新进度（旧版信号，向后兼容）"""
+        if self.progress_dialog and not isinstance(self.progress_dialog, EnhancedProgressDialog):
             self.progress_dialog.setValue(progress)
             self.progress_dialog.setLabelText(status)
+
+    def _on_enhanced_progress_updated(self, progress: int, downloaded_mb: float,
+                                     total_mb: float, speed_mb: float,
+                                     eta_seconds: int, filename: str):
+        """更新增强的进度信息"""
+        if self.progress_dialog and isinstance(self.progress_dialog, EnhancedProgressDialog):
+            self.progress_dialog.update_enhanced_progress(
+                progress, downloaded_mb, total_mb, speed_mb, eta_seconds, filename
+            )
     
     def _on_download_completed(self, model_name: str, success: bool):
         """下载完成"""
@@ -814,81 +1166,90 @@ class EnhancedModelDownloader(QObject):
     def _create_dialog_sync(self, recommendation, parent_widget, tab_context: str = None) -> bool:
         """同步创建对话框（确保在主线程中执行）"""
         try:
-            # 修复导入路径 - 使用安全的路径解析方式
+            # 🔧 修复：导入重构后的智能推荐对话框
             import sys
             import os
             from pathlib import Path
 
-            # 安全地获取项目根目录
-            try:
-                current_file = Path(__file__).resolve()
-                project_root = current_file.parent.parent.parent
-                project_root_str = str(project_root)
-                if project_root_str not in sys.path:
-                    sys.path.insert(0, project_root_str)
-                logger.info(f"✅ 项目根路径设置: {project_root_str}")
-            except Exception as e:
-                logger.warning(f"⚠️ 无法设置项目根路径: {e}")
-                # 回退到当前工作目录
-                project_root_str = os.getcwd()
-                if project_root_str not in sys.path:
-                    sys.path.insert(0, project_root_str)
+            # 确保项目根目录在sys.path中
+            current_file = Path(__file__).resolve()
+            project_root = current_file.parent.parent.parent
+            project_root_str = str(project_root)
+            if project_root_str not in sys.path:
+                sys.path.insert(0, project_root_str)
+                logger.info(f"✅ 添加项目根路径: {project_root_str}")
 
-            # 安全地获取src目录
-            try:
-                src_path = current_file.parent.parent
-                src_path_str = str(src_path)
-                if src_path_str not in sys.path:
-                    sys.path.insert(0, src_path_str)
-                logger.info(f"✅ src路径设置: {src_path_str}")
-            except Exception as e:
-                logger.warning(f"⚠️ 无法设置src路径: {e}")
-                # 回退到src目录
-                src_fallback = os.path.join(os.getcwd(), "src")
-                if os.path.exists(src_fallback) and src_fallback not in sys.path:
-                    sys.path.insert(0, src_fallback)
+            # 🔧 根本性重构：导入超快速智能推荐对话框
+            # 旧版本: EnhancedSmartDownloaderDialog
+            # 新版本: UltraFastSmartDownloaderDialog (根本性重构后的智能推荐对话框)
+            UltraFastSmartDownloaderDialog = None
+            import_errors = []
 
-            # 尝试导入增强对话框
+            # 方式1: 从src.ui导入
             try:
-                from src.ui.enhanced_download_dialog import EnhancedDownloadDialog
-                logger.info("✅ 增强对话框模块导入成功 (src.ui路径)")
-            except ImportError:
+                from src.ui.ultrafast_smart_downloader_dialog import UltraFastSmartDownloaderDialog
+                logger.info("✅ 超快速智能推荐对话框导入成功 (src.ui路径)")
+            except ImportError as e:
+                import_errors.append(f"src.ui: {str(e)}")
+                logger.warning(f"⚠️ src.ui路径导入失败: {e}")
+
+                # 方式2: 从ui导入
                 try:
-                    from ui.enhanced_download_dialog import EnhancedDownloadDialog
-                    logger.info("✅ 增强对话框模块导入成功 (ui路径)")
-                except ImportError:
-                    # 安全地使用绝对路径导入
+                    from ui.ultrafast_smart_downloader_dialog import UltraFastSmartDownloaderDialog
+                    logger.info("✅ 超快速智能推荐对话框导入成功 (ui路径)")
+                except ImportError as e2:
+                    import_errors.append(f"ui: {str(e2)}")
+                    logger.warning(f"⚠️ ui路径导入失败: {e2}")
+
+                    # 方式3: 使用绝对路径动态导入
                     try:
-                        current_file = Path(__file__).resolve()
-                        dialog_path = current_file.parent.parent / "ui" / "enhanced_download_dialog.py"
-                        logger.info(f"📁 对话框文件路径: {dialog_path}")
+                        dialog_path = current_file.parent.parent / "ui" / "ultrafast_smart_downloader_dialog.py"
+                        logger.info(f"📁 尝试绝对路径导入: {dialog_path}")
                         logger.info(f"📁 文件存在: {dialog_path.exists()}")
 
-                        if dialog_path.exists():
-                            import importlib.util
-                            spec = importlib.util.spec_from_file_location("enhanced_download_dialog", str(dialog_path))
-                            if spec and spec.loader:
-                                dialog_module = importlib.util.module_from_spec(spec)
-                                spec.loader.exec_module(dialog_module)
-                                EnhancedDownloadDialog = dialog_module.EnhancedDownloadDialog
-                                logger.info("✅ 增强对话框模块导入成功 (绝对路径)")
-                            else:
-                                raise ImportError("无法创建模块规范")
-                        else:
+                        if not dialog_path.exists():
                             raise ImportError(f"对话框文件不存在: {dialog_path}")
-                    except Exception as path_error:
-                        logger.error(f"❌ 绝对路径导入失败: {path_error}")
-                        raise ImportError(f"所有导入方式都失败: {path_error}")
 
-            # 创建增强对话框
-            logger.info(f"🔧 创建对话框: model={recommendation.model_name}, variant={recommendation.variant.name}, context={tab_context}")
-            dialog = EnhancedDownloadDialog(
+                        import importlib.util
+                        spec = importlib.util.spec_from_file_location("ultrafast_smart_downloader_dialog", str(dialog_path))
+                        if not spec or not spec.loader:
+                            raise ImportError("无法创建模块规范")
+
+                        dialog_module = importlib.util.module_from_spec(spec)
+                        sys.modules['ultrafast_smart_downloader_dialog'] = dialog_module
+                        spec.loader.exec_module(dialog_module)
+                        UltraFastSmartDownloaderDialog = dialog_module.UltraFastSmartDownloaderDialog
+                        logger.info("✅ 超快速智能推荐对话框导入成功 (绝对路径)")
+                    except Exception as e3:
+                        import_errors.append(f"absolute: {str(e3)}")
+                        logger.error(f"❌ 绝对路径导入失败: {e3}")
+
+            # 如果所有导入方式都失败，抛出详细错误
+            if UltraFastSmartDownloaderDialog is None:
+                error_msg = "所有导入方式都失败:\n" + "\n".join(f"  - {err}" for err in import_errors)
+                logger.error(f"❌ {error_msg}")
+                raise ImportError(error_msg)
+
+            # 创建超快速智能推荐对话框
+            # 🔧 修复：UltraFastSmartDownloaderDialog只接受model_name和parent两个参数
+            logger.info(f"🔧 创建超快速智能推荐对话框: model={recommendation.model_name}, variant={recommendation.variant.name}, context={tab_context}")
+            dialog = UltraFastSmartDownloaderDialog(
                 model_name=recommendation.model_name,
-                recommendation=recommendation,
-                parent=parent_widget,
-                tab_context=tab_context
+                parent=parent_widget
             )
-            logger.info("✅ 增强对话框创建成功")
+            logger.info("✅ 智能推荐对话框创建成功")
+
+            # 连接下载请求信号
+            download_result = {'success': False, 'variant_info': None}
+
+            def on_download_requested(model_name, variant_info):
+                """处理下载请求信号"""
+                logger.info(f"📥 收到下载请求信号: {model_name} - {variant_info.name}")
+                download_result['success'] = True
+                download_result['variant_info'] = variant_info
+
+            dialog.download_requested.connect(on_download_requested)
+            logger.info("✅ 下载请求信号已连接")
 
             # 设置对话框实例引用，用于防重复检查
             parent_widget._dialog_instance = dialog
@@ -924,11 +1285,31 @@ class EnhancedModelDownloader(QObject):
             except Exception as cleanup_error:
                 logger.warning(f"⚠️ 清理对话框实例时出错: {cleanup_error}")
 
-            if result == dialog.DialogCode.Accepted:
+            # 检查是否收到下载请求信号
+            if download_result['success'] and download_result['variant_info']:
+                variant_info = download_result['variant_info']
+                logger.info(f"✅ 处理下载请求: {variant_info.name}")
+
+                # 构造selected_variant对象
+                selected_variant = {
+                    'variant': type('Variant', (), {
+                        'name': variant_info.name,
+                        'quantization': type('Quantization', (), {'value': variant_info.quantization})(),
+                        'size_gb': variant_info.size_gb,
+                        'memory_requirement_gb': variant_info.memory_requirement_gb,
+                        'quality_retention': variant_info.quality_retention,
+                        'inference_speed_relative': variant_info.inference_speed_relative
+                    })()
+                }
+
+                # 用户确认下载选中版本
+                return self._download_selected_variant(selected_variant, recommendation.model_name, parent_widget)
+
+            elif result == dialog.DialogCode.Accepted:
+                # 兼容旧的处理方式（如果信号没有触发）
                 selected_variant = dialog.get_selected_variant()
                 if selected_variant:
-                    logger.info(f"✅ 用户选择版本: {selected_variant.get('variant', {}).get('name', 'Unknown')}")
-                    # 用户确认下载选中版本
+                    logger.info(f"✅ 用户选择版本（兼容模式）: {selected_variant.get('variant', {}).get('name', 'Unknown')}")
                     return self._download_selected_variant(selected_variant, recommendation.model_name, parent_widget)
                 else:
                     logger.warning("⚠️ 用户未选择版本")
@@ -940,16 +1321,41 @@ class EnhancedModelDownloader(QObject):
             return None
 
         except ImportError as e:
-            # 回退到基础对话框
-            logger.warning(f"⚠️ 增强对话框导入失败: {e}")
-            logger.warning("🔄 回退到基础对话框")
-            return self._show_basic_recommendation_dialog(recommendation, parent_widget)
+            # 🔧 修复：详细记录导入失败原因
+            logger.error(f"❌ 增强对话框导入失败: {e}")
+            import traceback
+            logger.error(f"导入失败详细信息:\n{traceback.format_exc()}")
+            logger.error(f"当前sys.path: {sys.path[:5]}")  # 只显示前5个路径
+            logger.error(f"当前工作目录: {os.getcwd()}")
+
+            # 移除基础推荐对话框回退，避免多重弹窗
+            # 直接显示错误提示并返回
+            from PyQt6.QtWidgets import QMessageBox
+            QMessageBox.critical(
+                parent_widget,
+                "对话框加载失败",
+                f"无法加载智能推荐对话框。\n\n"
+                f"错误: {str(e)}\n\n"
+                f"请检查程序安装是否完整，或联系技术支持。"
+            )
+            return False
+
         except Exception as e:
             logger.error(f"❌ 显示推荐对话框失败: {e}")
             import traceback
             logger.error(f"详细错误: {traceback.format_exc()}")
-            logger.warning("🔄 回退到基础对话框")
-            return self._show_basic_recommendation_dialog(recommendation, parent_widget)
+
+            # 移除基础推荐对话框回退，避免多重弹窗
+            # 直接显示错误提示并返回
+            from PyQt6.QtWidgets import QMessageBox
+            QMessageBox.critical(
+                parent_widget,
+                "对话框显示失败",
+                f"智能推荐对话框显示失败。\n\n"
+                f"错误: {str(e)}\n\n"
+                f"请重试或联系技术支持。"
+            )
+            return False
         finally:
             # 确保清理对话框相关状态 - 增强版本
             try:
@@ -1000,22 +1406,46 @@ class EnhancedModelDownloader(QObject):
         QMessageBox.information(parent_dialog, "其他选项", alternatives_text)
 
     def _download_recommended_variant(self, recommendation, parent_widget) -> bool:
-        """下载推荐的变体"""
-        # 这里需要根据推荐的变体配置实际的下载
-        # 暂时使用基础下载逻辑
+        """下载推荐的变体（从配置文件读取真实URL）"""
         variant = recommendation.variant
+        model_name = recommendation.model_name
 
-        # 创建临时配置
+        # 从配置文件读取下载URL
+        download_url = self._get_variant_download_url(model_name, variant.quantization.value)
+
+        if not download_url or download_url.startswith("https://example.com"):
+            logger.error(f"无法获取有效的下载URL: {model_name} - {variant.quantization.value}")
+            QMessageBox.critical(
+                parent_widget,
+                "下载错误",
+                f"无法获取模型下载URL。\n\n"
+                f"模型: {model_name}\n"
+                f"量化类型: {variant.quantization.value}\n\n"
+                f"请检查配置文件或联系技术支持。"
+            )
+            return False
+
+        # 创建下载配置（使用GPTQ格式的.safetensors文件）
         temp_config = {
             'name': variant.name,
-            'description': f"智能推荐版本 - {variant.quantization.value}",
+            'description': f"智能推荐版本 - {variant.quantization.value} (GPTQ格式)",
             'total_size': int(variant.size_gb * 1024**3),
-            'target_dir': f"models/{recommendation.model_name}/{variant.quantization.value}",
+            'target_dir': f"models/{model_name}/{variant.quantization.value}",
             'files': [
                 {
-                    'name': f"{recommendation.model_name}-{variant.quantization.value}.gguf",
-                    'url': f"https://example.com/{recommendation.model_name}/{variant.quantization.value}",
+                    'name': "model.safetensors",  # GPTQ格式使用.safetensors
+                    'url': download_url,
                     'size': int(variant.size_gb * 1024**3)
+                },
+                {
+                    'name': "config.json",
+                    'url': download_url.replace("/resolve/main/model.safetensors", "/resolve/main/config.json"),
+                    'size': 1024
+                },
+                {
+                    'name': "tokenizer.json",
+                    'url': download_url.replace("/resolve/main/model.safetensors", "/resolve/main/tokenizer.json"),
+                    'size': 2048
                 }
             ]
         }
@@ -1061,48 +1491,132 @@ class EnhancedModelDownloader(QObject):
         return None
 
     def _download_selected_variant(self, selected_variant: Dict, model_name: str, parent_widget) -> bool:
-        """下载用户选中的变体"""
+        """下载用户选中的变体（使用GPTQ格式）"""
         variant = selected_variant.get('variant')
         if not variant:
             return False
 
-        # 创建下载配置
+        # 从配置文件读取下载URL
+        download_url = self._get_variant_download_url(model_name, variant.quantization.value)
+
+        if not download_url or download_url.startswith("https://example.com"):
+            logger.error(f"无法获取有效的下载URL: {model_name} - {variant.quantization.value}")
+            from PyQt6.QtWidgets import QMessageBox
+            QMessageBox.critical(
+                parent_widget,
+                "下载错误",
+                f"无法获取模型下载URL。\n\n"
+                f"模型: {model_name}\n"
+                f"量化类型: {variant.quantization.value}\n\n"
+                f"请检查配置文件或联系技术支持。"
+            )
+            return False
+
+        # 创建下载配置（使用GPTQ格式的.safetensors文件）
         download_config = {
             'name': variant.name,
-            'description': f"用户选择版本 - {variant.quantization.value}",
+            'description': f"用户选择版本 - {variant.quantization.value} (GPTQ格式)",
             'total_size': int(variant.size_gb * 1024**3),
             'target_dir': f"models/{model_name}/{variant.quantization.value}",
             'files': [
                 {
-                    'name': f"{model_name}-{variant.quantization.value}.gguf",
-                    'url': self._get_download_url(model_name, variant.quantization.value),
+                    'name': "model.safetensors",  # GPTQ格式使用.safetensors
+                    'url': download_url,
                     'size': int(variant.size_gb * 1024**3)
+                },
+                {
+                    'name': "config.json",
+                    'url': download_url.replace("/resolve/main/model.safetensors", "/resolve/main/config.json"),
+                    'size': 1024
+                },
+                {
+                    'name': "tokenizer.json",
+                    'url': download_url.replace("/resolve/main/model.safetensors", "/resolve/main/tokenizer.json"),
+                    'size': 2048
                 }
             ]
         }
 
         return self._execute_download(download_config, parent_widget)
 
-    def _get_download_url(self, model_name: str, quantization_type: str) -> str:
-        """获取下载URL"""
-        # 这里应该根据实际的下载源配置返回正确的URL
-        # 暂时返回示例URL
-        base_urls = {
-            "qwen2.5-7b": {
-                "q4_k_m": "https://modelscope.cn/models/qwen/Qwen2.5-7B-Instruct-GGUF/resolve/main/qwen2.5-7b-instruct-q4_k_m.gguf",
-                "q5_k_m": "https://modelscope.cn/models/qwen/Qwen2.5-7B-Instruct-GGUF/resolve/main/qwen2.5-7b-instruct-q5_k_m.gguf",
-                "q8_0": "https://modelscope.cn/models/qwen/Qwen2.5-7B-Instruct-GGUF/resolve/main/qwen2.5-7b-instruct-q8_0.gguf",
-                "fp16": "https://modelscope.cn/models/qwen/Qwen2.5-7B-Instruct"
-            },
-            "mistral-7b": {
-                "q4_k_m": "https://hf-mirror.com/TheBloke/Mistral-7B-Instruct-v0.1-GGUF/resolve/main/mistral-7b-instruct-v0.1.q4_k_m.gguf",
-                "q5_k_m": "https://hf-mirror.com/TheBloke/Mistral-7B-Instruct-v0.1-GGUF/resolve/main/mistral-7b-instruct-v0.1.q5_k_m.gguf",
-                "q8_0": "https://hf-mirror.com/TheBloke/Mistral-7B-Instruct-v0.1-GGUF/resolve/main/mistral-7b-instruct-v0.1.q8_0.gguf",
-                "fp16": "https://hf-mirror.com/mistralai/Mistral-7B-Instruct-v0.1"
-            }
-        }
+    def _get_variant_download_url(self, model_name: str, quantization_type: str) -> str:
+        """从配置文件获取变体的下载URL（仅GPTQ格式）"""
+        try:
+            # 尝试多个可能的配置文件名
+            possible_filenames = [
+                f"{model_name}.yaml",  # 例如：qwen3-1.7b.yaml
+                f"{model_name}-zh.yaml",  # 例如：qwen3-1.7b-zh.yaml
+                f"{model_name}-en.yaml",  # 例如：mistral-7b-en.yaml
+            ]
 
-        return base_urls.get(model_name, {}).get(quantization_type, "https://example.com/model.gguf")
+            config_file = None
+            for filename in possible_filenames:
+                test_path = Path(f"configs/models/available_models/{filename}")
+                if test_path.exists():
+                    config_file = test_path
+                    logger.info(f"找到配置文件: {config_file}")
+                    break
+
+            if not config_file:
+                logger.error(f"配置文件不存在: {model_name} (尝试了 {possible_filenames})")
+                return None
+
+            import yaml
+            with open(config_file, 'r', encoding='utf-8') as f:
+                config = yaml.safe_load(f)
+
+            # 获取量化变体配置
+            variants = config.get('quantization_variants', {})
+
+            # 查找匹配的量化类型
+            for variant_key, variant_config in variants.items():
+                if variant_config.get('quantization_type') == quantization_type:
+                    download_url = variant_config.get('download_url')
+                    if download_url:
+                        # 确保URL指向.safetensors文件
+                        if not download_url.endswith('/model.safetensors'):
+                            download_url = f"{download_url}/resolve/main/model.safetensors"
+                        logger.info(f"找到下载URL: {model_name} - {quantization_type} -> {download_url}")
+                        return download_url
+
+            # 如果没有找到，尝试从download配置中获取
+            download_config = config.get('download', {})
+            quantized_versions = download_config.get('quantized_versions', {})
+
+            # 映射量化类型到配置键
+            quant_key_mapping = {
+                'int8': 'int8_128',
+                'int4': 'int4_128',
+                'int8_perchannel': 'int8_perchannel',
+                'int4_perchannel': 'int4_perchannel',
+                'fp16': 'fp16'
+            }
+
+            config_key = quant_key_mapping.get(quantization_type, quantization_type)
+            base_url = quantized_versions.get(config_key)
+
+            if base_url:
+                # 确保URL指向.safetensors文件
+                if not base_url.endswith('/model.safetensors'):
+                    download_url = f"{base_url}/resolve/main/model.safetensors"
+                else:
+                    download_url = base_url
+                logger.info(f"从download配置获取URL: {model_name} - {quantization_type} -> {download_url}")
+                return download_url
+
+            logger.warning(f"未找到下载URL: {model_name} - {quantization_type}")
+            return None
+
+        except Exception as e:
+            logger.error(f"读取配置文件失败: {e}")
+            import traceback
+            logger.error(f"详细错误: {traceback.format_exc()}")
+            return None
+
+    def _get_download_url(self, model_name: str, quantization_type: str) -> str:
+        """获取下载URL（已弃用，使用_get_variant_download_url代替）"""
+        logger.warning("_get_download_url已弃用，请使用_get_variant_download_url")
+        return self._get_variant_download_url(model_name, quantization_type)
 
     def _execute_download(self, config: Dict, parent_widget) -> bool:
         """执行实际下载"""

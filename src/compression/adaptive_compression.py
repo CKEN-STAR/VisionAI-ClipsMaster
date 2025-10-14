@@ -23,9 +23,30 @@ from enum import Enum
 import json
 
 # 导入压缩相关模块
-from src.compression.core import Compressor, compress, decompress
-from src.compression.compressors import get_compressor, get_available_compressors
-from src.compression.hardware_accel import get_best_hardware, HAS_CUDA
+from src.compression.compressors import (
+    get_compressor,
+    get_available_compressors,
+    compress_data,
+    decompress_data
+)
+
+# 延迟导入hardware_accel避免torch导入问题
+get_best_hardware = None
+HAS_CUDA = False
+
+def _lazy_import_hardware_accel():
+    """延迟导入硬件加速模块"""
+    global get_best_hardware, HAS_CUDA
+    if get_best_hardware is None:
+        try:
+            from src.compression.hardware_accel import get_best_hardware as gbh, HAS_CUDA as hc
+            get_best_hardware = gbh
+            HAS_CUDA = hc
+        except Exception as e:
+            logger.warning(f"硬件加速模块导入失败: {e}")
+            get_best_hardware = lambda *args, **kwargs: None
+            HAS_CUDA = False
+    return get_best_hardware, HAS_CUDA
 
 # 配置日志
 logger = logging.getLogger("AdaptiveCompression")
@@ -216,20 +237,28 @@ class SmartCompressor:
     def _init_compressor(self) -> None:
         """初始化压缩器"""
         # 创建基础压缩器
-        self.compressor = Compressor(
-            algo=self.default_algo,
-            level=self.default_level,
-            threads=None  # 自动选择线程数
-        )
-        
+        compressor_name = f"{self.default_algo}-{self.default_level}"
+        self.compressor = get_compressor(compressor_name)
+
+        # 如果找不到指定的压缩器,使用默认的
+        if self.compressor is None:
+            logger.warning(f"找不到压缩器 {compressor_name},使用默认压缩器")
+            self.compressor = get_compressor("zstd-3")
+
         # 如果启用硬件加速，创建硬件加速压缩器
         if self.use_hardware_accel:
             try:
-                self.hardware_compressor = get_best_hardware(
-                    algorithm=self.default_algo,
-                    level=self.default_level
-                )
-                logger.info(f"已初始化硬件加速压缩器: {type(self.hardware_compressor).__name__}")
+                # 延迟导入硬件加速模块
+                gbh, _ = _lazy_import_hardware_accel()
+                if gbh is not None:
+                    self.hardware_compressor = gbh(
+                        algorithm=self.default_algo,
+                        level=self.default_level
+                    )
+                    logger.info(f"已初始化硬件加速压缩器: {type(self.hardware_compressor).__name__}")
+                else:
+                    self.hardware_compressor = None
+                    logger.warning("硬件加速模块不可用，将使用标准压缩器")
             except Exception as e:
                 logger.warning(f"初始化硬件加速压缩器失败: {str(e)}，将使用标准压缩器")
                 self.hardware_compressor = None
@@ -444,14 +473,26 @@ class SmartCompressor:
         
         # 使用硬件加速器（如果可用）
         if self.use_hardware_accel and self.hardware_compressor:
-            compressed, metadata = self.hardware_compressor.compress(data)
+            try:
+                compressed = self.hardware_compressor.compress(data)
+                metadata = {"algorithm": algo, "level": level, "hardware_accel": True}
+            except Exception as e:
+                logger.warning(f"硬件加速压缩失败: {e},使用标准压缩器")
+                compressed = self.compressor.compress(data)
+                metadata = {"algorithm": algo, "level": level, "hardware_accel": False}
         else:
-            # 如果当前压缩器配置与需要的不同，创建临时压缩器
+            # 如果当前压缩器配置与需要的不同，获取对应的压缩器
             if algo != self.default_algo or level != self.default_level:
-                temp_compressor = Compressor(algo=algo, level=level)
-                compressed, metadata = temp_compressor.compress(data, with_metadata=True)
+                compressor_name = f"{algo}-{level}"
+                temp_compressor = get_compressor(compressor_name)
+                if temp_compressor:
+                    compressed = temp_compressor.compress(data)
+                else:
+                    compressed = self.compressor.compress(data)
             else:
-                compressed, metadata = self.compressor.compress(data, with_metadata=True)
+                compressed = self.compressor.compress(data)
+
+            metadata = {"algorithm": algo, "level": level, "hardware_accel": False}
         
         # 更新统计信息
         compression_time = time.time() - start_time
@@ -495,12 +536,16 @@ class SmartCompressor:
         start_time = time.time()
         
         # 使用硬件加速器（如果可用）
-        if (self.use_hardware_accel and self.hardware_compressor and 
-            metadata and metadata.get("smart_compression")):
-            decompressed = self.hardware_compressor.decompress(compressed, metadata)
+        if (self.use_hardware_accel and self.hardware_compressor and
+            metadata and metadata.get("hardware_accel")):
+            try:
+                decompressed = self.hardware_compressor.decompress(compressed)
+            except Exception as e:
+                logger.warning(f"硬件加速解压失败: {e},使用标准压缩器")
+                decompressed = self.compressor.decompress(compressed)
         else:
             # 使用标准压缩器
-            decompressed = decompress(compressed, metadata)
+            decompressed = self.compressor.decompress(compressed)
         
         # 更新统计信息
         decompression_time = time.time() - start_time

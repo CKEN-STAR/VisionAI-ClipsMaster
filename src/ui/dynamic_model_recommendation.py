@@ -58,146 +58,119 @@ class ModelRecommendationWorker(QObject):
     def get_recommendations(self):
         """获取模型推荐"""
         try:
+            logger.info(f"🚀 开始获取 {self.model_name} 的推荐")
+
             if self.is_cancelled:
+                logger.info("⚠️ 推荐已取消")
                 return
-            
+
             # 导入智能选择器
+            logger.info("📦 导入智能选择器...")
             from src.core.intelligent_model_selector import IntelligentModelSelector
-            
+
+            logger.info("🔧 创建智能选择器实例...")
             selector = IntelligentModelSelector()
-            
+
             # 强制刷新硬件配置
+            logger.info("🔄 强制刷新硬件配置...")
             selector.force_refresh_hardware()
-            
+
             if self.is_cancelled:
+                logger.info("⚠️ 推荐已取消")
                 return
-            
+
             # 获取所有可用变体
+            logger.info("📋 获取所有可用变体...")
             variants = self._get_all_variants()
-            
+            logger.info(f"✅ 找到 {len(variants)} 个变体")
+
             # 获取推荐
+            logger.info("🎯 获取智能推荐...")
             recommendation = selector.recommend_model_version(self.model_name)
-            
+
             if self.is_cancelled:
+                logger.info("⚠️ 推荐已取消")
                 return
-            
+
             # 标记推荐的变体
             if recommendation and recommendation.variant:
                 recommended_name = recommendation.variant.name
+                logger.info(f"✅ 推荐变体: {recommended_name}")
                 for variant in variants:
                     if variant.name == recommended_name:
                         variant.is_recommended = True
                         variant.recommendation_reason = self._get_recommendation_reason(
                             recommendation, self.hardware_info
                         )
+                        logger.info(f"✅ 标记推荐变体成功")
                         break
-            
+            else:
+                logger.warning("⚠️ 未获取到推荐结果")
+
+            logger.info("📤 发送推荐完成信号...")
             self.recommendation_completed.emit(variants)
-            
+            logger.info("✅ 推荐获取完成")
+
         except Exception as e:
-            logger.error(f"获取模型推荐失败: {e}")
+            logger.error(f"❌ 获取模型推荐失败: {e}")
+            import traceback
+            logger.error(f"详细错误: {traceback.format_exc()}")
             self.recommendation_failed.emit(str(e))
     
     def _get_all_variants(self) -> List[ModelVariantInfo]:
-        """获取所有模型变体信息"""
-        # 根据模型名称返回对应的变体信息
-        if "qwen" in self.model_name.lower():
-            return self._get_qwen_variants()
-        elif "mistral" in self.model_name.lower():
-            return self._get_mistral_variants()
-        else:
+        """获取所有模型变体信息 - 从QuantizationAnalyzer动态获取"""
+        try:
+            # 🔧 修复：从QuantizationAnalyzer动态获取变体信息,而不是硬编码
+            from src.core.quantization_analysis import QuantizationAnalyzer
+
+            analyzer = QuantizationAnalyzer()
+
+            # 获取所有变体
+            all_variants = analyzer.get_all_variants()
+
+            # 过滤出当前模型的变体
+            model_variants = []
+            for variant_name, variant_info in all_variants.items():
+                # 检查变体是否属于当前模型
+                if self._is_variant_for_model(variant_name, self.model_name):
+                    model_variants.append(ModelVariantInfo(
+                        name=variant_info.name,
+                        quantization=variant_info.quantization.value,
+                        file_size_gb=variant_info.size_gb,
+                        memory_requirement_gb=variant_info.memory_requirement_gb,
+                        quality_retention=variant_info.quality_retention,
+                        inference_speed_relative=variant_info.inference_speed_relative,
+                        download_time_estimate_min=int(variant_info.size_gb * 2.5),  # 估算下载时间
+                        disk_space_gb=variant_info.size_gb * 1.05  # 预留5%空间
+                    ))
+
+            if not model_variants:
+                logger.warning(f"未找到模型 {self.model_name} 的变体,使用通用变体")
+                return self._get_generic_variants()
+
+            return model_variants
+
+        except Exception as e:
+            logger.error(f"动态获取变体失败: {e},回退到通用变体")
             return self._get_generic_variants()
-    
-    def _get_qwen_variants(self) -> List[ModelVariantInfo]:
-        """获取Qwen模型变体"""
-        return [
-            ModelVariantInfo(
-                name="Qwen2.5-7B-Instruct-FP16",
-                quantization="FP16",
-                file_size_gb=14.0,
-                memory_requirement_gb=16.0,
-                quality_retention=1.0,
-                inference_speed_relative=1.0,
-                download_time_estimate_min=35,
-                disk_space_gb=14.5
-            ),
-            ModelVariantInfo(
-                name="Qwen2.5-7B-Instruct-Q8",
-                quantization="Q8_0",
-                file_size_gb=7.2,
-                memory_requirement_gb=8.5,
-                quality_retention=0.98,
-                inference_speed_relative=1.2,
-                download_time_estimate_min=18,
-                disk_space_gb=7.5
-            ),
-            ModelVariantInfo(
-                name="Qwen2.5-7B-Instruct-Q5",
-                quantization="Q5_K_M",
-                file_size_gb=4.8,
-                memory_requirement_gb=6.0,
-                quality_retention=0.95,
-                inference_speed_relative=1.5,
-                download_time_estimate_min=12,
-                disk_space_gb=5.0
-            ),
-            ModelVariantInfo(
-                name="Qwen2.5-7B-Instruct-Q4",
-                quantization="Q4_K_M",
-                file_size_gb=4.1,
-                memory_requirement_gb=5.2,
-                quality_retention=0.93,
-                inference_speed_relative=1.8,
-                download_time_estimate_min=10,
-                disk_space_gb=4.3
-            )
-        ]
-    
-    def _get_mistral_variants(self) -> List[ModelVariantInfo]:
-        """获取Mistral模型变体"""
-        return [
-            ModelVariantInfo(
-                name="Mistral-7B-Instruct-FP16",
-                quantization="FP16",
-                file_size_gb=13.5,
-                memory_requirement_gb=15.5,
-                quality_retention=1.0,
-                inference_speed_relative=1.0,
-                download_time_estimate_min=34,
-                disk_space_gb=14.0
-            ),
-            ModelVariantInfo(
-                name="Mistral-7B-Instruct-Q8",
-                quantization="Q8_0",
-                file_size_gb=7.0,
-                memory_requirement_gb=8.2,
-                quality_retention=0.98,
-                inference_speed_relative=1.2,
-                download_time_estimate_min=17,
-                disk_space_gb=7.3
-            ),
-            ModelVariantInfo(
-                name="Mistral-7B-Instruct-Q5",
-                quantization="Q5_K_M",
-                file_size_gb=4.6,
-                memory_requirement_gb=5.8,
-                quality_retention=0.95,
-                inference_speed_relative=1.5,
-                download_time_estimate_min=11,
-                disk_space_gb=4.8
-            ),
-            ModelVariantInfo(
-                name="Mistral-7B-Instruct-Q4",
-                quantization="Q4_K_M",
-                file_size_gb=4.0,
-                memory_requirement_gb=5.0,
-                quality_retention=0.93,
-                inference_speed_relative=1.8,
-                download_time_estimate_min=10,
-                disk_space_gb=4.2
-            )
-        ]
-    
+
+    def _is_variant_for_model(self, variant_name: str, model_name: str) -> bool:
+        """检查变体是否属于指定模型"""
+        variant_lower = variant_name.lower().replace("-", "").replace("_", "")
+        model_lower = model_name.lower().replace("-", "").replace("_", "")
+
+        # 检查Qwen系列
+        if "qwen" in model_lower and "qwen" in variant_lower:
+            return True
+        # 检查Mistral系列
+        elif "mistral" in model_lower and "mistral" in variant_lower:
+            return True
+        # 精确匹配
+        elif model_lower in variant_lower:
+            return True
+
+        return False
+
     def _get_generic_variants(self) -> List[ModelVariantInfo]:
         """获取通用模型变体"""
         return [
@@ -328,24 +301,46 @@ class DynamicModelRecommendationWidget(QWidget):
         """刷新推荐"""
         try:
             self.status_label.setText("🔄 正在更新推荐...")
-            
+
+            # 🔧 修复：清理旧的线程和worker,避免内存泄漏和崩溃
+            if self.recommendation_worker:
+                logger.info("🧹 取消旧的推荐任务...")
+                self.recommendation_worker.cancel()
+                self.recommendation_worker = None
+
+            if self.recommendation_thread and self.recommendation_thread.isRunning():
+                logger.info("🧹 停止旧的推荐线程...")
+                self.recommendation_thread.quit()
+                self.recommendation_thread.wait(1000)  # 等待最多1秒
+                if self.recommendation_thread.isRunning():
+                    logger.warning("⚠️ 线程未能正常停止,强制终止")
+                    self.recommendation_thread.terminate()
+                    self.recommendation_thread.wait()
+                self.recommendation_thread.deleteLater()
+                self.recommendation_thread = None
+
             # 创建推荐工作线程
             self.recommendation_thread = QThread()
             self.recommendation_worker = ModelRecommendationWorker(
                 self.model_name, self.current_hardware_info
             )
             self.recommendation_worker.moveToThread(self.recommendation_thread)
-            
+
             # 连接信号
             self.recommendation_worker.recommendation_completed.connect(self.update_recommendations)
             self.recommendation_worker.recommendation_failed.connect(self.on_recommendation_failed)
-            
+
+            # 🔧 修复：线程完成后自动清理
+            self.recommendation_thread.finished.connect(self.recommendation_thread.deleteLater)
+
             # 启动线程
             self.recommendation_thread.started.connect(self.recommendation_worker.get_recommendations)
             self.recommendation_thread.start()
-            
+
         except Exception as e:
             logger.error(f"刷新推荐失败: {e}")
+            import traceback
+            logger.error(f"详细错误: {traceback.format_exc()}")
             self.status_label.setText(f"❌ 刷新失败: {e}")
     
     def update_recommendations(self, variants: List[ModelVariantInfo]):

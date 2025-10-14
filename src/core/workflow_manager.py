@@ -41,9 +41,22 @@ class WorkflowManager:
         self.input_validator = InputValidator()
         self.jianying_exporter = JianYingProExporter()
         
+        # 初始化场景分析器
+        try:
+            from src.alignment.scene_analyzer import SceneAnalyzer
+            self.scene_analyzer = SceneAnalyzer(
+                min_scene_duration=1.0,
+                scene_threshold=30.0,
+                use_external_models=False
+            )
+            logger.info("场景分析器已启用")
+        except ImportError as e:
+            logger.warning(f"场景分析器导入失败: {e}")
+            self.scene_analyzer = None
+
         self.workflow_state = {
             "current_step": 0,
-            "total_steps": 7,
+            "total_steps": 9,  # 从8步增加到9步(添加关键帧提取)
             "status": "ready",
             "start_time": None,
             "end_time": None,
@@ -86,30 +99,45 @@ class WorkflowManager:
             # 步骤3: 字幕解析
             self._update_step(3, "字幕解析")
             parsing_result = self._parse_subtitles(subtitle_path)
-            
-            # 步骤4: 剧情分析
-            self._update_step(4, "剧情分析")
-            analysis_result = self._analyze_narrative(parsing_result["subtitles"])
-            
-            # 步骤5: 剧本重构
-            self._update_step(5, "剧本重构")
+
+            # 步骤4: 关键帧提取
+            self._update_step(4, "关键帧提取")
+            keyframe_result = self._extract_keyframes(video_path, parsing_result["total_duration"])
+
+            # 步骤5: 场景分析
+            self._update_step(5, "场景分析")
+            scene_result = self._analyze_scenes(
+                video_path,
+                parsing_result["subtitles"],
+                keyframe_result.get("keyframes", [])
+            )
+
+            # 步骤6: 剧情分析
+            self._update_step(6, "剧情分析")
+            analysis_result = self._analyze_narrative(
+                parsing_result["subtitles"],
+                scene_result.get("scenes", [])
+            )
+
+            # 步骤7: 剧本重构
+            self._update_step(7, "剧本重构")
             reconstruction_result = self._reconstruct_screenplay(
-                parsing_result["subtitles"], 
+                parsing_result["subtitles"],
                 analysis_result,
                 language_result["language"],
                 target_length
             )
-            
-            # 步骤6: 视频生成
-            self._update_step(6, "视频生成")
+
+            # 步骤8: 视频生成
+            self._update_step(8, "视频生成")
             generation_result = self._generate_clips(
-                video_path, 
+                video_path,
                 reconstruction_result["new_subtitles"],
                 output_dir
             )
-            
-            # 步骤7: 导出工程
-            self._update_step(7, "导出工程")
+
+            # 步骤9: 导出工程
+            self._update_step(9, "导出工程")
             export_result = self._export_project(
                 generation_result["output_video"],
                 reconstruction_result["new_subtitles"],
@@ -194,10 +222,101 @@ class WorkflowManager:
         total_duration = self.srt_parser.get_total_duration(subtitles)
         logger.info(f"📝 解析字幕: {len(subtitles)}条，总时长: {total_duration:.2f}秒")
         return {"subtitles": subtitles, "total_duration": total_duration}
-    
-    def _analyze_narrative(self, subtitles: List[Dict]) -> Dict[str, Any]:
+
+    def _extract_keyframes(self, video_path: str, video_duration: float) -> Dict[str, Any]:
+        """提取关键帧(智能自动化)"""
+        try:
+            # 延迟导入,避免cv2循环导入
+            from src.alignment import extract_keyframes
+
+            # 智能选择提取方法和参数
+            method, num_frames, threshold = self._select_keyframe_params(video_duration)
+
+            logger.info(f"🎞️ 开始提取关键帧: 方法={method}, 参数={num_frames if method=='uniform' else threshold}")
+
+            # 提取关键帧(不保存图像,仅用于分析)
+            keyframes = extract_keyframes(
+                video_path=video_path,
+                method=method,
+                num_frames=num_frames,
+                threshold=threshold,
+                save_frames=False
+            )
+
+            logger.info(f"✅ 关键帧提取完成: {len(keyframes)}帧")
+
+            return {
+                "keyframes": keyframes,
+                "keyframe_count": len(keyframes),
+                "method": method,
+                "video_duration": video_duration
+            }
+
+        except Exception as e:
+            logger.warning(f"关键帧提取失败: {e}, 继续执行后续步骤")
+            return {
+                "keyframes": [],
+                "keyframe_count": 0,
+                "method": "none",
+                "video_duration": video_duration
+            }
+
+    def _select_keyframe_params(self, video_duration: float) -> tuple:
+        """智能选择关键帧提取参数
+
+        根据视频时长自动选择最优的提取方法和参数:
+        - 短视频(<5分钟): 均匀提取, 10帧
+        - 中等视频(5-30分钟): 差异提取, 阈值35.0
+        - 长视频(>30分钟): 场景变化提取, 阈值30.0
+        """
+        if video_duration < 300:  # 5分钟
+            return ('uniform', 10, 30.0)
+        elif video_duration < 1800:  # 30分钟
+            return ('difference', 20, 35.0)
+        else:
+            return ('scene', 30, 30.0)
+
+    def _analyze_scenes(self, video_path: str, subtitles: List[Dict], keyframes: List[Dict] = None) -> Dict[str, Any]:
+        """分析场景"""
+        if self.scene_analyzer is None:
+            logger.warning("场景分析器未启用，跳过场景分析")
+            return {"scenes": [], "scene_count": 0}
+
+        try:
+            # 分析视频场景(自动使用缓存)
+            scenes = self.scene_analyzer.analyze_video(
+                video_path=video_path,
+                subtitle_data=subtitles,
+                use_cache=True
+            )
+
+            logger.info(f"🎬 场景分析完成: {len(scenes)}个场景")
+
+            # 统计场景类型
+            scene_types = {}
+            for scene in scenes:
+                scene_type = getattr(scene, 'scene_type', 'unknown')
+                scene_types[scene_type] = scene_types.get(scene_type, 0) + 1
+
+            return {
+                "scenes": scenes,
+                "scene_count": len(scenes),
+                "scene_types": scene_types
+            }
+
+        except Exception as e:
+            logger.error(f"场景分析失败: {e}")
+            return {"scenes": [], "scene_count": 0, "error": str(e)}
+
+    def _analyze_narrative(self, subtitles: List[Dict], scenes: List = None) -> Dict[str, Any]:
         """分析剧情"""
         analysis = self.narrative_analyzer.analyze_narrative_structure(subtitles)
+
+        # 如果有场景数据,添加到分析结果中
+        if scenes:
+            analysis["scenes"] = scenes
+            analysis["scene_count"] = len(scenes)
+
         logger.info(f"🎭 剧情分析完成，连贯性评分: {analysis.get('coherence_score', 0.8):.2f}")
         return analysis
     
@@ -281,7 +400,7 @@ class WorkflowManager:
         """重置工作流程状态"""
         self.workflow_state = {
             "current_step": 0,
-            "total_steps": 7,
+            "total_steps": 9,  # 更新为9步(添加关键帧提取)
             "status": "ready",
             "start_time": None,
             "end_time": None,

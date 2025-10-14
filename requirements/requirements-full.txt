@@ -14,6 +14,7 @@ datasets>=2.14.0
 # 深度学习加速（可选）
 accelerate>=0.21.0
 optimum>=1.12.0
+peft>=0.4.0  # LoRA/QLoRA微调支持
 
 # 模型量化
 bitsandbytes>=0.41.0; platform_system!="Windows"

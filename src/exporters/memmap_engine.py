@@ -10,7 +10,8 @@
 import os
 import mmap
 import numpy as np
-import cv2
+# 延迟导入cv2以避免递归加载问题
+# import cv2
 import logging
 import time
 from typing import Dict, List, Tuple, Optional, Union, Any, BinaryIO
@@ -20,6 +21,21 @@ from src.utils.log_handler import get_logger
 
 # 配置日志记录器
 logger = get_logger("memmap_engine")
+
+# cv2延迟导入标志
+_cv2 = None
+
+def _get_cv2():
+    """延迟导入cv2"""
+    global _cv2
+    if _cv2 is None:
+        try:
+            import cv2 as cv2_module
+            _cv2 = cv2_module
+        except ImportError:
+            logger.warning("cv2未安装,某些功能可能不可用")
+            _cv2 = None
+    return _cv2
 
 # 默认内存映射参数
 DEFAULT_PAGE_SIZE = 4096  # 默认页大小
@@ -232,13 +248,19 @@ class MemmapEngine:
             Tuple[np.ndarray, int]: 帧数据和实际读取的帧数
         """
         try:
+            # 获取cv2
+            cv2 = _get_cv2()
+            if cv2 is None:
+                logger.error("cv2未安装,无法读取视频帧")
+                return np.array([]), 0
+
             # 打开视频获取基本信息
             cap = cv2.VideoCapture(video_path)
-            
+
             if not cap.isOpened():
                 logger.error(f"无法打开视频文件: {video_path}")
                 return np.array([]), 0
-            
+
             # 获取视频属性
             total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
             height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
@@ -289,6 +311,11 @@ class MemmapEngine:
         
         # 回退逻辑：直接读取视频帧
         try:
+            cv2 = _get_cv2()
+            if cv2 is None:
+                logger.error("cv2未安装,无法读取视频帧")
+                return np.array([]), 0
+
             cap = cv2.VideoCapture(video_path)
             cap.set(cv2.CAP_PROP_POS_FRAMES, start_frame)
             

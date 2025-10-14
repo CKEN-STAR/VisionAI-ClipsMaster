@@ -113,28 +113,31 @@ class MainUIIntegrator(QObject):
                 menubar = QMenuBar(self.main_window)
                 self.main_window.setMenuBar(menubar)
             
-            # 查找或创建"工具"菜单
-            tools_menu = None
-            for action in menubar.actions():
-                if action.text() in ["工具", "Tools", "&Tools", "&工具"]:
-                    tools_menu = action.menu()
-                    break
-            
-            if not tools_menu:
-                tools_menu = menubar.addMenu("工具(&T)")
-            
-            # 智能下载器菜单项已移除 - 恢复UI界面到原始状态
-            # 保留后端功能，仅移除UI元素
-            
-            # 添加硬件信息菜单项
-            hardware_info_action = QAction("🔧 硬件信息", self.main_window)
-            hardware_info_action.setStatusTip("查看当前硬件配置信息")
-            hardware_info_action.triggered.connect(self._show_hardware_info)
-            
-            tools_menu.addAction(hardware_info_action)
-            self.menu_actions["hardware_info"] = hardware_info_action
-            
-            logger.info("✅ 菜单项集成完成")
+            # 工具菜单集成已完全移除 - 用户要求移除
+            # 所有菜单项(智能下载器、硬件信息)都已移除
+            # 不再创建或查找工具菜单
+
+            # # 查找或创建"工具"菜单
+            # tools_menu = None
+            # for action in menubar.actions():
+            #     if action.text() in ["工具", "Tools", "&Tools", "&工具"]:
+            #         tools_menu = action.menu()
+            #         break
+            #
+            # if not tools_menu:
+            #     tools_menu = menubar.addMenu("工具(&T)")
+            #
+            # # 智能下载器菜单项已移除 - 恢复UI界面到原始状态
+            # # 保留后端功能，仅移除UI元素
+            #
+            # # 硬件信息菜单项已移除 - 用户要求移除
+            # # hardware_info_action = QAction("🔧 硬件信息", self.main_window)
+            # # hardware_info_action.setStatusTip("查看当前硬件配置信息")
+            # # hardware_info_action.triggered.connect(self._show_hardware_info)
+            # # tools_menu.addAction(hardware_info_action)
+            # # self.menu_actions["hardware_info"] = hardware_info_action
+
+            logger.info("✅ 菜单项集成完成(工具菜单已移除)")
             
         except Exception as e:
             logger.error(f"❌ 菜单项集成失败: {e}")
@@ -180,9 +183,9 @@ class MainUIIntegrator(QObject):
         try:
             # 智能下载器快捷键已移除 - 恢复UI界面到原始状态
 
-            # 硬件信息快捷键 (Ctrl+Shift+H)
-            if "hardware_info" in self.menu_actions:
-                self.menu_actions["hardware_info"].setShortcut(QKeySequence("Ctrl+Shift+H"))
+            # 硬件信息快捷键已移除 - 用户要求移除
+            # if "hardware_info" in self.menu_actions:
+            #     self.menu_actions["hardware_info"].setShortcut(QKeySequence("Ctrl+Shift+H"))
 
             logger.info("✅ 快捷键设置完成")
 
@@ -234,15 +237,16 @@ class MainUIIntegrator(QObject):
             # 显示模型选择对话框
             from PyQt6.QtWidgets import QInputDialog
             
-            # 预定义的模型列表
+            # 预定义的模型列表（Qwen3和Mistral系列）
             models = [
-                "qwen2.5-7b",
-                "qwen2.5-14b", 
-                "qwen2.5-32b",
-                "llama-3.1-8b",
-                "llama-3.1-70b",
-                "mistral-7b",
-                "gemma-2-9b",
+                "qwen3-0.6b (入门级)",
+                "qwen3-1.7b (进阶级)",
+                "qwen3-8b (中高级)",
+                "qwen3-32b (旗舰级)",
+                "mistral-7b (基础级)",
+                "mistral-12b-nemo (进阶级)",
+                "mistral-24b-small (中高级)",
+                "mistral-large2 (旗舰级)",
                 "其他..."
             ]
             
@@ -263,7 +267,10 @@ class MainUIIntegrator(QObject):
                         "输入模型名称",
                         "请输入模型名称:"
                     )
-                
+                else:
+                    # 移除括号中的说明文字（如"qwen3-0.6b (入门级)" -> "qwen3-0.6b"）
+                    model_name = model_name.split(' (')[0].strip()
+
                 if ok and model_name:
                     # 显示智能下载器对话框
                     success = self.integration_manager.show_smart_downloader(model_name, self.main_window)

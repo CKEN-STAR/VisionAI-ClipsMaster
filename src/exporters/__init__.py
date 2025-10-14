@@ -14,57 +14,63 @@ from src.exporters.legal_logger import (
     get_legal_logger
 )
 
-# 导入流式处理管道功能
-from src.exporters.stream_pipe import (
-    ZeroCopyPipeline,
-    StreamingPipeline,
-    Processor,
-    FunctionProcessor,
-    TransformProcessor,
-    FilterProcessor,
-    CompositeProcessor,
-    VideoProcessor,
-    AudioProcessor,
-    ProcessingMode,
-    ProcessingStage,
-    PipelineContext,
-    create_pipeline,
-    create_streaming_pipeline,
-    create_processor
-)
+# 注释掉依赖cv2的模块导入，避免循环导入问题
+# 如果需要使用这些功能，请直接从对应模块导入，例如：
+# from src.exporters.stream_pipe import ZeroCopyPipeline
+# from src.exporters.ffmpeg_zerocopy import FFmpegExecutor
+# from src.exporters.metaclip_engine import MetaClipEngine
 
-# 导入FFmpeg零拷贝集成功能
-from src.exporters.ffmpeg_zerocopy import (
-    ZeroCopyFFmpegPipeline,
-    StreamingFFmpegPipeline,
-    FFmpegSettings,
-    FFmpegCodec,
-    FFmpegPreset,
-    FFmpegProcessor,
-    FFmpegError,
-    FFmpegExecutor,
-    FFmpegCommandBuilder,
-    VideoCutProcessor,
-    VideoConcatProcessor,
-    create_ffmpeg_pipeline,
-    create_streaming_ffmpeg_pipeline,
-    cut_video,
-    concat_videos
-)
+# # 导入流式处理管道功能
+# from src.exporters.stream_pipe import (
+#     ZeroCopyPipeline,
+#     StreamingPipeline,
+#     Processor,
+#     FunctionProcessor,
+#     TransformProcessor,
+#     FilterProcessor,
+#     CompositeProcessor,
+#     VideoProcessor,
+#     AudioProcessor,
+#     ProcessingMode,
+#     ProcessingStage,
+#     PipelineContext,
+#     create_pipeline,
+#     create_streaming_pipeline,
+#     create_processor
+# )
 
-# 导入元数据驱动剪辑功能
-from src.exporters.metaclip_engine import (
-    MetaClip,
-    MetaClipEngine,
-    MetaClipProcessor,
-    MetaClipError,
-    OperationType,
-    CodecMode,
-    SliceProcessor,
-    ConcatProcessor,
-    generate_metadata_clip,
-    get_metaclip_engine
-)
+# # 导入FFmpeg零拷贝集成功能
+# from src.exporters.ffmpeg_zerocopy import (
+#     ZeroCopyFFmpegPipeline,
+#     StreamingFFmpegPipeline,
+#     FFmpegSettings,
+#     FFmpegCodec,
+#     FFmpegPreset,
+#     FFmpegProcessor,
+#     FFmpegError,
+#     FFmpegExecutor,
+#     FFmpegCommandBuilder,
+#     VideoCutProcessor,
+#     VideoConcatProcessor,
+#     create_ffmpeg_pipeline,
+#     create_streaming_ffmpeg_pipeline,
+#     cut_video,
+#     concat_videos
+# )
+
+# # 导入元数据驱动剪辑功能
+# from src.exporters.metaclip_engine import (
+#     MetaClip,
+#     MetaClipEngine,
+#     MetaClipProcessor,
+#     MetaClipError,
+#     OperationType,
+#     CodecMode,
+#     SliceProcessor,
+#     ConcatProcessor,
+#     generate_metadata_clip,
+#     get_metaclip_engine
+# )
 
 # 导入简化版法律审计日志功能
 from src.exporters.simple_legal_logger import (
@@ -178,17 +184,17 @@ from .hw_detector import (
     print_acceleration_report
 )
 
-# 导入回退引擎功能
-from .fallback_engine import (
-    FallbackEngine,
-    ProcessingMode,
-    ZeroCopyUnavailableError,
-    safe_zero_copy,
-    get_fallback_engine,
-    zero_copy_process,
-    traditional_process,
-    get_memory_usage
-)
+# # 导入回退引擎功能（依赖cv2）
+# from .fallback_engine import (
+#     FallbackEngine,
+#     ProcessingMode,
+#     ZeroCopyUnavailableError,
+#     safe_zero_copy,
+#     get_fallback_engine,
+#     zero_copy_process,
+#     traditional_process,
+#     get_memory_usage
+# )
 
 # 导入资源清理功能
 from .resource_cleaner import (
@@ -270,16 +276,16 @@ from src.exporters.structured_logger import (
     get_structured_logger
 )
 
-from src.exporters.log_analyzer import LogAnalyzer
-from src.exporters.log_visualizer import LogVisualizer
-from src.exporters.log_integration import (
-    log_operation,
-    log_video_process,
-    log_error,
-    log_model_usage,
-    LoggingManager,
-    get_logging_manager
-)
+# from src.exporters.log_analyzer import LogAnalyzer  # 依赖pandas
+# from src.exporters.log_visualizer import LogVisualizer  # 依赖pandas
+# from src.exporters.log_integration import (  # 依赖log_analyzer
+#     log_operation,
+#     log_video_process,
+#     log_error,
+#     log_model_usage,
+#     LoggingManager,
+#     get_logging_manager
+# )
 
 # 导入实时日志系统组件
 from src.exporters.log_writer import (
@@ -319,52 +325,12 @@ __all__ = [
     'log_legal_operation',
     'log_legal_operation_func',
     'get_legal_logger',
-    
-    # 流式处理管道功能
-    'ZeroCopyPipeline',
-    'StreamingPipeline',
-    'Processor',
-    'FunctionProcessor',
-    'TransformProcessor',
-    'FilterProcessor',
-    'CompositeProcessor',
-    'VideoProcessor',
-    'AudioProcessor',
-    'ProcessingMode',
-    'ProcessingStage',
-    'PipelineContext',
-    'create_pipeline',
-    'create_streaming_pipeline',
-    'create_processor',
-    
-    # FFmpeg零拷贝集成功能
-    'ZeroCopyFFmpegPipeline',
-    'StreamingFFmpegPipeline',
-    'FFmpegSettings',
-    'FFmpegCodec',
-    'FFmpegPreset',
-    'FFmpegProcessor',
-    'FFmpegError',
-    'FFmpegExecutor',
-    'FFmpegCommandBuilder',
-    'VideoCutProcessor',
-    'VideoConcatProcessor',
-    'create_ffmpeg_pipeline',
-    'create_streaming_ffmpeg_pipeline',
-    'cut_video',
-    'concat_videos',
-    
-    # 元数据驱动剪辑功能
-    'MetaClip',
-    'MetaClipEngine',
-    'MetaClipProcessor',
-    'MetaClipError',
-    'OperationType',
-    'CodecMode',
-    'SliceProcessor',
-    'ConcatProcessor',
-    'generate_metadata_clip',
-    'get_metaclip_engine',
+
+    # 注意：流式处理管道、FFmpeg零拷贝、元数据驱动剪辑功能已移除
+    # 请直接从对应模块导入：
+    # from src.exporters.stream_pipe import ZeroCopyPipeline
+    # from src.exporters.ffmpeg_zerocopy import FFmpegExecutor
+    # from src.exporters.metaclip_engine import MetaClipEngine
     
     # 简化版法律审计日志功能
     'simple_log_legal_operation',
@@ -458,15 +424,8 @@ __all__ = [
     'get_detected_acceleration',
     'print_acceleration_report',
     
-    # 回退引擎功能
-    'FallbackEngine',
-    'ProcessingMode',
-    'ZeroCopyUnavailableError',
-    'safe_zero_copy',
-    'get_fallback_engine',
-    'zero_copy_process',
-    'traditional_process',
-    'get_memory_usage',
+    # 回退引擎功能（已移除，依赖cv2）
+    # 请直接从模块导入: from src.exporters.fallback_engine import FallbackEngine
     
     # 资源清理功能
     'get_resource_cleaner',
@@ -524,14 +483,14 @@ __all__ = [
     'create_sample_log',
     'StructuredLogger',
     'get_structured_logger',
-    'LogAnalyzer',
-    'LogVisualizer',
-    'log_operation',
-    'log_video_process',
-    'log_error',
-    'log_model_usage',
-    'LoggingManager',
-    'get_logging_manager',
+    # 'LogAnalyzer',  # 依赖pandas
+    # 'LogVisualizer',  # 依赖pandas
+    # 'log_operation',  # 来自log_integration，依赖pandas
+    # 'log_video_process',  # 依赖pandas
+    # 'log_error',  # 依赖pandas
+    # 'log_model_usage',  # 依赖pandas
+    # 'LoggingManager',  # 依赖pandas
+    # 'get_logging_manager',  # 依赖pandas
     
     # 实时日志功能
     'RealtimeLogger',

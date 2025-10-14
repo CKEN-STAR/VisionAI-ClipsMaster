@@ -1,0 +1,10 @@
+# Required dependencies
+numpy>=1.19.0
+opencv-python>=4.5.0
+
+# Optional dependencies for enhanced functionality
+scikit-image>=0.18.0  # For better SSIM and PSNR calculation
+librosa>=0.8.0        # For audio quality metrics
+matplotlib>=3.3.0     # For visualization of quality metrics
+PyYAML>=5.4.0         # For configuration handling
+pytest>=6.0.0         # For running tests 

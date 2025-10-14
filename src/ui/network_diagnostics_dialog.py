@@ -19,7 +19,7 @@ from PyQt6.QtWidgets import (
     QHeaderView, QMessageBox, QApplication, QWidget
 )
 from PyQt6.QtCore import Qt, pyqtSignal, QThread, QTimer
-from PyQt6.QtGui import QFont, QPalette, QColor, QIcon
+from PyQt6.QtGui import QFont, QColor, QPalette, QColor, QIcon
 
 # 添加项目根目录到路径
 project_root = Path(__file__).parent.parent.parent
@@ -52,60 +52,111 @@ class NetworkDiagnosticsWorker(QThread):
             if not HAS_NETWORK_TOOLS:
                 self.diagnostics_completed.emit(None)
                 return
-            
-            self.progress_updated.emit(10, "初始化网络检测器...")
+
+            self.progress_updated.emit(5, "初始化网络检测器...")
             self.checker = NetworkConnectivityChecker()
-            self.manager = IntelligentDownloadManager()
-            
-            self.progress_updated.emit(30, "检查基本网络连通性...")
-            
-            # 创建事件循环
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-            
+
+            self.progress_updated.emit(10, "检查DNS解析...")
+
+            # 使用同步方法进行网络诊断
             try:
-                self.progress_updated.emit(50, "执行综合网络诊断...")
-                diagnostics = loop.run_until_complete(self.checker.comprehensive_network_diagnosis())
-                
-                self.progress_updated.emit(70, "检查下载源状态...")
-                source_status = loop.run_until_complete(self.manager.check_all_sources())
-                
+                # 简化的网络诊断 - 不使用异步
+                import socket
+                import urllib.request
+                import time
+
+                diagnostics = {
+                    'dns_working': False,
+                    'internet_accessible': False,
+                    'urls_status': {}
+                }
+
+                # 检查DNS
+                try:
+                    socket.gethostbyname('www.baidu.com')
+                    diagnostics['dns_working'] = True
+                    self.progress_updated.emit(15, "DNS解析成功 ✅")
+                except:
+                    self.progress_updated.emit(15, "DNS解析失败 ❌")
+
+                self.progress_updated.emit(20, "开始检测网站连通性...")
+
+                # 检查互联网连接和下载源
+                test_urls = {
+                    'https://www.baidu.com': '百度',
+                    'https://modelscope.cn': 'ModelScope',
+                    'https://huggingface.co': 'HuggingFace',
+                    'https://github.com': 'GitHub',
+                    'https://www.google.com': 'Google'
+                }
+
+                # 为每个URL分配进度 (20%-70%, 共50%, 每个URL 10%)
+                url_count = len(test_urls)
+                for idx, (url, name) in enumerate(test_urls.items()):
+                    progress = 20 + int((idx / url_count) * 50)
+                    self.progress_updated.emit(progress, f"检测 {name}...")
+
+                    try:
+                        start_time = time.time()
+                        req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0'})
+                        with urllib.request.urlopen(req, timeout=5) as response:
+                            response_time = (time.time() - start_time) * 1000  # 转换为毫秒
+                            diagnostics['urls_status'][url] = {
+                                'accessible': True,
+                                'status_code': response.status,
+                                'response_time': response_time,
+                                'name': name
+                            }
+                            diagnostics['internet_accessible'] = True
+                            self.progress_updated.emit(progress + 5, f"{name} 可访问 ✅ ({response_time:.0f}ms)")
+                    except Exception as e:
+                        diagnostics['urls_status'][url] = {
+                            'accessible': False,
+                            'error': str(e),
+                            'response_time': 0,
+                            'name': name
+                        }
+                        self.progress_updated.emit(progress + 5, f"{name} 不可访问 ❌")
+
+                self.progress_updated.emit(75, "分析下载源状态...")
+
+                # 检查下载源
+                download_sources = {
+                    'ModelScope': 'https://modelscope.cn',
+                    'HuggingFace': 'https://huggingface.co',
+                    'GitHub': 'https://github.com'
+                }
+
+                source_status = {}
+                for source_name, source_url in download_sources.items():
+                    if source_url in diagnostics['urls_status']:
+                        url_info = diagnostics['urls_status'][source_url]
+                        source_status[source_name] = {
+                            'available': url_info['accessible'],
+                            'response_time': url_info.get('response_time', 0)
+                        }
+
                 self.progress_updated.emit(90, "生成诊断报告...")
-                
-                # 合并结果
+
+                # 简化的结果
                 result = {
                     'network_diagnostics': diagnostics,
                     'source_status': source_status,
-                    'manager_diagnostics': self.manager.get_network_diagnostics()
+                    'manager_diagnostics': {}
                 }
-                
+
                 self.progress_updated.emit(100, "诊断完成")
                 self.diagnostics_completed.emit(result)
-                
-            finally:
-                loop.close()
-                
+
+            except Exception as e:
+                logger.error(f"网络诊断执行失败: {e}")
+                self.diagnostics_completed.emit(None)
+
         except Exception as e:
             logger.error(f"网络诊断失败: {e}")
+            import traceback
+            traceback.print_exc()
             self.diagnostics_completed.emit(None)
-        finally:
-            # 清理资源
-            if self.checker:
-                try:
-                    loop = asyncio.new_event_loop()
-                    asyncio.set_event_loop(loop)
-                    loop.run_until_complete(self.checker.close())
-                    loop.close()
-                except:
-                    pass
-            if self.manager:
-                try:
-                    loop = asyncio.new_event_loop()
-                    asyncio.set_event_loop(loop)
-                    loop.run_until_complete(self.manager.close())
-                    loop.close()
-                except:
-                    pass
 
 class NetworkDiagnosticsDialog(QDialog):
     """网络诊断对话框"""
@@ -240,11 +291,16 @@ class NetworkDiagnosticsDialog(QDialog):
         # 优化建议
         recommendations_group = QGroupBox("网络优化建议")
         recommendations_layout = QVBoxLayout(recommendations_group)
-        
+
         self.recommendations_text = QTextEdit()
         self.recommendations_text.setReadOnly(True)
         self.recommendations_text.setPlainText("请先运行网络诊断以获取优化建议...")
-        
+
+        # 设置更大的字体
+        recommendations_font = QFont()
+        recommendations_font.setPointSize(12)  # 从默认的9pt增加到12pt
+        self.recommendations_text.setFont(recommendations_font)
+
         recommendations_layout.addWidget(self.recommendations_text)
         layout.addWidget(recommendations_group)
         
@@ -300,40 +356,158 @@ class NetworkDiagnosticsDialog(QDialog):
         
         if network_diag:
             # 更新网络状态概览
-            status_map = {
-                NetworkStatus.EXCELLENT: "优秀 ✅",
-                NetworkStatus.GOOD: "良好 ✅", 
-                NetworkStatus.FAIR: "一般 ⚠️",
-                NetworkStatus.POOR: "较差 ❌",
-                NetworkStatus.OFFLINE: "离线 ❌"
-            }
-            
-            self.overall_status_label.setText(f"状态: {status_map.get(network_diag.overall_status, '未知')}")
-            self.internet_status_label.setText(f"互联网连接: {'正常 ✅' if network_diag.internet_accessible else '异常 ❌'}")
-            self.dns_status_label.setText(f"DNS解析: {'正常 ✅' if network_diag.dns_working else '异常 ❌'}")
-            self.avg_response_label.setText(f"平均响应时间: {network_diag.avg_response_time:.1f}ms")
-            
+            # 处理简化的字典格式
+            dns_working = network_diag.get('dns_working', False)
+            internet_accessible = network_diag.get('internet_accessible', False)
+            urls_status = network_diag.get('urls_status', {})
+
+            # 确定整体状态
+            if internet_accessible and dns_working:
+                overall_status = "良好 ✅"
+            elif dns_working:
+                overall_status = "一般 ⚠️"
+            else:
+                overall_status = "离线 ❌"
+
+            self.overall_status_label.setText(f"状态: {overall_status}")
+            self.internet_status_label.setText(f"互联网连接: {'正常 ✅' if internet_accessible else '异常 ❌'}")
+            self.dns_status_label.setText(f"DNS解析: {'正常 ✅' if dns_working else '异常 ❌'}")
+
+            # 计算平均响应时间
+            response_times = []
+            for url_info in urls_status.values():
+                if url_info.get('accessible') and 'response_time' in url_info:
+                    response_times.append(url_info['response_time'])
+            avg_response = sum(response_times) / len(response_times) if response_times else 0
+            self.avg_response_label.setText(f"平均响应时间: {avg_response:.1f}ms")
+
             # 更新详细结果表格
-            self.details_table.setRowCount(len(network_diag.detailed_results))
-            for i, (url, result) in enumerate(network_diag.detailed_results.items()):
+            self.details_table.setRowCount(len(urls_status))
+            for i, (url, result) in enumerate(urls_status.items()):
                 self.details_table.setItem(i, 0, QTableWidgetItem(url))
-                self.details_table.setItem(i, 1, QTableWidgetItem("可访问 ✅" if result.accessible else "不可访问 ❌"))
-                self.details_table.setItem(i, 2, QTableWidgetItem(f"{result.response_time:.1f}ms"))
-                self.details_table.setItem(i, 3, QTableWidgetItem(result.error or "无"))
-            
-            # 更新建议
-            recommendations = "\n".join(network_diag.recommendations)
-            self.recommendations_text.setPlainText(recommendations)
+                accessible = result.get('accessible', False)
+                self.details_table.setItem(i, 1, QTableWidgetItem("可访问 ✅" if accessible else "不可访问 ❌"))
+                response_time = result.get('response_time', 0) if accessible else 0
+                self.details_table.setItem(i, 2, QTableWidgetItem(f"{response_time:.1f}ms"))
+                error = result.get('error', '无')
+                self.details_table.setItem(i, 3, QTableWidgetItem(error))
+
+            # 更新建议 - 根据实际网络状况动态生成
+            recommendations = []
+
+            # DNS检查
+            if not dns_working:
+                recommendations.append("❌ DNS解析失败")
+                recommendations.append("   建议: 检查DNS设置,尝试使用8.8.8.8或114.114.114.114")
+
+            # 互联网连接检查
+            if not internet_accessible:
+                recommendations.append("❌ 无法访问互联网")
+                recommendations.append("   建议: 检查网络连接,确认路由器和防火墙设置")
+
+            # 响应时间分析
+            if avg_response > 0:
+                if avg_response < 100:
+                    recommendations.append("✅ 网络速度优秀 (平均响应时间 < 100ms)")
+                elif avg_response < 300:
+                    recommendations.append("⚠️ 网络速度良好 (平均响应时间 100-300ms)")
+                elif avg_response < 1000:
+                    recommendations.append("⚠️ 网络速度一般 (平均响应时间 300-1000ms)")
+                    recommendations.append("   建议: 检查网络带宽,关闭占用带宽的程序")
+                else:
+                    recommendations.append("❌ 网络速度较慢 (平均响应时间 > 1000ms)")
+                    recommendations.append("   建议: 检查网络质量,考虑更换网络环境")
+
+            # 下载源可用性分析
+            accessible_count = sum(1 for info in urls_status.values() if info.get('accessible'))
+            total_count = len(urls_status)
+
+            if accessible_count == total_count:
+                recommendations.append("✅ 所有测试网站均可访问")
+            elif accessible_count > 0:
+                recommendations.append(f"⚠️ 部分网站不可访问 ({accessible_count}/{total_count})")
+                # 列出不可访问的网站
+                for url, info in urls_status.items():
+                    if not info.get('accessible'):
+                        name = info.get('name', url)
+                        recommendations.append(f"   - {name}: {info.get('error', '未知错误')}")
+            else:
+                recommendations.append("❌ 所有测试网站均不可访问")
+                recommendations.append("   建议: 检查防火墙设置,确认是否被拦截")
+
+            # 如果一切正常
+            if not recommendations:
+                recommendations.append("✅ 网络连接正常,所有功能可用")
+
+            self.recommendations_text.setPlainText("\n".join(recommendations))
         
         # 更新下载源状态
         if source_status:
             self.sources_table.setRowCount(len(source_status))
-            for i, (source_id, (available, response_time)) in enumerate(source_status.items()):
-                self.sources_table.setItem(i, 0, QTableWidgetItem(source_id))
-                self.sources_table.setItem(i, 1, QTableWidgetItem("下载源"))
-                self.sources_table.setItem(i, 2, QTableWidgetItem("可用 ✅" if available else "不可用 ❌"))
-                self.sources_table.setItem(i, 3, QTableWidgetItem(f"{response_time:.1f}ms" if available else "N/A"))
-                self.sources_table.setItem(i, 4, QTableWidgetItem("自动"))
+            for i, (source_id, source_info) in enumerate(source_status.items()):
+                # 处理字典格式
+                if isinstance(source_info, dict):
+                    available = source_info.get('available', False)
+                    response_time = source_info.get('response_time', 0)
+                else:
+                    # 兼容元组格式
+                    available, response_time = source_info
+
+                # 创建不可编辑的单元格
+                name_item = QTableWidgetItem(source_id)
+                name_item.setFlags(name_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+                self.sources_table.setItem(i, 0, name_item)
+
+                type_item = QTableWidgetItem("模型下载源")
+                type_item.setFlags(type_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+                self.sources_table.setItem(i, 1, type_item)
+
+                status_item = QTableWidgetItem("可用 ✅" if available else "不可用 ❌")
+                status_item.setFlags(status_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+                self.sources_table.setItem(i, 2, status_item)
+
+                time_item = QTableWidgetItem(f"{response_time:.1f}ms" if available else "N/A")
+                time_item.setFlags(time_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+                self.sources_table.setItem(i, 3, time_item)
+
+                # 根据响应时间和可用性智能推荐
+                if available:
+                    # 根据响应时间动态评分
+                    if response_time < 100:
+                        recommendation = "优先推荐 ⭐⭐⭐⭐"
+                        priority_score = 4
+                    elif response_time < 200:
+                        recommendation = "强烈推荐 ⭐⭐⭐"
+                        priority_score = 3
+                    elif response_time < 500:
+                        recommendation = "推荐使用 ⭐⭐"
+                        priority_score = 2
+                    elif response_time < 1000:
+                        recommendation = "可以使用 ⭐"
+                        priority_score = 1
+                    else:
+                        recommendation = "备用选择"
+                        priority_score = 0
+                else:
+                    recommendation = "暂不可用 ❌"
+                    priority_score = -1
+
+                priority_item = QTableWidgetItem(recommendation)
+                priority_item.setFlags(priority_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+
+                # 根据优先级设置颜色
+                if priority_score >= 3:
+                    priority_item.setForeground(QColor(0, 150, 0))  # 深绿色
+                elif priority_score >= 2:
+                    priority_item.setForeground(QColor(100, 200, 0))  # 浅绿色
+                elif priority_score >= 1:
+                    priority_item.setForeground(QColor(200, 150, 0))  # 橙色
+                elif priority_score >= 0:
+                    priority_item.setForeground(QColor(200, 100, 0))  # 深橙色
+                else:
+                    priority_item.setForeground(QColor(200, 0, 0))  # 红色
+
+                self.sources_table.setItem(i, 4, priority_item)
 
 def show_network_diagnostics(parent=None):
     """显示网络诊断对话框"""

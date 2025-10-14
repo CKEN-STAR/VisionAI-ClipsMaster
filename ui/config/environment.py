@@ -129,7 +129,7 @@ def _show_ffmpeg_install_guide():
     print("3. 解压到项目的 tools/ffmpeg/ 目录")
     print()
     print("或者运行以下命令自动安装：")
-    print("   python ui/config/ffmpeg_installer.py")
+    print("   python scripts/tools/ffmpeg_installer.py")
     print("=" * 50)
 
 def check_package(package_name: str) -> bool:

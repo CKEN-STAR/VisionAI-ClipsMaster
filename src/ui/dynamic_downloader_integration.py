@@ -89,10 +89,10 @@ class DynamicDownloaderIntegration(QObject):
             
             # 检查模型推荐组件
             from src.ui.dynamic_model_recommendation import DynamicModelRecommendationWidget
-            
-            # 检查增强对话框
-            from src.ui.enhanced_smart_downloader_dialog import EnhancedSmartDownloaderDialog
-            
+
+            # 检查超快速智能推荐对话框
+            from src.ui.ultrafast_smart_downloader_dialog import UltraFastSmartDownloaderDialog
+
             # 检查核心组件
             from src.core.enhanced_model_downloader import EnhancedModelDownloader
             from src.core.intelligent_model_selector import IntelligentModelSelector
@@ -106,12 +106,12 @@ class DynamicDownloaderIntegration(QObject):
     def show_smart_downloader(self, model_name: str, parent_widget: QWidget = None) -> bool:
         """显示智能下载器对话框"""
         try:
-            # 导入增强对话框
-            from src.ui.enhanced_smart_downloader_dialog import EnhancedSmartDownloaderDialog
-            
+            # 导入超快速智能推荐对话框
+            from src.ui.ultrafast_smart_downloader_dialog import UltraFastSmartDownloaderDialog
+
             # 创建对话框
             parent = parent_widget or self.parent_widget
-            dialog = EnhancedSmartDownloaderDialog(model_name, parent)
+            dialog = UltraFastSmartDownloaderDialog(model_name, parent)
             
             # 连接信号
             dialog.download_requested.connect(self._handle_download_request)

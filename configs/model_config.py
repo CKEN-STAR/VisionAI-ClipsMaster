@@ -141,21 +141,23 @@ def get_model_config(model_id: str) -> Optional[ModelConfig]:
     )
 
 def get_qwen_config() -> ModelConfig:
-    """获取Qwen模型配置
-    
+    """获取Qwen模型配置（默认使用Qwen2.5-0.5B）
+
     Returns:
         ModelConfig: Qwen模型配置对象
     """
     config = load_model_config()
-    default_zh_model_id = config.get("default_models", {}).get("zh", "qwen2.5-7b-zh")
+    # 更新为Qwen2.5系列默认模型
+    default_zh_model_id = config.get("default_models", {}).get("zh", "qwen2.5-0.5b-zh")
     return get_model_config(default_zh_model_id)
 
 def get_mistral_config() -> ModelConfig:
-    """获取Mistral模型配置
-    
+    """获取Mistral模型配置（默认使用Mistral-7B）
+
     Returns:
         ModelConfig: Mistral模型配置对象
     """
     config = load_model_config()
+    # Mistral-7B仍然是默认英文模型
     default_en_model_id = config.get("default_models", {}).get("en", "mistral-7b-en")
-    return get_model_config(default_en_model_id) 
+    return get_model_config(default_en_model_id)

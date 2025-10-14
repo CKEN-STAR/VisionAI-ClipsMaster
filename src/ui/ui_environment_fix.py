@@ -12,7 +12,7 @@ import warnings
 def fix_cuda_environment():
     """修复CUDA环境问题"""
     # 设置环境变量避免CUDA问题
-    os.environ['CUDA_VISIBLE_DEVICES'] = ''
+    # os.environ['CUDA_VISIBLE_DEVICES'] = ''  # 注释掉,允许使用GPU
     os.environ['TORCH_USE_CUDA_DSA'] = '0'
     os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 

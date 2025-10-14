@@ -13,6 +13,7 @@ import logging
 from typing import Dict, Any, Optional, Tuple
 from dataclasses import dataclass
 from enum import Enum
+from pathlib import Path
 
 # 尝试导入GPU检测库
 try:
@@ -85,7 +86,11 @@ class HardwareInfo:
 
 class HardwareDetector:
     """硬件检测器"""
-    
+
+    # 类级别缓存（CPU信息不会变化，但设备变化时需要重新检测）
+    _cpu_brand_cache = None
+    _cpu_hardware_fingerprint = None  # CPU硬件指纹，用于检测设备变化
+
     def __init__(self):
         """初始化硬件检测器"""
         self.logger = logging.getLogger(__name__)
@@ -175,20 +180,69 @@ class HardwareDetector:
             return {"total_gb": 4.0, "available_gb": 2.0, "used_gb": 2.0, "usage_percent": 50.0}
     
     def _detect_cpu(self) -> Dict[str, Any]:
-        """检测CPU信息"""
+        """检测CPU信息（优化版：使用缓存）"""
         try:
             cpu_freq = psutil.cpu_freq()
             cpu_count = psutil.cpu_count()
-            
-            # 获取CPU架构和品牌信息
+
+            # 获取CPU架构
             architecture = platform.machine()
-            processor = platform.processor()
-            
+
+            # 🔧 优化：使用类级别缓存获取CPU品牌信息（支持设备变化检测）
+            # 生成当前硬件指纹（用于检测设备变化）
+            try:
+                current_fingerprint = f"{cpu_count}_{int(psutil.virtual_memory().total/1024**3)}_{architecture}"
+            except:
+                current_fingerprint = "unknown"
+
+            # 检查缓存是否有效（设备变化时需要重新检测）
+            hardware_changed = (HardwareDetector._cpu_hardware_fingerprint != current_fingerprint)
+
+            if HardwareDetector._cpu_brand_cache is None or hardware_changed:
+                if hardware_changed and HardwareDetector._cpu_brand_cache is not None:
+                    self.logger.info(f"🔄 检测到设备变化，重新检测CPU品牌...")
+
+                processor = "Unknown"
+
+                # 尝试使用Windows注册表获取CPU品牌（最快，0.001秒）
+                try:
+                    if platform.system() == "Windows":
+                        import winreg
+                        key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"HARDWARE\DESCRIPTION\System\CentralProcessor\0")
+                        processor = winreg.QueryValueEx(key, "ProcessorNameString")[0].strip()
+                        winreg.CloseKey(key)
+
+                        if processor and processor != "Unknown":
+                            self.logger.debug(f"从Windows注册表获取CPU品牌: {processor}")
+                except Exception as e:
+                    self.logger.debug(f"从Windows注册表获取CPU品牌失败: {e}")
+
+                # 如果Windows注册表失败，回退到cpuinfo（Linux/Mac或Windows注册表失败时）
+                if processor == "Unknown":
+                    try:
+                        import cpuinfo
+                        cpu_info_dict = cpuinfo.get_cpu_info()
+                        processor = cpu_info_dict.get('brand_raw', '')
+                        if not processor:
+                            processor = cpu_info_dict.get('brand', '')
+                    except Exception as e:
+                        self.logger.debug(f"cpuinfo检测失败: {e}")
+                        # 最后回退到platform.processor()
+                        processor = platform.processor()
+                        if not processor:
+                            processor = "Unknown"
+
+                # 缓存CPU品牌信息和硬件指纹
+                HardwareDetector._cpu_brand_cache = processor if processor else "Unknown"
+                HardwareDetector._cpu_hardware_fingerprint = current_fingerprint
+            else:
+                processor = HardwareDetector._cpu_brand_cache
+
             return {
                 "count": cpu_count,
                 "freq_mhz": cpu_freq.current if cpu_freq else 2000.0,
                 "architecture": architecture,
-                "brand": processor if processor else "Unknown"
+                "brand": processor
             }
         except Exception as e:
             self.logger.error(f"CPU检测失败: {e}")

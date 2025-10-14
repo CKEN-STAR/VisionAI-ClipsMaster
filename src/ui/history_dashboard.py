@@ -26,53 +26,101 @@ try:
     )
     from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QSize, QDate
     from PyQt6.QtGui import QPixmap, QColor, QPalette, QFont, QIcon
-    import pyqtgraph as pg
     HAS_QT = True
 except ImportError:
     HAS_QT = False
-    logging.warning("PyQt6 或 pyqtgraph 未安装，可视化仪表盘将不可用")
+    logging.warning("PyQt6 未安装，可视化仪表盘将不可用")
 
-# 导入历史分析模块
-from src.monitor.history_analyzer import (
-    get_history_analyzer, analyze_memory_trends, analyze_cache_performance, 
-    analyze_oom_risks, generate_daily_report, generate_weekly_report,
-    get_latest_reports
-)
+# 延迟导入pyqtgraph和历史分析模块（避免matplotlib循环导入）
+# 这些模块将在需要时才导入
+pg = None
+analyze_memory_trends = None
+analyze_cache_performance = None
+analyze_oom_risks = None
+generate_daily_report = None
+generate_weekly_report = None
+get_latest_reports = None
 
 # 设置日志
 logger = logging.getLogger("history_dashboard")
 
 
+def _lazy_import_dependencies():
+    """延迟导入依赖模块，避免循环导入"""
+    global pg, analyze_memory_trends, analyze_cache_performance, analyze_oom_risks
+    global generate_daily_report, generate_weekly_report, get_latest_reports
+
+    if pg is None:
+        try:
+            import pyqtgraph as _pg
+            pg = _pg
+        except ImportError:
+            logger.error("pyqtgraph未安装，图表功能不可用")
+            raise
+
+    if analyze_memory_trends is None:
+        try:
+            from src.monitor.history_analyzer import (
+                analyze_memory_trends as _amt,
+                analyze_cache_performance as _acp,
+                analyze_oom_risks as _aor,
+                generate_daily_report as _gdr,
+                generate_weekly_report as _gwr,
+                get_latest_reports as _glr
+            )
+            analyze_memory_trends = _amt
+            analyze_cache_performance = _acp
+            analyze_oom_risks = _aor
+            generate_daily_report = _gdr
+            generate_weekly_report = _gwr
+            get_latest_reports = _glr
+        except ImportError as e:
+            logger.error(f"历史分析模块导入失败: {e}")
+            raise
+
+
 class TrendChart(QWidget):
     """趋势图表组件"""
-    
+
     def __init__(self, title: str, parent=None):
         """初始化趋势图表
-        
+
         Args:
             title: 图表标题
             parent: 父窗口
         """
         super().__init__(parent)
-        
+
+        # 延迟导入依赖
+        _lazy_import_dependencies()
+
         self.setMinimumHeight(250)
-        
+
         # 创建布局
         layout = QVBoxLayout(self)
-        
+
         # 标题标签
         title_label = QLabel(title)
         title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         title_label.setStyleSheet("font-weight: bold; font-size: 12pt;")
         layout.addWidget(title_label)
-        
+
         # 创建绘图小部件
         self.plot_widget = pg.PlotWidget()
         self.plot_widget.setBackground('w')
         self.plot_widget.showGrid(x=True, y=True, alpha=0.3)
-        
+
+        # 添加边框样式
+        self.plot_widget.setStyleSheet("""
+            QWidget {
+                border: 2px solid #cccccc;
+                border-radius: 5px;
+                background-color: white;
+            }
+        """)
+
         layout.addWidget(self.plot_widget)
-        
+
         # 初始化曲线
         self.curves = {}
     
@@ -150,15 +198,11 @@ class ReportSummaryWidget(QWidget):
             parent: 父窗口
         """
         super().__init__(parent)
-        
+
         # 创建布局
         layout = QVBoxLayout(self)
-        
-        # 标题
-        title_label = QLabel("报告摘要")
-        title_label.setStyleSheet("font-weight: bold; font-size: 14pt;")
-        layout.addWidget(title_label)
-        
+        layout.setContentsMargins(0, 0, 0, 0)
+
         # 创建网格布局
         grid_layout = QGridLayout()
         
@@ -284,29 +328,43 @@ class ReportSummaryWidget(QWidget):
         try:
             # 获取最新报告
             reports = get_latest_reports(limit=5)
-            
+
             # 清空表格
             self.reports_list.setRowCount(0)
-            
+
             # 添加报告
             for i, report in enumerate(reports):
                 self.reports_list.insertRow(i)
-                
+
                 # 报告类型
                 report_type = "日报" if "daily" in report.get('file_name', '') else "周报"
                 self.reports_list.setItem(i, 0, QTableWidgetItem(report_type))
-                
+
                 # 报告日期
                 date_str = report.get('datetime', '').split('T')[0]
                 self.reports_list.setItem(i, 1, QTableWidgetItem(date_str))
-                
-                # 操作按钮
+
+                # 操作按钮容器
+                button_widget = QWidget()
+                button_layout = QHBoxLayout(button_widget)
+                button_layout.setContentsMargins(2, 2, 2, 2)
+                button_layout.setSpacing(5)
+
+                # 查看按钮
                 view_button = QPushButton("查看")
                 view_button.setProperty("report_path", report.get('file_path'))
                 view_button.clicked.connect(self._view_report)
-                
-                self.reports_list.setCellWidget(i, 2, view_button)
-                
+                button_layout.addWidget(view_button)
+
+                # 删除按钮
+                delete_button = QPushButton("删除")
+                delete_button.setProperty("report_path", report.get('file_path'))
+                delete_button.setStyleSheet("background-color: #ff6b6b; color: white;")
+                delete_button.clicked.connect(self._delete_report)
+                button_layout.addWidget(delete_button)
+
+                self.reports_list.setCellWidget(i, 2, button_widget)
+
         except Exception as e:
             logger.error(f"更新报告列表失败: {e}")
     
@@ -354,33 +412,69 @@ class ReportSummaryWidget(QWidget):
         sender = self.sender()
         if not sender:
             return
-            
+
         report_path = sender.property("report_path")
         if not report_path or not os.path.exists(report_path):
             QMessageBox.warning(self, "查看失败", "报告文件不存在")
             return
-            
+
         try:
             # 读取报告
             with open(report_path, 'r', encoding='utf-8') as f:
                 report_data = json.load(f)
-                
+
             # 创建查看对话框
             dialog = QMainWindow(self)
             dialog.setWindowTitle(f"查看报告 - {os.path.basename(report_path)}")
             dialog.resize(800, 600)
-            
+
             # 创建文本框
             text_edit = QTextEdit()
             text_edit.setReadOnly(True)
             text_edit.setPlainText(json.dumps(report_data, indent=2, ensure_ascii=False))
-            
+
             dialog.setCentralWidget(text_edit)
             dialog.show()
-            
+
         except Exception as e:
             logger.error(f"查看报告失败: {e}")
             QMessageBox.critical(self, "查看失败", f"查看报告失败: {str(e)}")
+
+    def _delete_report(self):
+        """删除报告"""
+        # 获取报告路径
+        sender = self.sender()
+        if not sender:
+            return
+
+        report_path = sender.property("report_path")
+        if not report_path or not os.path.exists(report_path):
+            QMessageBox.warning(self, "删除失败", "报告文件不存在")
+            return
+
+        # 确认删除
+        reply = QMessageBox.question(
+            self,
+            "确认删除",
+            f"确定要删除报告 {os.path.basename(report_path)} 吗？\n此操作不可恢复。",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No
+        )
+
+        if reply == QMessageBox.StandardButton.Yes:
+            try:
+                # 删除文件
+                os.remove(report_path)
+
+                # 提示成功
+                QMessageBox.information(self, "删除成功", "报告已成功删除")
+
+                # 更新报告列表
+                self._update_reports_list()
+
+            except Exception as e:
+                logger.error(f"删除报告失败: {e}")
+                QMessageBox.critical(self, "删除失败", f"删除报告失败: {str(e)}")
 
 
 class RecommendationsWidget(QWidget):
@@ -393,15 +487,11 @@ class RecommendationsWidget(QWidget):
             parent: 父窗口
         """
         super().__init__(parent)
-        
+
         # 创建布局
         layout = QVBoxLayout(self)
-        
-        # 标题
-        title_label = QLabel("系统优化建议")
-        title_label.setStyleSheet("font-weight: bold; font-size: 14pt;")
-        layout.addWidget(title_label)
-        
+        layout.setContentsMargins(0, 0, 0, 0)
+
         # 创建内容部分
         self.content = QTextEdit()
         self.content.setReadOnly(True)
@@ -606,33 +696,96 @@ class RecommendationsWidget(QWidget):
 
 class HistoryDashboard(QWidget):
     """历史数据可视化仪表盘"""
-    
+
     def __init__(self, parent=None):
         """初始化仪表盘
-        
+
         Args:
             parent: 父窗口
         """
         super().__init__(parent)
-        
-        # 设置窗口标题和大小
+
+        # 延迟导入依赖
+        _lazy_import_dependencies()
+
+        # 设置窗口标志，使其显示为独立窗口（带边框和标题栏）
+        self.setWindowFlags(Qt.WindowType.Window)
+
+        # 设置窗口标题和大小（增大窗口尺寸以显示更多内容）
         self.setWindowTitle("历史数据分析仪表盘")
-        self.resize(1000, 700)
-        
+        self.resize(1400, 900)
+
+        # 设置窗口样式（添加边框和文字颜色）
+        self.setStyleSheet("""
+            QWidget {
+                background-color: #f5f5f5;
+                color: #333333;
+            }
+            QGroupBox {
+                border: 2px solid #cccccc;
+                border-radius: 5px;
+                margin-top: 10px;
+                padding: 10px;
+                background-color: white;
+                font-weight: bold;
+                color: #333333;
+            }
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                left: 10px;
+                padding: 0 5px;
+                color: #333333;
+            }
+            QLabel {
+                color: #333333;
+            }
+            QPushButton {
+                color: #333333;
+                background-color: #e0e0e0;
+                border: 1px solid #cccccc;
+                border-radius: 3px;
+                padding: 5px 10px;
+            }
+            QPushButton:hover {
+                background-color: #d0d0d0;
+            }
+            QComboBox {
+                color: #333333;
+                background-color: white;
+                border: 1px solid #cccccc;
+                border-radius: 3px;
+                padding: 3px;
+            }
+            QTableWidget {
+                color: #333333;
+                background-color: white;
+                gridline-color: #e0e0e0;
+            }
+            QTableWidget::item {
+                color: #333333;
+            }
+            QHeaderView::section {
+                background-color: #f0f0f0;
+                color: #333333;
+                border: 1px solid #cccccc;
+                padding: 5px;
+            }
+        """)
+
         # 初始化UI
         self.init_ui()
-        
+
         # 初始化数据
         self.days_to_analyze = 7
-        
+
         # 更新数据
         self.update_dashboard()
-        
+
         # 自动更新定时器
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_dashboard)
         self.timer.start(3600000)  # 每小时更新一次
-        
+
         logger.info("历史数据分析仪表盘初始化完成")
     
     def init_ui(self):
@@ -664,38 +817,52 @@ class HistoryDashboard(QWidget):
         
         # 创建分割器
         splitter = QSplitter(Qt.Orientation.Horizontal)
-        
+
         # 左侧面板：图表区域
         left_panel = QWidget()
         left_layout = QVBoxLayout(left_panel)
-        
-        # 内存趋势图
-        self.memory_chart = TrendChart("内存使用趋势")
-        left_layout.addWidget(self.memory_chart)
-        
-        # 缓存命中率图
-        self.cache_chart = TrendChart("缓存命中率趋势")
-        left_layout.addWidget(self.cache_chart)
-        
+        left_layout.setContentsMargins(0, 0, 0, 0)
+
+        # 内存趋势图（用GroupBox包裹）
+        memory_group = QGroupBox("内存使用趋势")
+        memory_group_layout = QVBoxLayout(memory_group)
+        self.memory_chart = TrendChart("")  # 标题由GroupBox提供
+        memory_group_layout.addWidget(self.memory_chart)
+        left_layout.addWidget(memory_group)
+
+        # 缓存命中率图（用GroupBox包裹）
+        cache_group = QGroupBox("缓存命中率趋势")
+        cache_group_layout = QVBoxLayout(cache_group)
+        self.cache_chart = TrendChart("")  # 标题由GroupBox提供
+        cache_group_layout.addWidget(self.cache_chart)
+        left_layout.addWidget(cache_group)
+
         splitter.addWidget(left_panel)
-        
+
         # 右侧面板：摘要和建议
         right_panel = QWidget()
         right_layout = QVBoxLayout(right_panel)
-        
-        # 报告摘要
+        right_layout.setContentsMargins(0, 0, 0, 0)
+
+        # 报告摘要（用GroupBox包裹）
+        summary_group = QGroupBox("报告摘要")
+        summary_group_layout = QVBoxLayout(summary_group)
         self.summary_widget = ReportSummaryWidget()
-        right_layout.addWidget(self.summary_widget)
-        
-        # 建议
+        summary_group_layout.addWidget(self.summary_widget)
+        right_layout.addWidget(summary_group)
+
+        # 建议（用GroupBox包裹）
+        recommendations_group = QGroupBox("系统优化建议")
+        recommendations_group_layout = QVBoxLayout(recommendations_group)
         self.recommendations_widget = RecommendationsWidget()
-        right_layout.addWidget(self.recommendations_widget)
-        
+        recommendations_group_layout.addWidget(self.recommendations_widget)
+        right_layout.addWidget(recommendations_group)
+
         splitter.addWidget(right_panel)
-        
-        # 设置分割器比例
-        splitter.setSizes([600, 400])
-        
+
+        # 设置分割器比例（增大窗口后调整比例，左侧图表区域更大）
+        splitter.setSizes([850, 550])
+
         main_layout.addWidget(splitter)
         
         # 状态栏
@@ -745,118 +912,140 @@ class HistoryDashboard(QWidget):
     
     def _update_memory_chart(self, memory_data: Dict[str, Any]):
         """更新内存趋势图
-        
+
         Args:
             memory_data: 内存分析数据
         """
         try:
             daily_data = memory_data.get("data", {}).get("daily_data", [])
-            
+
+            # 清空图表
+            self.memory_chart.plot_widget.clear()
+
             if not daily_data:
+                # 显示"暂无数据"提示
+                text_item = pg.TextItem(
+                    "暂无历史数据\n\n系统需要运行一段时间后才能收集到历史数据",
+                    anchor=(0.5, 0.5),
+                    color=(128, 128, 128)
+                )
+                text_item.setPos(0.5, 0.5)
+                self.memory_chart.plot_widget.addItem(text_item)
                 return
-                
+
             # 准备数据
             dates = []
             peak_memory = []
             avg_memory = []
-            
+
             for item in daily_data:
                 dates.append(item.get("date"))
                 peak_memory.append(item.get("memory_percent_max", 0))
                 avg_memory.append(item.get("memory_percent_mean", 0))
-            
+
             # 准备数据字典
             data_dict = {
                 "dates": range(len(dates)),  # X轴使用索引
                 "peak_memory": peak_memory,
                 "avg_memory": avg_memory
             }
-            
+
             # 颜色设置
             colors = {
                 "peak_memory": (255, 0, 0),
                 "avg_memory": (0, 0, 255)
             }
-            
+
             # 绘制图表
             self.memory_chart.plot_data(
-                data_dict, 
-                "dates", 
+                data_dict,
+                "dates",
                 ["peak_memory", "avg_memory"],
                 colors
             )
-            
+
             # 添加图例
             self.memory_chart.add_legend({
                 "peak_memory": "峰值内存使用率",
                 "avg_memory": "平均内存使用率"
             })
-            
+
             # 设置坐标轴标签
             self.memory_chart.set_axes_labels("日期", "内存使用率 (%)")
-            
+
             # 设置X轴刻度
             if dates:
                 axis = self.memory_chart.plot_widget.getAxis('bottom')
                 ticks = [(i, date) for i, date in enumerate(dates)]
                 axis.setTicks([ticks])
-            
+
         except Exception as e:
             logger.error(f"更新内存趋势图失败: {e}")
     
     def _update_cache_chart(self, cache_data: Dict[str, Any]):
         """更新缓存命中率图
-        
+
         Args:
             cache_data: 缓存分析数据
         """
         try:
             daily_data = cache_data.get("data", {}).get("daily_data", [])
-            
+
+            # 清空图表
+            self.cache_chart.plot_widget.clear()
+
             if not daily_data:
+                # 显示"暂无数据"提示
+                text_item = pg.TextItem(
+                    "暂无历史数据\n\n系统需要运行一段时间后才能收集到历史数据",
+                    anchor=(0.5, 0.5),
+                    color=(128, 128, 128)
+                )
+                text_item.setPos(0.5, 0.5)
+                self.cache_chart.plot_widget.addItem(text_item)
                 return
-                
+
             # 准备数据
             dates = []
             hit_rates = []
-            
+
             for item in daily_data:
                 dates.append(item.get("date"))
                 hit_rates.append(item.get("hit_rate_mean", 0))
-            
+
             # 准备数据字典
             data_dict = {
                 "dates": range(len(dates)),  # X轴使用索引
                 "hit_rates": hit_rates
             }
-            
+
             # 颜色设置
             colors = {
                 "hit_rates": (0, 128, 0)
             }
-            
+
             # 绘制图表
             self.cache_chart.plot_data(
-                data_dict, 
-                "dates", 
+                data_dict,
+                "dates",
                 ["hit_rates"],
                 colors
             )
-            
+
             # 添加图例
             self.cache_chart.add_legend({
                 "hit_rates": "缓存命中率"
             })
-            
+
             # 设置坐标轴标签
             self.cache_chart.set_axes_labels("日期", "命中率 (%)")
-            
+
             # 设置X轴刻度
             if dates:
                 axis = self.cache_chart.plot_widget.getAxis('bottom')
                 ticks = [(i, date) for i, date in enumerate(dates)]
                 axis.setTicks([ticks])
-            
+
         except Exception as e:
             logger.error(f"更新缓存命中率图失败: {e}")
 
@@ -866,11 +1055,46 @@ def run_dashboard():
     if not HAS_QT:
         logger.error("缺少PyQt6或pyqtgraph，无法启动仪表盘")
         return
-    
+
     app = QApplication([])
     dashboard = HistoryDashboard()
     dashboard.show()
     sys.exit(app.exec())
+
+
+class HistoryDashboardLauncher:
+    """历史数据仪表盘启动器（避免循环导入）"""
+
+    def __init__(self):
+        """初始化启动器"""
+        self.dashboard = None
+
+    def launch_dashboard(self, parent=None):
+        """启动仪表盘
+
+        Args:
+            parent: 父窗口
+        """
+        try:
+            if self.dashboard is None:
+                self.dashboard = HistoryDashboard(parent)
+
+            self.dashboard.show()
+            self.dashboard.raise_()
+            self.dashboard.activateWindow()
+
+        except Exception as e:
+            logger.error(f"启动历史数据仪表盘失败: {e}")
+            raise
+
+
+def get_history_dashboard_launcher():
+    """获取历史数据仪表盘启动器
+
+    Returns:
+        HistoryDashboardLauncher: 启动器实例
+    """
+    return HistoryDashboardLauncher()
 
 
 if __name__ == "__main__":
@@ -879,6 +1103,6 @@ if __name__ == "__main__":
         level=logging.INFO,
         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     )
-    
+
     # 运行仪表盘
-    run_dashboard() 
+    run_dashboard()

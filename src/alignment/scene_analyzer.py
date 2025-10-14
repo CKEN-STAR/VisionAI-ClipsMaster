@@ -34,6 +34,47 @@ class Scene:
     confidence: float = 0.0
     metadata: Dict[str, Any] = field(default_factory=dict)
 
+    @property
+    def duration(self) -> float:
+        """场景持续时间"""
+        return self.end_time - self.start_time
+
+    @property
+    def scene_id(self) -> int:
+        """场景ID(从metadata中获取)"""
+        return self.metadata.get('scene_id', 0)
+
+    def to_dict(self) -> Dict[str, Any]:
+        """转换为字典"""
+        return {
+            'scene_id': self.scene_id,
+            'start_time': self.start_time,
+            'end_time': self.end_time,
+            'duration': self.duration,
+            'scene_type': self.scene_type,
+            'location': self.location,
+            'confidence': self.confidence,
+            'text': self.text,
+            'characters': self.characters,
+            'keyframes': self.keyframes,
+            'metadata': self.metadata
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> 'Scene':
+        """从字典创建Scene对象"""
+        return cls(
+            start_time=data.get('start_time', 0.0),
+            end_time=data.get('end_time', 0.0),
+            keyframes=data.get('keyframes', []),
+            text=data.get('text'),
+            scene_type=data.get('scene_type'),
+            location=data.get('location'),
+            characters=data.get('characters', []),
+            confidence=data.get('confidence', 0.0),
+            metadata=data.get('metadata', {})
+        )
+
 class SceneAnalyzer:
     """视频场景分析器"""
     
@@ -52,7 +93,16 @@ class SceneAnalyzer:
         self.min_scene_duration = min_scene_duration
         self.scene_threshold = scene_threshold
         self.use_external_models = use_external_models
-        
+
+        # 初始化缓存管理器
+        try:
+            from src.alignment.scene_cache_manager import get_cache_manager
+            self.cache_manager = get_cache_manager()
+            logger.info("场景缓存管理器已启用")
+        except ImportError as e:
+            logger.warning(f"场景缓存管理器导入失败: {e}")
+            self.cache_manager = None
+
         # 可选: 如果启用外部模型，尝试导入
         self.scene_classifier = None
         if use_external_models:
@@ -62,28 +112,42 @@ class SceneAnalyzer:
                 logger.info("外部场景分类模型未配置")
             except ImportError:
                 logger.warning("无法导入外部场景分类模型，将使用基本分析方法")
-        
+
         logger.info(f"场景分析器初始化完成，最小场景持续时间: {min_scene_duration}秒")
     
-    def analyze_video(self, 
-                     video_path: str, 
-                     subtitle_data: Optional[List[Dict[str, Any]]] = None) -> List[Scene]:
+    def analyze_video(self,
+                     video_path: str,
+                     subtitle_data: Optional[List[Dict[str, Any]]] = None,
+                     use_cache: bool = True) -> List[Scene]:
         """
         分析视频，识别场景并关联字幕数据
-        
+
         参数:
             video_path: 视频文件路径
             subtitle_data: 字幕数据，每项包含start_time, end_time, text等字段
-            
+            use_cache: 是否使用缓存
+
         返回:
             场景列表
         """
         logger.info(f"开始分析视频: {video_path}")
-        
+
         # 检查视频文件是否存在
         if not os.path.exists(video_path):
             logger.error(f"视频文件不存在: {video_path}")
             return []
+
+        # 尝试从缓存加载
+        if use_cache and self.cache_manager:
+            cached_scenes = self.cache_manager.load_cache(video_path)
+            if cached_scenes is not None:
+                logger.info(f"[缓存] 使用缓存的场景数据: {len(cached_scenes)}个场景")
+                # 将字典转换为Scene对象
+                scenes = [Scene.from_dict(s) for s in cached_scenes]
+                # 如果有新的字幕数据,重新关联
+                if subtitle_data:
+                    self._align_subtitles_with_scenes(scenes, subtitle_data)
+                return scenes
         
         # 提取场景变化关键帧
         keyframes = extract_keyframes(
@@ -109,10 +173,14 @@ class SceneAnalyzer:
         if subtitle_data:
             self._align_subtitles_with_scenes(scenes, subtitle_data)
             logger.info("已将字幕数据与场景关联")
-        
+
         # 分析场景内容
         self._analyze_scene_content(scenes, video_path)
-        
+
+        # 保存到缓存
+        if use_cache and self.cache_manager:
+            self.cache_manager.save_cache(video_path, scenes)
+
         return scenes
     
     def _identify_scenes(self, 

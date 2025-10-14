@@ -3,6 +3,11 @@
 """
 VisionAI-ClipsMaster 剪映专业版导出器
 将处理后的视频项目导出为剪映专业版可识别的工程文件格式
+
+重构说明：
+- 使用新的JianyingDraftGenerator（基于pyCapCut实现）
+- 保持向后兼容性
+- 生成标准的draft_content.json格式
 """
 
 import os
@@ -12,6 +17,14 @@ import time
 from typing import Dict, List, Any, Optional
 from pathlib import Path
 import logging
+
+# 导入新的导出器适配器
+try:
+    from .jianying_exporter_adapter import JianyingExporterAdapter
+    HAS_NEW_EXPORTER = True
+except ImportError:
+    HAS_NEW_EXPORTER = False
+    print("警告: 无法导入新的剪映导出器")
 
 # 导入兼容性验证器
 try:
@@ -194,8 +207,32 @@ class JianyingProExporter:
             else:
                 raise ValueError(f"不支持的输入类型: {type(segments_or_project_data)}")
 
-            # 创建剪映工程结构
-            logger.info("正在转换为剪映工程格式...")
+            # 优先使用新的导出器（基于pyCapCut）
+            if HAS_NEW_EXPORTER:
+                logger.info("使用新的剪映导出器（基于pyCapCut实现）")
+                try:
+                    adapter = JianyingExporterAdapter(
+                        width=self.export_settings.get("width", 1920),
+                        height=self.export_settings.get("height", 1080),
+                        fps=self.export_settings.get("fps", 30)
+                    )
+
+                    success = adapter.export_project(project_data, output_path)
+
+                    if success:
+                        logger.info(f"剪映工程文件已成功导出到: {output_path}")
+                        return True
+                    else:
+                        logger.warning("新导出器导出失败，尝试使用旧导出器")
+                        # 继续使用旧导出器
+                except Exception as e:
+                    logger.error(f"新导出器出错: {e}，尝试使用旧导出器")
+                    # 继续使用旧导出器
+            else:
+                logger.warning("新导出器不可用，使用旧导出器")
+
+            # 使用旧的导出器（向后兼容）
+            logger.info("正在转换为剪映工程格式（旧格式）...")
             jianying_project = self._convert_to_jianying_format(project_data)
             logger.info("格式转换完成")
 

@@ -31,17 +31,8 @@ try:
 except ImportError:
     HAS_PYQTGRAPH = False
 
-# 导入压缩相关模块
-from src.compression.adaptive_compression import (
-    get_smart_compressor, get_compression_stats,
-    MemoryPressureLevel, ResourcePriority
-)
-from src.compression.hardware_accel import get_best_hardware, benchmark_hardware
-from src.compression.core import benchmark as benchmark_algorithms
-from src.compression.compressors import get_available_compressors
-
-# 导入UI组件
-from src.ui.components.memory_visualization import MemoryWidget
+# 延迟导入压缩相关模块（避免循环导入和matplotlib问题）
+# 这些模块将在需要时才导入
 
 # 配置日志
 logger = logging.getLogger("compression_dashboard")
@@ -269,8 +260,8 @@ class LineChart(QWidget):
                 break
                 
             y = chart_y + chart_height - (i - min_value) / (max_value - min_value) * chart_height
-            painter.drawLine(chart_x - 5, y, chart_x, y)
-            painter.drawText(5, y - 10, chart_x - 10, 20, 
+            painter.drawLine(chart_x - 5, int(y), chart_x, int(y))
+            painter.drawText(5, int(y) - 10, chart_x - 10, 20,
                           Qt.AlignmentFlag.AlignRight, f"{i}{self.unit}")
         
         # 绘制X轴
@@ -281,8 +272,8 @@ class LineChart(QWidget):
             
             for i in range(0, len(self.data), x_step):
                 x = chart_x + i * chart_width / (len(self.data) - 1)
-                painter.drawLine(x, chart_y + chart_height, x, chart_y + chart_height + 5)
-                painter.drawText(x - 30, chart_y + chart_height + 5, 60, 20, 
+                painter.drawLine(int(x), chart_y + chart_height, int(x), chart_y + chart_height + 5)
+                painter.drawText(int(x) - 30, chart_y + chart_height + 5, 60, 20,
                               Qt.AlignmentFlag.AlignCenter, self.time_labels[i])
             
             # 绘制折线
@@ -455,10 +446,19 @@ class CompressionDashboardWindow(QMainWindow):
         # 算法对比
         self.algo_chart = AlgorithmComparisonChart()
         bottom_layout.addWidget(self.algo_chart)
-        
+
         # 内存监控
-        self.memory_widget = MemoryWidget()
-        bottom_layout.addWidget(self.memory_widget)
+        try:
+            from src.ui.components.memory_visualization import MemoryWidget
+            self.memory_widget = MemoryWidget()
+            bottom_layout.addWidget(self.memory_widget)
+        except ImportError as e:
+            logger.warning(f"无法导入MemoryWidget: {e}")
+            # 使用占位符
+            placeholder = QLabel("内存监控组件不可用")
+            placeholder.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            bottom_layout.addWidget(placeholder)
+            self.memory_widget = None
         
         realtime_layout.addLayout(bottom_layout)
         
@@ -480,17 +480,161 @@ class CompressionDashboardWindow(QMainWindow):
         # 创建详细信息页
         details_tab = QWidget()
         self.tabs.addTab(details_tab, "详细信息")
-        
+
         # 详细信息布局
         details_layout = QVBoxLayout(details_tab)
-        
+
         # 压缩统计信息表格
         self.stats_table = QTableWidget()
         self.stats_table.setColumnCount(2)
         self.stats_table.setHorizontalHeaderLabels(["指标", "值"])
         self.stats_table.horizontalHeader().setStretchLastSection(True)
         details_layout.addWidget(self.stats_table)
-        
+
+        # 创建功能说明页
+        help_tab = QWidget()
+        self.tabs.addTab(help_tab, "功能说明")
+
+        # 功能说明布局
+        help_layout = QVBoxLayout(help_tab)
+
+        # 创建滚动区域
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+        help_layout.addWidget(scroll_area)
+
+        # 说明内容
+        help_content = QWidget()
+        scroll_area.setWidget(help_content)
+        content_layout = QVBoxLayout(help_content)
+
+        # 标题
+        title_label = QLabel("📊 压缩性能监控仪表盘 - 功能说明")
+        title_font = QFont()
+        title_font.setPointSize(16)
+        title_font.setBold(True)
+        title_label.setFont(title_font)
+        title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        content_layout.addWidget(title_label)
+
+        # 说明文本
+        help_text = QLabel("""
+<h3>📋 功能概述</h3>
+<p>压缩性能监控仪表盘提供实时的压缩系统性能监控，帮助您了解压缩效率、资源使用情况和系统性能。</p>
+
+<h3>🎯 主要功能</h3>
+
+<h4>1. 实时监控</h4>
+<ul>
+    <li><b>压缩率仪表盘</b>：以仪表盘形式显示当前压缩率（0-100%）</li>
+    <li><b>吞吐量图表</b>：实时折线图显示压缩吞吐量变化（MB/s）</li>
+    <li><b>算法对比</b>：表格形式对比不同压缩算法的性能</li>
+    <li><b>内存监控</b>：实时显示内存使用情况</li>
+</ul>
+
+<h4>2. 历史趋势</h4>
+<ul>
+    <li><b>历史压缩率</b>：显示长期压缩率变化趋势（最多1000个数据点）</li>
+    <li><b>历史吞吐量</b>：显示长期吞吐量变化趋势（最多1000个数据点）</li>
+    <li><b>趋势分析</b>：帮助识别性能瓶颈和优化机会</li>
+</ul>
+
+<h4>3. 详细统计</h4>
+<ul>
+    <li>压缩/解压操作次数</li>
+    <li>处理的总字节数</li>
+    <li>平均压缩率和吞吐量</li>
+    <li>算法切换次数</li>
+    <li>当前内存压力级别</li>
+</ul>
+
+<h4>4. 基准测试</h4>
+<ul>
+    <li>一键运行压缩算法基准测试</li>
+    <li>对比不同算法的性能表现</li>
+    <li>测试指标：压缩率、压缩速度、解压速度、内存使用</li>
+</ul>
+
+<h3>⚙️ 使用方法</h3>
+
+<h4>查看实时监控</h4>
+<ol>
+    <li>打开仪表盘后，默认显示"实时监控"标签页</li>
+    <li>观察左上角的压缩率仪表盘（0-100%）</li>
+    <li>观察右上角的吞吐量折线图（MB/s）</li>
+    <li>查看左下角的算法对比表格</li>
+    <li>查看右下角的内存使用监控</li>
+</ol>
+
+<h4>查看历史趋势</h4>
+<ol>
+    <li>点击"历史趋势"标签页</li>
+    <li>查看历史压缩率变化图表</li>
+    <li>查看历史吞吐量变化图表</li>
+    <li>图表自动保存最近1000个数据点</li>
+</ol>
+
+<h4>运行基准测试</h4>
+<ol>
+    <li>点击右上角"运行基准测试"按钮</li>
+    <li>等待测试完成（约10-30秒）</li>
+    <li>查看"实时监控"页面的算法对比表格</li>
+    <li>对比各算法的压缩率、速度和内存使用</li>
+</ol>
+
+<h4>调整更新频率</h4>
+<ol>
+    <li>在顶部选择"更新频率"下拉框</li>
+    <li>选择合适的更新间隔：
+        <ul>
+            <li><b>1秒</b>：适合调试和快速变化场景</li>
+            <li><b>2秒</b>：默认设置，平衡性能和实时性</li>
+            <li><b>5秒</b>：适合长期监控</li>
+            <li><b>10秒</b>：适合低资源消耗场景</li>
+        </ul>
+    </li>
+</ol>
+
+<h3>📊 性能指标说明</h3>
+
+<h4>压缩率</h4>
+<p>显示为节省的百分比（0-100%）。例如，50%表示压缩后大小为原始大小的50%，节省了50%的空间。</p>
+
+<h4>吞吐量</h4>
+<p>显示为MB/s，表示每秒处理的数据量。数值越高，性能越好。</p>
+
+<h4>内存使用</h4>
+<p>显示为MB，表示压缩操作占用的内存大小。</p>
+
+<h3>⚠️ 注意事项</h3>
+
+<ul>
+    <li><b>性能影响</b>：更新频率越高，CPU使用率越高。建议在性能敏感场景使用5秒或10秒更新频率。</li>
+    <li><b>基准测试</b>：会占用较多CPU资源，避免在关键任务期间运行。</li>
+    <li><b>数据准确性</b>：压缩率和吞吐量基于实际压缩操作统计。如果没有压缩操作，数据可能为0或不更新。</li>
+    <li><b>内存使用</b>：历史数据保存在内存中，每个图表最多保存1000个数据点。长时间运行不会导致内存泄漏。</li>
+</ul>
+
+<h3>💡 提示</h3>
+
+<ul>
+    <li>定期查看历史趋势，识别性能瓶颈</li>
+    <li>运行基准测试，选择最适合您场景的压缩算法</li>
+    <li>根据实际需求调整更新频率，平衡实时性和性能</li>
+    <li>关注内存压力级别，避免系统资源耗尽</li>
+</ul>
+
+<p style="text-align: center; margin-top: 20px; color: #666;">
+    <i>VisionAI-ClipsMaster - 压缩性能监控仪表盘 v1.0</i>
+</p>
+        """)
+        help_text.setWordWrap(True)
+        help_text.setTextFormat(Qt.TextFormat.RichText)
+        help_text.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignTop)
+        content_layout.addWidget(help_text)
+
+        content_layout.addStretch()
+
         # 初始化数据
         self._initialize_data()
         
@@ -500,7 +644,8 @@ class CompressionDashboardWindow(QMainWindow):
         self.update_timer.start(2000)  # 默认2秒更新一次
         
         # 启动内存监控
-        self.memory_widget.start_monitoring()
+        if self.memory_widget is not None:
+            self.memory_widget.start_monitoring()
     
     def _initialize_data(self):
         """初始化数据"""
@@ -538,12 +683,16 @@ class CompressionDashboardWindow(QMainWindow):
         
         self.update_timer.stop()
         self.update_timer.start(rate)
-        
-        self.memory_widget.set_update_interval(rate)
+
+        if self.memory_widget is not None:
+            self.memory_widget.set_update_interval(rate)
     
     def _update_data(self):
         """更新显示数据"""
         try:
+            # 延迟导入
+            from src.compression.adaptive_compression import get_compression_stats
+
             # 获取压缩统计信息
             stats = get_compression_stats()
             
@@ -604,13 +753,18 @@ class CompressionDashboardWindow(QMainWindow):
             if time_spent > 0:
                 throughput = bytes_processed / (1024 * 1024) / time_spent
                 self.stats_table.setItem(6, 1, QTableWidgetItem(f"{throughput:.2f} MB/s"))
-            
+
             self.stats_table.setItem(7, 1, QTableWidgetItem(str(stats.get("algo_switches", 0))))
-            
+
             # 获取当前内存压力级别
-            compressor = get_smart_compressor()
-            pressure_level = compressor.current_pressure_level.name
-            self.stats_table.setItem(8, 1, QTableWidgetItem(pressure_level))
+            try:
+                from src.compression.adaptive_compression import get_smart_compressor
+                compressor = get_smart_compressor()
+                pressure_level = compressor.current_pressure_level.name
+                self.stats_table.setItem(8, 1, QTableWidgetItem(pressure_level))
+            except Exception as e:
+                logger.warning(f"无法获取内存压力级别: {e}")
+                self.stats_table.setItem(8, 1, QTableWidgetItem("未知"))
             
             self.stats_table.setItem(9, 1, QTableWidgetItem(str(stats.get("level_adjustments", 0))))
             
@@ -645,7 +799,8 @@ class CompressionDashboardWindow(QMainWindow):
         """关闭事件处理"""
         # 停止所有计时器和监控
         self.update_timer.stop()
-        self.memory_widget.stop_monitoring()
+        if self.memory_widget is not None:
+            self.memory_widget.stop_monitoring()
         
         # 如果正在运行基准测试，等待它完成
         if hasattr(self, 'benchmark_thread') and self.benchmark_thread.isRunning():
@@ -663,9 +818,12 @@ class BenchmarkThread(QThread):
     def run(self):
         """运行基准测试"""
         try:
+            # 延迟导入
+            from src.compression.compressors import get_available_compressors
+
             # 设置较小的数据大小以便快速测试
             data_size = 50 * 1024 * 1024  # 50MB
-            
+
             # 获取可用算法
             algorithms = get_available_compressors()
             
@@ -695,29 +853,29 @@ class BenchmarkThread(QThread):
     
     def _benchmark_algorithm(self, algo, test_data):
         """测试单个算法性能
-        
+
         Args:
             algo: 算法名称
             test_data: 测试数据
-        
+
         Returns:
             dict: 测试结果
         """
         # 导入压缩函数
-        from src.compression.core import compress, decompress
+        from src.compression.compressors import compress_data, decompress_data
         import time
         import psutil
-        
+
         start_mem = psutil.Process().memory_info().rss / (1024 * 1024)  # MB
-        
+
         # 测试压缩速度
         start_time = time.time()
-        compressed, metadata = compress(test_data, algo=algo, level=3)
+        compressed, metadata = compress_data(test_data, algorithm=algo)
         compress_time = time.time() - start_time
-        
+
         # 测试解压速度
         start_time = time.time()
-        decompressed = decompress(compressed, metadata=metadata)
+        decompressed = decompress_data(compressed, metadata=metadata)
         decompress_time = time.time() - start_time
         
         end_mem = psutil.Process().memory_info().rss / (1024 * 1024)  # MB

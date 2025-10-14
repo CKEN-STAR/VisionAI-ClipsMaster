@@ -5,39 +5,46 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![PyQt6](https://img.shields.io/badge/GUI-PyQt6-green.svg)](https://www.riverbankcomputing.com/software/pyqt/)
-[![AI Models](https://img.shields.io/badge/AI-Mistral%207B%20%2B%20Qwen2.5%207B-red.svg)](https://huggingface.co/)
+[![AI Models](https://img.shields.io/badge/AI-Mistral%20%2B%20Qwen2.5系列-red.svg)](https://huggingface.co/)
+[![Version](https://img.shields.io/badge/Version-v1.1.0-blue.svg)]()
 [![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen.svg)]()
 [![Test Status](https://img.shields.io/badge/Tests-EXCELLENT%20(100%25)-brightgreen.svg)]()
 [![Project Size](https://img.shields.io/badge/Size-1.46GB%20(Optimized)-blue.svg)]()
 
 ### 📚 文档质量徽章
 
-[![Documentation Coverage](https://img.shields.io/badge/📚_Documentation-100%25_Complete-brightgreen.svg)](DOCUMENTATION_INDEX.md)
-[![User Guide](https://img.shields.io/badge/📖_User_Guide-Available-blue.svg)](USAGE.md)
+[![Documentation Coverage](https://img.shields.io/badge/📚_Documentation-100%25_Complete-brightgreen.svg)](docs/api/DOCUMENTATION_INDEX.md)
+[![User Guide](https://img.shields.io/badge/📖_User_Guide-Available-blue.svg)](docs/guides/USAGE.md)
 [![API Documentation](https://img.shields.io/badge/🔌_API_Docs-Complete-orange.svg)](docs/API_REFERENCE.md)
-[![Developer Guide](https://img.shields.io/badge/👨‍💻_Dev_Guide-Ready-purple.svg)](DEVELOPMENT.md)
-[![Deployment Guide](https://img.shields.io/badge/🚀_Deployment-Ready-red.svg)](DEPLOYMENT.md)
-[![FAQ Available](https://img.shields.io/badge/❓_FAQ-18_Issues_Covered-yellow.svg)](FAQ.md)
+[![Developer Guide](https://img.shields.io/badge/👨‍💻_Dev_Guide-Ready-purple.svg)](docs/development/DEVELOPMENT.md)
+[![Deployment Guide](https://img.shields.io/badge/🚀_Deployment-Ready-red.svg)](docs/deployment/DEPLOYMENT.md)
+[![FAQ Available](https://img.shields.io/badge/❓_FAQ-18_Issues_Covered-yellow.svg)](docs/guides/FAQ.md)
 [![Multilingual](https://img.shields.io/badge/🌐_Languages-中文_+_English-green.svg)](docs/)
-[![Installation Guide](https://img.shields.io/badge/📥_Installation-Step_by_Step-lightblue.svg)](INSTALLATION.md)
+[![Installation Guide](https://img.shields.io/badge/📥_Installation-Step_by_Step-lightblue.svg)](docs/guides/INSTALLATION.md)
 
 ## ✨ 项目亮点
 
--🤖 **双模型AI架构**: Mistral-7B(英文) + Qwen2.5-7B(中文)，智能分析剧情结构
+- 🤖 **双模型AI架构**: Mistral系列(英文) + Qwen2.5系列(中文)，智能分析剧情结构
 
--🎯 **智能剧本重构**: AI深度理解原始字幕，重构为病毒式传播的爆款短剧风格
+- 🎯 **智能剧本重构**: AI深度理解原始字幕，重构为病毒式传播的爆款短剧风格
 
--💾 **4GB内存优化**: 专为低配设备优化，支持Q2_K/Q4_K_M/Q5_K量化模型
+- 🎓 **真实训练系统**: LoRA微调技术，支持原片+爆款字幕对训练，中英文分语言训练 ⭐ NEW
 
--🎨 **现代化UI**: PyQt6界面，支持深色/浅色主题，响应式设计
+- ⚡ **硬件加速**: CUDA GPU加速压缩，自动硬件选择，智能回退机制 ⭐ NEW
 
--⚡ **高效处理**: 精确时间轴映射(≤0.5秒误差)，零损失视频剪辑
+- 🧠 **智能内存优化**: 自动监控和清理，支持更低配设备（4GB RAM可用） ⭐ NEW
 
--📤 **剪映导出**: 完美兼容剪映项目文件格式，无缝对接后期制作
+- 📊 **性能监控**: 压缩性能监控、历史数据分析、错误可视化 ⭐ NEW
 
--🏆 **生产就绪**: EXCELLENT级别测试认证，100%功能验证通过
+- 🎨 **现代化UI**: PyQt6界面，支持深色/浅色主题，响应式设计
 
--🔧 **体积优化**: 项目体积1.46GB，经过专业优化，高效部署
+- 🔧 **高效处理**: 精确时间轴映射(≤0.5秒误差)，零损失视频剪辑
+
+- 📤 **剪映导出**: 完美兼容剪映项目文件格式，无缝对接后期制作
+
+- 🏆 **生产就绪**: EXCELLENT级别测试认证，100%功能验证通过
+
+- 💾 **体积优化**: 项目体积1.46GB，经过专业优化，高效部署
 
 
 ## 🚀 快速开始
@@ -81,7 +88,7 @@ pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/
 python simple_ui_fixed.py  # 主程序入口
 ```
 
-> 📋 **详细安装指南**: [📥 INSTALLATION.md](INSTALLATION.md) - 包含Windows/Linux/macOS完整安装步骤
+> 📋 **详细安装指南**: [📥 INSTALLATION.md](docs/guides/INSTALLATION.md) - 包含Windows/Linux/macOS完整安装步骤
 
 ### 🔧 高级安装 (推荐)
 
@@ -96,29 +103,30 @@ pip install -r requirements.txt
 python simple_ui_fixed.py
 ```
 
-> 🔧 **开发者安装**: [👨‍💻 DEVELOPMENT.md](DEVELOPMENT.md#开发环境设置) - 包含开发环境配置和工具设置
+> 🔧 **开发者安装**: [👨‍💻 DEVELOPMENT.md](docs/development/DEVELOPMENT.md#开发环境设置) - 包含开发环境配置和工具设置
 
 ### 🎯 首次使用
 
-1. **启动应用** - 运行后会自动检测系统配置 → [📖 详细教程](USAGE.md#快速开始)
-2. **选择语言模式** - 中文/英文/自动检测 → [🌐 语言设置](USAGE.md#语言切换)
-3. **智能模型推荐** - 系统会根据您的硬件推荐最适合的AI模型 → [🧠 模型管理](USAGE.md#ai模型管理)
-4. **导入素材** - 上传原始SRT字幕和视频文件 → [📁 文件导入](USAGE.md#核心功能使用)
-5. **AI分析重构** - 一键启动智能剧本重构 → [🤖 AI重构](USAGE.md#ai剧本重构功能)
-6. **导出项目** - 生成剪映项目文件，继续后期制作 → [📤 项目导出](USAGE.md#剪映项目导出)
+1. **启动应用** - 运行后会自动检测系统配置 → [📖 详细教程](docs/guides/USAGE.md#快速开始)
+2. **选择语言模式** - 中文/英文/自动检测 → [🌐 语言设置](docs/guides/USAGE.md#语言切换)
+3. **智能模型推荐** - 系统会根据您的硬件推荐最适合的AI模型 → [🧠 模型管理](docs/guides/USAGE.md#ai模型管理)
+4. **导入素材** - 上传原始SRT字幕和视频文件 → [📁 文件导入](docs/guides/USAGE.md#核心功能使用)
+5. **AI分析重构** - 一键启动智能剧本重构 → [🤖 AI重构](docs/guides/USAGE.md#ai剧本重构功能)
+6. **导出项目** - 生成剪映项目文件，继续后期制作 → [📤 项目导出](docs/guides/USAGE.md#剪映项目导出)
 
-> 💡 **新用户提示**: 完整的使用教程请查看 [📖 USAGE.md](USAGE.md)，遇到问题请参考 [❓ FAQ.md](FAQ.md)
+> 💡 **新用户提示**: 完整的使用教程请查看 [📖 USAGE.md](docs/guides/USAGE.md)，遇到问题请参考 [❓ FAQ.md](docs/guides/FAQ.md)
 
 ## 🏗️ 技术架构
 
 ### 🧠 AI引擎
 ```
 双语言模型架构
-├── Mistral-7B-Instruct (英文处理)
+├── Mistral系列 (英文处理)
 │   ├── 量化版本: Q2_K (2.8GB) / Q4_K_M (4.1GB) / Q5_K (6.3GB)
 │   └── 专长: 英文剧情分析、情节重构
-└── Qwen2.5-7B-Instruct (中文处理)
-    ├── 量化版本: Q2_K (2.8GB) / Q4_K_M (4.1GB) / Q5_K (6.3GB)
+└── Qwen2.5系列 (中文处理)
+    ├── 智能推荐: 根据设备性能自动选择0.5B/1.5B/3B/7B/14B/32B
+    ├── 量化版本: INT4 / INT8 / INT4-128 / INT8-PerChannel
     └── 专长: 中文语境理解、本土化改编
 ```
 
@@ -456,6 +464,26 @@ python comprehensive_production_verification_test.py
 
 ## 📝 更新日志
 
+### v1.1.0 (2025-10-10) - 重大功能更新版 🎉
+#### 🎯 核心新特性
+- ✨ **真实训练系统激活**: LoRA微调技术，支持原片+爆款字幕对训练，中英文分语言训练
+- ⚡ **硬件加速启用**: CUDA GPU加速压缩，自动硬件选择（CUDA→QAT→CPU），智能回退机制
+- 🧠 **内存优化系统**: 自动监控（每30秒），智能清理（80%/90%阈值），支持更低配设备
+- 📊 **性能监控集成**: 压缩性能监控、历史数据分析、错误可视化等5个高级功能全部集成
+- 🔧 **依赖版本优化**: 修复numpy、matplotlib、opencv-python等所有版本冲突
+
+#### 🔧 UI功能集成
+- ✅ 压缩监控仪表盘 - 实时监控压缩性能和吞吐量
+- ✅ 历史数据仪表盘 - 内存使用历史、日报/周报、报告管理
+- ✅ 错误可视化对话框 - 错误历史、统计和趋势可视化
+- ✅ 内存优化器 - 智能内存管理、自动清理、手动控制
+- ✅ 硬件加速器 - GPU/CPU压缩加速、自动硬件选择
+
+#### 🚀 性能提升
+- ⚡ 硬件加速：CUDA GPU加速压缩，性能提升显著
+- 🧠 内存优化：自动监控和清理，内存使用更高效
+- 📊 实时监控：压缩性能、历史数据、错误统计一目了然
+
 ### v1.0.1 (2025-07-25) - 生产就绪优化版本
 #### 🔧 修复和改进
 - ✅ 修复了核心功能模块的兼容性问题
@@ -537,8 +565,17 @@ python comprehensive_production_verification_test.py
 
 ## 📋 版本历史
 
+### v1.1.0 - 智能下载器优化版 (2025-10-06)
+[![Version 1.1.0](https://img.shields.io/badge/Version-1.1.0-brightgreen.svg)](https://github.com/CKEN-STAR/VisionAI-ClipsMaster/releases/tag/v1.1.0)
+
+**🎯 主要改进**
+- 🔧 修复智能推荐下载器显示问题
+- 🔧 修复CUDA设备检测错误
+- 🔧 改进模型下载流程的稳定性
+- 🔧 优化错误处理和日志记录机制
+
 ### v1.0.1 - 生产就绪优化版 (2025-07-25)
-[![Version 1.0.1](https://img.shields.io/badge/Version-1.0.1-brightgreen.svg)](https://github.com/CKEN-STAR/VisionAI-ClipsMaster/releases/tag/v1.0.1)
+[![Version 1.0.1](https://img.shields.io/badge/Version-1.0.1-blue.svg)](https://github.com/CKEN-STAR/VisionAI-ClipsMaster/releases/tag/v1.0.1)
 
 **🎯 主要改进**
 - ✨ **性能监控增强**: 新增实时性能监控面板，支持CPU/GPU/内存使用率可视化
