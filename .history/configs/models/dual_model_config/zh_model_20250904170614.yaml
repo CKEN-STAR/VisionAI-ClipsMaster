@@ -1,7 +1,0 @@
-context_length: 8192
-language: zh
-name: qwen2.5-7b-zh
-path: models/qwen/quantized/qwen-test-small.gguf
-quantization: Q4_K_M
-temperature: 0.7
-top_p: 0.9
