@@ -43,17 +43,21 @@ emotion_thresholds:
 # 片段选择配置
 segment_selection:
   min_duration: 1.5          # 最小片段时长(秒)
-  max_segments: 15           # 最大片段数量
+  max_segments: 30           # 最大片段数量（注意：本路径仅在 SegmentAdvisor 中使用；爆款SRT生成不受此项限制）
   key_segment_boost: 1.2     # 关键片段重要性提升系数
   sentiment_weight: 0.8      # 情感强度权重
   coherence_weight: 0.6      # 连贯性权重
-  
+
   # 总时长控制（避免过短/过长）
   total_duration:
-    min: 20                  # 最小总时长(秒)
-    max: 120                 # 最大总时长(秒)
-    target: 60               # 目标总时长(秒)
-    
+    min: 90                  # 最小总时长(秒)
+    max: 180                 # 最大总时长(秒)
+    target: 120              # 目标总时长(秒)
+
+# 关键对白提取配置（用于AI提取关键对白比例）
+key_dialogue_extraction:
+  retention_ratio: 0.75      # 关键对白目标保留比例（0.3-0.8），默认75%（贴近爆款方案S）；可被ENV VACL_DIALOGUE_RETAINED_PCT覆盖
+
 # 节奏控制
 rhythm_control:
   max_consecutive_similar: 3  # 最大连续相似情感片段数

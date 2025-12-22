@@ -1,9 +1,10 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 VisionAI-ClipsMaster 主界面程序
 """
 import sys
+import os
 import time
 
 def setup_global_exception_handler():
@@ -37,17 +38,9 @@ import psutil
 import gc
 from datetime import datetime
 
-# 配置全局logger
-logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
-
-# 如果没有handler，添加一个控制台handler
-if not logger.handlers:
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    console_handler.setFormatter(formatter)
-    logger.addHandler(console_handler)
+# 统一使用项目日志配置（写入 logs/visionai.log + 控制台）
+from src.utils.log_handler import get_logger  # 触发全局basicConfig(含FileHandler)
+logger = get_logger(__name__)
 
 # Type hints removed as they are not currently used in the codebase
 # 设置项目根目录
@@ -69,14 +62,14 @@ _optimize_startup_performance = None
 
 try:
     from src.utils.startup_performance_optimizer import (
-        get_startup_optimizer as _get_startup_optimizer, 
+        get_startup_optimizer as _get_startup_optimizer,
         optimize_startup_performance as _optimize_startup_performance
     )
     STARTUP_OPTIMIZER_AVAILABLE = True
     print("[OK] 启动优化器导入成功")
 except ImportError as e:
     print(f"[WARN] 启动优化器导入失败: {e}")
-    
+
 # 通用兼容性函数
 def get_startup_optimizer():
     if STARTUP_OPTIMIZER_AVAILABLE and _get_startup_optimizer:
@@ -124,7 +117,7 @@ def get_current_model_info(language: str = "zh") -> dict:
             return {
                 "model_name": recommendation.model_name,
                 "display_name": recommendation.variant.name,
-                "series": "Qwen2.5系列" if language == "zh" else "Mistral系列",
+                "series": "Qwen3系列" if language == "zh" else "Mistral系列",
                 "language": "中文" if language == "zh" else "英文",
                 "size_gb": recommendation.variant.size_gb,
                 "quantization": recommendation.variant.quantization.value
@@ -135,9 +128,9 @@ def get_current_model_info(language: str = "zh") -> dict:
     # 回退到默认值
     if language == "zh":
         return {
-            "model_name": "qwen2.5-1.5b",
-            "display_name": "Qwen2.5-1.5B",
-            "series": "Qwen2.5系列",
+            "model_name": "qwen3-1.7b",
+            "display_name": "Qwen3-1.7B",
+            "series": "Qwen3系列",
             "language": "中文",
             "size_gb": 1.0,
             "quantization": "INT4"
@@ -181,7 +174,7 @@ try:
     )
     ENHANCED_RESPONSE_MONITOR_AVAILABLE = True
     print("[OK] 增强响应时间监控器导入成功")
-    
+
     # 尝试导入额外的函数
     try:
         from src.utils.response_monitor_enhanced import (
@@ -251,11 +244,11 @@ except ImportError as e:
     def apply_optimized_styles(widget, css=""):
         del widget, css  # 忽略未使用的参数
         pass
-    def optimize_stylesheet(stylesheet): 
+    def optimize_stylesheet(stylesheet):
         return stylesheet
-    def get_css_optimization_report(): 
+    def get_css_optimization_report():
         return {}
-    def clear_css_cache(): 
+    def clear_css_cache():
         pass
 # 导入用户体验增强模块
 try:
@@ -364,6 +357,45 @@ except ImportError as e:
     class ThemeSettingsDialog:
         @staticmethod
         def show_theme_dialog(parent=None): return None
+
+# 导入云端AI引擎
+try:
+    from src.core.cloud_ai_engine import (
+        CloudAIEngine, CloudPlatform, CloudModel,
+        get_supported_platforms, get_supported_models, get_platform_models,
+        get_cloud_ai_engine, PLATFORM_CONFIG
+    )
+    from src.config.cloud_api_config import CloudAPIConfig, get_cloud_api_config
+    HAS_CLOUD_AI = True
+    print("[OK] 云端AI引擎导入成功")
+except ImportError as e:
+    HAS_CLOUD_AI = False
+    print(f"[WARN] 云端AI引擎导入失败: {e}")
+    # 定义空类以保持兼容性
+    class CloudAIEngine:
+        def __init__(self, *args, **kwargs): pass
+        def configure(self, *args, **kwargs): pass
+        def test_connection(self): return {"success": False, "error": "云端AI引擎不可用"}
+        def generate(self, *args, **kwargs): return ""
+    class CloudPlatform:
+        SILICONFLOW = "siliconflow"
+        MODELSCOPE = "modelscope"
+    class CloudModel:
+        QWEN3_235B = "qwen3-235b"
+        DEEPSEEK_V3 = "deepseek-v3"
+    def get_supported_platforms(): return []
+    def get_supported_models(): return []
+    def get_platform_models(platform): return []
+    def get_cloud_ai_engine(): return CloudAIEngine()
+    class CloudAPIConfig:
+        def __init__(self): pass
+        @property
+        def mode(self): return "local"
+        @property
+        def is_cloud_mode(self): return False
+    def get_cloud_api_config(): return CloudAPIConfig()
+    PLATFORM_CONFIG = {}
+
 # 简单日志记录器（智能模块加载器功能已集成到其他模块中）
 class SimpleLogger:
     def info(self, msg): print(f"[INFO] {msg}")
@@ -668,10 +700,11 @@ class ViralSRTWorker(QObject):
     item_completed = pyqtSignal(str, str)    # 单个文件完成信号 (output_path, original_name)
     all_completed = pyqtSignal(int, int)     # 全部完成信号 (success_count, total_count)
     error_occurred = pyqtSignal(str)         # 错误信号
-    def __init__(self, selected_items, language_mode):
+    def __init__(self, selected_items, language_mode, cloud_engine=None):
         super().__init__()
         self.selected_items = selected_items
         self.language_mode = language_mode
+        self.cloud_engine = cloud_engine  # 云端AI引擎（可选）
         self.is_cancelled = False
 
     def _perform_advanced_analysis(self, srt_path):
@@ -753,106 +786,146 @@ class ViralSRTWorker(QObject):
             return None
 
     def process(self):
-        """处理爆款SRT生成"""
-        try:
+        """处理爆款SRT生成 - 整体处理版本"""
+        print("\n" + "="*80)
+        print("[ViralSRTWorker] 开始处理爆款SRT生成")
+        print("="*80)
 
+        try:
             total_count = len(self.selected_items)
             success_count = 0
 
-            # 第一阶段: 高级分析所有选中的SRT文件
-            self.progress_updated.emit(0, "🔍 正在进行高级分析...")
-            analysis_results = []
+            print(f"[阶段1/3] 收集SRT文件内容 (共{total_count}个文件)")
+            print(f"   - 语言模式: {self.language_mode}")
+
+            # 第一阶段: 收集所有SRT文件内容
+            self.progress_updated.emit(0, "📚 正在读取所有SRT文件...")
+            all_srt_data = []
 
             for i, item in enumerate(self.selected_items):
                 if self.is_cancelled:
+                    print("[警告] 用户取消操作")
                     break
 
                 srt_path = item.data(Qt.ItemDataRole.UserRole)
                 original_name = os.path.basename(srt_path)
 
-                # 更新分析进度
-                analysis_progress = int((i / total_count) * 20)  # 分析占20%进度
-                self.progress_updated.emit(analysis_progress, f"🔍 分析中: {original_name}")
+                # 更新读取进度
+                read_progress = int((i / total_count) * 10)  # 读取占10%进度
+                self.progress_updated.emit(read_progress, f"📚 读取中: {original_name}")
+                print(f"   [{i+1}/{total_count}] 读取: {original_name}")
 
                 try:
-                    # 执行高级分析
-                    analysis_result = self._perform_advanced_analysis(srt_path)
-                    analysis_results.append({
+                    # 读取SRT文件内容
+                    with open(srt_path, 'r', encoding='utf-8') as f:
+                        srt_content = f.read()
+
+                    all_srt_data.append({
                         'path': srt_path,
                         'name': original_name,
-                        'analysis': analysis_result
+                        'content': srt_content
                     })
+                    print(f"       ✅ 成功读取 ({len(srt_content)} 字符)")
+
                 except Exception as e:
-                    print(f"[WARN] 高级分析失败 {original_name}: {e}")
-                    # 分析失败不影响后续处理
+                    print(f"       ❌ 读取失败: {e}")
+                    self.item_completed.emit("", original_name)
 
-            # 第二阶段: 生成爆款SRT
-            self.progress_updated.emit(20, "✨ 开始生成爆款SRT...")
+            # 第二阶段: AI整体理解所有剧情
+            print(f"\n[阶段2/3] AI整体理解剧情 (共{total_count}集)")
+            
+            # 🆕 判断使用云端还是本地模式
+            if self.cloud_engine is not None:
+                self.progress_updated.emit(10, "☁️ 云端AI正在理解整个故事（共{}集）...".format(total_count))
+                print(f"   - 使用云端AI引擎")
+            else:
+                self.progress_updated.emit(10, "🧠 本地AI正在理解整个故事（共{}集）...".format(total_count))
+                print(f"   - 使用本地AI引擎")
 
-            for i, item in enumerate(self.selected_items):
+            try:
+                print("   [1/3] 导入VideoProcessor...")
+                from simple_ui_fixed import VideoProcessor
 
-                if self.is_cancelled:
+                print("   [2/3] 调用AI批量处理...")
+                print(f"       - 文件数量: {len(all_srt_data)}")
+                print(f"       - 语言模式: {self.language_mode}")
+                print(f"       - AI模式: {'云端' if self.cloud_engine else '本地'}")
 
-                    break
-                srt_path = item.data(Qt.ItemDataRole.UserRole)
-                original_name = os.path.basename(srt_path)
-                # 更新进度 (20%-100%)
-                progress = 20 + int((i / total_count) * 80)
-                self.progress_updated.emit(progress, f"✨ 正在生成: {original_name}")
-                try:
-                    # 调用处理函数
-                    from simple_ui_fixed import VideoProcessor
-                    output_path = VideoProcessor.generate_viral_srt(srt_path, language_mode=self.language_mode)
+                viral_srt_results = VideoProcessor.generate_viral_srt_batch(
+                    all_srt_data,
+                    language_mode=self.language_mode,
+                    cloud_engine=self.cloud_engine  # 传递云端引擎
+                )
 
-                    if output_path:
-                        # 如果生成成功，尝试进行时间轴对齐
-                        if PrecisionAlignmentEngineer is not None:
-                            try:
-                                self.progress_updated.emit(progress + 5, f"正在对齐时间轴: {original_name}")
+                print(f"   [3/3] AI处理完成")
+                print(f"       - 结果数量: {len(viral_srt_results) if viral_srt_results else 0}")
 
-                                # 导入枚举类型
-                                from src.core.alignment_engineer import AlignmentPrecision
+                if not viral_srt_results:
+                    print("       ❌ AI处理失败: 返回结果为空")
+                    raise Exception("AI整体处理失败")
 
-                                # 创建对齐引擎
-                                aligner = PrecisionAlignmentEngineer(target_precision=AlignmentPrecision.HIGH)
+                # 第三阶段: 保存生成的爆款SRT文件
+                print(f"\n[阶段3/3] 保存爆款SRT文件")
+                self.progress_updated.emit(50, "💾 正在保存爆款SRT文件...")
 
-                                # 读取原始和重构后的字幕
-                                with open(srt_path, 'r', encoding='utf-8') as f:
-                                    original_srt = f.read()
-                                with open(output_path, 'r', encoding='utf-8') as f:
-                                    viral_srt = f.read()
+                for i, result in enumerate(viral_srt_results):
+                    if self.is_cancelled:
+                        print("[警告] 用户取消操作")
+                        break
 
-                                # 执行对齐（假设视频时长可以从原始字幕推断）
-                                aligned_result = aligner.align_subtitle_to_video(
-                                    original_subtitles=original_srt,
-                                    reconstructed_subtitles=viral_srt,
-                                    video_duration=None  # 自动推断
-                                )
+                    # 更新保存进度 (50%-100%)
+                    save_progress = 50 + int((i / total_count) * 50)
+                    self.progress_updated.emit(save_progress, f"💾 保存中: {result['name']}")
 
-                                if aligned_result:
-                                    # 如果对齐成功，更新输出文件
-                                    with open(output_path, 'w', encoding='utf-8') as f:
-                                        f.write(aligned_result)
-                                    print(f"[OK] 时间轴对齐完成: {original_name}")
-                                else:
-                                    print(f"[WARN] 时间轴对齐失败，使用原始重构结果: {original_name}")
+                    try:
+                        output_path = result['output_path']
+                        original_name = result['name']
 
-                            except Exception as e:
-                                print(f"[WARN] 时间轴对齐出错，使用原始重构结果: {e}")
+                        print(f"   [{i+1}/{total_count}] 保存: {original_name}")
+                        print(f"       - 输出路径: {output_path}")
+
+                        # 禁用时间轴对齐（AI已经生成了正确的时间轴）
+                        # 时间轴对齐功能已禁用，因为：
+                        # 1. AI生成的爆款SRT已经包含了正确的时间轴
+                        # 2. align_subtitle_to_video() 返回的是 AlignmentResult 对象，不是SRT字符串
+                        # 3. 对齐功能导致0字节文件问题
+                        print(f"       - 跳过时间轴对齐（AI已生成正确时间轴）")
 
                         success_count += 1
                         self.item_completed.emit(output_path, original_name)
-                    else:
-                        self.item_completed.emit("", original_name)
+                        print(f"       ✅ 保存成功")
 
-                except Exception as e:
-                    print(f"处理SRT文件失败: {e}")
-                    import traceback
-                    traceback.print_exc()
-                    self.item_completed.emit("", original_name)
+                    except Exception as e:
+                        print(f"       ❌ 保存失败: {e}")
+                        import traceback
+                        traceback.print_exc()
+                        self.item_completed.emit("", result.get('name', 'unknown'))
+
+            except Exception as e:
+                print(f"\n[ERROR] AI整体处理失败: {e}")
+                import traceback
+                print("[ERROR] 详细错误信息:")
+                traceback.print_exc()
+
+                # 如果整体处理失败，标记所有文件为失败
+                print(f"[警告] 标记所有{len(all_srt_data)}个文件为失败")
+                for srt_data in all_srt_data:
+                    self.item_completed.emit("", srt_data['name'])
+
             # 发送完成信号
+            print(f"\n[完成] 爆款SRT生成完成")
+            print(f"   - 成功: {success_count}/{total_count}")
+            print(f"   - 失败: {total_count - success_count}/{total_count}")
+            print("="*80 + "\n")
+
             self.all_completed.emit(success_count, total_count)
+
         except Exception as e:
+            print(f"\n[FATAL ERROR] 处理过程发生严重错误: {e}")
+            import traceback
+            print("[ERROR] 详细错误信息:")
+            traceback.print_exc()
+            print("="*80 + "\n")
 
             self.error_occurred.emit(str(e))
 
@@ -1386,6 +1459,19 @@ LanguageDetector = None
 SRTParser = None
 InputValidator = None
 WorkflowManager = None
+RealAIEngine = None
+InferenceModelLoader = None
+
+# 导入真实AI引擎和GGUF模型加载器
+try:
+    from src.core.real_ai_engine import RealAIEngine
+    from src.inference.model_loader import InferenceModelLoader
+    print("[OK] RealAIEngine 和 InferenceModelLoader 导入成功")
+    CORE_MODULES_AVAILABLE = True
+except Exception as e:
+    print(f"[WARN] RealAIEngine/InferenceModelLoader 导入失败: {e}")
+    RealAIEngine = None
+    InferenceModelLoader = None
 
 # 导入剧本重构引擎
 try:
@@ -1408,7 +1494,7 @@ try:
     from src.training.model_fine_tuner import ModelFineTuner
     print("[OK] ModelFineTuner 导入成功")
     CORE_MODULES_AVAILABLE = True
-except ImportError as e:
+except Exception as e:
     print(f"[WARN] ModelFineTuner 导入失败: {e}")
     # 创建占位符类
     class ModelFineTuner:
@@ -1651,11 +1737,30 @@ try:
     print("[OK] AIPlotAnalyzer 导入成功")
 except ImportError as e:
     print(f"[WARN] AIPlotAnalyzer 导入失败: {e}")
+    # 创建占位符类
+    from dataclasses import dataclass
+    from typing import List, Dict, Any
+
+    @dataclass
+    class NarrativeMap:
+        emotion_curve: List[Dict[str, Any]]
+        plot_points: List[Dict[str, Any]]
+        characters: List[Dict[str, Any]]
+        climax_points: List[Dict[str, Any]]
+        narrative_structure: Dict[str, Any]
+
     class AIPlotAnalyzer:
         def __init__(self):
             pass
         def analyze_plot(self, *args, **kwargs):
-            return {"status": "error", "message": "AI剧情分析器未安装"}
+            # 返回空的NarrativeMap对象
+            return NarrativeMap(
+                emotion_curve=[],
+                plot_points=[],
+                characters=[],
+                climax_points=[],
+                narrative_structure={}
+            )
 
 # 导入工作流程进度对话框
 try:
@@ -1731,7 +1836,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'ui', 'components'))
 # GPU检测工具
 def detect_gpu_info():
     """独立显卡检测系统（使用WMI检测NVIDIA/AMD独立显卡）
-    
+
     Returns:
         dict: GPU信息，包含可用性、设备名称、详细信息和错误信息
             - available: bool, GPU是否可用
@@ -2259,12 +2364,12 @@ class ModelDownloadThread(QThread):
                 ]
             },
             # 保持向后兼容（映射到新模型）
-            'qwen2.5-7b-zh': {
-                'url': 'https://modelscope.cn/models/Qwen/Qwen3-0.6B-Instruct-GGUF/resolve/main/qwen3-0.6b-instruct-q4_k_m.gguf',
-                'path': 'models/qwen/qwen3-0.6b/quantized/Q4_K_M.gguf',
-                'size': 300_000_000,
+            'qwen3-1.7b-zh': {
+                'url': 'https://modelscope.cn/models/Qwen/Qwen3-1.7B-Instruct-GGUF/resolve/main/qwen3-1.7b-instruct-q4_k_m.gguf',
+                'path': 'models/qwen/qwen3-1.7b/quantized/Q4_K_M.gguf',
+                'size': 1_000_000_000,
                 'fallback_urls': [
-                    'https://huggingface.co/Qwen/Qwen3-0.6B-Instruct-GGUF/resolve/main/qwen3-0.6b-instruct-q4_k_m.gguf'
+                    'https://huggingface.co/Qwen/Qwen3-1.7B-Instruct-GGUF/resolve/main/qwen3-1.7b-instruct-q4_k_m.gguf'
                 ]
             }
         }
@@ -2423,7 +2528,7 @@ class ModelDownloadThread(QThread):
                             # 更新进度
                             progress = int(40 + (downloaded / total_size) * 50)  # 10-90%
                             self.progress_updated.emit(
-                                progress, 
+                                progress,
                                 f"已下载: {downloaded/1024/1024:.1f}MB / {total_size/1024/1024:.1f}MB"
                             )
                 # 下载完成，验证文件大小
@@ -2481,7 +2586,7 @@ class ModelDownloadThread(QThread):
                 self.progress_updated.emit(92, "运行量化命令...")
                 # 执行量化命令
                 process = subprocess.Popen(
-                    cmd, 
+                    cmd,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     text=True
@@ -2622,25 +2727,17 @@ class VideoProcessor(QObject):
             if not os.path.exists(srt_file_path):
                 print(f"[ERROR] SRT文件不存在: {srt_file_path}")
                 return None
-            
+
             # 验证文件大小
             file_size = os.path.getsize(srt_file_path)
             if file_size == 0:
                 print(f"[ERROR] SRT文件为空: {srt_file_path}")
                 return None
-            
+
             # 验证文件扩展名
             if not srt_file_path.lower().endswith('.srt'):
                 print(f"[ERROR] 文件不是SRT格式: {srt_file_path}")
                 return None
-            
-            # 使用真实的剧本重构引擎
-            if ScreenplayEngineer is None:
-                print(f"[ERROR] 剧本重构引擎未安装")
-                return None
-
-            # 创建剧本重构引擎实例
-            engineer = ScreenplayEngineer()
 
             # 读取SRT文件内容
             with open(srt_file_path, 'r', encoding='utf-8') as f:
@@ -2658,17 +2755,97 @@ class VideoProcessor(QObject):
                 # 自动检测语言
                 language = "zh" if any("\u4e00" <= char <= "\u9fff" for char in srt_content) else "en"
 
-            print(f"[INFO] 使用剧本重构引擎生成爆款剧本，语言: {language}")
+            print(f"[INFO] 使用AI引擎生成爆款剧本，语言: {language}")
+
+            # 优先使用真实的AI引擎(GGUF模型)
+            if RealAIEngine is not None:
+                try:
+                    print(f"[INFO] 尝试使用RealAIEngine进行AI分析...")
+
+                    # 🔧 创建进度回调函数（静态方法，使用print输出进度）
+                    def ai_progress_callback(progress, message):
+                        """AI引擎进度回调"""
+                        print(f"[AI进度] {progress}% - {message}")
+
+                    # 创建AI引擎实例（传递进度回调）
+                    print(f"[INFO] 正在创建RealAIEngine实例...")
+                    ai_engine = RealAIEngine(progress_callback=ai_progress_callback)
+
+                    # 加载对应语言的GGUF模型
+                    print(f"[INFO] 正在加载GGUF模型（语言: {language}）...")
+                    model_loaded = ai_engine.load_model(language)
+
+                    if not model_loaded:
+                        print(f"[WARN] GGUF模型加载失败，降级到ScreenplayEngineer")
+                        print(f"[WARN] 可能原因: 模型文件不存在或损坏")
+                        raise ImportError("GGUF模型不可用")
+
+                    # 使用AI引擎生成爆款剧本
+                    prompt = f"""请将以下字幕内容重构为更具吸引力的"爆款"版本:
+
+{srt_content}
+
+要求:
+1. 保持原有时间轴结构
+2. 增强情感表达和冲突张力
+3. 添加悬念和高潮点
+4. 使用更吸引人的表述方式
+5. 保持内容连贯性
+
+请直接输出重构后的SRT格式内容。"""
+
+                    # 调用AI生成
+                    response = ai_engine.generate(prompt, language=language)
+
+                    if response and response.strip():
+                        # 写入新SRT文件
+                        output_path = os.path.splitext(srt_file_path)[0] + "_viral.srt"
+                        with open(output_path, "w", encoding="utf-8") as f:
+                            f.write(response)
+
+                        # 验证输出文件
+                        if os.path.exists(output_path) and os.path.getsize(output_path) > 0:
+                            print(f"[SUCCESS] 使用RealAIEngine生成爆款SRT成功: {output_path}")
+                            return output_path
+                        else:
+                            print(f"[WARN] AI生成的内容无效，降级到ScreenplayEngineer")
+                            raise ValueError("AI生成内容无效")
+                    else:
+                        print(f"[WARN] AI引擎返回空结果，降级到ScreenplayEngineer")
+                        raise ValueError("AI返回空结果")
+
+                except Exception as e:
+                    print(f"[WARN] RealAIEngine处理失败: {e}，降级到ScreenplayEngineer")
+                    # 继续使用ScreenplayEngineer作为备用方案
+
+            # 备用方案: 使用ScreenplayEngineer
+            if ScreenplayEngineer is None:
+                print(f"[ERROR] 剧本重构引擎未安装，且AI引擎不可用")
+                return None
+
+            print(f"[INFO] 使用ScreenplayEngineer进行剧本重构（完整版7步算法）...")
+
+            # 创建剧本重构引擎实例
+            engineer = ScreenplayEngineer()
 
             # 调用剧本重构引擎
             try:
-                # 先分析剧情结构
-                analysis = engineer.analyze_plot_structure(srt_content)
-                if not analysis or analysis.get("error"):
-                    print(f"[WARN] 剧情分析失败，使用基础重构")
+                # 🆕 解析SRT文件为字幕列表
+                print(f"[INFO] 解析SRT文件...")
+                original_subtitles = engineer.import_srt(srt_file_path)
+                if not original_subtitles or len(original_subtitles) == 0:
+                    print(f"[ERROR] SRT文件解析失败或为空")
+                    return None
 
-                # 执行剧本重构
-                result = engineer.reconstruct_screenplay(srt_file_path)
+                print(f"[INFO] 成功解析 {len(original_subtitles)} 条字幕")
+
+                # 🆕 使用完整版7步重构算法生成爆款剧本
+                print(f"[INFO] 开始执行7步重构算法...")
+                result = engineer.generate_screenplay(
+                    original_subtitles,
+                    language=language,
+                    preset_name="viral"
+                )
 
                 if not result or not result.get("success", False):
                     error_msg = result.get("error", "未知错误") if result else "重构失败"
@@ -2676,7 +2853,7 @@ class VideoProcessor(QObject):
                     return None
 
                 # 获取重构后的片段
-                segments = result.get("segments", [])
+                segments = result.get("screenplay", result.get("segments", []))
                 if not segments or len(segments) == 0:
                     print(f"[ERROR] 重构结果为空")
                     return None
@@ -2692,8 +2869,9 @@ class VideoProcessor(QObject):
 
                 # 验证输出文件
                 if os.path.exists(output_path) and os.path.getsize(output_path) > 0:
-                    print(f"[SUCCESS] 爆款SRT生成成功: {output_path}")
-                    print(f"[INFO] 原始片段: {len(srt_content.split('\\n\\n'))}, 重构片段: {len(segments)}")
+                    print(f"[SUCCESS] 使用ScreenplayEngineer生成爆款SRT成功: {output_path}")
+                    original_segments = len(srt_content.split('\n\n'))
+                    print(f"[INFO] 原始片段: {original_segments}, 重构片段: {len(segments)}")
                     return output_path
                 else:
                     print(f"[ERROR] 输出文件生成失败: {output_path}")
@@ -2704,10 +2882,290 @@ class VideoProcessor(QObject):
                 import traceback
                 traceback.print_exc()
                 return None
-                
+
         except Exception as e:
             print(f"[ERROR] 生成爆款SRT出错: {e}")
             return None
+
+    @staticmethod
+    def _subtitles_to_srt(subtitles):
+        """将字幕列表转换为SRT格式字符串（保留原始时间码信息）"""
+        srt_lines = []
+        for i, subtitle in enumerate(subtitles, 1):
+            # 序号
+            srt_lines.append(str(i))
+
+            # 时间轴 - 支持两种格式
+            # 格式1: start_time/end_time (浮点数秒)
+            # 格式2: start/end (SRT格式字符串)
+            if 'start_time' in subtitle and 'end_time' in subtitle:
+                start_time = subtitle.get('start_time', 0.0)
+                end_time = subtitle.get('end_time', 0.0)
+                start_str = VideoProcessor._seconds_to_srt_time(start_time)
+                end_str = VideoProcessor._seconds_to_srt_time(end_time)
+            elif 'start' in subtitle and 'end' in subtitle:
+                start_str = subtitle.get('start', '00:00:00,000')
+                end_str = subtitle.get('end', '00:00:00,000')
+            else:
+                start_str = '00:00:00,000'
+                end_str = '00:00:00,000'
+
+            srt_lines.append(f"{start_str} --> {end_str}")
+
+            # 字幕文本
+            text = subtitle.get('text', '')
+            srt_lines.append(text)
+
+            # 保留原始时间码信息（作为注释，以#开头）
+            if 'original_episode' in subtitle or 'original_start' in subtitle:
+                metadata_parts = []
+                if 'original_episode' in subtitle:
+                    metadata_parts.append(f"episode={subtitle['original_episode']}")
+                if 'original_index' in subtitle:
+                    metadata_parts.append(f"index={subtitle['original_index']}")
+                if 'original_start' in subtitle:
+                    metadata_parts.append(f"start={subtitle['original_start']}")
+                if 'original_end' in subtitle:
+                    metadata_parts.append(f"end={subtitle['original_end']}")
+
+                if metadata_parts:
+                    metadata_line = f"#ORIGINAL: {', '.join(metadata_parts)}"
+                    srt_lines.append(metadata_line)
+
+            # 空行分隔
+            srt_lines.append('')
+
+        return '\n'.join(srt_lines)
+
+    @staticmethod
+    def _seconds_to_srt_time(seconds):
+        """将秒数转换为SRT时间格式 (HH:MM:SS,mmm)"""
+        hours = int(seconds // 3600)
+        minutes = int((seconds % 3600) // 60)
+        secs = int(seconds % 60)
+        millis = int((seconds % 1) * 1000)
+        return f"{hours:02d}:{minutes:02d}:{secs:02d},{millis:03d}"
+
+    @staticmethod
+    def generate_viral_srt_batch(all_srt_data, language_mode="auto", cloud_engine=None):
+        """
+        批量生成爆款SRT - 整体理解所有剧情后生成
+
+        Args:
+            all_srt_data: 所有SRT数据列表，每个元素包含 {'path', 'name', 'content'}
+            language_mode: 语言模式
+            cloud_engine: 云端AI引擎实例（可选，如果提供则使用云端模式）
+
+        Returns:
+            List[Dict]: 生成结果列表，每个元素包含 {'output_path', 'name', 'original_path'}
+        """
+        try:
+            print(f"[INFO] 开始批量生成爆款SRT，共{len(all_srt_data)}个文件")
+
+            # 检测语言
+            if language_mode and language_mode != "auto":
+                language = language_mode
+            else:
+                # 从第一个SRT文件检测语言
+                first_content = all_srt_data[0]['content'] if all_srt_data else ""
+                language = "zh" if any("\u4e00" <= char <= "\u9fff" for char in first_content) else "en"
+
+            print(f"[INFO] 检测到语言: {language}")
+
+            # 🆕 判断使用云端还是本地AI引擎
+            use_cloud = cloud_engine is not None
+            ai_engine = None
+            
+            if use_cloud:
+                print(f"[INFO] 使用云端AI引擎进行整体AI分析...")
+                ai_engine = cloud_engine
+            else:
+                # 使用本地AI引擎(GGUF模型)
+                if RealAIEngine is None:
+                    raise ImportError("[ERROR] RealAIEngine未导入，无法生成爆款SRT")
+
+                print(f"[INFO] 使用本地RealAIEngine进行整体AI分析...")
+
+                # 🔧 创建进度回调函数（静态方法，使用print输出进度）
+                def ai_progress_callback(progress, message):
+                    """AI引擎进度回调"""
+                    print(f"[AI进度] {progress}% - {message}")
+
+                # 创建AI引擎实例（传递进度回调）
+                ai_engine = RealAIEngine(progress_callback=ai_progress_callback)
+
+                # 加载对应语言的GGUF模型
+                if not ai_engine.load_model(language):
+                    raise RuntimeError(f"[ERROR] GGUF模型加载失败，语言: {language}")
+
+            print(f"[SUCCESS] GGUF模型加载成功，语言: {language}")
+
+            # 解析所有SRT文件为字幕列表
+            print(f"[INFO] 正在解析SRT文件...")
+            from src.core.srt_parser import SRTParser
+            parser = SRTParser()
+
+            all_subtitles = []
+            for srt_data in all_srt_data:
+                # 使用 parse_srt_content 方法解析字符串内容
+                subtitles = parser.parse_srt_content(srt_data['content'])
+                all_subtitles.append(subtitles)
+
+            print(f"[INFO] 解析完成，共{len(all_subtitles)}个SRT文件")
+
+            # 🔧 新增：使用分析模块增强AI理解
+            print(f"[INFO] 正在进行叙事结构分析...")
+            analysis_results = []
+
+            # 对每一集进行分析
+            for i, subtitles in enumerate(all_subtitles):
+                episode_analysis = {}
+
+                # 1. 叙事结构分析（快速模式）
+                if IntegratedNarrativeAnalyzer is not None:
+                    try:
+                        analyzer = IntegratedNarrativeAnalyzer()
+                        narrative_result = analyzer.analyze_narrative_structure(subtitles)
+                        episode_analysis['narrative'] = narrative_result
+                        print(f"[INFO] 第{i+1}集叙事分析完成")
+                    except Exception as e:
+                        print(f"[WARN] 第{i+1}集叙事分析失败: {e}")
+
+                # 2. 节奏分析
+                if RhythmAnalyzer is not None:
+                    try:
+                        rhythm_analyzer = RhythmAnalyzer()
+                        # 使用analyze_segments方法分析字幕列表
+                        rhythm_result = rhythm_analyzer.analyze_segments(subtitles)
+                        episode_analysis['rhythm'] = rhythm_result
+                        print(f"[INFO] 第{i+1}集节奏分析完成")
+                    except Exception as e:
+                        print(f"[WARN] 第{i+1}集节奏分析失败: {e}")
+
+                # 3. 片段建议
+                if SegmentAdvisor is not None:
+                    try:
+                        segment_advisor = SegmentAdvisor()
+                        segment_result = segment_advisor.analyze_segments(subtitles)
+                        episode_analysis['segments'] = segment_result
+                        print(f"[INFO] 第{i+1}集片段分析完成")
+                    except Exception as e:
+                        print(f"[WARN] 第{i+1}集片段分析失败: {e}")
+
+                # 4. 深度剧情分析（使用AIPlotAnalyzer）
+                if AIPlotAnalyzer is not None:
+                    try:
+                        plot_analyzer = AIPlotAnalyzer()
+                        narrative_map = plot_analyzer.analyze_plot(subtitles, language)
+                        episode_analysis['narrative_map'] = narrative_map
+                        print(f"[INFO] 第{i+1}集深度剧情分析完成 - 情感点:{len(narrative_map.emotion_curve)}, 情节点:{len(narrative_map.plot_points)}, 角色:{len(narrative_map.characters)}, 高潮点:{len(narrative_map.climax_points)}")
+                    except Exception as e:
+                        print(f"[WARN] 第{i+1}集深度剧情分析失败: {e}")
+
+                analysis_results.append(episode_analysis)
+
+            print(f"[SUCCESS] 所有分析完成，共{len(analysis_results)}集")
+            # 第2.5阶段：调用WorkflowManager的Auto逻辑进行长度自适应参数下发（不做上限裁剪）
+            try:
+                from src.core.workflow_manager import WorkflowManager
+                wm = WorkflowManager()
+
+                # 聚合多集指标：总时长=各集求和；总条数=各集求和；情感分=按时长加权平均
+                per_durations = []
+                for subs in all_subtitles:
+                    try:
+                        per_durations.append(parser.get_total_duration(subs))
+                    except Exception:
+                        # 兜底：使用最后一条的end_time
+                        if subs:
+                            per_durations.append(max([s.get('end_time', 0.0) for s in subs]) - min([s.get('start_time', 0.0) for s in subs]))
+                        else:
+                            per_durations.append(0.0)
+                total_dur_sum = sum(per_durations)
+                total_lines = sum(len(subs) for subs in all_subtitles)
+
+                # 情感分按时长加权
+                emo_weighted_sum = 0.0
+                for idx, ep in enumerate(analysis_results):
+                    dur = per_durations[idx] if idx < len(per_durations) else 0.0
+                    emo = 0.7
+                    try:
+                        emo = float((ep.get('narrative') or {}).get('emotional_score', 0.7) or 0.7)
+                    except Exception:
+                        pass
+                    emo_weighted_sum += emo * max(0.0, dur)
+                emo_avg = (emo_weighted_sum / total_dur_sum) if total_dur_sum > 0 else 0.7
+
+                auto_res = wm.auto_calibrate_metrics(total_duration=total_dur_sum,
+                                                     subtitle_count=total_lines,
+                                                     emotional_score=emo_avg)
+                print(f"[INFO] Auto长度自适应: 档位={auto_res.get('grade')} | 区间={auto_res.get('target_min')}-{auto_res.get('target_max')}s | 保留率={auto_res.get('retain_ratio')} | maxSeg={auto_res.get('max_segments')} | dpm={auto_res.get('dpm'):.1f}")
+            except Exception as e:
+                print(f"[WARN] Auto长度自适应阶段失败，继续默认流程: {e}")
+
+
+            # 调用AI生成爆款字幕 - 多集混剪成一个完整视频
+            print(f"[INFO] 正在调用AI引擎进行混剪生成...")
+            print(f"[INFO] AI将理解整个故事（第1-{len(all_subtitles)}集）后生成1个混剪SRT...")
+
+            # 使用批量生成方法，让AI理解整个故事并生成混剪SRT
+            # 🔧 新增：传递分析结果给AI引擎
+            viral_subtitles = ai_engine.generate_viral_subtitle_batch(
+                all_subtitles,
+                language=language,
+                analysis_results=analysis_results  # 传递分析结果
+            )
+
+            print(f"[SUCCESS] AI混剪生成成功，共{len(viral_subtitles)}条字幕")
+
+            # 将字幕列表转换为SRT格式
+            print(f"[INFO] 正在转换为SRT格式...")
+            srt_content = VideoProcessor._subtitles_to_srt(viral_subtitles)
+            print(f"[DEBUG] 混剪SRT内容长度: {len(srt_content)} 字符")
+
+            # 保存生成的混剪爆款SRT文件
+            # 使用第一个SRT文件的目录
+            first_srt_path = all_srt_data[0]['path']
+            output_dir = os.path.dirname(first_srt_path)
+
+            # 生成混剪文件名（使用时间戳）
+            import time
+            timestamp = int(time.time())
+            output_filename = f"混剪爆款_{timestamp}.srt"
+            output_path = os.path.join(output_dir, output_filename)
+
+            # 调试信息
+            print(f"[DEBUG] 准备写入混剪文件: {output_path}")
+            print(f"[DEBUG] 内容长度: {len(srt_content)} 字符")
+            print(f"[DEBUG] 内容前200字符: {srt_content[:200]}")
+
+            # 写入文件
+            with open(output_path, "w", encoding="utf-8") as f:
+                f.write(srt_content)
+
+            # 验证输出文件
+            file_size = os.path.getsize(output_path) if os.path.exists(output_path) else 0
+            print(f"[DEBUG] 文件大小: {file_size} 字节")
+
+            if file_size > 0:
+                print(f"[SUCCESS] 生成混剪爆款SRT成功: {output_filename}")
+                results = [{
+                    'output_path': output_path,
+                    'name': output_filename,
+                    'original_path': first_srt_path
+                }]
+            else:
+                print(f"[ERROR] 混剪文件生成失败")
+                results = []
+
+            print(f"[INFO] 混剪生成完成")
+            return results
+
+        except Exception as e:
+            print(f"[ERROR] 批量生成爆款SRT出错: {e}")
+            import traceback
+            traceback.print_exc()
+            return []
 
     def process_video(self, video_path, srt_path, output_path, language_mode="auto"):
         """处理视频，生成混剪"""
@@ -2733,8 +3191,8 @@ class VideoProcessor(QObject):
                     self.process_log.emit(message if message else f"处理进度: {progress}%")
             # 模拟处理过程
             process_steps = [
-                "初始化视频处理...", 
-                "读取原始视频...", 
+                "初始化视频处理...",
+                "读取原始视频...",
                 "解析字幕文件...",
                 "生成视频特效...",
                 "应用字幕叠加...",
@@ -2775,95 +3233,107 @@ class VideoProcessor(QObject):
     @staticmethod
     def generate_video(video_path, srt_path, output_path, use_gpu=False):
         """生成混剪视频
-        Args:
 
+        使用真实的FFmpeg视频处理功能,根据SRT字幕时间码切割并拼接视频片段。
+
+        Args:
             video_path: 视频文件路径
             srt_path: SRT文件路径
             output_path: 输出视频路径
             use_gpu: 是否使用GPU加速
-        Returns:
 
+        Returns:
             str: 输出视频路径，失败返回None
+
+        Raises:
+            RuntimeError: 当FFmpeg不可用时
+            ImportError: 当核心模块不可用时
         """
         # 检查是否安装了FFmpeg
         global HAS_FFMPEG
         if not HAS_FFMPEG:
-            error_msg = "未检测到FFmpeg，无法处理视频。请安装FFmpeg后重试。"
+            error_msg = "未检测到FFmpeg，无法处理视频。\n\n请按照以下步骤安装FFmpeg:\n1. 访问 https://ffmpeg.org/download.html\n2. 下载适合您系统的版本\n3. 将FFmpeg添加到系统PATH环境变量\n4. 重启应用程序"
             print(error_msg)
-            # 显示错误消息框
-            QMessageBox.critical(None, "错误", error_msg)
-            return None
+            QMessageBox.critical(None, "FFmpeg未安装", error_msg)
+            raise RuntimeError("FFmpeg未安装或不可用")
+
         try:
-            from src.core.clip_generator import import_video, cut_by_srt, export_video
-            print(f"开始生成视频，GPU: {use_gpu}")
-            # 导入视频
-            video_frames = import_video(video_path)
-            if not video_frames:
-                print(f"导入视频失败: {video_path}")
-                return None
-            # 导入SRT
-            with open(srt_path, 'r', encoding='utf-8') as f:
-                srt_content = f.read()
-            if not srt_content:
-                print(f"读取SRT失败: {srt_path}")
-                return None
-            # 根据SRT剪辑视频
-            cuts = cut_by_srt(video_frames, srt_content, use_gpu=use_gpu)
-            if not cuts:
-                print("视频剪辑失败")
-                return None
-            # 导出视频
-            result = export_video(cuts, output_path)
-            if result:
-                print(f"视频导出成功: {output_path}")
+            # 导入真实的视频处理模块
+            from src.core.clip_generator import generate_from_srt
+            # 记录UI调用核心生成
+            try:
+                logger.info(f"[UI] 使用ClipGenerator生成视频: video={video_path}, srt={srt_path}, gpu={use_gpu}")
+            except Exception:
+                pass
+
+
+            print(f"开始生成混剪视频...")
+            print(f"  - 原始视频: {video_path}")
+            print(f"  - 字幕文件: {srt_path}")
+            print(f"  - 输出路径: {output_path}")
+            print(f"  - GPU加速: {use_gpu}")
+
+            # 调用真实的视频生成功能
+            result = generate_from_srt(
+                video_path=video_path,
+                srt_path=srt_path,
+                output_path=output_path
+            )
+
+            # 检查生成结果
+            if result.get('status') == 'success':
+                try:
+                    logger.info(f"[UI] 视频生成成功: {output_path}")
+                except Exception:
+                    pass
+                print(f"✅ 视频生成成功: {output_path}")
                 return output_path
             else:
-                print("视频导出失败")
+                error = result.get('error', '未知错误')
+                try:
+                    logger.error(f"[UI] 视频生成失败: {error}")
+                except Exception:
+                    pass
+                print(f"❌ 视频生成失败: {error}")
+                QMessageBox.critical(None, "视频生成失败", f"生成视频时出错:\n{error}")
                 return None
-        except ImportError:
-            print("缺少所需模块，使用模拟生成...")
-            # 模拟生成视频（用于演示）
-            try:
-                import time
-                import shutil
-                import os
-                # 模拟生成过程
-                time.sleep(2)
-                # 创建示例输出视频（复制原始视频）
-                if os.path.exists(video_path):
-                    shutil.copy(video_path, output_path)
-                    print(f"已创建示例输出: {output_path}")
-                    return output_path
-                else:
-                    # 创建空文件，模拟输出
-                    with open(output_path, 'wb') as f:
-                        f.write(b'DEMO VIDEO')
-                    return output_path
-            except Exception as e:
-                print(f"模拟生成失败: {e}")
-                return None
+
+        except ImportError as e:
+            error_msg = f"核心视频处理模块不可用: {str(e)}\n\n这可能是因为:\n1. 项目依赖未完全安装\n2. 模块路径配置错误\n\n请运行: pip install -r requirements.txt"
+            print(error_msg)
+            QMessageBox.critical(None, "模块导入失败", error_msg)
+            raise ImportError(error_msg)
+
         except Exception as e:
-            print(f"生成视频错误: {e}")
+            error_msg = f"生成视频时发生错误: {str(e)}"
+            print(error_msg)
+            try:
+                logger.exception(error_msg)
+            except Exception:
+                pass
+            import traceback
+            traceback.print_exc()
+            QMessageBox.critical(None, "视频生成错误", error_msg)
             return None
 
     def get_srt_info(srt_path):
         """获取SRT文件信息"""
         try:
             from src.core.srt_parser import parse_srt
-            
+
             subtitles = parse_srt(srt_path)
             if not subtitles:
                 return None
-            
+
             total_duration = subtitles[-1]["end_time"] if subtitles else 0
-            
+
             return {
                 "subtitle_count": len(subtitles),
                 "total_duration": total_duration,
                 "file_size": os.path.getsize(srt_path),
                 "is_valid": True
             }
-            
+
         except Exception as e:
             return {
                 "subtitle_count": 0,
@@ -2917,16 +3387,118 @@ class TrainingWorker(QObject):
             self.progress_updated.emit(5)
             # 准备训练数据
             training_data = []
+
+            # 🔧 新增：对原始SRT和爆款SRT进行分析
+            self.status_updated.emit("正在分析原始SRT和爆款SRT...")
+
+            # 解析爆款SRT
+            from src.core.srt_parser import SRTParser
+            parser = SRTParser()
+            viral_subtitles = parser.parse_srt_content(self.viral_srt_text)
+
+            # 分析爆款SRT
+            viral_analysis = {}
+            if IntegratedNarrativeAnalyzer is not None:
+                try:
+                    analyzer = IntegratedNarrativeAnalyzer()
+                    viral_analysis['narrative'] = analyzer.analyze_narrative_structure(viral_subtitles)
+                except Exception as e:
+                    print(f"[WARN] 爆款SRT叙事分析失败: {e}")
+
+            if RhythmAnalyzer is not None:
+                try:
+                    rhythm_analyzer = RhythmAnalyzer()
+                    viral_analysis['rhythm'] = rhythm_analyzer.analyze_segments(viral_subtitles)
+                except Exception as e:
+                    print(f"[WARN] 爆款SRT节奏分析失败: {e}")
+
+            # 🔧 新增：使用ScreenplayEngineer分析爆款SRT
+            if ScreenplayEngineer is not None:
+                try:
+                    engineer = ScreenplayEngineer()
+                    engineer.load_subtitles(viral_subtitles)
+                    plot_analysis = engineer.analyze_plot()
+                    viral_analysis['plot'] = plot_analysis
+                    print(f"[INFO] 爆款SRT剧本分析完成")
+                except Exception as e:
+                    print(f"[WARN] 爆款SRT剧本分析失败: {e}")
+
+            # 🔧 新增：使用AIPlotAnalyzer进行深度剧情分析（用于模型训练）
+            if AIPlotAnalyzer is not None:
+                try:
+                    # 检测语言
+                    language = "zh"  # 默认中文
+                    if viral_subtitles and len(viral_subtitles) > 0:
+                        sample_text = viral_subtitles[0].get("text", "")
+                        if sample_text and any(ord(c) < 128 for c in sample_text):
+                            language = "en"
+
+                    plot_analyzer = AIPlotAnalyzer()
+                    narrative_map = plot_analyzer.analyze_plot(viral_subtitles, language)
+                    viral_analysis['narrative_map'] = narrative_map
+                    print(f"[INFO] 爆款SRT深度剧情分析完成 - 情感点:{len(narrative_map.emotion_curve)}, 情节点:{len(narrative_map.plot_points)}, 角色:{len(narrative_map.characters)}, 高潮点:{len(narrative_map.climax_points)}")
+                except Exception as e:
+                    print(f"[WARN] 爆款SRT深度剧情分析失败: {e}")
+
             # 读取原始SRT文件
             for i, srt_path in enumerate(self.original_srt_paths):
                 try:
                     with open(srt_path, 'r', encoding='utf-8') as f:
                         content = f.read()
-                    # 添加到训练数据
+
+                    # 🔧 新增：分析原始SRT
+                    original_subtitles = parser.parse_srt_content(content)
+                    original_analysis = {}
+
+                    if IntegratedNarrativeAnalyzer is not None:
+                        try:
+                            analyzer = IntegratedNarrativeAnalyzer()
+                            original_analysis['narrative'] = analyzer.analyze_narrative_structure(original_subtitles)
+                        except Exception as e:
+                            print(f"[WARN] 原始SRT叙事分析失败: {e}")
+
+                    if RhythmAnalyzer is not None:
+                        try:
+                            rhythm_analyzer = RhythmAnalyzer()
+                            original_analysis['rhythm'] = rhythm_analyzer.analyze_segments(original_subtitles)
+                        except Exception as e:
+                            print(f"[WARN] 原始SRT节奏分析失败: {e}")
+
+                    # 🔧 新增：使用ScreenplayEngineer进行剧本分析
+                    if ScreenplayEngineer is not None:
+                        try:
+                            engineer = ScreenplayEngineer()
+                            engineer.load_subtitles(original_subtitles)
+                            plot_analysis = engineer.analyze_plot()
+                            original_analysis['plot'] = plot_analysis
+                            print(f"[INFO] 原始SRT剧本分析完成")
+                        except Exception as e:
+                            print(f"[WARN] 原始SRT剧本分析失败: {e}")
+
+                    # 🔧 新增：使用AIPlotAnalyzer进行深度剧情分析（用于模型训练）
+                    if AIPlotAnalyzer is not None:
+                        try:
+                            # 检测语言
+                            language = "zh"  # 默认中文
+                            if original_subtitles and len(original_subtitles) > 0:
+                                sample_text = original_subtitles[0].get("text", "")
+                                if sample_text and any(ord(c) < 128 for c in sample_text):
+                                    language = "en"
+
+                            plot_analyzer = AIPlotAnalyzer()
+                            narrative_map = plot_analyzer.analyze_plot(original_subtitles, language)
+                            original_analysis['narrative_map'] = narrative_map
+                            print(f"[INFO] 原始SRT深度剧情分析完成 - 情感点:{len(narrative_map.emotion_curve)}, 情节点:{len(narrative_map.plot_points)}, 角色:{len(narrative_map.characters)}, 高潮点:{len(narrative_map.climax_points)}")
+                        except Exception as e:
+                            print(f"[WARN] 原始SRT深度剧情分析失败: {e}")
+
+                    # 添加到训练数据（包含分析结果）
                     training_data.append({
                         "original": content,
                         "viral": self.viral_srt_text,
-                        "source": os.path.basename(srt_path)
+                        "source": os.path.basename(srt_path),
+                        "original_analysis": original_analysis,
+                        "viral_analysis": viral_analysis
                     })
                     # 更新进度
                     progress = 5 + int((i + 1) / len(self.original_srt_paths) * 15)
@@ -2944,154 +3516,121 @@ class TrainingWorker(QObject):
             # 创建训练数据目录
             training_dir = os.path.join(PROJECT_ROOT, "data", "training", lang_dir)
             os.makedirs(training_dir, exist_ok=True)
-            # 保存为JSON文件
+            # 保存为JSON文件（格式化为ModelFineTuner期望的格式）
             import json
             import datetime
             training_file = os.path.join(
-                training_dir, 
+                training_dir,
                 f"training_data_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
             )
+
+            # 转换数据格式：original -> original_subtitles, viral -> viral_subtitles
+            formatted_data = []
+            for item in training_data:
+                formatted_data.append({
+                    "original_subtitles": item.get("original", ""),
+                    "viral_subtitles": item.get("viral", ""),
+                    "source": item.get("source", "")
+                })
+
             with open(training_file, 'w', encoding='utf-8') as f:
                 json.dump({
-                    "count": len(training_data),
+                    "count": len(formatted_data),
                     "created_at": datetime.datetime.now().isoformat(),
                     "language": self.language_mode,
-                    "samples": training_data
+                    "data": formatted_data  # 使用 "data" 而不是 "samples"
                 }, f, ensure_ascii=False, indent=2)
             self.progress_updated.emit(25)
-            # 如果有可用的训练模块，使用它
-            if CORE_MODULES_AVAILABLE and ModelFineTuner is not None:
-                try:
-                    self.status_updated.emit("正在初始化模型训练器...")
-                    # 创建训练器
-                    tuner = ModelFineTuner()
 
-                    # 设置进度回调
-                    def progress_callback(progress, message):
-                        if not self.is_running:
-                            return False  # 返回False停止训练
-                        # 更新UI进度 (25-90%)
-                        ui_progress = 25 + int(progress * 65)
-                        self.progress_updated.emit(ui_progress)
-                        self.status_updated.emit(message)
-                        return True
+            # 检查训练模块是否可用
+            if not CORE_MODULES_AVAILABLE or ModelFineTuner is None:
+                error_msg = "训练模块不可用！请确保已安装所有依赖：transformers, peft, datasets"
+                log_handler.log("error", error_msg)
+                self.training_failed.emit(error_msg)
+                return
 
-                    self.status_updated.emit("正在执行模型微调...")
-                    # 执行训练
-                    result = tuner.fine_tune_model(
-                        training_data=training_data,
-                        language=self.language_mode,
-                        progress_callback=progress_callback
-                    )
+            try:
+                self.status_updated.emit("正在初始化模型训练器...")
+                log_handler.log("info", "开始真实模型训练")
 
+                # 创建训练器
+                tuner = ModelFineTuner()
+
+                # 设置进度和日志回调
+                def progress_callback_wrapper(stage, progress):
+                    """进度回调包装器"""
                     if not self.is_running:
-                        return
+                        log_handler.log("warning", "用户中断训练")
+                        return False  # 返回False停止训练
 
-                    # 检查训练结果
-                    if result and result.get("success", False):
-                        # 添加语言信息到结果
-                        result["language"] = self.language_mode
-                        result["samples_count"] = len(training_data)
-                        # 完成训练
-                        self.progress_updated.emit(100)
-                        self.status_updated.emit("模型训练完成！")
-                        self.training_completed.emit(result)
-                        return
-                    else:
-                        error_msg = result.get("error", "未知错误") if result else "训练失败"
-                        print(f"训练失败: {error_msg}")
-                        # 回退到模拟训练
-                except Exception as e:
-                    print(f"训练失败: {e}")
-                    import traceback
-                    traceback.print_exc()
-                    # 回退到模拟训练
-            # 如果核心训练模块不可用或训练失败，进行模拟训练
-            self.simulate_training()
+                    # 将训练器进度(0-1)映射到UI进度(25-95%)
+                    ui_progress = 25 + int(progress * 70)
+                    self.progress_updated.emit(ui_progress)
+                    self.status_updated.emit(f"{stage}: {progress:.1%}")
+                    log_handler.log("debug", f"训练进度: {stage} - {progress:.1%}")
+
+                def log_callback_wrapper(message):
+                    """日志回调包装器"""
+                    self.status_updated.emit(message)
+                    log_handler.log("info", message)
+
+                # 设置回调
+                tuner.set_callbacks(
+                    progress_callback=progress_callback_wrapper,
+                    log_callback=log_callback_wrapper
+                )
+
+                self.status_updated.emit("正在执行真实模型微调...")
+                log_handler.log("info", f"训练文件: {training_file}")
+                log_handler.log("info", f"训练语言: {self.language_mode}")
+                log_handler.log("info", f"训练样本数: {len(training_data)}")
+                log_handler.log("info", f"使用GPU: {self.use_gpu}")
+
+                # 执行真实训练
+                result = tuner.fine_tune_model(
+                    language=self.language_mode,
+                    training_data_path=training_file,
+                    validation_data_path=None,
+                    custom_config=None
+                )
+
+                if not self.is_running:
+                    log_handler.log("warning", "训练被用户中断")
+                    return
+
+                # 检查训练结果
+                if result and result.get("success", False):
+                    # 添加语言信息到结果
+                    result["language"] = self.language_mode
+                    result["samples_count"] = len(training_data)
+                    result["training_file"] = training_file
+
+                    # 完成训练
+                    self.progress_updated.emit(100)
+                    self.status_updated.emit("✅ 真实模型训练完成！")
+                    log_handler.log("info", f"训练成功完成！模型保存到: {result.get('output_dir', 'N/A')}")
+                    self.training_completed.emit(result)
+                    return
+                else:
+                    # 训练失败
+                    error_msg = result.get("error", "未知错误") if result else "训练返回空结果"
+                    log_handler.log("error", f"训练失败: {error_msg}")
+                    self.training_failed.emit(f"训练失败: {error_msg}")
+                    return
+
+            except Exception as e:
+                # 捕获异常并报告
+                error_msg = f"训练过程发生异常: {str(e)}"
+                log_handler.log("error", error_msg)
+                import traceback
+                traceback.print_exc()
+                log_handler.log("error", f"异常堆栈: {traceback.format_exc()}")
+                self.training_failed.emit(error_msg)
+                return
         except Exception as e:
             self.training_failed.emit(str(e))
         finally:
             self.is_running = False
-    def simulate_training(self):
-        """模拟训练过程 - 增强版本"""
-        if not self.is_running:
-            return
-
-        # 从智能推荐系统获取当前模型信息
-        model_info = get_current_model_info(self.language_mode)
-        lang_display = model_info['language']
-        model_name = model_info['display_name']
-
-        # 模拟训练的各个阶段
-        stages = [
-            (25, 40, f"初始化{model_name}模型..."),
-            (40, 60, f"加载训练数据到{model_name}..."),
-            (60, 85, f"执行{lang_display}模型微调..."),
-            (85, 95, f"验证{model_name}性能..."),
-            (95, 100, f"保存微调后的{model_name}模型...")
-        ]
-
-        # 模拟每个训练epoch
-        for epoch in range(self.total_epochs):
-            if not self.is_running:
-                return
-
-            self.current_epoch = epoch + 1
-            epoch_start_progress = 25 + (epoch * 70 // self.total_epochs)
-            epoch_end_progress = 25 + ((epoch + 1) * 70 // self.total_epochs)
-
-            # 模拟epoch内的训练步骤
-            for step in range(epoch_start_progress, epoch_end_progress):
-                if not self.is_running:
-                    return
-
-                self.progress_updated.emit(step)
-
-                # 根据进度显示不同的状态信息
-                for start, end, message in stages:
-                    if start <= step < end:
-                        self.status_updated.emit(f"Epoch {self.current_epoch}/{self.total_epochs}: {message}")
-                        break
-
-                # 模拟计算时间
-                time.sleep(0.05)
-
-            # 模拟epoch完成，发送loss信息
-            epoch_loss = 2.0 - (epoch * 0.5)  # 模拟loss下降
-            self.epoch_completed.emit(self.current_epoch, epoch_loss)
-
-        if not self.is_running:
-            return
-
-        # 模拟最终验证
-        self.status_updated.emit(f"正在验证{lang_display}模型性能...")
-        self.progress_updated.emit(95)
-        time.sleep(0.2)
-
-        # 模拟验证完成
-        final_accuracy = 0.80 + len(self.original_srt_paths) * 0.02  # 根据数据量调整准确率
-        self.validation_completed.emit(final_accuracy)
-
-        # 完成训练
-        self.progress_updated.emit(100)
-        self.status_updated.emit(f"{lang_display}模型训练完成！")
-
-        # 返回增强的模拟结果
-        result = {
-            "samples_count": len(self.original_srt_paths),
-            "use_gpu": self.use_gpu,
-            "language": self.language_mode,
-            "model_name": model_name,
-            "epochs_completed": self.total_epochs,
-            "final_accuracy": final_accuracy,
-            "final_loss": epoch_loss,
-            "improvement_score": 0.15 + len(self.original_srt_paths) * 0.01,  # 模拟改进幅度
-            "training_file": f"training_data_{self.language_mode}.json",
-            "model_path": f"fine_tuned_{self.language_mode}_{model_name.lower()}.safetensors",
-            "completed": True,
-            "training_successful": True
-        }
-        self.training_completed.emit(result)
 
     def stop(self):
 
@@ -3540,73 +4079,111 @@ class SimplifiedTrainingFeeder(QWidget):
             log_handler.log("error", f"模型检查失败: {e}")
 
     def _check_model_files(self, lang_mode):
-        """纯粹的模型文件检查，不涉及UI交互（支持多个模型变体）"""
+        """纯粹的模型文件检查，不涉及UI交互（支持多个模型变体）
+
+        支持智能下载器下载的路径（models/Qwen3-*/fp16, models/qwen3-*/base）
+        以及旧版本路径（models/qwen/quantized, models/qwen/base）
+        """
         base_dir = Path(__file__).resolve().parent
 
         if lang_mode == "zh":
-            # 检查Qwen3系列所有可能的模型路径
+            # 检查Qwen系列所有可能的模型路径
             model_paths = [
-                # Qwen3-0.6B
+                # 智能下载器路径 - Qwen3系列（FP16格式）
+                base_dir / "models/Qwen3-0.6B/fp16",
+                base_dir / "models/Qwen3-1.7B/fp16",
+                base_dir / "models/Qwen3-1.7B/fp16",
+                base_dir / "models/Qwen3-8B/fp16",
+                base_dir / "models/Qwen3-32B/fp16",
+                base_dir / "models/Qwen3-32b/fp16",
+                base_dir / "models/Qwen3-32B/fp16",
+                # 智能下载器路径 - Qwen3系列（FP16格式）
+                base_dir / "models/qwen3-0.6b/base",
+                base_dir / "models/qwen3-1.7b/base",
+                base_dir / "models/qwen3-4b/base",
+                base_dir / "models/qwen3-8b/base",
+                base_dir / "models/qwen3-32b/base",
+                # 旧版本路径 - models/qwen子目录
                 base_dir / "models/qwen/qwen3-0.6b/quantized/Q4_K_M.gguf",
                 base_dir / "models/qwen/qwen3-0.6b/base",
-                # Qwen3-1.7B
                 base_dir / "models/qwen/qwen3-1.7b/quantized/Q4_K_M.gguf",
                 base_dir / "models/qwen/qwen3-1.7b/base",
-                # Qwen3-8B
                 base_dir / "models/qwen/qwen3-8b/quantized/Q4_K_M.gguf",
                 base_dir / "models/qwen/qwen3-8b/base",
-                # Qwen3-32B
                 base_dir / "models/qwen/qwen3-32b/quantized/Q4_K_M.gguf",
                 base_dir / "models/qwen/qwen3-32b/base",
-                # 旧版本兼容
-                base_dir / "models/qwen/quantized/Q4_K_M.gguf",
-                base_dir / "models/qwen/finetuned"
+                base_dir / "models/qwen/quantized/Q4_K_M.gguf"
+                # 🔧 修复：不检查 finetuned 目录，因为那是训练模型，不是基础模型
+                # base_dir / "models/qwen/finetuned"
             ]
-            check_dir = str(base_dir / "models/qwen")
         else:
             # 检查Mistral系列所有可能的模型路径
             model_paths = [
-                # Mistral-7B
+                # 智能下载器路径 - Mistral系列（FP16格式）
+                base_dir / "models/mistral-7b/base",
+                base_dir / "models/mistral-12b-nemo/base",
+                base_dir / "models/mistral-24b-small/base",
+                base_dir / "models/mistral-large2/base",
+                # 旧版本路径 - models/mistral子目录
                 base_dir / "models/mistral/mistral-7b/quantized/Q4_K_M.gguf",
                 base_dir / "models/mistral/mistral-7b/base",
-                # Mistral-12B-Nemo
                 base_dir / "models/mistral/mistral-12b-nemo/quantized/Q4_K_M.gguf",
                 base_dir / "models/mistral/mistral-12b-nemo/base",
-                # Mistral-24B-Small
                 base_dir / "models/mistral/mistral-24b-small/quantized/Q4_K_M.gguf",
                 base_dir / "models/mistral/mistral-24b-small/base",
-                # Mistral-Large-2
                 base_dir / "models/mistral/mistral-large2/quantized/Q4_K_M.gguf",
                 base_dir / "models/mistral/mistral-large2/base",
-                # 旧版本兼容
-                base_dir / "models/mistral/quantized/Q4_K_M.gguf",
-                base_dir / "models/mistral/finetuned"
+                base_dir / "models/mistral/quantized/Q4_K_M.gguf"
+                # 🔧 修复：不检查 finetuned 目录，因为那是训练模型，不是基础模型
+                # base_dir / "models/mistral/finetuned"
             ]
-            check_dir = str(base_dir / "models/mistral")
 
         # 转换Path对象为字符串
         model_paths = [str(p) for p in model_paths]
 
-        # 检查具体文件
+        # 检查具体文件（基础模型通常 > 500MB）
         for path in model_paths:
             if os.path.exists(path):
-                if os.path.isfile(path) and os.path.getsize(path) > 100 * 1024 * 1024:  # 100MB
+                if os.path.isfile(path) and os.path.getsize(path) > 500 * 1024 * 1024:  # 500MB
                     return True
-                elif os.path.isdir(path) and self._has_large_files(path, 100):
+                elif os.path.isdir(path) and self._has_large_files(path):  # 使用默认500MB阈值
                     return True
 
-        # 检查模型目录
-        if self._has_large_files(check_dir, 100):
-            return True
+        # 如果静态路径检查未找到，尝试动态检测
+        models_dir = base_dir / "models"
+        if models_dir.exists():
+            if lang_mode == "zh":
+                # 检查所有qwen开头的目录
+                for item in models_dir.iterdir():
+                    if item.is_dir() and item.name.startswith(("qwen", "Qwen")):
+                        # 🔧 修复：排除 finetuned 和 trained 目录（那是训练模型，不是基础模型）
+                        if "finetuned" in item.name.lower() or "trained" in item.name.lower():
+                            continue
+                        if self._has_large_files(str(item)):  # 使用默认500MB阈值
+                            log_handler.log("info", f"✅ 在 {item.name} 中找到中文模型")
+                            return True
+            else:
+                # 检查所有mistral开头的目录
+                for item in models_dir.iterdir():
+                    if item.is_dir() and item.name.startswith(("mistral", "Mistral")):
+                        # 🔧 修复：排除 finetuned 和 trained 目录（那是训练模型，不是基础模型）
+                        if "finetuned" in item.name.lower() or "trained" in item.name.lower():
+                            continue
+                        if self._has_large_files(str(item)):  # 使用默认500MB阈值
+                            log_handler.log("info", f"✅ 在 {item.name} 中找到英文模型")
+                            return True
 
         return False
 
-    def _has_large_files(self, directory, min_size_mb=10):
-        """检查目录中是否有大文件"""
+    def _has_large_files(self, directory, min_size_mb=500):
+        """检查目录中是否有大文件（基础模型通常 > 500MB）"""
         if not os.path.exists(directory):
             return False
         min_size = min_size_mb * 1024 * 1024
-        for root, _, files in os.walk(directory):
+        for root, dirs, files in os.walk(directory):
+            # 🔧 修复：排除 finetuned 和 trained 目录（那是训练模型，不是基础模型）
+            dirs[:] = [d for d in dirs if "finetuned" not in d.lower() and "trained" not in d.lower()]
+
             for file in files:
                 file_path = os.path.join(root, file)
                 try:
@@ -3873,11 +4450,13 @@ class SimplifiedTrainingFeeder(QWidget):
             self.current_loss_label.setText(f"损失: {loss:.4f}")
 
         # 显示完成消息
+        # 🔧 修复：根据实际设备动态显示（GPU或CPU）
+        device_info = '使用了GPU加速' if used_gpu else '使用了CPU训练'
         message = (f"{model_name}训练完成！\n\n"
                  f"- 使用样本数: {samples_count}\n"
                  f"- 训练准确率: {accuracy:.2%}\n"
                  f"- 损失值: {loss:.4f}\n"
-                 f"- {'使用了GPU加速' if used_gpu else '使用了CPU处理'}\n\n"
+                 f"- {device_info}\n\n"
                  f"{model_name}已更新，现在可以自主生成爆款SRT，无需手动参数调整。\n"
                  f"注意：此次训练仅更新了{model_name}，不影响{get_model_display_name('en' if language == 'zh' else 'zh')}。")
         QMessageBox.information(self, f"{model_name}训练完成", message)
@@ -3940,11 +4519,10 @@ class SimplifiedTrainingFeeder(QWidget):
 
             # 使用全息错误显示
             error_info = ErrorInfo(
+                error_type=ErrorType.SYSTEM,
                 title=f"{model_name}训练失败",
-                description=error_message,
-                error_type=ErrorType.ERROR,
-                details="训练过程中出现了错误，可能是因为训练数据不足或格式问题。",
-                solutions=["检查训练数据", "增加样本数量", "尝试不同参数"]
+                message=error_message,
+                details="训练过程中出现了错误，可能是因为训练数据不足、格式问题或依赖库版本不兼容。\n\n建议：\n• 检查训练数据格式\n• 增加样本数量\n• 尝试不同参数\n• 确保Transformers库版本最新"
             )
             show_error(error_info, self)
         else:
@@ -4006,18 +4584,18 @@ class SimplifiedTrainingFeeder(QWidget):
         current_tab = self.tabs.currentIndex()
         # 视频处理页面
         if current_tab == 0:
-            # 如果有视频和SRT，则开始生成视频
-            if (self.video_list.count() > 0 and 
+            # 如果有视频和SRT，则创建剪映工程
+            if (self.video_list.count() > 0 and
                 self.srt_list.count() > 0):
-                self.generate_video()
-                log_handler.log("info", "快捷键触发：开始生成视频")
+                self.generate_project_file()
+                log_handler.log("info", "快捷键触发：创建剪映工程")
                 return True
             else:
-                self.statusBar().showMessage("生成视频需要先添加视频和SRT文件", 3000)
+                self.statusBar().showMessage("创建剪映工程需要先添加视频和SRT文件", 3000)
         # 训练页面
         elif current_tab == 1 and hasattr(self, 'training_feeder'):
             # 如果有原始SRT，则开始生成爆款SRT
-            if (hasattr(self.training_feeder, 'original_srt_list') and 
+            if (hasattr(self.training_feeder, 'original_srt_list') and
                 self.training_feeder.original_srt_list.count() > 0):
                 self.training_feeder.viral_srt_text_edit.clear()
                 self.generate_viral_srt()
@@ -4166,7 +4744,7 @@ class SimpleScreenplayApp(QMainWindow):
 
         try:
             # 设置窗口属性（关键组件，立即加载）
-            self.setWindowTitle("🎬 VisionAI-ClipsMaster - v1.1.0 [洪良完美无敌版]")
+            self.setWindowTitle("🎬 VisionAI-ClipsMaster - v1.2.0 [洪良完美无敌版]")
             self.resize(1350, 900)  # 增加到1350x900尺寸，保持3:2宽高比，提供更好的屏幕空间利用率
             # 设置窗口最小尺寸
             self.setMinimumSize(800, 600)
@@ -5223,11 +5801,11 @@ class SimpleScreenplayApp(QMainWindow):
         generate_srt_action.setShortcut("Ctrl+G")
         generate_srt_action.triggered.connect(self.generate_viral_srt)
         action_menu.addAction(generate_srt_action)
-        # 生成视频动作
-        generate_video_action = QAction("生成视频", self)
+        # 创建剪映工程动作
+        generate_project_action = QAction("创建剪映工程", self)
 
-        generate_video_action.triggered.connect(self.generate_video)
-        action_menu.addAction(generate_video_action)
+        generate_project_action.triggered.connect(self.generate_project_file)
+        action_menu.addAction(generate_project_action)
         # 查看菜单
         view_menu = menubar.addMenu("查看(&V)")
         # 聚焦上传区域
@@ -5308,6 +5886,12 @@ class SimpleScreenplayApp(QMainWindow):
             keyframe_extractor_action.triggered.connect(self.show_keyframe_extractor)
             tools_menu.addAction(keyframe_extractor_action)
 
+        # 🆕 视频质量对比
+        video_compare_action = QAction("视频质量对比", self)
+        video_compare_action.setShortcut("Ctrl+Shift+C")
+        video_compare_action.triggered.connect(self.show_video_compare)
+        tools_menu.addAction(video_compare_action)
+
         # 场景分析已集成到工作流程中自动执行,无需手动菜单项
         # 关键帧提取也已集成到工作流程自动执行,但保留独立工具入口供高级用户使用
 
@@ -5366,35 +5950,111 @@ class SimpleScreenplayApp(QMainWindow):
         # 创建视频处理页面
         video_widget = QWidget()
         video_layout = QVBoxLayout(video_widget)
-        # 语言模式选择
-        lang_group = QGroupBox("输入视频和字幕处理语言")
-        lang_layout = QHBoxLayout()
-        # 创建语言选择单选按钮
+        
+        # ========== AI推理模式选择区域（单行布局）==========
+        ai_mode_group = QGroupBox("AI推理模式")
+        ai_mode_layout = QHBoxLayout()
+        
+        # 模式选择下拉框（替代原来的"自动检测"单选按钮位置）
+        self.ai_mode_combo = QComboBox()
+        self.ai_mode_combo.addItem("本地模式", "local")
+        self.ai_mode_combo.addItem("云端模式", "cloud")
+        self.ai_mode_combo.setMinimumWidth(100)
+        self.ai_mode_combo.currentIndexChanged.connect(self.on_ai_mode_changed)
+        ai_mode_layout.addWidget(self.ai_mode_combo)
+        
+        # 本地模式的语言选择（中文模式、英文模式单选按钮）
+        self.local_mode_container = QWidget()
+        local_layout = QHBoxLayout(self.local_mode_container)
+        local_layout.setContentsMargins(10, 0, 0, 0)
+        
+        # 隐藏的自动检测单选按钮（保持兼容性，默认选中）
         self.lang_auto_radio = QRadioButton("自动检测")
+        self.lang_auto_radio.setVisible(False)
+        self.lang_auto_radio.setChecked(True)
+        
         self.lang_zh_radio = QRadioButton("中文模式")
         self.lang_en_radio = QRadioButton("英文模式")
-
-        self.lang_auto_radio.setChecked(True)  # 默认自动检测
-        # 语言模式按钮分组
+        
         lang_btn_group = QButtonGroup(self)
-
         lang_btn_group.addButton(self.lang_auto_radio)
         lang_btn_group.addButton(self.lang_zh_radio)
         lang_btn_group.addButton(self.lang_en_radio)
-        # 连接语言模式切换信号，但使用lambda避免直接调用，以防止在初始化时意外触发
-
+        
         self.lang_auto_radio.clicked.connect(lambda: self.change_language_mode("auto"))
         self.lang_zh_radio.clicked.connect(lambda: self.change_language_mode("zh"))
-        # 英文单选按钮的点击事件直接连接到change_language_mode("en")，不再通过check_en_model检查
-
         self.lang_en_radio.clicked.connect(lambda: self.change_language_mode("en"))
-        # 添加按钮到布局
-        lang_layout.addWidget(self.lang_auto_radio)
-        lang_layout.addWidget(self.lang_zh_radio)
-        lang_layout.addWidget(self.lang_en_radio)
-        lang_group.setLayout(lang_layout)
-        # 添加语言选择组到视频布局
-        video_layout.addWidget(lang_group)
+        
+        local_layout.addWidget(self.lang_auto_radio)
+        local_layout.addWidget(self.lang_zh_radio)
+        local_layout.addWidget(self.lang_en_radio)
+        ai_mode_layout.addWidget(self.local_mode_container)
+        
+        # 云端模式的配置（平台、模型、API Key横向排列）
+        self.cloud_mode_container = QWidget()
+        cloud_layout = QHBoxLayout(self.cloud_mode_container)
+        cloud_layout.setContentsMargins(10, 0, 0, 0)
+        cloud_layout.setSpacing(12)
+        
+        # 平台选择
+        self.cloud_platform_combo = QComboBox()
+        self.cloud_platform_combo.addItem("硅基流动", "siliconflow")
+        self.cloud_platform_combo.addItem("魔搭社区", "modelscope")
+        self.cloud_platform_combo.setMinimumWidth(140)
+        self.cloud_platform_combo.setMinimumHeight(36)
+        self.cloud_platform_combo.setStyleSheet("font-size: 14px; padding: 4px 8px;")
+        self.cloud_platform_combo.currentIndexChanged.connect(self.on_cloud_platform_changed)
+        
+        # 模型选择
+        self.cloud_model_combo = QComboBox()
+        self.cloud_model_combo.addItem("Qwen3-235B", "qwen3")
+        self.cloud_model_combo.addItem("DeepSeek-V3.2", "deepseek-v3.2")
+        self.cloud_model_combo.setMinimumWidth(160)
+        self.cloud_model_combo.setMinimumHeight(36)
+        self.cloud_model_combo.setStyleSheet("font-size: 14px; padding: 4px 8px;")
+        
+        # API Key输入
+        self.cloud_api_key_input = QLineEdit()
+        self.cloud_api_key_input.setPlaceholderText("请输入API密钥")
+        self.cloud_api_key_input.setEchoMode(QLineEdit.EchoMode.Password)
+        self.cloud_api_key_input.setMinimumWidth(280)
+        self.cloud_api_key_input.setMinimumHeight(36)
+        self.cloud_api_key_input.setStyleSheet("font-size: 14px; padding: 6px 10px;")
+        
+        # 测试连接按钮
+        self.test_cloud_btn = QPushButton("🔗 测试连接")
+        self.test_cloud_btn.setMinimumWidth(110)
+        self.test_cloud_btn.setMinimumHeight(36)
+        self.test_cloud_btn.clicked.connect(self.test_cloud_connection)
+        self.test_cloud_btn.setStyleSheet("""
+            QPushButton {
+                background: #17a2b8;
+                color: white;
+                border-radius: 5px;
+                padding: 8px 16px;
+                font-weight: bold;
+                font-size: 14px;
+            }
+            QPushButton:hover {
+                background: #138496;
+            }
+        """)
+        
+        cloud_layout.addWidget(self.cloud_platform_combo)
+        cloud_layout.addWidget(self.cloud_model_combo)
+        cloud_layout.addWidget(self.cloud_api_key_input)
+        cloud_layout.addWidget(self.test_cloud_btn)
+        
+        self.cloud_mode_container.setVisible(False)
+        ai_mode_layout.addWidget(self.cloud_mode_container)
+        
+        ai_mode_layout.addStretch()
+        ai_mode_group.setLayout(ai_mode_layout)
+        video_layout.addWidget(ai_mode_group)
+        
+        # 初始化云端配置状态
+        self.cloud_mode_enabled = False
+        self._load_cloud_config()
         # 创建分割器
         splitter = QSplitter(Qt.Orientation.Horizontal)
 
@@ -5597,9 +6257,10 @@ class SimpleScreenplayApp(QMainWindow):
         # advanced_analysis_btn.clicked.connect(self.show_advanced_analysis)
         # action_layout.addWidget(advanced_analysis_btn)
 
-        generate_srt_btn = QPushButton("✨ 生成爆款SRT")
+        generate_srt_btn = QPushButton("✨ AI优化字幕")
 
         generate_srt_btn.setMinimumHeight(45)
+        generate_srt_btn.setToolTip("使用AI模型分析并优化字幕内容，生成更具吸引力的版本")
         generate_srt_btn.setStyleSheet(f"""
             QPushButton {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
@@ -5627,9 +6288,10 @@ class SimpleScreenplayApp(QMainWindow):
         # 创建并排的生成工程文件和导出按钮布局
         video_export_layout = QHBoxLayout()
         # 生成工程文件按钮（左侧）
-        generate_project_btn = QPushButton("🎬 生成工程文件")
+        generate_project_btn = QPushButton("📦 创建剪映工程")
 
         generate_project_btn.setMinimumHeight(45)
+        generate_project_btn.setToolTip("基于视频和优化后的字幕创建剪映工程文件")
         generate_project_btn.setProperty("class", "success")
         generate_project_btn.setStyleSheet(f"""
             QPushButton {{
@@ -5656,9 +6318,10 @@ class SimpleScreenplayApp(QMainWindow):
         generate_project_btn.clicked.connect(self.generate_project_file)
         video_export_layout.addWidget(generate_project_btn)
         # 导出到剪映按钮（右侧）
-        export_jianying_btn = QPushButton("📱 导出到剪映")
+        export_jianying_btn = QPushButton("📱 导入到剪映")
 
         export_jianying_btn.setMinimumHeight(45)
+        export_jianying_btn.setToolTip("将工程文件导入到剪映应用，可在剪映中进一步编辑")
         export_jianying_btn.setStyleSheet(f"""
             QPushButton {{
                 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
@@ -5864,7 +6527,7 @@ class SimpleScreenplayApp(QMainWindow):
         subtitle_layout.addStretch()  # 右侧弹性空间
         about_layout.addLayout(subtitle_layout)
         # 添加版本信息
-        version_label = QLabel("📦 版本 1.1.0 | 🗓️ 2025年10月发布 | ✅ 生产就绪")
+        version_label = QLabel("📦 版本 1.2.0 | 🗓️ 2025年12月发布 | ✅ 生产就绪")
 
         version_label.setStyleSheet("""
             QLabel {
@@ -5987,7 +6650,7 @@ class SimpleScreenplayApp(QMainWindow):
         tech_layout.setContentsMargins(15, 25, 15, 15)
         tech_features = [
 
-            "🤖 双模型AI：Mistral系列 (英文) + Qwen2.5系列 (中文)",
+            "🤖 双模型AI：Mistral系列 (英文) + Qwen3系列 (中文)",
             "🎥 视频处理：FFmpeg GPU加速, 精确切割",
             "🧩 智能分析：剧情重构, 病毒式转换算法",
             "💾 轻量部署：4GB内存兼容, CPU优化",
@@ -6497,10 +7160,33 @@ class SimpleScreenplayApp(QMainWindow):
         model_management_widget = QWidget()
         model_management_layout = QVBoxLayout()
 
-        # 标题
+        # 标题和帮助按钮布局
+        title_layout = QHBoxLayout()
+
         model_title = QLabel("模型管理")
         model_title.setStyleSheet(f"font-size: {self.font_sizes['h2']}pt; font-weight: bold; margin-bottom: 10px;")
-        model_management_layout.addWidget(model_title)
+        title_layout.addWidget(model_title)
+
+        # 添加帮助按钮
+        help_btn = QPushButton("📖 查看模型工作流程说明")
+        help_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                padding: 8px 15px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #45a049;
+            }
+        """)
+        help_btn.clicked.connect(self._show_model_workflow_help)
+        title_layout.addWidget(help_btn)
+        title_layout.addStretch()
+
+        model_management_layout.addLayout(title_layout)
 
         # 描述
         model_description = QLabel("管理训练模型和推理模型，支持版本切换和删除")
@@ -6727,7 +7413,7 @@ class SimpleScreenplayApp(QMainWindow):
         self.tab_widget = self.tabs  # 标签页控件别名
         self.original_srt_import_btn = None  # 原始SRT导入按钮（在训练页面中）
         self.viral_srt_import_btn = None     # 爆款SRT导入按钮（在训练页面中）
-        
+
         # 查找并映射实际的按钮
         try:
             # 查找训练页面中的导入按钮
@@ -6738,7 +7424,7 @@ class SimpleScreenplayApp(QMainWindow):
                     if "导入原始SRT" in child.text():
                         self.original_srt_import_btn = child
                         break
-                
+
                 # 查找爆款SRT导入按钮
                 for child in train_widget.findChildren(QPushButton):
                     if "导入爆款SRT" in child.text():
@@ -6953,6 +7639,149 @@ class SimpleScreenplayApp(QMainWindow):
             print(f"强制清理内存失败: {e}")
             QMessageBox.warning(self, "清理失败", f"强制清理内存失败: {str(e)}")
 
+    def _show_model_workflow_help(self):
+        """显示模型工作流程和删除操作说明"""
+        help_dialog = QDialog(self)
+        help_dialog.setWindowTitle("模型工作流程和删除操作说明")
+        help_dialog.setMinimumSize(800, 600)
+
+        layout = QVBoxLayout()
+
+        # 创建滚动区域
+        scroll_area = QScrollArea()
+        scroll_area.setWidgetResizable(True)
+
+        # 创建内容容器
+        content_widget = QWidget()
+        content_layout = QVBoxLayout()
+
+        # 添加说明文本
+        help_text = QLabel("""
+<h2>📚 模型工作流程说明</h2>
+
+<h3>1️⃣ 完整的模型工作流程</h3>
+<pre>
+下载基础模型 → 训练模型 → 合并模型 → 转换为GGUF → 用于推理
+</pre>
+
+<h3>2️⃣ 各种模型详解</h3>
+
+<table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+<tr style="background-color: #f0f0f0;">
+    <th>模型类型</th>
+    <th>位置</th>
+    <th>体积</th>
+    <th>用途</th>
+</tr>
+<tr>
+    <td><b>基础模型</b></td>
+    <td>models/Qwen3-1.7B/fp16/</td>
+    <td>约3GB</td>
+    <td>用于训练的起点</td>
+</tr>
+<tr>
+    <td><b>训练模型/LoRA适配器</b></td>
+    <td>models/qwen/finetuned/</td>
+    <td>约几十MB</td>
+    <td>存储训练的参数调整</td>
+</tr>
+<tr>
+    <td><b>合并模型</b></td>
+    <td>models/qwen/merged/</td>
+    <td>约3GB</td>
+    <td>转换GGUF的中间产物</td>
+</tr>
+<tr>
+    <td><b>GGUF量化模型</b></td>
+    <td>models/qwen/quantized/*.gguf</td>
+    <td>约600MB-1.5GB</td>
+    <td>用于推理（视频处理）</td>
+</tr>
+</table>
+
+<h3>3️⃣ 删除操作的影响</h3>
+
+<h4>场景1：删除基础模型</h4>
+<ul>
+<li>✅ 删除：基础模型（约3GB）+ 所有合并模型（约3GB）</li>
+<li>❌ 保留：训练模型 + GGUF模型</li>
+<li>⚠️ 影响：无法再次训练新模型，但可以继续使用GGUF模型进行推理</li>
+</ul>
+
+<h4>场景2：删除训练模型</h4>
+<ul>
+<li>✅ 删除：训练模型 + 合并模型（约3GB）+ GGUF模型</li>
+<li>❌ 保留：基础模型（约3GB）</li>
+<li>⚠️ 影响：可以重新训练新模型，但之前的训练结果和GGUF模型都被删除了</li>
+</ul>
+
+<h4>场景3：只删除GGUF模型</h4>
+<ul>
+<li>✅ 删除：GGUF模型（约600MB-1.5GB）</li>
+<li>❌ 保留：基础模型 + 训练模型 + 合并模型</li>
+<li>⚠️ 影响：可以重新转换GGUF模型，训练结果保留</li>
+</ul>
+
+<h3>4️⃣ 合并模型的版本管理</h3>
+
+<p><b>重要说明：</b>合并模型<b>没有版本管理</b>，每次转换都会<b>覆盖</b>之前的合并模型。</p>
+
+<ul>
+<li>✅ 训练模型：有版本管理（v1, v2, v3...）</li>
+<li>✅ GGUF模型：有版本管理（按时间戳命名）</li>
+<li>❌ 合并模型：<b>没有版本管理</b>（总是覆盖）</li>
+</ul>
+
+<p><b>原因：</b>合并模型只是转换GGUF的中间产物，不需要保留多个版本。</p>
+
+<h3>5️⃣ 常见问题</h3>
+
+<p><b>Q：多次训练是否会产生多个合并模型？</b></p>
+<p>A：不会。每次转换GGUF时，合并模型都会覆盖之前的版本，不会造成体积冗余。</p>
+
+<p><b>Q：删除基础模型后，项目体积为什么只下降了部分？</b></p>
+<p>A：之前是Bug，现在已修复。删除基础模型时会自动删除所有合并模型，项目体积会完全下降。</p>
+
+<p><b>Q：删除训练模型后，GGUF模型列表为什么消失了？</b></p>
+<p>A：这是正确的行为。删除训练模型时，系统会自动删除对应的GGUF模型。</p>
+
+<hr>
+
+<p style="text-align: center; color: #666;">
+<b>详细文档：</b>docs/模型工作流程和删除操作说明.md
+</p>
+        """)
+        help_text.setWordWrap(True)
+        help_text.setTextFormat(Qt.TextFormat.RichText)
+        help_text.setOpenExternalLinks(True)
+        content_layout.addWidget(help_text)
+
+        content_widget.setLayout(content_layout)
+        scroll_area.setWidget(content_widget)
+
+        layout.addWidget(scroll_area)
+
+        # 添加关闭按钮
+        close_btn = QPushButton("关闭")
+        close_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                padding: 10px 20px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #45a049;
+            }
+        """)
+        close_btn.clicked.connect(help_dialog.accept)
+        layout.addWidget(close_btn)
+
+        help_dialog.setLayout(layout)
+        help_dialog.exec()
+
     def _create_model_management_tab(self, model_type: str, language: str):
         """
         创建模型管理标签页
@@ -6990,7 +7819,7 @@ class SimpleScreenplayApp(QMainWindow):
         version_manager = ModelVersionManager(base_dir=base_dir)
 
         if model_type == "qwen":
-            model_loader = InferenceModelLoader("qwen2.5-7b-zh")
+            model_loader = InferenceModelLoader("Qwen3-8B-zh")
         else:
             model_loader = EnModelLoader("mistral-7b-en")
 
@@ -7004,10 +7833,19 @@ class SimpleScreenplayApp(QMainWindow):
         active_info_label.setStyleSheet("padding: 10px; background-color: #e8f5e9; border-radius: 5px; border: none;")
         layout.addWidget(active_info_label)
 
-        # ===== 训练模型版本列表 =====
-        trained_title = QLabel(f"🎓 {language}训练模型版本（HuggingFace格式）")
+        # ===== 训练模型（持续迭代） =====
+        trained_title = QLabel(f"🎓 {language}训练模型（HuggingFace格式 - 持续迭代）")
         trained_title.setStyleSheet("font-weight: bold; font-size: 14px; margin-top: 15px; color: #2c3e50;")
         layout.addWidget(trained_title)
+
+        # 说明文本
+        info_label = QLabel(
+            "💡 <b>持续迭代训练模式：</b>每次训练都会覆盖当前模型，逐步提升质量。<br>"
+            "训练完成后，可转换为GGUF格式用于推理，并保留多个GGUF版本进行效果对比。"
+        )
+        info_label.setWordWrap(True)
+        info_label.setStyleSheet("padding: 8px; background-color: #fff3cd; border-radius: 5px; font-size: 12px; color: #856404;")
+        layout.addWidget(info_label)
 
         # 版本列表
         version_list = QListWidget()
@@ -7172,15 +8010,74 @@ class SimpleScreenplayApp(QMainWindow):
 
         layout.addLayout(gguf_buttons_layout)
 
-        # ===== 基础模型信息 =====
+        # ===== 基础模型管理 =====
         base_title = QLabel(f"📦 {language}基础模型（HuggingFace格式）")
         base_title.setStyleSheet("font-weight: bold; font-size: 14px; margin-top: 15px; color: #2c3e50;")
         layout.addWidget(base_title)
 
-        base_info_label = QLabel("正在加载...")
-        base_info_label.setWordWrap(True)
-        base_info_label.setStyleSheet("padding: 10px; background-color: #e3f2fd; border-radius: 5px; border: none;")
-        layout.addWidget(base_info_label)
+        # 基础模型列表
+        base_model_list = QListWidget()
+        base_model_list.setMaximumHeight(150)
+        base_model_list.setStyleSheet("""
+            QListWidget {
+                border: 1px solid #bdc3c7;
+                border-radius: 5px;
+                padding: 5px;
+                background-color: #ecf0f1;
+            }
+            QListWidget::item {
+                padding: 8px;
+                border-radius: 3px;
+                margin: 2px;
+            }
+            QListWidget::item:selected {
+                background-color: #3498db;
+                color: white;
+            }
+            QListWidget::item:hover {
+                background-color: #d5dbdb;
+            }
+        """)
+        layout.addWidget(base_model_list)
+
+        # 基础模型操作按钮
+        base_buttons_layout = QHBoxLayout()
+
+        base_refresh_btn = QPushButton("🔄 刷新")
+        base_refresh_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #3498db;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                padding: 8px 15px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #2980b9;
+            }
+        """)
+
+        base_delete_btn = QPushButton("🗑️ 删除")
+        base_delete_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #e74c3c;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                padding: 8px 15px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #c0392b;
+            }
+        """)
+
+        base_buttons_layout.addWidget(base_refresh_btn)
+        base_buttons_layout.addWidget(base_delete_btn)
+        base_buttons_layout.addStretch()
+
+        layout.addLayout(base_buttons_layout)
 
         # ===== 存储使用情况 =====
         storage_title = QLabel("💾 存储使用情况")
@@ -7248,6 +8145,50 @@ class SimpleScreenplayApp(QMainWindow):
         def refresh_model_info():
             """刷新模型信息"""
             try:
+                # 自动检测并注册现有的finetuned模型（如果还没有注册）
+                from pathlib import Path
+                finetuned_path = Path(base_dir) / "finetuned"
+                if finetuned_path.exists():
+                    # 检查是否有必需的模型文件
+                    has_model = (finetuned_path / "adapter_model.safetensors").exists() or \
+                               (finetuned_path / "pytorch_model.bin").exists()
+
+                    if has_model:
+                        # 检查是否已经注册
+                        versions = version_manager.list_versions()
+                        is_registered = False
+                        for v in versions:
+                            hf_path = v.get('hf_path', '')
+                            if 'finetuned' in hf_path:
+                                is_registered = True
+                                break
+
+                        # 如果没有注册，自动注册
+                        if not is_registered:
+                            try:
+                                # 读取训练配置（如果存在）
+                                training_config_file = finetuned_path / "training_config.json"
+                                training_info = {"training_type": "EXISTING_MODEL"}
+
+                                if training_config_file.exists():
+                                    import json
+                                    with open(training_config_file, 'r', encoding='utf-8') as f:
+                                        config = json.load(f)
+                                        training_info["config"] = config
+
+                                # 注册现有模型（引用模式）
+                                version_id = version_manager.register_new_version(
+                                    model_path=str(finetuned_path),
+                                    gguf_path=None,
+                                    training_info=training_info,
+                                    copy_files=False  # 引用模式，不复制文件
+                                )
+
+                                if version_id:
+                                    print(f"自动注册现有模型: {version_id}")
+                            except Exception as e:
+                                print(f"自动注册模型失败: {e}")
+
                 # 刷新激活模型信息
                 active_version = version_manager.get_active_version()
                 if active_version:
@@ -7284,6 +8225,7 @@ class SimpleScreenplayApp(QMainWindow):
                 for v in versions:
                     is_active = v['version_id'] == version_manager.versions.get("active_version")
                     is_best = v['version_id'] == best_version_id and best_score > 0
+                    is_current = v['version_id'] == "current"
 
                     # 构建显示文本
                     prefix = ""
@@ -7292,13 +8234,29 @@ class SimpleScreenplayApp(QMainWindow):
                     if is_best:
                         prefix += "🏆 "
 
-                    item_text = f"{prefix}{v['version_id']} - {v['created_at']}"
+                    # 特殊处理 "current" 版本
+                    if is_current:
+                        # 获取训练信息
+                        training_info = v.get('training_info', {})
+                        training_type = training_info.get('training_type', 'UNKNOWN')
+
+                        # 显示为"当前训练模型"
+                        item_text = f"{prefix}📌 当前训练模型 - {v['created_at']}"
+
+                        # 添加训练信息
+                        if training_type != 'UNKNOWN':
+                            item_text += f" ({training_type})"
+                    else:
+                        item_text = f"{prefix}{v['version_id']} - {v['created_at']}"
 
                     # 添加性能分数
                     if 'performance_score' in v:
                         item_text += f" (性能: {v['performance_score']:.2%})"
 
-                    version_list.addItem(item_text)
+                    # 创建列表项并存储真实的版本ID
+                    item = QListWidgetItem(item_text)
+                    item.setData(Qt.ItemDataRole.UserRole, v['version_id'])  # 存储真实的版本ID
+                    version_list.addItem(item)
 
                 # 刷新GGUF推理模型列表
                 gguf_list.clear()
@@ -7322,14 +8280,115 @@ class SimpleScreenplayApp(QMainWindow):
                             item_text = f"🎓 {gguf_file.name} ({size_mb:.1f} MB)"
                             gguf_list.addItem(item_text)
 
-                # 刷新基础模型信息
-                model_info = model_loader.get_model_info()
-                base_hf_path = model_info['huggingface']['path']
-                if base_hf_path:
-                    base_text = f"<b>路径:</b> {base_hf_path}"
-                else:
-                    base_text = "❌ 未找到基础模型"
-                base_info_label.setText(base_text)
+                # 刷新基础模型列表
+                base_model_list.clear()
+                base_models_data = []  # 存储模型数据（用于删除）
+
+                # 扫描qwen模型
+                if model_type == "qwen":
+                    models_root = Path("models")
+                    if models_root.exists():
+                        # 🔧 智能扫描：递归查找所有包含config.json的目录
+                        print(f"🔍 开始扫描Qwen模型目录: {models_root}")
+
+                        # 扫描所有qwen相关目录
+                        for qwen_dir in models_root.glob("qwen*"):
+                            if not qwen_dir.is_dir():
+                                continue
+
+                            print(f"  📁 检查目录: {qwen_dir.name}")
+
+                            # 递归查找所有包含config.json的子目录
+                            for model_dir in qwen_dir.rglob("*"):
+                                if not model_dir.is_dir():
+                                    continue
+
+                                config_file = model_dir / "config.json"
+                                if config_file.exists():
+                                    # 检查是否包含模型文件
+                                    has_safetensors = list(model_dir.glob("*.safetensors"))
+                                    has_bin = list(model_dir.glob("*.bin"))
+
+                                    if has_safetensors or has_bin:
+                                        try:
+                                            size_mb = sum(f.stat().st_size for f in model_dir.rglob("*") if f.is_file()) / (1024 * 1024)
+
+                                            # 确定模型类型
+                                            if "fp16" in str(model_dir).lower():
+                                                model_type_str = "FP16"
+                                            elif "int4" in str(model_dir).lower():
+                                                model_type_str = "INT4"
+                                            elif "int8" in str(model_dir).lower():
+                                                model_type_str = "INT8"
+                                            else:
+                                                model_type_str = "HuggingFace"
+
+                                            # 生成显示名称
+                                            relative_path = model_dir.relative_to(models_root)
+                                            display_text = f"✅ {relative_path} ({model_type_str}) - {size_mb:.1f} MB"
+
+                                            print(f"    ✅ 找到模型: {display_text}")
+
+                                            # 创建列表项并存储路径
+                                            item = QListWidgetItem(display_text)
+                                            item.setData(Qt.ItemDataRole.UserRole, str(model_dir))
+                                            base_model_list.addItem(item)
+                                            base_models_data.append({"name": str(relative_path), "path": model_dir, "size_mb": size_mb})
+                                        except Exception as e:
+                                            print(f"    ❌ 计算模型大小失败: {e}")
+
+                        print(f"✅ Qwen模型扫描完成，找到 {base_model_list.count()} 个模型")
+
+                # 扫描mistral模型
+                elif model_type == "mistral":
+                    models_root = Path("models")
+                    if models_root.exists():
+                        # 🔧 智能扫描：递归查找所有包含config.json的目录
+                        print(f"🔍 开始扫描Mistral模型目录: {models_root}")
+
+                        # 扫描所有mistral相关目录
+                        for mistral_dir in models_root.glob("mistral*"):
+                            if not mistral_dir.is_dir():
+                                continue
+
+                            print(f"  📁 检查目录: {mistral_dir.name}")
+
+                            # 递归查找所有包含config.json的子目录
+                            for model_dir in mistral_dir.rglob("*"):
+                                if not model_dir.is_dir():
+                                    continue
+
+                                config_file = model_dir / "config.json"
+                                if config_file.exists():
+                                    # 检查是否包含模型文件
+                                    has_safetensors = list(model_dir.glob("*.safetensors"))
+                                    has_bin = list(model_dir.glob("*.bin"))
+
+                                    if has_safetensors or has_bin:
+                                        try:
+                                            size_mb = sum(f.stat().st_size for f in model_dir.rglob("*") if f.is_file()) / (1024 * 1024)
+
+                                            # 生成显示名称
+                                            relative_path = model_dir.relative_to(models_root)
+                                            display_text = f"✅ {relative_path} (HuggingFace) - {size_mb:.1f} MB"
+
+                                            print(f"    ✅ 找到模型: {display_text}")
+
+                                            # 创建列表项并存储路径
+                                            item = QListWidgetItem(display_text)
+                                            item.setData(Qt.ItemDataRole.UserRole, str(model_dir))
+                                            base_model_list.addItem(item)
+                                            base_models_data.append({"name": str(relative_path), "path": model_dir, "size_mb": size_mb})
+                                        except Exception as e:
+                                            print(f"    ❌ 计算模型大小失败: {e}")
+
+                        print(f"✅ Mistral模型扫描完成，找到 {base_model_list.count()} 个模型")
+
+                # 如果没有找到基础模型，显示提示
+                if base_model_list.count() == 0:
+                    item = QListWidgetItem("❌ 未找到基础模型 - 请使用智能下载器下载模型")
+                    item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsSelectable)  # 不可选择
+                    base_model_list.addItem(item)
 
                 # 刷新存储信息
                 storage = version_manager.get_storage_usage()
@@ -7356,9 +8415,12 @@ class SimpleScreenplayApp(QMainWindow):
                 QMessageBox.warning(widget, "警告", "请先选择一个版本")
                 return
 
-            # 提取版本ID
-            item_text = current_item.text()
-            version_id = item_text.split(" - ")[0].replace("✅ ", "").strip()
+            # 🔧 修复：从UserRole中获取真实的版本ID（而不是从文本中提取）
+            version_id = current_item.data(Qt.ItemDataRole.UserRole)
+            if not version_id:
+                # 如果没有存储数据，尝试从文本中提取（兼容旧代码）
+                item_text = current_item.text()
+                version_id = item_text.split(" - ")[0].replace("✅ ", "").replace("🏆 ", "").replace("📌 当前训练模型", "current").strip()
 
             # 激活版本
             if version_manager.set_active_version(version_id):
@@ -7376,10 +8438,12 @@ class SimpleScreenplayApp(QMainWindow):
                 QMessageBox.warning(widget, "警告", "请先选择一个训练模型版本")
                 return
 
-            # 提取版本ID
-            item_text = current_item.text()
-            # 移除所有标记符号
-            version_id = item_text.split(" - ")[0].replace("✅ ", "").replace("🏆 ", "").strip()
+            # 🔧 修复：从UserRole中获取真实的版本ID（而不是从文本中提取）
+            version_id = current_item.data(Qt.ItemDataRole.UserRole)
+            if not version_id:
+                # 如果没有存储数据，尝试从文本中提取（兼容旧代码）
+                item_text = current_item.text()
+                version_id = item_text.split(" - ")[0].replace("✅ ", "").replace("🏆 ", "").replace("📌 当前训练模型", "current").strip()
 
             # 获取版本信息
             version_info = version_manager.get_version_info(version_id)
@@ -7392,110 +8456,390 @@ class SimpleScreenplayApp(QMainWindow):
                 QMessageBox.critical(widget, "错误", f"版本 {version_id} 没有HuggingFace模型路径")
                 return
 
-            # 确认转换
-            reply = QMessageBox.question(
-                widget,
-                "确认转换",
-                f"确定要将版本 {version_id} 转换为GGUF格式吗？\n这可能需要几分钟时间。",
-                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
-            )
+            # 智能推荐量化类型
+            def recommend_quantization(model_type_str):
+                """根据模型类型和系统资源智能推荐量化类型"""
+                import psutil
 
-            if reply == QMessageBox.StandardButton.Yes:
-                try:
-                    # 显示进度对话框
-                    progress_dialog = QMessageBox(widget)
-                    progress_dialog.setWindowTitle("转换中")
-                    progress_dialog.setText(f"正在转换版本 {version_id} 为GGUF格式...\n请稍候...")
-                    progress_dialog.setStandardButtons(QMessageBox.StandardButton.NoButton)
-                    progress_dialog.show()
+                # 获取可用内存（GB）
+                available_memory_gb = psutil.virtual_memory().available / (1024**3)
+
+                # 根据内存和模型类型推荐
+                if available_memory_gb < 4:
+                    # 低内存设备：使用更激进的量化
+                    return "Q2_K", "内存较低，推荐使用极限压缩"
+                elif available_memory_gb < 8:
+                    # 中等内存：使用平衡量化
+                    return "Q4_K_M", "内存适中，推荐使用平衡量化"
+                elif available_memory_gb < 16:
+                    # 较高内存：可以使用更高质量
+                    return "Q5_K", "内存充足，推荐使用高质量量化"
+                else:
+                    # 高内存：使用最佳质量
+                    return "Q6_K", "内存充裕，推荐使用最佳质量量化"
+
+            # 获取智能推荐
+            recommended_quant, recommend_reason = recommend_quantization(model_type)
+
+            # 创建量化类型选择对话框
+            from PyQt6.QtWidgets import QDialog, QVBoxLayout, QLabel, QComboBox, QPushButton, QHBoxLayout
+
+            quant_dialog = QDialog(widget)
+            quant_dialog.setWindowTitle("选择量化类型")
+            quant_dialog.setMinimumWidth(500)
+
+            dialog_layout = QVBoxLayout(quant_dialog)
+
+            # 说明文本
+            info_label = QLabel(
+                f"<h3>选择GGUF量化类型</h3>"
+                f"<p><b>智能推荐：</b>{recommended_quant}</p>"
+                f"<p><i>{recommend_reason}</i></p>"
+                f"<hr>"
+                f"<p>量化类型说明：</p>"
+                f"<ul>"
+                f"<li><b>Q2_K</b> - 2-bit，极小体积（~0.8GB），质量较低，适合测试</li>"
+                f"<li><b>Q4_K_S</b> - 4-bit小体积版（~1.2GB），质量可接受</li>"
+                f"<li><b>Q4_K_M</b> - 4-bit中等版（~1.5GB），<b>推荐</b>，平衡质量和体积</li>"
+                f"<li><b>Q5_K_S</b> - 5-bit小体积版（~1.8GB），高质量</li>"
+                f"<li><b>Q5_K</b> - 5-bit（~2.0GB），高质量</li>"
+                f"<li><b>Q6_K</b> - 6-bit（~2.4GB），接近原始质量</li>"
+                f"<li><b>Q8_0</b> - 8-bit（~2.8GB），高精度</li>"
+                f"<li><b>F16</b> - 16-bit float（~3.0GB），原始质量</li>"
+                f"</ul>"
+            )
+            info_label.setWordWrap(True)
+            dialog_layout.addWidget(info_label)
+
+            # 量化类型选择器
+            quant_combo = QComboBox()
+            quant_options = [
+                ("Q2_K", "🚀 Q2_K - 极限压缩（~0.8GB）"),
+                ("Q4_K_S", "📦 Q4_K_S - 小体积（~1.2GB）"),
+                ("Q4_K_M", "⚖️ Q4_K_M - 平衡推荐（~1.5GB）"),
+                ("Q5_K_S", "🎯 Q5_K_S - 高质量小体积（~1.8GB）"),
+                ("Q5_K", "💎 Q5_K - 高质量（~2.0GB）"),
+                ("Q6_K", "🏆 Q6_K - 最佳质量（~2.4GB）"),
+                ("Q8_0", "🔬 Q8_0 - 高精度（~2.8GB）"),
+                ("F16", "📊 F16 - 原始质量（~3.0GB）")
+            ]
+
+            for quant_value, quant_label in quant_options:
+                quant_combo.addItem(quant_label, quant_value)
+
+            # 设置默认选择为推荐的量化类型
+            for i, (quant_value, _) in enumerate(quant_options):
+                if quant_value == recommended_quant:
+                    quant_combo.setCurrentIndex(i)
+                    break
+
+            dialog_layout.addWidget(QLabel("<b>选择量化类型：</b>"))
+            dialog_layout.addWidget(quant_combo)
+
+            # 按钮
+            button_layout = QHBoxLayout()
+            ok_btn = QPushButton("确定转换")
+            cancel_btn = QPushButton("取消")
+
+            ok_btn.clicked.connect(quant_dialog.accept)
+            cancel_btn.clicked.connect(quant_dialog.reject)
+
+            button_layout.addStretch()
+            button_layout.addWidget(cancel_btn)
+            button_layout.addWidget(ok_btn)
+
+            dialog_layout.addLayout(button_layout)
+
+            # 显示对话框
+            if quant_dialog.exec() != QDialog.DialogCode.Accepted:
+                return  # 用户取消
+
+            # 获取用户选择的量化类型
+            quantization = quant_combo.currentData()
+
+            try:
+                # 显示进度对话框
+                progress_dialog = QMessageBox(widget)
+                progress_dialog.setWindowTitle("转换中")
+                progress_dialog.setText(
+                    f"正在转换版本 {version_id} 为GGUF格式...\n"
+                    f"量化类型: {quantization}\n"
+                    f"请稍候..."
+                )
+                progress_dialog.setStandardButtons(QMessageBox.StandardButton.NoButton)
+                progress_dialog.show()
+                QApplication.processEvents()
+
+                # 执行转换
+                from models.converters.model_converter import ModelConverter
+                from pathlib import Path
+                converter = ModelConverter()
+
+                # 智能检测模型类型
+                hf_path_obj = Path(hf_path)
+                has_config = (hf_path_obj / "config.json").exists()
+                has_adapter_config = (hf_path_obj / "adapter_config.json").exists()
+                has_adapter_model = (hf_path_obj / "adapter_model.safetensors").exists()
+
+                # 如果是LoRA适配器，需要先合并
+                if has_adapter_config and has_adapter_model and not has_config:
+                    progress_dialog.setText(
+                        f"检测到LoRA适配器\n\n"
+                        f"步骤1/2：合并LoRA到基础模型...\n"
+                        f"这可能需要几分钟，请稍候..."
+                    )
                     QApplication.processEvents()
 
-                    # 执行转换
-                    from models.converters.model_converter import ModelConverter
-                    converter = ModelConverter()
+                    # 🔧 修复：从adapter_config.json中动态读取基础模型路径
+                    import json
+                    adapter_config_file = hf_path_obj / "adapter_config.json"
+                    try:
+                        with open(adapter_config_file, 'r', encoding='utf-8') as f:
+                            adapter_config = json.load(f)
+                        base_model_path = adapter_config.get("base_model_name_or_path")
 
-                    # 确定量化类型
-                    quantization = "Q4_K_M" if model_type == "qwen" else "Q5_K"
+                        if not base_model_path:
+                            raise ValueError("adapter_config.json中未找到base_model_name_or_path字段")
 
-                    # 转换
-                    gguf_path = converter.convert_format(
-                        source_path=hf_path,
-                        target_format="gguf",
-                        output_path=None,  # 自动生成路径
-                        quantization=quantization
+                        # 验证基础模型路径是否存在
+                        if not Path(base_model_path).exists():
+                            raise FileNotFoundError(f"基础模型不存在: {base_model_path}")
+
+                        logger.info(f"从adapter_config.json读取基础模型路径: {base_model_path}")
+                    except Exception as e:
+                        # 如果读取失败，使用默认路径
+                        logger.warning(f"无法从adapter_config.json读取基础模型路径: {e}")
+                        base_model_path = "models/qwen3-1.7b/Qwen3-1.7B" if model_type == "qwen" else "models/mistral/base"
+                        logger.info(f"使用默认基础模型路径: {base_model_path}")
+
+                    # 合并LoRA
+                    merged_path = converter.merge_lora_to_base(
+                        base_model_path=base_model_path,
+                        lora_adapter_path=hf_path,
+                        output_path=str(hf_path_obj.parent / "merged")
                     )
 
-                    progress_dialog.close()
+                    progress_dialog.setText(
+                        f"✅ 步骤1/2完成：LoRA合并成功\n\n"
+                        f"步骤2/2：转换为GGUF格式...\n"
+                        f"这可能需要几分钟，请稍候..."
+                    )
+                    QApplication.processEvents()
 
-                    if gguf_path:
-                        # 更新版本信息中的GGUF路径
-                        version_info['gguf_path'] = gguf_path
-                        version_manager._save_versions()
+                    # 使用合并后的模型进行转换
+                    model_to_convert = merged_path
+                else:
+                    model_to_convert = hf_path
 
-                        # 执行性能评估
-                        try:
-                            from src.training.performance_evaluator import PerformanceEvaluator
-                            evaluator = PerformanceEvaluator()
+                # 转换为GGUF
+                # 确定输出路径（保存到quantized目录）
+                from datetime import datetime
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                if model_type == "qwen":
+                    gguf_output_dir = Path("models/qwen/quantized")
+                else:
+                    gguf_output_dir = Path("models/mistral/quantized")
 
-                            performance_score = evaluator.evaluate_model(
-                                model_path=gguf_path,
-                                model_type="gguf"
-                            )
+                gguf_output_dir.mkdir(parents=True, exist_ok=True)
+                gguf_output_path = str(gguf_output_dir / f"trained_{timestamp}_{quantization}.gguf")
 
-                            # 更新性能分数
-                            version_manager.update_version_performance(version_id, performance_score)
+                gguf_path = converter.convert_format(
+                    model_path=model_to_convert,
+                    output_format="gguf",
+                    output_path=gguf_output_path,
+                    quant_type=quantization
+                )
 
-                            # 检查是否应该切换到新模型
-                            active_version = version_manager.get_active_version()
-                            should_switch = False
+                if gguf_path:
+                    # 更新版本信息中的GGUF路径
+                    version_info['gguf_path'] = gguf_path
+                    version_manager._save_versions()
 
-                            if active_version and active_version['version_id'] != version_id:
-                                current_score = active_version.get('performance_score', 0)
-                                if performance_score > current_score:
-                                    should_switch = True
-                                    improvement = performance_score - current_score
-                                    switch_msg = f"\n\n新模型性能更优（提升: {improvement:.2%}）\n是否切换到此模型？"
+                    # 🔧 新增：GGUF转换完成后，自动删除merged目录
+                    if has_adapter_config and has_adapter_model and not has_config:
+                        merged_dir = hf_path_obj.parent / "merged"
+                        if merged_dir.exists():
+                            try:
+                                import shutil
+                                shutil.rmtree(merged_dir)
+                                logger.info(f"✅ 已自动删除临时合并模型目录: {merged_dir}")
+                            except Exception as cleanup_error:
+                                logger.warning(f"⚠️ 删除合并模型目录失败: {cleanup_error}")
 
-                                    switch_reply = QMessageBox.question(
-                                        widget,
-                                        "性能更优",
-                                        f"转换成功！\n性能分数: {performance_score:.2%}{switch_msg}",
-                                        QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
-                                    )
+                    # 显示性能评估进度
+                    progress_dialog.setText(
+                        f"✅ GGUF转换完成\n\n"
+                        f"步骤3/3：性能评估中...\n"
+                        f"正在加载模型并测试推理性能，请稍候..."
+                    )
+                    QApplication.processEvents()
 
-                                    if switch_reply == QMessageBox.StandardButton.Yes:
-                                        version_manager.set_active_version(version_id)
-                                        QMessageBox.information(widget, "成功", f"已切换到版本: {version_id}")
-                                else:
-                                    QMessageBox.information(
-                                        widget,
-                                        "转换成功",
-                                        f"GGUF模型已生成！\n性能分数: {performance_score:.2%}\n\n当前激活模型性能更优，未自动切换。"
-                                    )
-                            else:
-                                # 第一个模型或当前模型，直接激活
-                                version_manager.set_active_version(version_id)
-                                QMessageBox.information(
-                                    widget,
-                                    "转换成功",
-                                    f"GGUF模型已生成并激活！\n性能分数: {performance_score:.2%}"
-                                )
+                    # 执行性能评估
+                    try:
+                        # 🔧 修复：检查系统内存，如果内存不足则跳过性能评估
+                        import psutil
+                        mem = psutil.virtual_memory()
+                        available_gb = mem.available / (1024 ** 3)
 
-                        except Exception as eval_error:
+                        if available_gb < 2.0:  # 如果可用内存小于2GB
+                            logger.info(f"⚠️ 系统可用内存不足({available_gb:.2f}GB < 2GB)，跳过性能评估")
+                            progress_dialog.close()
+
                             QMessageBox.information(
                                 widget,
                                 "转换成功",
-                                f"GGUF模型已生成！\n性能评估失败: {eval_error}"
+                                f"GGUF模型已生成！\n\n"
+                                f"⚠️ 由于系统内存不足({available_gb:.2f}GB)，已跳过性能评估。\n"
+                                f"模型已保存到: {gguf_path}"
+                            )
+                            refresh_model_info()
+                            return
+
+                        from src.training.performance_evaluator import PerformanceEvaluator
+                        evaluator = PerformanceEvaluator()
+
+                        # 🔧 修复：使用线程执行性能评估，避免阻塞UI
+                        import threading
+                        evaluation_result = {"score": None, "error": None, "completed": False}
+
+                        def run_evaluation():
+                            try:
+                                score = evaluator.evaluate_model(
+                                    model_path=gguf_path,
+                                    model_type="gguf"
+                                )
+                                evaluation_result["score"] = score
+                            except Exception as e:
+                                evaluation_result["error"] = str(e)
+                            finally:
+                                evaluation_result["completed"] = True
+
+                        eval_thread = threading.Thread(target=run_evaluation, daemon=True)
+                        eval_thread.start()
+
+                        # 🔧 修复：使用try-finally确保进度对话框一定会被关闭
+                        try:
+                            # 🔧 修复：增加超时时间到180秒（3分钟）
+                            # 原因：性能评估需要对5个样本进行推理，平均每个样本需要20-30秒
+                            # 实际测试显示完整评估需要约112秒
+                            timeout = 180
+                            start_wait = time.time()
+                            last_update = start_wait
+
+                            while not evaluation_result["completed"]:
+                                QApplication.processEvents()  # 保持UI响应
+                                time.sleep(0.1)
+
+                                # 🔧 修复：每10秒更新一次进度提示
+                                current_time = time.time()
+                                if current_time - last_update > 10:
+                                    elapsed = int(current_time - start_wait)
+                                    progress_dialog.setText(
+                                        f"✅ GGUF转换完成\n\n"
+                                        f"步骤3/3：性能评估中...\n"
+                                        f"正在加载模型并测试推理性能，请稍候...\n\n"
+                                        f"⏱️ 已用时: {elapsed}秒 / {timeout}秒"
+                                    )
+                                    last_update = current_time
+
+                                # 检查超时
+                                if time.time() - start_wait > timeout:
+                                    logger.warning(f"⚠️ 性能评估超时({timeout}秒)，跳过评估")
+
+                                    # 🔧 修复：确保进度对话框被正确关闭
+                                    progress_dialog.accept()  # 使用accept()而不是close()
+                                    QApplication.processEvents()  # 确保关闭事件被处理
+
+                                    QMessageBox.information(
+                                        widget,
+                                        "转换成功",
+                                        f"GGUF模型已生成！\n\n"
+                                        f"⚠️ 性能评估超时（超过{timeout}秒），已跳过。\n"
+                                        f"模型已保存到: {gguf_path}\n\n"
+                                        f"💡 提示：您可以稍后在模型管理中手动评估模型性能。"
+                                    )
+                                    refresh_model_info()
+                                    return
+                        finally:
+                            # 🔧 修复：无论如何都要关闭进度对话框
+                            if progress_dialog.isVisible():
+                                progress_dialog.accept()
+                                QApplication.processEvents()  # 确保关闭事件被处理
+
+                        # 检查评估结果
+                        if evaluation_result["error"]:
+                            raise Exception(evaluation_result["error"])
+
+                        performance_score = evaluation_result["score"]
+
+                        # 更新性能分数
+                        version_manager.update_version_performance(version_id, performance_score)
+
+                        # 检查是否应该切换到新模型
+                        active_version = version_manager.get_active_version()
+                        should_switch = False
+
+                        if active_version and active_version['version_id'] != version_id:
+                            current_score = active_version.get('performance_score', 0)
+                            if performance_score > current_score:
+                                should_switch = True
+                                improvement = performance_score - current_score
+                                switch_msg = f"\n\n新模型性能更优（提升: {improvement:.2%}）\n是否切换到此模型？"
+
+                                switch_reply = QMessageBox.question(
+                                    widget,
+                                    "性能更优",
+                                    f"转换成功！\n性能分数: {performance_score:.2%}{switch_msg}",
+                                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+                                )
+
+                                if switch_reply == QMessageBox.StandardButton.Yes:
+                                    version_manager.set_active_version(version_id)
+                                    QMessageBox.information(widget, "成功", f"已切换到版本: {version_id}")
+                            else:
+                                QMessageBox.information(
+                                    widget,
+                                    "转换成功",
+                                    f"GGUF模型已生成！\n性能分数: {performance_score:.2%}\n\n当前激活模型性能更优，未自动切换。"
+                                )
+                        else:
+                            # 第一个模型或当前模型，直接激活
+                            version_manager.set_active_version(version_id)
+                            QMessageBox.information(
+                                widget,
+                                "转换成功",
+                                f"GGUF模型已生成并激活！\n性能分数: {performance_score:.2%}"
                             )
 
-                        refresh_model_info()
-                    else:
-                        QMessageBox.critical(widget, "失败", "GGUF转换失败")
+                    except Exception as eval_error:
+                        # 🔧 修复：性能评估失败，确保进度对话框被正确关闭
+                        if progress_dialog.isVisible():
+                            progress_dialog.accept()
+                            QApplication.processEvents()
 
-                except Exception as e:
-                    progress_dialog.close()
-                    import traceback
-                    QMessageBox.critical(widget, "失败", f"转换失败: {e}\n\n{traceback.format_exc()}")
+                        QMessageBox.information(
+                            widget,
+                            "转换成功",
+                            f"GGUF模型已生成！\n性能评估失败: {eval_error}"
+                        )
+
+                    refresh_model_info()
+                else:
+                    # 🔧 修复：转换失败，确保进度对话框被正确关闭
+                    if progress_dialog.isVisible():
+                        progress_dialog.accept()
+                        QApplication.processEvents()
+
+                    QMessageBox.critical(widget, "失败", "GGUF转换失败")
+
+            except Exception as e:
+                # 🔧 修复：异常情况，确保进度对话框被正确关闭
+                if progress_dialog.isVisible():
+                    progress_dialog.accept()
+                    QApplication.processEvents()
+
+                import traceback
+                QMessageBox.critical(widget, "失败", f"转换失败: {e}\n\n{traceback.format_exc()}")
 
         convert_btn.clicked.connect(convert_selected_to_gguf)
 
@@ -7506,21 +8850,51 @@ class SimpleScreenplayApp(QMainWindow):
                 QMessageBox.warning(widget, "警告", "请先选择一个版本")
                 return
 
-            # 提取版本ID
-            item_text = current_item.text()
-            version_id = item_text.split(" - ")[0].replace("✅ ", "").strip()
+            # 从列表项数据中获取真实的版本ID
+            version_id = current_item.data(Qt.ItemDataRole.UserRole)
+            if not version_id:
+                # 如果没有存储数据，尝试从文本中提取（兼容旧代码）
+                item_text = current_item.text()
+                version_id = item_text.split(" - ")[0].replace("✅ ", "").replace("🏆 ", "").replace("📌 当前训练模型", "current").strip()
+
+            # 获取显示文本用于确认对话框
+            display_text = current_item.text()
+
+            # 检查是否是激活版本
+            is_active_version = (version_id == version_manager.versions.get("active_version"))
 
             # 确认删除
-            reply = QMessageBox.question(
-                widget,
-                "确认删除",
-                f"确定要删除版本 {version_id} 吗？\n此操作不可恢复！",
-                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
-            )
+            if is_active_version:
+                # 激活版本：显示特殊警告
+                reply = QMessageBox.question(
+                    widget,
+                    "⚠️ 确认删除激活版本",
+                    f"⚠️ 警告：这是当前激活的版本！\n\n"
+                    f"版本信息：{display_text}\n\n"
+                    f"删除后将没有激活版本，可能影响模型使用。\n\n"
+                    f"确定要强制删除吗？\n\n"
+                    f"此操作不可恢复！",
+                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+                )
+            else:
+                # 普通版本：正常确认
+                reply = QMessageBox.question(
+                    widget,
+                    "确认删除",
+                    f"确定要删除以下版本吗？\n\n{display_text}\n\n此操作不可恢复！",
+                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+                )
 
             if reply == QMessageBox.StandardButton.Yes:
+                # 如果是激活版本，先取消激活
+                if is_active_version:
+                    logger.info(f"用户确认删除激活版本: {version_id}，先取消激活")
+                    version_manager.versions["active_version"] = None
+                    version_manager._save_versions()
+
+                # 删除版本
                 if version_manager.delete_version(version_id):
-                    QMessageBox.information(widget, "成功", f"已删除版本: {version_id}")
+                    QMessageBox.information(widget, "成功", f"已删除版本: {display_text}")
                     refresh_model_info()
                 else:
                     QMessageBox.critical(widget, "失败", f"删除版本失败: {version_id}")
@@ -7567,6 +8941,89 @@ class SimpleScreenplayApp(QMainWindow):
                     QMessageBox.critical(widget, "失败", f"删除失败: {e}")
 
         gguf_delete_btn.clicked.connect(delete_selected_gguf)
+
+        def delete_selected_base_model():
+            """删除选中的基础模型"""
+            current_item = base_model_list.currentItem()
+            if not current_item:
+                QMessageBox.warning(widget, "警告", "请先选择一个基础模型")
+                return
+
+            # 获取模型路径
+            model_path_str = current_item.data(Qt.ItemDataRole.UserRole)
+            if not model_path_str:
+                QMessageBox.warning(widget, "警告", "无法获取模型路径")
+                return
+
+            model_path = Path(model_path_str)
+            display_text = current_item.text()
+
+            # 确认删除
+            reply = QMessageBox.question(
+                widget,
+                "⚠️ 确认删除基础模型",
+                f"⚠️ 警告：删除基础模型将无法进行训练！\n\n"
+                f"模型信息：{display_text}\n"
+                f"路径：{model_path}\n\n"
+                f"确定要删除吗？\n\n"
+                f"此操作不可恢复！",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+            )
+
+            if reply == QMessageBox.StandardButton.Yes:
+                try:
+                    import shutil
+                    if model_path.exists():
+                        # 删除整个模型目录
+                        shutil.rmtree(model_path)
+                        logger.info(f"已删除基础模型: {model_path}")
+
+                        # 🔧 修复：检查并删除合并模型
+                        # 合并模型是基础模型 + LoRA适配器的合并结果
+                        # 删除基础模型后，合并模型将无法使用，应该一起删除
+                        merged_dirs_to_check = [
+                            Path("models/qwen/merged"),
+                            Path("models/mistral/merged")
+                        ]
+
+                        deleted_merged_count = 0
+                        for merged_dir in merged_dirs_to_check:
+                            if merged_dir.exists():
+                                try:
+                                    # 检查是否有模型文件
+                                    merged_files = list(merged_dir.glob("*.safetensors")) + list(merged_dir.glob("*.bin"))
+                                    if merged_files:
+                                        logger.info(f"   检测到合并模型: {merged_dir} ({len(merged_files)}个文件)")
+                                        # 删除合并模型目录
+                                        shutil.rmtree(merged_dir)
+                                        logger.info(f"   已删除合并模型目录: {merged_dir}")
+                                        deleted_merged_count += 1
+                                except Exception as e:
+                                    logger.error(f"   删除合并模型失败: {e}")
+
+                        # 显示删除结果
+                        success_msg = f"已删除基础模型:\n{display_text}"
+                        if deleted_merged_count > 0:
+                            success_msg += f"\n\n同时删除了 {deleted_merged_count} 个合并模型目录"
+
+                        QMessageBox.information(widget, "成功", success_msg)
+
+                        # 🔧 修复：删除模型后，重新检查模型状态
+                        # 这样视频处理标签页的模型检测才能正确工作
+                        logger.info("🔄 重新检查模型状态...")
+                        self.check_models()  # 🔧 修复：使用正确的方法名
+                        logger.info(f"✅ 模型状态已更新: 中文模型={'已安装' if self.zh_model_exists else '未安装'}, 英文模型={'已安装' if self.en_model_exists else '未安装'}")
+
+                        # 刷新模型管理页面UI
+                        refresh_model_info()
+                    else:
+                        QMessageBox.critical(widget, "失败", f"模型路径不存在:\n{model_path}")
+                except Exception as e:
+                    logger.error(f"删除基础模型失败: {e}")
+                    QMessageBox.critical(widget, "失败", f"删除失败:\n{e}")
+
+        base_delete_btn.clicked.connect(delete_selected_base_model)
+        base_refresh_btn.clicked.connect(refresh_model_info)
 
         def cleanup_all_inactive():
             """清理所有非激活训练版本"""
@@ -7718,86 +9175,276 @@ class SimpleScreenplayApp(QMainWindow):
         """检查模型是否已下载（支持多个模型变体）"""
         base_dir = Path(__file__).resolve().parent
 
-        # 检查中文模型（Qwen3系列）
+        # 检查中文模型（Qwen系列）
+        # 支持智能下载器下载的路径（models/Qwen3-*/fp16, models/qwen3-*/base）
+        # 以及旧版本路径（models/qwen/quantized, models/qwen/base）
         zh_model_paths = [
-            # Qwen3-0.6B
+            # 智能下载器路径 - Qwen3系列（FP16格式）
+            base_dir / "models/Qwen3-0.6B/fp16",
+            base_dir / "models/Qwen3-1.7B/fp16",
+            base_dir / "models/Qwen3-1.7B/fp16",
+            base_dir / "models/Qwen3-8B/fp16",
+            base_dir / "models/Qwen3-32B/fp16",
+            base_dir / "models/Qwen3-32b/fp16",
+            base_dir / "models/Qwen3-32B/fp16",
+            # 智能下载器路径 - Qwen3系列（FP16格式）
+            base_dir / "models/qwen3-0.6b/base",
+            base_dir / "models/qwen3-1.7b/base",
+            base_dir / "models/qwen3-4b/base",
+            base_dir / "models/qwen3-8b/base",
+            base_dir / "models/qwen3-32b/base",
+            # 旧版本路径 - models/qwen子目录
             base_dir / "models/qwen/qwen3-0.6b/quantized/Q4_K_M.gguf",
             base_dir / "models/qwen/qwen3-0.6b/base",
-            # Qwen3-1.7B
             base_dir / "models/qwen/qwen3-1.7b/quantized/Q4_K_M.gguf",
             base_dir / "models/qwen/qwen3-1.7b/base",
-            # Qwen3-8B
             base_dir / "models/qwen/qwen3-8b/quantized/Q4_K_M.gguf",
             base_dir / "models/qwen/qwen3-8b/base",
-            # Qwen3-32B
             base_dir / "models/qwen/qwen3-32b/quantized/Q4_K_M.gguf",
             base_dir / "models/qwen/qwen3-32b/base",
-            # 旧版本兼容
             base_dir / "models/qwen/quantized/Q4_K_M.gguf",
-            base_dir / "models/qwen/finetuned"
+            base_dir / "models/qwen/base"
+            # 🔧 修复：不检查 finetuned 目录，因为那是训练模型，不是基础模型
+            # base_dir / "models/qwen/finetuned"
         ]
 
-        # 检查models/qwen目录是否存在并有实际模型文件
-        qwen_dir = str(base_dir / "models/qwen")
-        self.zh_model_exists = any(os.path.exists(str(path)) for path in zh_model_paths)
-        if os.path.isdir(qwen_dir):
-            # 递归检查是否有大文件（模型文件通常很大）
-            self.zh_model_exists = self._has_large_files(qwen_dir)
+        # 🔧 修复：不仅检查路径是否存在，还要检查是否有大文件（模型文件）
+        self.zh_model_exists = False
+        for path in zh_model_paths:
+            if os.path.exists(str(path)):
+                # 如果是文件，检查文件大小（基础模型通常 > 500MB）
+                if os.path.isfile(str(path)):
+                    if os.path.getsize(str(path)) > 500 * 1024 * 1024:  # 500MB
+                        self.zh_model_exists = True
+                        log_handler.log("info", f"🔍 检测到中文模型文件: {path}")
+                        break
+                # 如果是目录，检查目录中是否有大文件
+                elif os.path.isdir(str(path)):
+                    if self._has_large_files(str(path)):  # 使用默认500MB阈值
+                        self.zh_model_exists = True
+                        log_handler.log("info", f"🔍 检测到中文模型目录: {path}")
+                        break
+
+        # 如果路径检查未找到，尝试检查models目录下的qwen相关目录
+        if not self.zh_model_exists:
+            log_handler.log("info", "🔍 静态路径检查未找到中文模型，开始动态检测...")
+            models_dir = base_dir / "models"
+            if models_dir.exists():
+                log_handler.log("info", f"📁 检查 models 目录: {models_dir}")
+                # 检查所有qwen开头的目录
+                for item in models_dir.iterdir():
+                    if item.is_dir() and item.name.startswith(("qwen", "Qwen")):
+                        log_handler.log("info", f"🔍 检查目录: {item.name}")
+                        # 🔧 修复：排除 finetuned 和 trained 目录（那是训练模型，不是基础模型）
+                        if "finetuned" in item.name.lower() or "trained" in item.name.lower():
+                            log_handler.log("info", f"⏭️ 跳过训练模型目录: {item.name}")
+                            continue
+                        # 🔧 修复：对于 models/qwen 这样的目录，需要排除其中的 finetuned 和 trained 子目录
+                        # 只检查 base 和 quantized 子目录
+                        if item.name.lower() in ("qwen", "qwen3"):
+                            log_handler.log("info", f"🔍 检查 {item.name} 的子目录...")
+                            # 检查 base 和 quantized 子目录
+                            has_model = False
+                            for subdir in ["base", "quantized"]:
+                                subdir_path = item / subdir
+                                log_handler.log("info", f"  🔍 检查子目录: {subdir_path}")
+                                if subdir_path.exists():
+                                    has_large = self._has_large_files(str(subdir_path))
+                                    log_handler.log("info", f"  {'✅' if has_large else '❌'} {subdir} 目录{'有' if has_large else '无'}大文件")
+                                    if has_large:
+                                        has_model = True
+                                        break
+                                else:
+                                    log_handler.log("info", f"  ⏭️ {subdir} 目录不存在")
+                            if has_model:
+                                self.zh_model_exists = True
+                                log_handler.log("info", f"✅ 在 {item.name} 中找到中文模型")
+                                break
+                        else:
+                            # 对于其他目录（如 Qwen3-1.7B），直接检查
+                            log_handler.log("info", f"🔍 直接检查目录: {item}")
+                            has_large = self._has_large_files(str(item))
+                            log_handler.log("info", f"  {'✅' if has_large else '❌'} 目录{'有' if has_large else '无'}大文件")
+                            if has_large:
+                                self.zh_model_exists = True
+                                log_handler.log("info", f"✅ 在 {item.name} 中找到中文模型")
+                                break
+            else:
+                log_handler.log("warning", f"❌ models 目录不存在: {models_dir}")
 
         # 检查英文模型（Mistral系列）
+        # 支持智能下载器下载的路径（models/mistral-*/base）
+        # 以及旧版本路径（models/mistral/quantized, models/mistral/base）
         en_model_paths = [
-            # Mistral-7B
+            # 智能下载器路径 - Mistral系列（FP16格式）
+            base_dir / "models/mistral-7b/base",
+            base_dir / "models/mistral-12b-nemo/base",
+            base_dir / "models/mistral-24b-small/base",
+            base_dir / "models/mistral-large2/base",
+            # 旧版本路径 - models/mistral子目录
             base_dir / "models/mistral/mistral-7b/quantized/Q4_K_M.gguf",
             base_dir / "models/mistral/mistral-7b/base",
-            # Mistral-12B-Nemo
             base_dir / "models/mistral/mistral-12b-nemo/quantized/Q4_K_M.gguf",
             base_dir / "models/mistral/mistral-12b-nemo/base",
-            # Mistral-24B-Small
             base_dir / "models/mistral/mistral-24b-small/quantized/Q4_K_M.gguf",
             base_dir / "models/mistral/mistral-24b-small/base",
-            # Mistral-Large-2
             base_dir / "models/mistral/mistral-large2/quantized/Q4_K_M.gguf",
             base_dir / "models/mistral/mistral-large2/base",
-            # 旧版本兼容
             base_dir / "models/mistral/quantized/Q4_K_M.gguf",
-            base_dir / "models/mistral/finetuned"
+            base_dir / "models/mistral/base"
+            # 🔧 修复：不检查 finetuned 目录，因为那是训练模型，不是基础模型
+            # base_dir / "models/mistral/finetuned"
         ]
 
-        # 检查models/mistral目录是否存在并有实际模型文件
-        mistral_dir = str(base_dir / "models/mistral")
-        self.en_model_exists = any(os.path.exists(str(path)) for path in en_model_paths)
-        if os.path.isdir(mistral_dir) and os.listdir(mistral_dir):
-            # 递归检查是否有大文件（模型文件通常很大）
-            has_large_files = self._has_large_files(mistral_dir)
-            # 只有当目录中确实存在大文件时，才认为模型已安装
-            self.en_model_exists = has_large_files
+        # 🔧 修复：不仅检查路径是否存在，还要检查是否有大文件（模型文件）
+        self.en_model_exists = False
+        for path in en_model_paths:
+            if os.path.exists(str(path)):
+                # 如果是文件，检查文件大小（基础模型通常 > 500MB）
+                if os.path.isfile(str(path)):
+                    if os.path.getsize(str(path)) > 500 * 1024 * 1024:  # 500MB
+                        self.en_model_exists = True
+                        log_handler.log("info", f"🔍 检测到英文模型文件: {path}")
+                        break
+                # 如果是目录，检查目录中是否有大文件
+                elif os.path.isdir(str(path)):
+                    if self._has_large_files(str(path)):  # 使用默认500MB阈值
+                        self.en_model_exists = True
+                        log_handler.log("info", f"🔍 检测到英文模型目录: {path}")
+                        break
+
+        # 如果路径检查未找到，尝试检查models目录下的mistral相关目录
+        if not self.en_model_exists:
+            log_handler.log("info", "🔍 静态路径检查未找到英文模型，开始动态检测...")
+            models_dir = base_dir / "models"
+            if models_dir.exists():
+                log_handler.log("info", f"📁 检查 models 目录: {models_dir}")
+                # 检查所有mistral开头的目录
+                for item in models_dir.iterdir():
+                    if item.is_dir() and item.name.startswith(("mistral", "Mistral")):
+                        log_handler.log("info", f"🔍 检查目录: {item.name}")
+                        # 🔧 修复：排除 finetuned 和 trained 目录（那是训练模型，不是基础模型）
+                        if "finetuned" in item.name.lower() or "trained" in item.name.lower():
+                            log_handler.log("info", f"⏭️ 跳过训练模型目录: {item.name}")
+                            continue
+                        # 🔧 修复：对于 models/mistral 这样的目录，需要排除其中的 finetuned 和 trained 子目录
+                        # 只检查 base 和 quantized 子目录
+                        if item.name.lower() == "mistral":
+                            log_handler.log("info", f"🔍 检查 {item.name} 的子目录...")
+                            # 检查 base 和 quantized 子目录
+                            has_model = False
+                            for subdir in ["base", "quantized"]:
+                                subdir_path = item / subdir
+                                log_handler.log("info", f"  🔍 检查子目录: {subdir_path}")
+                                if subdir_path.exists():
+                                    has_large = self._has_large_files(str(subdir_path))
+                                    log_handler.log("info", f"  {'✅' if has_large else '❌'} {subdir} 目录{'有' if has_large else '无'}大文件")
+                                    if has_large:
+                                        has_model = True
+                                        break
+                                else:
+                                    log_handler.log("info", f"  ⏭️ {subdir} 目录不存在")
+                            if has_model:
+                                self.en_model_exists = True
+                                log_handler.log("info", f"✅ 在 {item.name} 中找到英文模型")
+                                break
+                        else:
+                            # 对于其他目录（如 mistral-7b），直接检查
+                            log_handler.log("info", f"🔍 直接检查目录: {item}")
+                            has_large = self._has_large_files(str(item))
+                            log_handler.log("info", f"  {'✅' if has_large else '❌'} 目录{'有' if has_large else '无'}大文件")
+                            if has_large:
+                                self.en_model_exists = True
+                                log_handler.log("info", f"✅ 在 {item.name} 中找到英文模型")
+                                break
+            else:
+                log_handler.log("warning", f"❌ models 目录不存在: {models_dir}")
         # 记录日志
         log_handler.log("info", f"中文模型状态: {'已安装' if self.zh_model_exists else '未安装'}")
         log_handler.log("info", f"英文模型状态: {'已安装' if self.en_model_exists else '未安装'}")
         # 更新下载按钮状态
         self.update_download_button()
-    def _has_large_files(self, directory, min_size_mb=10):
+    def _has_large_files(self, directory, min_size_mb=500):
         """递归检查目录中是否有大文件（可能是模型文件）
         Args:
 
             directory: 要检查的目录
-            min_size_mb: 最小文件大小（MB），默认10MB
+            min_size_mb: 最小文件大小（MB），默认500MB（基础模型通常 > 500MB）
         Returns:
 
             bool: 是否存在大文件
         """
         if not os.path.exists(directory):
             return False
+
         min_size = min_size_mb * 1024 * 1024  # 转换为字节
-        for root, _, files in os.walk(directory):
+
+        for root, dirs, files in os.walk(directory):
+            # 🔧 修复：排除 finetuned 和 trained 目录（那是训练模型，不是基础模型）
+            dirs[:] = [d for d in dirs if "finetuned" not in d.lower() and "trained" not in d.lower()]
+
             for file in files:
                 file_path = os.path.join(root, file)
                 try:
-                    if os.path.getsize(file_path) > min_size:
+                    if os.path.getsize(file_path) >= min_size:
                         return True
-                except (OSError, IOError):
+                except OSError:
                     continue
+
         return False
+
+    def check_gguf_model_exists(self, language_mode):
+        """检查GGUF格式模型是否存在
+
+        Args:
+            language_mode: 语言模式，"zh"或"en"
+
+        Returns:
+            bool: GGUF模型是否存在
+        """
+        base_dir = Path(__file__).resolve().parent
+
+        if language_mode == "zh":
+            # 检查中文GGUF模型路径（包括所有可能的目录）
+            gguf_paths = [
+                base_dir / "models/qwen/gguf",
+                base_dir / "models/qwen/quantized",  # 主要检查目录
+                base_dir / "models/qwen/merged",     # 合并后的模型可能在这里
+                base_dir / "models/Qwen3-1.7B/gguf",
+                base_dir / "models/Qwen3-1.7B/quantized",
+                base_dir / "models/qwen3-1.7b/gguf",
+                base_dir / "models/qwen3-1.7b/quantized",
+            ]
+        elif language_mode == "en":
+            # 检查英文GGUF模型路径（包括所有可能的目录）
+            gguf_paths = [
+                base_dir / "models/mistral/gguf",
+                base_dir / "models/mistral/quantized",  # 主要检查目录
+                base_dir / "models/mistral/merged",     # 合并后的模型可能在这里
+                base_dir / "models/mistral-7b/gguf",
+                base_dir / "models/mistral-7b/quantized",
+            ]
+        else:
+            return False
+
+        # 检查是否有任何GGUF文件
+        for path in gguf_paths:
+            if path.exists() and path.is_dir():
+                # 查找.gguf文件
+                gguf_files = list(path.glob("*.gguf"))
+                if gguf_files:
+                    # 检查文件大小（至少100MB）
+                    for gguf_file in gguf_files:
+                        try:
+                            if gguf_file.stat().st_size > 100 * 1024 * 1024:
+                                log_handler.log("info", f"✅ 找到GGUF模型: {gguf_file}")
+                                return True
+                        except OSError:
+                            continue
+
+        log_handler.log("info", f"❌ 未找到{language_mode}的GGUF模型")
+        return False
+
     def update_download_button(self):
         """更新模型状态标识（已移除下载按钮）"""
         # 此方法保留以兼容现有代码，但不再需要更新按钮
@@ -8008,7 +9655,7 @@ class SimpleScreenplayApp(QMainWindow):
         dialog_manager = DialogManager.get_instance()
 
         # 🔧 修复：构建唯一的对话框标识符
-        dialog_key = f"qwen2.5-7b_{tab_context}"
+        dialog_key = f"Qwen3-8B_{tab_context}"
 
         # 检查是否可以显示对话框
         if not dialog_manager.can_show_dialog(dialog_key, self):
@@ -8263,12 +9910,12 @@ class SimpleScreenplayApp(QMainWindow):
 
         """回退的中文模型下载方法"""
         log_handler.log("info", "🔄 使用回退方案下载中文模型")
-        log_handler.log("info", "📞 创建 ModelDownloadThread('qwen2.5-7b-zh')")
+        log_handler.log("info", "📞 创建 ModelDownloadThread('Qwen3-8B-zh')")
 
         # 创建并启动下载线程
         # 注意：ModelDownloadThread现在支持通用名称"qwen"，会自动映射到"qwen3-0.6b-zh"
         # 但为了明确，这里仍使用具体名称
-        self.download_thread = ModelDownloadThread("qwen2.5-7b-zh")
+        self.download_thread = ModelDownloadThread("Qwen3-8B-zh")
         self.download_thread.progress_updated.connect(self.update_download_progress)
         self.download_thread.download_completed.connect(self.on_zh_download_completed)
         self.download_thread.download_failed.connect(self.on_download_failed)
@@ -8285,30 +9932,48 @@ class SimpleScreenplayApp(QMainWindow):
     def on_dynamic_download_completed(self, model_name: str, variant_info, success: bool):
         """动态下载完成回调"""
         try:
+            log_handler.log("info", f"📥 收到下载完成回调: model_name={model_name}, success={success}")
 
             if success:
-
                 log_handler.log("info", f"🎉 动态下载完成: {model_name} ({variant_info.name})")
-                # 更新状态显示
-                self.status_label.setText(f"✅ {model_name} 下载完成")
+
+                # 更新状态显示（安全处理）
+                try:
+                    if hasattr(self, 'status_label'):
+                        self.status_label.setText(f"✅ {model_name} 下载完成")
+                    else:
+                        log_handler.log("warning", "status_label 不存在，跳过状态显示更新")
+                except Exception as e:
+                    log_handler.log("warning", f"更新状态显示失败: {e}")
+
                 # 显示成功通知
-                QMessageBox.information(
-                    self,
-                    "下载完成",
-                    f"模型 {model_name} 下载完成！\n\n"
-                    f"变体: {variant_info.name}\n"
-                    f"文件大小: {variant_info.file_size_gb:.1f} GB\n"
-                    f"质量保持: {variant_info.quality_retention:.1%}"
-                )
-                # 刷新模型状态
+                try:
+                    QMessageBox.information(
+                        self,
+                        "下载完成",
+                        f"模型 {model_name} 下载完成！\n\n"
+                        f"变体: {variant_info.name}\n"
+                        f"文件大小: {variant_info.file_size_gb:.1f} GB\n"
+                        f"质量保持: {variant_info.quality_retention:.1%}"
+                    )
+                except Exception as e:
+                    log_handler.log("warning", f"显示成功通知失败: {e}")
+
+                # 刷新模型状态（关键步骤）
+                log_handler.log("info", "🔄 准备刷新模型状态...")
                 self.refresh_model_status()
+                log_handler.log("info", "✅ 模型状态刷新完成")
             else:
-
                 log_handler.log("warning", f"动态下载失败或取消: {model_name}")
-                self.status_label.setText(f"❌ {model_name} 下载失败")
+                try:
+                    if hasattr(self, 'status_label'):
+                        self.status_label.setText(f"❌ {model_name} 下载失败")
+                except Exception as e:
+                    log_handler.log("warning", f"更新状态显示失败: {e}")
         except Exception as e:
-
             log_handler.log("error", f"处理动态下载完成回调失败: {e}")
+            import traceback
+            log_handler.log("error", f"详细错误信息: {traceback.format_exc()}")
 
     def on_hardware_changed(self, hardware_snapshot):
 
@@ -8324,13 +9989,16 @@ class SimpleScreenplayApp(QMainWindow):
     def refresh_model_status(self):
         """刷新模型状态"""
         try:
-
-            # 这里可以添加刷新模型状态的逻辑
-            # 例如：检查模型文件是否存在、更新UI显示等
-            log_handler.log("info", "刷新模型状态")
+            # 🔧 修复：下载完成后，重新检查模型状态
+            # 这样视频处理标签页的模型检测才能正确工作
+            log_handler.log("info", "🔄 刷新模型状态...")
+            log_handler.log("info", f"📊 刷新前的模型状态: 中文模型={'已安装' if self.zh_model_exists else '未安装'}, 英文模型={'已安装' if self.en_model_exists else '未安装'}")
+            self.check_models()
+            log_handler.log("info", f"✅ 模型状态已更新: 中文模型={'已安装' if self.zh_model_exists else '未安装'}, 英文模型={'已安装' if self.en_model_exists else '未安装'}")
         except Exception as e:
-
             log_handler.log("error", f"刷新模型状态失败: {e}")
+            import traceback
+            log_handler.log("error", f"详细错误信息: {traceback.format_exc()}")
 
     def update_download_progress(self, progress, message):
 
@@ -8381,12 +10049,10 @@ class SimpleScreenplayApp(QMainWindow):
 
             # 使用全息错误显示
             error_info = ErrorInfo(
+                error_type=ErrorType.SYSTEM,
                 title="模型下载失败",
-                description=f"英文模型下载失败: {error_message}",
-                error_type=ErrorType.ERROR,
-                details="模型下载过程中出现错误，可能是网络连接问题或服务器不可用。",
-                solutions=["检查网络连接", "稍后重试", "尝试从其他源下载"]
-
+                message=f"英文模型下载失败: {error_message}",
+                details="模型下载过程中出现错误，可能是网络连接问题或服务器不可用。\n\n建议：\n• 检查网络连接\n• 稍后重试\n• 尝试从其他源下载"
             )
             show_error(error_info, self)
         else:
@@ -8652,6 +10318,215 @@ CPU模式下处理速度可能较慢，但功能完整。
                 log_handler.log("error", f"GPU诊断失败: {str(e)}")
         # 使用统一的弹窗显示
         show_gpu_detection_dialog(self, gpu_info, diagnosis)
+    # ========== 云端AI模式相关方法 ==========
+    
+    def _load_cloud_config(self):
+        """加载云端配置"""
+        try:
+            if HAS_CLOUD_AI:
+                config = get_cloud_api_config()
+                
+                # 临时断开信号连接，避免触发弹窗
+                self.ai_mode_combo.blockSignals(True)
+                self.cloud_platform_combo.blockSignals(True)
+                
+                # 设置模式
+                if config.is_cloud_mode:
+                    self.ai_mode_combo.setCurrentIndex(1)  # 云端模式
+                    self.cloud_mode_enabled = True
+                else:
+                    self.ai_mode_combo.setCurrentIndex(0)  # 本地模式
+                    self.cloud_mode_enabled = False
+                
+                # 设置平台
+                platform = config.platform
+                platform_index = self.cloud_platform_combo.findData(platform)
+                if platform_index >= 0:
+                    self.cloud_platform_combo.setCurrentIndex(platform_index)
+                
+                # 设置模型
+                model = config.model
+                model_index = self.cloud_model_combo.findData(model)
+                if model_index >= 0:
+                    self.cloud_model_combo.setCurrentIndex(model_index)
+                
+                # 设置API Key
+                api_key = config.api_key
+                if api_key:
+                    self.cloud_api_key_input.setText(api_key)
+                
+                # 恢复信号连接
+                self.ai_mode_combo.blockSignals(False)
+                self.cloud_platform_combo.blockSignals(False)
+                
+                # 更新UI显示
+                self._update_ai_mode_ui()
+                
+                print(f"[OK] 云端配置加载完成: 模式={'云端' if self.cloud_mode_enabled else '本地'}")
+        except Exception as e:
+            print(f"[WARN] 加载云端配置失败: {e}")
+    
+    def _save_cloud_config(self):
+        """保存云端配置"""
+        try:
+            if HAS_CLOUD_AI:
+                config = get_cloud_api_config()
+                config.mode = "cloud" if self.cloud_mode_enabled else "local"
+                config.platform = self.cloud_platform_combo.currentData()
+                config.model = self.cloud_model_combo.currentData()
+                config.api_key = self.cloud_api_key_input.text().strip()
+                config.save_config()
+                print(f"[OK] 云端配置已保存")
+        except Exception as e:
+            print(f"[WARN] 保存云端配置失败: {e}")
+    
+    def _update_ai_mode_ui(self):
+        """更新AI模式UI显示"""
+        if self.cloud_mode_enabled:
+            self.local_mode_container.setVisible(False)
+            self.cloud_mode_container.setVisible(True)
+        else:
+            self.local_mode_container.setVisible(True)
+            self.cloud_mode_container.setVisible(False)
+    
+    def on_ai_mode_changed(self, index):
+        """AI模式切换事件"""
+        mode = self.ai_mode_combo.currentData()
+        self.cloud_mode_enabled = (mode == "cloud")
+        self._update_ai_mode_ui()
+        self._save_cloud_config()
+        
+        mode_name = "云端模式" if self.cloud_mode_enabled else "本地模式"
+        print(f"[INFO] AI推理模式切换为: {mode_name}")
+        
+        if self.cloud_mode_enabled:
+            # 检查云端配置是否完整
+            if not self.cloud_api_key_input.text().strip():
+                QMessageBox.information(
+                    self,
+                    "提示",
+                    "您已切换到云端模式，请填写API密钥后再进行视频处理。\n\n"
+                    "获取API密钥：\n"
+                    "• 硅基流动：https://cloud.siliconflow.cn\n"
+                    "• 魔搭社区：https://modelscope.cn/my/myaccesstoken",
+                    QMessageBox.StandardButton.Ok
+                )
+    
+    def on_cloud_platform_changed(self, index):
+        """云平台切换事件"""
+        platform = self.cloud_platform_combo.currentData()
+        print(f"[INFO] 云平台切换为: {platform}")
+        self._save_cloud_config()
+    
+    def test_cloud_connection(self):
+        """测试云端API连接"""
+        platform = self.cloud_platform_combo.currentData()
+        model = self.cloud_model_combo.currentData()
+        api_key = self.cloud_api_key_input.text().strip()
+        
+        if not api_key:
+            QMessageBox.warning(
+                self,
+                "缺少API密钥",
+                "请先填写API密钥再进行测试。",
+                QMessageBox.StandardButton.Ok
+            )
+            return
+        
+        # 显示测试中提示
+        self.test_cloud_btn.setText("测试中...")
+        self.test_cloud_btn.setEnabled(False)
+        QApplication.processEvents()
+        
+        try:
+            if HAS_CLOUD_AI:
+                # 创建云端AI引擎并测试
+                engine = CloudAIEngine()
+                engine.configure(platform, model, api_key)
+                result = engine.test_connection()
+                
+                if result.get("success"):
+                    QMessageBox.information(
+                        self,
+                        "连接成功",
+                        f"✅ API连接测试成功！\n\n"
+                        f"平台: {PLATFORM_CONFIG.get(platform, {}).get('name', platform)}\n"
+                        f"模型: {model}",
+                        QMessageBox.StandardButton.Ok
+                    )
+                    # 保存配置
+                    self._save_cloud_config()
+                else:
+                    error_msg = result.get("error", "未知错误")
+                    QMessageBox.warning(
+                        self,
+                        "连接失败",
+                        f"❌ API连接测试失败\n\n错误信息: {error_msg}",
+                        QMessageBox.StandardButton.Ok
+                    )
+            else:
+                QMessageBox.warning(
+                    self,
+                    "功能不可用",
+                    "云端AI引擎模块未正确加载，请检查安装。",
+                    QMessageBox.StandardButton.Ok
+                )
+        except Exception as e:
+            error_str = str(e)
+            # 检查是否是魔搭社区绑定问题
+            if "绑定阿里云" in error_str or "bind" in error_str.lower():
+                QMessageBox.warning(
+                    self,
+                    "需要绑定阿里云账号",
+                    "❌ 魔搭社区API需要绑定阿里云账号才能使用！\n\n"
+                    "解决方案：\n"
+                    "1. 访问 https://modelscope.cn/my/myaccesstoken\n"
+                    "2. 点击「绑定阿里云账号」完成绑定\n"
+                    "3. 绑定后重新测试连接\n\n"
+                    "或者：切换到「硅基流动」平台，无需绑定即可使用。",
+                    QMessageBox.StandardButton.Ok
+                )
+            else:
+                QMessageBox.critical(
+                    self,
+                    "测试出错",
+                    f"测试过程中发生错误:\n{error_str}",
+                    QMessageBox.StandardButton.Ok
+                )
+        finally:
+            self.test_cloud_btn.setText("🔗 测试连接")
+            self.test_cloud_btn.setEnabled(True)
+    
+    def get_cloud_ai_engine_configured(self):
+        """获取已配置的云端AI引擎实例"""
+        if not self.cloud_mode_enabled or not HAS_CLOUD_AI:
+            return None
+        
+        platform = self.cloud_platform_combo.currentData()
+        model = self.cloud_model_combo.currentData()
+        api_key = self.cloud_api_key_input.text().strip()
+        
+        if not api_key:
+            return None
+        
+        try:
+            engine = CloudAIEngine()
+            engine.configure(platform, model, api_key)
+            return engine
+        except Exception as e:
+            print(f"[ERROR] 配置云端AI引擎失败: {e}")
+            return None
+    
+    def is_cloud_mode_ready(self):
+        """检查云端模式是否已准备就绪"""
+        if not self.cloud_mode_enabled:
+            return False
+        if not HAS_CLOUD_AI:
+            return False
+        if not self.cloud_api_key_input.text().strip():
+            return False
+        return True
+
     def get_current_language_mode(self):
         """从单选按钮获取当前语言模式
 
@@ -8670,8 +10545,9 @@ CPU模式下处理速度可能较慢，但功能完整。
 
     def change_language_mode(self, mode):
         """切换语言模式"""
-        if mode == self.language_mode:
-            return
+        # 🔧 修复：即使模式相同，也要检查模型是否存在
+        # 这样可以处理用户删除模型后再次点击的情况
+        mode_changed = (mode != self.language_mode)
 
         # 🔧 修复：在切换语言模式前，先清理所有下载器状态
         if hasattr(self, 'enhanced_downloader') and self.enhanced_downloader:
@@ -8680,6 +10556,12 @@ CPU模式下处理速度可能较慢，但功能完整。
                 log_handler.log("info", f"🔧 主窗口语言切换前：已清理下载器状态")
             except Exception as e:
                 log_handler.log("warning", f"清理下载器状态失败: {e}")
+
+        # 🔧 修复：每次切换语言模式时都重新检查模型状态
+        # 这样可以处理用户在外部添加/删除模型文件的情况
+        log_handler.log("info", f"🔄 切换语言模式前，重新检查模型状态...")
+        self.check_models()
+        log_handler.log("info", f"✅ 模型状态检查完成: 中文模型={'已安装' if self.zh_model_exists else '未安装'}, 英文模型={'已安装' if self.en_model_exists else '未安装'}")
 
         self.language_mode = mode
         mode_names = {
@@ -8698,9 +10580,11 @@ CPU模式下处理速度可能较慢，但功能完整。
         # 🔧 修复：设置标志，避免训练页面重复检查
         self._is_changing_language_from_main = True
 
+        # 🔧 第一层检测：检查基础模型是否存在
         # 如果选择了英文模式，检查英文模型是否已下载
         if mode == "en":
             if not self.en_model_exists:
+                log_handler.log("info", f"🔍 第一层检测：检测到英文基础模型缺失，弹出智能推荐下载器")
                 self.check_and_download_en_model("language_mode_change")
                 # 如果在训练页面，也更新训练页面的语言选择
                 if hasattr(self, 'train_feeder'):
@@ -8709,9 +10593,29 @@ CPU模式下处理速度可能较慢，但功能完整。
                 self._is_changing_language_from_main = False
                 return  # 在下载对话框中用户可能会切换回其他模式，此处直接返回
 
+            # 🔧 第二层检测：检查GGUF格式模型是否存在
+            has_gguf = self.check_gguf_model_exists("en")
+            if not has_gguf:
+                log_handler.log("warning", f"🔍 第二层检测：英文基础模型存在，但GGUF格式模型不存在")
+                QMessageBox.information(
+                    self,
+                    "缺少GGUF格式模型",
+                    f"检测到英文基础模型已下载，但还没有用于推理的GGUF格式模型。\n\n"
+                    f"视频处理需要使用GGUF格式模型进行推理生成。\n\n"
+                    f"请前往：\n"
+                    f"  设置 → 模型管理 → 转换为GGUF格式\n\n"
+                    f"将基础模型转换为GGUF格式后再进行视频处理。",
+                    QMessageBox.StandardButton.Ok
+                )
+                # 🔧 修复：清除标志
+                self._is_changing_language_from_main = False
+                return
+
+        # 🔧 第一层检测：检查基础模型是否存在
         # 如果选择了中文模式，检查中文模型是否已下载
         if mode == "zh":
             if not self.zh_model_exists:
+                log_handler.log("info", f"🔍 第一层检测：检测到中文基础模型缺失，弹出智能推荐下载器")
                 self.check_and_download_zh_model("language_mode_change")
                 # 如果在训练页面，也更新训练页面的语言选择
                 if hasattr(self, 'train_feeder'):
@@ -8719,6 +10623,24 @@ CPU模式下处理速度可能较慢，但功能完整。
                 # 🔧 修复：清除标志
                 self._is_changing_language_from_main = False
                 return  # 在下载对话框中用户可能会切换回其他模式，此处直接返回
+
+            # 🔧 第二层检测：检查GGUF格式模型是否存在
+            has_gguf = self.check_gguf_model_exists("zh")
+            if not has_gguf:
+                log_handler.log("warning", f"🔍 第二层检测：中文基础模型存在，但GGUF格式模型不存在")
+                QMessageBox.information(
+                    self,
+                    "缺少GGUF格式模型",
+                    f"检测到中文基础模型已下载，但还没有用于推理的GGUF格式模型。\n\n"
+                    f"视频处理需要使用GGUF格式模型进行推理生成。\n\n"
+                    f"请前往：\n"
+                    f"  设置 → 模型管理 → 转换为GGUF格式\n\n"
+                    f"将基础模型转换为GGUF格式后再进行视频处理。",
+                    QMessageBox.StandardButton.Ok
+                )
+                # 🔧 修复：清除标志
+                self._is_changing_language_from_main = False
+                return
 
         # 记录切换并更新状态栏
         self.statusBar().showMessage(f"已切换到{mode_names.get(mode, '未知')}，使用{model_info}")
@@ -8733,15 +10655,13 @@ CPU模式下处理速度可能较慢，但功能完整。
         self._is_changing_language_from_main = False
         # 设置界面方向
         if HAS_TEXT_DIRECTION:
-
-            set_application_layout_direction(mode)
             is_rtl = LayoutDirection.is_rtl_language(mode)
-
+            set_application_layout_direction(
+                LayoutDirection.RIGHT_TO_LEFT if is_rtl else LayoutDirection.LEFT_TO_RIGHT
+            )
             if is_rtl:
-
                 log_handler.log("info", f"切换到RTL语言({mode})，调整布局方向")
-            # 应用RTL样式
-            apply_rtl_styles(self, mode)
+                apply_rtl_styles(self)  # 仅在RTL时应用额外样式
 
     def setup_language_direction(self):
 
@@ -8764,13 +10684,15 @@ CPU模式下处理速度可能较慢，但功能完整。
 
                 log_handler.log("info", f"检测到系统语言: {system_lang}, 语言代码: {lang_code}")
                 # 设置布局方向
-                set_application_layout_direction(lang_code)
+                is_rtl = LayoutDirection.is_rtl_language(lang_code)
+                set_application_layout_direction(
+                    LayoutDirection.RIGHT_TO_LEFT if is_rtl else LayoutDirection.LEFT_TO_RIGHT
+                )
                 # 如果是RTL语言，记录日志
-                if LayoutDirection.is_rtl_language(lang_code):
-
+                if is_rtl:
                     log_handler.log("info", f"检测到RTL语言({lang_code})，已调整布局方向为从右到左")
                     # 应用RTL样式
-                    apply_rtl_styles(self, lang_code)
+                    apply_rtl_styles(self)
         except Exception as e:
 
             log_handler.log("error", f"设置语言方向时出错: {e}")
@@ -8813,7 +10735,7 @@ CPU模式下处理速度可能较慢，但功能完整。
                 <h4 style="color: #2c3e50; margin-top: 0;">🧠 AI算法开发</h4>
 
                 <p><strong>核心技能：</strong>大型语言模型优化、自然语言处理、深度学习算法设计</p>
-                <p><strong>项目成果：</strong>Mistral系列/Qwen2.5系列双模型架构、智能推荐系统、智能字幕重构、病毒式传播算法</p>
+                <p><strong>项目成果：</strong>Mistral系列/Qwen3系列双模型架构、智能推荐系统、智能字幕重构、病毒式传播算法</p>
             </div>
             <div style="margin: 15px 0; padding: 10px; background-color: #f8f9fa; border-left: 4px solid #f39c12;">
                 <h4 style="color: #2c3e50; margin-top: 0;">🎬 视频处理技术</h4>
@@ -9297,7 +11219,7 @@ CPU模式下处理速度可能较慢，但功能完整。
                         title="无法打开系统监控",
                         message=f"缺少必要的监控模块: {str(e)}",
                         details="请确保已安装所有必要的依赖项",
-                        error_type=ErrorType.IMPORT_ERROR
+                        error_type=ErrorType.SYSTEM
 
                     )
                 )
@@ -9772,6 +11694,48 @@ CPU模式下处理速度可能较慢，但功能完整。
     # 场景分析已集成到工作流程中自动执行,无需手动调用
     # 关键帧提取也已集成到工作流程自动执行,但保留独立工具入口供高级用户使用
 
+    def show_video_compare(self):
+        """显示视频质量对比对话框"""
+        try:
+            # 导入视频对比对话框
+            from src.ui.video_compare_dialog import VideoCompareDialog
+
+            # 获取当前选中的视频（如果有）
+            video1_path = None
+            video2_path = None
+
+            # 尝试从视频列表获取
+            if hasattr(self, 'video_list') and self.video_list.count() > 0:
+                # 获取第一个视频作为原片
+                video1_path = self.video_list.item(0).data(Qt.ItemDataRole.UserRole)
+
+            # 尝试从最近生成的视频获取混剪视频
+            if hasattr(self, 'last_generated_video') and self.last_generated_video:
+                video2_path = self.last_generated_video
+
+            # 创建并显示对话框
+            dialog = VideoCompareDialog(
+                parent=self,
+                video1_path=video1_path,
+                video2_path=video2_path
+            )
+            dialog.exec()
+
+        except ImportError as e:
+            log_handler.log("error", f"导入视频对比对话框失败: {str(e)}")
+            QMessageBox.warning(
+                self,
+                "功能不可用",
+                "视频对比功能不可用，请检查相关模块是否正确安装。"
+            )
+        except Exception as e:
+            log_handler.log("error", f"显示视频对比对话框失败: {str(e)}")
+            QMessageBox.critical(
+                self,
+                "对比错误",
+                f"显示视频对比对话框时发生错误: {str(e)}"
+            )
+
     def show_hotkey_guide(self):
         """显示热键指南对话框"""
         # 创建热键指南对话框
@@ -9826,7 +11790,7 @@ CPU模式下处理速度可能较慢，但功能完整。
         </ul>
         <p><b>立即开始生成 (Ctrl+G)</b></p>
         <ul>
-            <li>在<b>视频处理页面</b>：如果已添加视频和SRT文件，则开始生成混剪视频</li>
+            <li>在<b>视频处理页面</b>：如果已添加视频和SRT文件，则创建剪映工程</li>
             <li>在<b>训练页面</b>：如果已添加原始SRT文件，则开始训练并生成爆款SRT</li>
         </ul>
         <p><b>注意事项</b></p>
@@ -9879,11 +11843,10 @@ CPU模式下处理速度可能较慢，但功能完整。
         if HAS_ERROR_VISUALIZER:
             # 使用全息错误显示
             error_info = ErrorInfo(
+                error_type=ErrorType.SYSTEM,
                 title="视频处理失败",
-                description=error_message,
-                error_type=ErrorType.ERROR,
-                details="视频处理过程中出现错误，可能是因为视频格式不兼容或处理参数设置问题。",
-                solutions=["检查视频格式", "尝试不同参数", "使用其他视频文件"]
+                message=error_message,
+                details="视频处理过程中出现错误，可能是因为视频格式不兼容或处理参数设置问题。\n\n建议：\n• 检查视频格式\n• 尝试不同参数\n• 使用其他视频文件"
             )
             show_error(error_info, self)
         else:
@@ -10058,18 +12021,18 @@ CPU模式下处理速度可能较慢，但功能完整。
         current_tab = self.tabs.currentIndex()
         # 视频处理页面
         if current_tab == 0:
-            # 如果有视频和SRT，则开始生成视频
-            if (self.video_list.count() > 0 and 
+            # 如果有视频和SRT，则创建剪映工程
+            if (self.video_list.count() > 0 and
                 self.srt_list.count() > 0):
-                self.generate_video()
-                log_handler.log("info", "快捷键触发：开始生成视频")
+                self.generate_project_file()
+                log_handler.log("info", "快捷键触发：创建剪映工程")
                 return True
             else:
-                self.statusBar().showMessage("生成视频需要先添加视频和SRT文件", 3000)
+                self.statusBar().showMessage("创建剪映工程需要先添加视频和SRT文件", 3000)
         # 训练页面
         elif current_tab == 1 and hasattr(self, 'training_feeder'):
             # 如果有原始SRT，则开始生成爆款SRT
-            if (hasattr(self.training_feeder, 'original_srt_list') and 
+            if (hasattr(self.training_feeder, 'original_srt_list') and
                 self.training_feeder.original_srt_list.count() > 0):
                 self.training_feeder.viral_srt_text_edit.clear()
                 self.generate_viral_srt()
@@ -10114,72 +12077,136 @@ CPU模式下处理速度可能较慢，但功能完整。
         if 'log_handler' in globals():
             log_handler.log("info", f"Process: {message}")
     def generate_viral_srt(self):
-        """生成爆款SRT - 优化版本，支持异步处理"""
+        """生成爆款SRT - 自动处理所有SRT文件"""
         start_time = time.time()
 
+        # 添加详细日志
+        print("\n" + "="*80)
+        print("[AI优化字幕] 按钮被点击")
+        print("="*80)
+
         try:
-
             # 记录用户交互
+            print("[步骤1/6] 记录用户交互...")
             self.record_user_interaction()
-            # 检查是否有选中的SRT
+
+            # 检查是否有SRT文件
+            print(f"[步骤2/6] 检查SRT文件列表... (当前数量: {self.srt_list.count()})")
             if self.srt_list.count() == 0:
-
-                QMessageBox.warning(self, "警告", "请先添加SRT字幕文件")
+                print("[警告] 没有SRT文件,显示提示对话框")
+                QMessageBox.information(self, "操作提示",
+                    "📋 正确的工作流程:\n\n"
+                    "步骤1: 添加多个视频到视频池\n"
+                    "步骤2: 添加对应的SRT字幕文件\n"
+                    "步骤3: 点击'AI优化字幕'自动处理所有SRT\n"
+                    "步骤4: 点击'创建剪映工程'生成混剪工程\n"
+                    "步骤5: 点击'导入到剪映'完成导出\n\n"
+                    "💡 提示: 请先添加SRT字幕文件")
+                print("[结束] 用户取消操作")
                 return
-            # 获取选中的SRT文件
-            selected_items = self.srt_list.selectedItems()
 
-            if not selected_items:
+            # 自动获取所有SRT文件（不需要用户选择）
+            print(f"[步骤3/6] 获取所有SRT文件...")
+            all_srt_items = []
+            for i in range(self.srt_list.count()):
+                item = self.srt_list.item(i)
+                all_srt_items.append(item)
+                print(f"   - SRT文件 {i+1}: {item.text()}")
 
-                QMessageBox.warning(self, "警告", "请选择要处理的SRT文件")
-                return
             # 防止重复处理
+            print(f"[步骤4/6] 检查处理状态... (is_processing: {self.is_processing})")
             if self.is_processing:
-
+                print("[警告] 已经在处理中,显示提示对话框")
                 QMessageBox.information(self, "提示", "正在处理中，请稍候...")
+                print("[结束] 用户取消操作")
                 return
+
             # 设置处理状态
+            print("[步骤5/6] 设置处理状态...")
             self.is_processing = True
-
             self.process_progress_bar.setValue(0)
-            self.statusBar().showMessage("正在准备生成爆款SRT...")
-            log_handler.log("info", f"开始生成爆款SRT，语言模式: {self.get_current_language_mode()}")
-            # 优化：使用异步处理避免界面冻结
-            self._process_viral_srt_async(selected_items)
-        except Exception as e:
 
+            language_mode = self.get_current_language_mode()
+            print(f"   - 语言模式: {language_mode}")
+            print(f"   - 文件数量: {len(all_srt_items)}")
+
+            self.statusBar().showMessage(f"正在准备生成爆款SRT（共{len(all_srt_items)}个文件）...")
+            log_handler.log("info", f"开始生成爆款SRT，共{len(all_srt_items)}个文件，语言模式: {language_mode}")
+
+            # 优化：使用异步处理避免界面冻结
+            print("[步骤6/6] 启动异步处理...")
+            self._process_viral_srt_async(all_srt_items)
+            print("[成功] AI优化字幕任务已启动")
+            print("="*80 + "\n")
+
+        except Exception as e:
             self.is_processing = False
             error_msg = f"生成爆款SRT时发生错误: {str(e)}"
+            print(f"\n[ERROR] {error_msg}")
 
-            print(f"[ERROR] {error_msg}")
+            # 打印详细错误信息
+            import traceback
+            print("[ERROR] 详细错误信息:")
+            traceback.print_exc()
+
             QMessageBox.critical(self, "错误", error_msg)
             self.statusBar().showMessage("生成爆款SRT失败")
+            print("="*80 + "\n")
+
         finally:
-
             elapsed = time.time() - start_time
-
             if elapsed > 0.1:  # 如果初始化时间超过0.1秒，记录
                 print(f"[PERF] 爆款SRT生成初始化耗时: {elapsed:.3f}秒")
 
     def _process_viral_srt_async(self, selected_items):
-
         """异步处理爆款SRT生成"""
+        print("\n[异步处理] 开始创建工作线程...")
         try:
             # 创建工作线程
+            print("   [1/5] 创建QThread...")
             self.viral_srt_thread = QThread()
-            self.viral_srt_worker = ViralSRTWorker(selected_items, self.get_current_language_mode())
+
+            # 🆕 检查是否使用云端模式
+            cloud_engine = None
+            if self.cloud_mode_enabled and self.is_cloud_mode_ready():
+                cloud_engine = self.get_cloud_ai_engine_configured()
+                if cloud_engine:
+                    print(f"   [1.5/5] 使用云端AI引擎...")
+                else:
+                    print(f"   [1.5/5] 云端引擎配置失败，回退到本地模式...")
+
+            print(f"   [2/5] 创建ViralSRTWorker (文件数: {len(selected_items)})...")
+            self.viral_srt_worker = ViralSRTWorker(
+                selected_items, 
+                self.get_current_language_mode(),
+                cloud_engine=cloud_engine  # 传递云端引擎
+            )
+
+            print("   [3/5] 将Worker移动到线程...")
             self.viral_srt_worker.moveToThread(self.viral_srt_thread)
+
             # 连接信号
+            print("   [4/5] 连接信号...")
             self.viral_srt_thread.started.connect(self.viral_srt_worker.process)
             self.viral_srt_worker.progress_updated.connect(self._on_viral_srt_progress)
             self.viral_srt_worker.item_completed.connect(self._on_viral_srt_item_completed)
             self.viral_srt_worker.all_completed.connect(self._on_viral_srt_all_completed)
             self.viral_srt_worker.error_occurred.connect(self._on_viral_srt_error)
+
             # 启动线程
+            print("   [5/5] 启动线程...")
             self.viral_srt_thread.start()
+            print("[异步处理] ✅ 工作线程已启动\n")
+
         except Exception as e:
             self.is_processing = False
-            print(f"[ERROR] 异步处理启动失败: {e}")
+            print(f"\n[ERROR] 异步处理启动失败: {e}")
+
+            # 打印详细错误信息
+            import traceback
+            print("[ERROR] 详细错误信息:")
+            traceback.print_exc()
+
             QMessageBox.critical(self, "错误", f"启动异步处理失败: {str(e)}")
     def _on_viral_srt_progress(self, progress, message):
         """处理爆款SRT生成进度更新"""
@@ -10282,6 +12309,12 @@ CPU模式下处理速度可能较慢，但功能完整。
             # 使用工作流程模式
             self._generate_video_with_workflow(video_path, srt_path)
             return
+
+        # 标准模式
+        self._generate_video_standard_mode(video_path, srt_path)
+
+    def _generate_video_standard_mode(self, video_path, srt_path):
+        """标准模式生成视频(不使用工作流)"""
         # 检查是否为爆款SRT
         srt_name = os.path.basename(srt_path)
 
@@ -10289,8 +12322,8 @@ CPU模式下处理速度可能较慢，但功能完整。
 
             reply = QMessageBox.question(
 
-                self, 
-                "确认使用", 
+                self,
+                "确认使用",
                 f"所选SRT文件 '{srt_name}' 不是爆款SRT，确定要使用吗?",
                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
                 QMessageBox.StandardButton.No
@@ -10381,13 +12414,15 @@ CPU模式下处理速度可能较慢，但功能完整。
                 pass
 
     def _generate_video_with_workflow(self, video_path, srt_path):
-        """使用工作流程模式生成混剪视频"""
+        """使用工作流程模式生成混剪视频 - 使用真实的WorkflowManager(后台线程)"""
         # 检查WorkflowProgressDialog是否可用
         if WorkflowProgressDialog is None:
             QMessageBox.warning(self, "警告", "工作流程进度对话框不可用，将使用标准模式")
-            # 回退到标准模式
+            # 回退到标准模式 - 直接调用标准处理流程,避免递归
             self.workflow_progress_enabled = False
-            self.generate_video()
+            # 不要调用self.generate_video(),会导致递归!
+            # 直接执行标准模式的处理逻辑
+            self._generate_video_standard_mode(video_path, srt_path)
             return
 
         # 询问保存路径
@@ -10405,224 +12440,428 @@ CPU模式下处理速度可能较慢，但功能完整。
         progress_dialog = WorkflowProgressDialog(self)
         progress_dialog.show()
 
-        # 模拟7步工作流程
-        try:
-            # 步骤1: 输入验证
-            progress_dialog.update_step(1, "running", "正在验证输入文件...")
-            QApplication.processEvents()
-            time.sleep(0.5)
+        # 创建工作流Worker
+        class WorkflowWorker(QObject):
+            """工作流执行Worker"""
+            progress_updated = pyqtSignal(int, int, str)  # current_step, total_steps, description
+            workflow_completed = pyqtSignal(dict)  # result
+            workflow_failed = pyqtSignal(str)  # error_message
+            log_message = pyqtSignal(str)  # log message
 
-            if not os.path.exists(video_path):
-                progress_dialog.update_step(1, "error", "视频文件不存在")
-                progress_dialog.set_completed(False)
-                return
-            if not os.path.exists(srt_path):
-                progress_dialog.update_step(1, "error", "字幕文件不存在")
-                progress_dialog.set_completed(False)
-                return
+            def __init__(self, video_path, srt_path, output_dir):
+                super().__init__()
+                self.video_path = video_path
+                self.srt_path = srt_path
+                self.output_dir = output_dir
 
-            progress_dialog.update_step(1, "completed", "输入验证完成")
-            QApplication.processEvents()
-
-            # 步骤2: 语言检测
-            progress_dialog.update_step(2, "running", "正在检测字幕语言...")
-            QApplication.processEvents()
-            time.sleep(0.3)
-
-            # 检测语言
-            language = "zh"  # 默认中文
-            try:
-                with open(srt_path, 'r', encoding='utf-8') as f:
-                    content = f.read()
-                    if any("\u4e00" <= char <= "\u9fff" for char in content):
-                        language = "zh"
-                    else:
-                        language = "en"
-            except:
-                pass
-
-            progress_dialog.update_step(2, "completed", f"检测到语言: {'中文' if language == 'zh' else '英文'}")
-            QApplication.processEvents()
-
-            # 步骤3: 字幕解析
-            progress_dialog.update_step(3, "running", "正在解析字幕文件...")
-            QApplication.processEvents()
-            time.sleep(0.3)
-            progress_dialog.update_step(3, "completed", "字幕解析完成")
-            QApplication.processEvents()
-
-            # 步骤4: 剧情分析
-            progress_dialog.update_step(4, "running", "正在分析剧情结构...")
-            QApplication.processEvents()
-            time.sleep(0.5)
-            progress_dialog.update_step(4, "completed", "剧情分析完成")
-            QApplication.processEvents()
-
-            # 步骤5: 剧本重构
-            progress_dialog.update_step(5, "running", "正在重构剧本...")
-            QApplication.processEvents()
-            time.sleep(0.5)
-            progress_dialog.update_step(5, "completed", "剧本重构完成")
-            QApplication.processEvents()
-
-            # 步骤6: 视频生成
-            progress_dialog.update_step(6, "running", "正在生成混剪视频...")
-            QApplication.processEvents()
-
-            # 检查是否使用零拷贝模式
-            use_zerocopy = hasattr(self, 'zerocopy_enabled') and self.zerocopy_enabled
-
-            if use_zerocopy and ZeroCopyFFmpegPipeline is not None:
-                progress_dialog.add_log("使用零拷贝FFmpeg管道处理视频")
+            def run(self):
+                """执行工作流"""
                 try:
-                    # 使用零拷贝管道
-                    pipeline = ZeroCopyFFmpegPipeline()
-                    # 这里需要根据SRT文件切割和拼接视频
-                    # 简化实现:直接调用标准处理器
-                    language_mode = self.get_current_language_mode()
-                    output_path = self.processor.process_video(
-                        video_path=video_path,
-                        srt_path=srt_path,
-                        output_path=save_path,
-                        language_mode=language_mode
+                    self.log_message.emit("初始化工作流管理器...")
+
+                    # 创建进度回调函数
+                    def progress_callback(current_step, total_steps, description):
+                        self.progress_updated.emit(current_step, total_steps, description)
+
+                    # 创建工作流管理器
+                    workflow_manager = WorkflowManager(progress_callback=progress_callback)
+
+                    # 准备输出目录
+                    os.makedirs(self.output_dir, exist_ok=True)
+
+                    # 执行完整工作流
+                    self.log_message.emit(f"开始处理视频: {os.path.basename(self.video_path)}")
+                    self.log_message.emit(f"字幕文件: {os.path.basename(self.srt_path)}")
+
+                    result = workflow_manager.execute_full_workflow(
+                        video_path=self.video_path,
+                        subtitle_path=self.srt_path,
+                        output_dir=self.output_dir
                     )
+
+                    # 发送完成信号
+                    self.workflow_completed.emit(result)
+
                 except Exception as e:
-                    progress_dialog.add_log(f"零拷贝模式失败,回退到标准模式: {str(e)}")
-                    language_mode = self.get_current_language_mode()
-                    output_path = self.processor.process_video(
-                        video_path=video_path,
-                        srt_path=srt_path,
-                        output_path=save_path,
-                        language_mode=language_mode
-                    )
-            else:
-                # 调用标准视频处理器
-                if use_zerocopy:
-                    progress_dialog.add_log("零拷贝模式不可用,使用标准模式")
-                language_mode = self.get_current_language_mode()
-                output_path = self.processor.process_video(
-                    video_path=video_path,
-                    srt_path=srt_path,
-                    output_path=save_path,
-                    language_mode=language_mode
-                )
+                    import traceback
+                    error_msg = f"{str(e)}\n{traceback.format_exc()}"
+                    self.workflow_failed.emit(error_msg)
 
-            if not output_path:
-                progress_dialog.update_step(6, "error", "视频生成失败")
-                progress_dialog.set_completed(False)
-                QMessageBox.critical(self, "错误", "视频生成失败")
-                return
+        # 创建Worker和线程
+        output_dir = os.path.dirname(save_path)
+        worker = WorkflowWorker(video_path, srt_path, output_dir)
+        thread = QThread()
+        worker.moveToThread(thread)
 
-            progress_dialog.update_step(6, "completed", "视频生成完成")
-            QApplication.processEvents()
+        # 连接信号
+        thread.started.connect(worker.run)
 
-            # 步骤7: 导出工程
-            progress_dialog.update_step(7, "running", "正在导出剪映工程文件...")
-            QApplication.processEvents()
-            time.sleep(0.3)
-            progress_dialog.update_step(7, "completed", "工程文件导出完成")
-            QApplication.processEvents()
+        worker.progress_updated.connect(
+            lambda step, total, desc: (
+                progress_dialog.update_step(step, "running", desc),
+                progress_dialog.add_log(f"步骤 {step}/{total}: {desc}"),
+                QApplication.processEvents()
+            )
+        )
 
-            # 完成
-            progress_dialog.set_completed(True)
-            progress_dialog.add_log(f"✅ 混剪视频已保存到: {output_path}")
+        worker.log_message.connect(
+            lambda msg: (
+                progress_dialog.add_log(msg),
+                QApplication.processEvents()
+            )
+        )
 
-            # 显示成功消息
-            QMessageBox.information(self, "成功", f"爆款视频已生成并保存到:\n{output_path}")
-            self.statusBar().showMessage(f"视频生成成功: {os.path.basename(output_path)}")
-            log_handler.log("info", f"视频生成成功: {output_path}")
+        def on_workflow_completed(result):
+            """工作流完成处理"""
+            try:
+                if result.get("status") == "success":
+                    # 获取生成的视频路径
+                    output_path = result.get("output", {}).get("mixed_video", save_path)
 
-        except Exception as e:
-            progress_dialog.add_log(f"❌ 错误: {str(e)}")
+                    # 如果输出路径不是用户选择的路径,复制过去
+                    if output_path != save_path and os.path.exists(output_path):
+                        import shutil
+                        shutil.copy2(output_path, save_path)
+                        output_path = save_path
+
+                    # 标记所有步骤为完成
+                    for step in range(1, 10):
+                        progress_dialog.update_step(step, "completed", "")
+
+                    progress_dialog.set_completed(True)
+                    progress_dialog.add_log(f"✅ 混剪视频已保存到: {output_path}")
+
+                    # 显示成功消息
+                    QMessageBox.information(self, "成功", f"爆款视频已生成并保存到:\n{output_path}")
+                    self.statusBar().showMessage(f"视频生成成功: {os.path.basename(output_path)}")
+                    log_handler.log("info", f"视频生成成功: {output_path}")
+                else:
+                    # 处理失败
+                    error_msg = result.get("error", "未知错误")
+                    progress_dialog.add_log(f"❌ 工作流失败: {error_msg}")
+                    progress_dialog.set_completed(False)
+                    QMessageBox.critical(self, "错误", f"视频生成失败:\n{error_msg}")
+                    log_handler.log("error", f"视频生成失败: {error_msg}")
+            finally:
+                # 清理线程
+                thread.quit()
+                thread.wait()
+
+        def on_workflow_failed(error_msg):
+            """工作流失败处理"""
+            progress_dialog.add_log(f"❌ 错误: {error_msg}")
             progress_dialog.set_completed(False)
-            QMessageBox.critical(self, "错误", f"视频生成出错: {str(e)}")
-            log_handler.log("error", f"视频生成出错: {str(e)}")
+            QMessageBox.critical(self, "错误", f"视频生成出错:\n{error_msg}")
+            log_handler.log("error", f"视频生成出错: {error_msg}")
+            # 清理线程
+            thread.quit()
+            thread.wait()
+
+        worker.workflow_completed.connect(on_workflow_completed)
+        worker.workflow_failed.connect(on_workflow_failed)
+
+        # 启动线程
+        thread.start()
+
+        # 保存线程引用,防止被垃圾回收
+        self._workflow_thread = thread
+        self._workflow_worker = worker
 
     def generate_project_file(self):
-
-        """生成工程文件（不渲染视频）"""
-        # 检查是否有选中的视频和SRT
+        """生成工程文件（支持多视频混剪）"""
+        # 检查是否有视频
         if self.video_list.count() == 0:
-            QMessageBox.warning(self, "警告", "请先添加视频")
+            QMessageBox.warning(self, "警告", "请先添加视频到视频池")
             return
-        # 获取选中的视频
-        selected_video = self.video_list.currentItem()
-        if not selected_video:
-            QMessageBox.warning(self, "警告", "请选择一个要处理的视频")
+
+        # 检查是否有SRT文件
+        if self.srt_list.count() == 0:
+            QMessageBox.warning(self, "警告", "请先添加SRT文件")
             return
-        video_path = selected_video.data(Qt.ItemDataRole.UserRole)
-        # 找到选中的爆款SRT
-        selected_srt = self.srt_list.currentItem()
-        if not selected_srt:
-            QMessageBox.warning(self, "警告", "请选择一个SRT文件")
-            return
-        srt_path = selected_srt.data(Qt.ItemDataRole.UserRole)
-        # 检查是否为爆款SRT
-        srt_name = os.path.basename(srt_path)
-        if not "爆款" in srt_name:
-            reply = QMessageBox.question(
+
+        # 收集所有视频
+        all_videos = []
+        for i in range(self.video_list.count()):
+            item = self.video_list.item(i)
+            video_path = item.data(Qt.ItemDataRole.UserRole)
+            all_videos.append(video_path)
+
+        # 收集所有爆款SRT（或用户确认的SRT）
+        all_srts = []
+        mixed_cut_srts = []  # 混剪爆款SRT
+
+        for i in range(self.srt_list.count()):
+            item = self.srt_list.item(i)
+            srt_path = item.data(Qt.ItemDataRole.UserRole)
+            srt_name = os.path.basename(srt_path)
+
+            # 优先使用爆款SRT（_viral.srt 或 混剪爆款）
+            if "_viral" in srt_name or "混剪爆款" in srt_name:
+                all_srts.append(srt_path)
+                # 记录混剪爆款SRT
+                if "混剪爆款" in srt_name or "混剪" in srt_name:
+                    mixed_cut_srts.append(srt_path)
+
+        # 智能处理：如果只有1个混剪SRT，自动使用它（无需询问）
+        if not all_srts and len(mixed_cut_srts) == 0:
+            # 检查是否有包含"混剪"的SRT
+            for i in range(self.srt_list.count()):
+                item = self.srt_list.item(i)
+                srt_path = item.data(Qt.ItemDataRole.UserRole)
+                srt_name = os.path.basename(srt_path)
+                if "混剪" in srt_name:
+                    mixed_cut_srts.append(srt_path)
+
+            # 如果只有1个混剪SRT，自动使用
+            if len(mixed_cut_srts) == 1:
+                all_srts = mixed_cut_srts
+                log_handler.log("info", f"自动识别混剪SRT: {os.path.basename(mixed_cut_srts[0])}")
+                self.statusBar().showMessage(f"✅ 自动识别混剪SRT: {os.path.basename(mixed_cut_srts[0])}", 3000)
+            else:
+                # 如果没有混剪SRT，询问是否使用所有SRT
+                reply = QMessageBox.question(
+                    self,
+                    "确认使用",
+                    f"没有找到爆款SRT文件（*_viral.srt 或 混剪爆款*.srt），是否使用所有SRT文件进行混剪？",
+                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                    QMessageBox.StandardButton.No
+                )
+                if reply == QMessageBox.StandardButton.Yes:
+                    for i in range(self.srt_list.count()):
+                        item = self.srt_list.item(i)
+                        srt_path = item.data(Qt.ItemDataRole.UserRole)
+                        all_srts.append(srt_path)
+                else:
+                    return
+
+        # 智能处理混剪SRT：如果只有1个混剪SRT，询问用户是否使用它
+        is_single_mixed_cut = False
+        if len(all_srts) == 1 and len(all_videos) > 1:
+            srt_name = os.path.basename(all_srts[0])
+            if "混剪" in srt_name or "混剪爆款" in srt_name:
+                # 询问用户是否使用混剪SRT
+                reply = QMessageBox.question(
+                    self,
+                    "确认使用混剪SRT",
+                    f"检测到1个混剪SRT文件：\n{srt_name}\n\n"
+                    f"当前有{len(all_videos)}个视频文件。\n\n"
+                    f"混剪SRT通常是从多个视频中提取精华片段生成的，\n"
+                    f"是否使用这个混剪SRT创建工程文件？\n\n"
+                    f"提示：混剪SRT会自动匹配对应的视频片段。",
+                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                    QMessageBox.StandardButton.Yes
+                )
+                if reply == QMessageBox.StandardButton.Yes:
+                    is_single_mixed_cut = True
+                    log_handler.log("info", f"用户确认使用混剪SRT: {srt_name}")
+                else:
+                    self.statusBar().showMessage("用户取消使用混剪SRT")
+                    return
+
+        # 检查视频和SRT数量是否匹配（混剪SRT除外）
+        if not is_single_mixed_cut and len(all_videos) != len(all_srts):
+            QMessageBox.warning(
                 self,
-                "确认使用",
-                f"所选SRT文件 '{srt_name}' 不是爆款SRT，确定要使用吗?",
-                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-                QMessageBox.StandardButton.No
+                "警告",
+                (f"视频数量({len(all_videos)})与SRT数量({len(all_srts)})不匹配！\n\n"
+                 f"多视频混剪需要每个视频对应一个SRT文件。\n\n"
+                 f"提示：如果您使用的是混剪SRT（从多个视频提取精华），\n"
+                 f"请确保SRT文件名包含\"混剪\"或\"混剪爆款\"关键词。")
             )
-            if reply != QMessageBox.StandardButton.Yes:
-                return
+            return
+
         # 显示处理中
-        self.statusBar().showMessage(f"正在生成工程文件...")
-        log_handler.log("info", f"开始生成工程文件: 视频={video_path}, 字幕={srt_path}")
+        if is_single_mixed_cut:
+            self.statusBar().showMessage(f"正在生成混剪工程文件（使用混剪SRT）...")
+            log_handler.log("info", f"开始生成混剪工程: {len(all_videos)}个视频, 1个混剪SRT")
+        else:
+            self.statusBar().showMessage(f"正在生成多视频混剪工程文件...")
+            log_handler.log("info", f"开始生成多视频混剪工程: {len(all_videos)}个视频, {len(all_srts)}个SRT")
+
         # 重置进度条
         self.process_progress_bar.setValue(0)
-        # 询问保存路径
-        video_name = os.path.splitext(os.path.basename(video_path))[0]
-        default_name = f"{video_name}_工程文件.json"
-        save_path, _ = QFileDialog.getSaveFileName(
-            self, "保存工程文件", default_name, "工程文件 (*.json)"
-        )
-        if not save_path:
-            self.statusBar().showMessage("工程文件生成已取消")
-            log_handler.log("info", "用户取消工程文件生成")
-            return
+
         try:
-            # 生成工程文件数据
-            project_data = self._build_project_data(video_path, srt_path)
-            # 保存工程文件
-            with open(save_path, 'w', encoding='utf-8') as f:
-                json.dump(project_data, f, ensure_ascii=False, indent=2)
+            # 生成多视频混剪工程文件数据
+            self.process_progress_bar.setValue(20)
+            project_data = self._build_multi_video_project_data(all_videos, all_srts)
+
             # 保存到实例变量，供导出功能使用
-            self.last_project_file = save_path
             self.last_project_data = project_data
-            # 更新进度条
-            self.process_progress_bar.setValue(100)
-            # 成功
-            self.statusBar().showMessage(f"工程文件生成成功: {os.path.basename(save_path)}")
-            log_handler.log("info", f"工程文件生成成功: {save_path}")
-            QMessageBox.information(
-                self,
-                "成功",
-                f"工程文件已生成并保存到:\n{save_path}\n\n"
-                f"现在可以点击导出到剪映按钮将项目导出到剪映进行编辑。"
-            )
+
+            # 直接调用导出到剪映功能
+            self.process_progress_bar.setValue(40)
+            self.statusBar().showMessage("正在导出到剪映...")
+
+            # 调用导出功能（自动生成剪映草稿）
+            self._export_to_jianying_direct(project_data, all_videos, all_srts)
+
         except Exception as e:
             # 失败
             self.process_progress_bar.setValue(0)
             self.statusBar().showMessage("工程文件生成失败")
             log_handler.log("error", f"工程文件生成失败: {str(e)}")
             QMessageBox.critical(self, "错误", f"工程文件生成失败: {str(e)}")
-    def _build_project_data(self, video_path: str, srt_path: str):
-        """构建工程文件数据"""
-        try:
 
+    def _export_to_jianying_direct(self, project_data, all_videos, all_srts):
+        """直接导出到剪映（一键完成）"""
+        try:
+            # 导入剪映导出模块
+            from src.exporters.jianying_draft_generator import JianyingDraftGenerator
+            from src.exporters.jianying_path_detector import get_detector
+
+            # 检测剪映草稿目录
+            self.statusBar().showMessage("正在检测剪映草稿目录...")
+            self.process_progress_bar.setValue(50)
+
+            detector = get_detector()
+            draft_dir = detector.detect_draft_directory()
+
+            if not draft_dir:
+                # 无法自动检测，询问用户是否手动选择
+                reply = QMessageBox.question(
+                    self,
+                    "无法检测剪映草稿目录",
+                    "无法自动检测到剪映草稿目录。\n\n"
+                    "这可能是因为：\n"
+                    "1. 剪映未安装\n"
+                    "2. 剪映安装在非标准位置\n"
+                    "3. 草稿目录已被修改\n\n"
+                    "是否手动选择剪映草稿目录？",
+                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+                )
+
+                if reply == QMessageBox.StandardButton.Yes:
+                    draft_dir = QFileDialog.getExistingDirectory(
+                        self,
+                        "选择剪映草稿目录",
+                        os.path.expanduser("~")
+                    )
+
+                    if draft_dir:
+                        try:
+                            detector.set_draft_directory(draft_dir)
+                            log_handler.log("info", f"用户手动设置草稿目录: {draft_dir}")
+                        except Exception as e:
+                            QMessageBox.critical(
+                                self,
+                                "错误",
+                                f"设置草稿目录失败：{str(e)}"
+                            )
+                            return
+                    else:
+                        self.statusBar().showMessage("导出已取消")
+                        return
+                else:
+                    self.statusBar().showMessage("导出已取消")
+                    return
+
+            log_handler.log("info", f"检测到剪映草稿目录: {draft_dir}")
+
+            # 生成剪映草稿
+            self.statusBar().showMessage("正在生成剪映草稿...")
+            self.process_progress_bar.setValue(60)
+
+            # 创建剪映草稿生成器
+            generator = JianyingDraftGenerator(width=1920, height=1080, fps=30)
+
+            # 获取场景数据
+            scenes = project_data.get('scenes', [])
+            if not scenes:
+                QMessageBox.critical(self, "错误", "项目中没有场景数据")
+                return
+
+            log_handler.log("info", f"开始处理{len(scenes)}个场景...")
+
+            # 🔧 修复：所有视频片段使用同一个轨道（混剪模式）
+            from src.exporters.jianying_track_manager import TrackType
+            main_video_track = generator.track_manager.create_track(TrackType.VIDEO)
+            log_handler.log("info", "创建主视频轨道（所有片段将在此轨道上连续播放）")
+
+            # 添加所有视频片段到同一个轨道
+            for i, scene in enumerate(scenes):
+                video_path = scene.get('video_path')
+                source_start = scene.get('source_start', 0.0)
+                source_end = scene.get('source_end', 0.0)
+                timeline_start = scene.get('timeline_start', 0.0)
+
+                if not video_path or not os.path.exists(video_path):
+                    log_handler.log("warning", f"跳过场景{scene.get('id')}: 视频文件不存在")
+                    continue
+
+                # 添加视频片段到主轨道
+                generator.add_video_segment(
+                    video_path=video_path,
+                    start_time=source_start,
+                    end_time=source_end,
+                    target_start=timeline_start,
+                    speed=1.0,
+                    volume=1.0,
+                    track=main_video_track  # 🔧 所有片段使用同一轨道
+                )
+
+                log_handler.log("debug", f"添加片段 {i+1}/{len(scenes)}: {os.path.basename(video_path)} [{source_start:.2f}s-{source_end:.2f}s] -> 时间轴[{timeline_start:.2f}s]")
+
+                # 注意：字幕将在剪映中手动添加，或使用剪映的自动字幕功能
+
+                # 更新进度
+                if i % 10 == 0:
+                    progress = 60 + int((i / len(scenes)) * 30)
+                    self.process_progress_bar.setValue(progress)
+                    QApplication.processEvents()
+
+            # 生成草稿文件夹
+            self.statusBar().showMessage("正在保存剪映草稿...")
+            self.process_progress_bar.setValue(90)
+
+            # 生成项目名称
+            project_name = f"混剪工程_{int(time.time())}"
+            draft_path = generator.create_draft_folder(draft_dir, project_name)
+
+            if not draft_path:
+                QMessageBox.critical(self, "错误", "创建剪映草稿失败")
+                return
+
+            # 保存草稿路径到实例变量（供"导入到剪映"按钮使用）
+            self.last_draft_path = draft_path
+            self.last_draft_detector = detector
+
+            # 完成
+            self.process_progress_bar.setValue(100)
+            self.statusBar().showMessage("剪映工程创建成功！")
+            log_handler.log("info", f"剪映工程创建成功: {draft_path}")
+
+            # 显示成功消息（不启动剪映）
+            QMessageBox.information(
+                self,
+                "成功",
+                f"剪映工程已创建成功！\n\n"
+                f"视频数量: {len(all_videos)}\n"
+                f"SRT数量: {len(all_srts)}\n"
+                f"总片段数: {len(scenes)}\n\n"
+                f"草稿位置:\n{draft_path}\n\n"
+                f"💡 提示：请点击\"📱 导入到剪映\"按钮启动剪映。"
+            )
+
+        except Exception as e:
+            self.process_progress_bar.setValue(0)
+            self.statusBar().showMessage("导出失败")
+            # 🔧 修复：移除exc_info参数，使用traceback记录完整错误信息
+            import traceback
+            error_msg = f"导出到剪映失败: {e}\n{traceback.format_exc()}"
+            log_handler.log("error", error_msg)
+            QMessageBox.critical(self, "错误", f"导出到剪映失败：{str(e)}")
+
+    def _build_project_data(self, video_path: str, srt_path: str):
+        """构建工程文件数据（单视频）"""
+        try:
             # 读取SRT文件
             with open(srt_path, 'r', encoding='utf-8') as f:
-
                 srt_content = f.read()
             # 解析SRT内容
             scenes = self._parse_srt_to_scenes(srt_content, video_path)
             # 构建工程数据
             project_data = {
-
                 "project_id": f"visionai_project_{int(time.time())}",
                 "title": f"VisionAI工程 - {os.path.splitext(os.path.basename(video_path))[0]}",
                 "created_time": time.strftime("%Y-%m-%d %H:%M:%S"),
@@ -10643,36 +12882,354 @@ CPU模式下处理速度可能较慢，但功能完整。
             }
             return project_data
         except Exception as e:
-
             log_handler.log("error", f"构建工程数据失败: {e}")
             raise
 
-    def _parse_srt_to_scenes(self, srt_content: str, video_path: str):
+    def _build_multi_video_project_data(self, video_paths: list, srt_paths: list):
+        """构建多视频混剪工程文件数据
 
-        """解析SRT内容为场景数据"""
+        Args:
+            video_paths: 视频文件路径列表
+            srt_paths: SRT文件路径列表（可以是混剪SRT或原始SRT）
+
+        Returns:
+            工程数据字典
+        """
+        try:
+            all_scenes = []
+            current_timeline_position = 0.0  # 当前时间轴位置（秒）
+
+            # 🔧 修复：检测是否为混剪SRT（包含#ORIGINAL元数据）
+            is_remix_srt = False
+            if len(srt_paths) == 1:
+                # 只有一个SRT文件，可能是混剪SRT
+                with open(srt_paths[0], 'r', encoding='utf-8') as f:
+                    first_lines = f.read(1000)
+                    if '#ORIGINAL:' in first_lines:
+                        is_remix_srt = True
+                        log_handler.log("info", "检测到混剪SRT，将根据original_episode字段关联视频")
+
+            if is_remix_srt:
+                # 混剪SRT模式：根据original_episode字段将字幕关联到对应的视频
+                srt_path = srt_paths[0]
+                with open(srt_path, 'r', encoding='utf-8') as f:
+                    srt_content = f.read()
+
+                # 解析SRT内容（不指定video_path）
+                scenes = self._parse_srt_to_scenes_remix(srt_content, video_paths)
+
+                # 调整场景的时间轴位置
+                for scene in scenes:
+                    scene_duration = scene["duration"]
+
+                    # 设置全局时间轴位置
+                    scene["timeline_start"] = current_timeline_position
+                    scene["timeline_end"] = current_timeline_position + scene_duration
+
+                    all_scenes.append(scene)
+
+                    # 更新时间轴位置
+                    current_timeline_position += scene_duration
+
+                log_handler.log("info", f"混剪SRT添加了{len(scenes)}个场景")
+
+            else:
+                # 原始SRT模式：每个视频对应一个SRT
+                for video_idx, (video_path, srt_path) in enumerate(zip(video_paths, srt_paths)):
+                    log_handler.log("info", f"处理第{video_idx+1}/{len(video_paths)}个视频: {os.path.basename(video_path)}")
+
+                    # 读取SRT文件
+                    with open(srt_path, 'r', encoding='utf-8') as f:
+                        srt_content = f.read()
+
+                    # 解析SRT内容
+                    scenes = self._parse_srt_to_scenes(srt_content, video_path)
+
+                    # 调整场景的时间轴位置
+                    for scene in scenes:
+                        # 保留原始的source_start和source_end（用于从源视频提取）
+                        # 但调整start_time和end_time到全局时间轴
+                        scene_duration = scene["duration"]
+
+                        # 更新场景ID，包含视频索引
+                        scene["scene_id"] = f"video{video_idx+1}_scene_{scene['id'].split('_')[-1]}"
+                        scene["id"] = scene["scene_id"]
+
+                        # 设置全局时间轴位置
+                        scene["timeline_start"] = current_timeline_position
+                        scene["timeline_end"] = current_timeline_position + scene_duration
+
+                        # 添加视频来源信息
+                        scene["video_index"] = video_idx
+                        scene["video_name"] = os.path.basename(video_path)
+                        scene["srt_name"] = os.path.basename(srt_path)
+
+                        all_scenes.append(scene)
+
+                        # 更新时间轴位置
+                        current_timeline_position += scene_duration
+
+                    log_handler.log("info", f"视频{video_idx+1}添加了{len(scenes)}个场景")
+
+            # 🔧 新增：合并同一视频中连续的片段，减少碎片化
+            all_scenes = self._merge_continuous_scenes(all_scenes)
+            
+            # 重新计算时间轴位置
+            current_timeline_position = 0.0
+            for scene in all_scenes:
+                scene_duration = scene["duration"]
+                scene["timeline_start"] = current_timeline_position
+                scene["timeline_end"] = current_timeline_position + scene_duration
+                current_timeline_position += scene_duration
+
+            # 构建工程数据
+            project_data = {
+                "project_id": f"visionai_multi_project_{int(time.time())}",
+                "title": f"VisionAI多视频混剪工程 - {len(video_paths)}个视频",
+                "created_time": time.strftime("%Y-%m-%d %H:%M:%S"),
+                "project_type": "multi_video_mix",
+                "source_videos": video_paths,
+                "source_srts": srt_paths,
+                "scenes": all_scenes,
+                "metadata": {
+                    "total_videos": len(video_paths),
+                    "total_srts": len(srt_paths),
+                    "total_scenes": len(all_scenes),
+                    "total_duration": current_timeline_position,
+                    "video_formats": [os.path.splitext(vp)[1] for vp in video_paths],
+                    "srt_encoding": "utf-8"
+                },
+                "export_settings": {
+                    "target_format": "jianying",
+                    "resolution": "1920x1080",
+                    "fps": 30
+                }
+            }
+
+            log_handler.log("info", f"多视频混剪工程数据构建完成: {len(all_scenes)}个场景, 总时长{current_timeline_position:.2f}秒")
+            return project_data
+
+        except Exception as e:
+            log_handler.log("error", f"构建多视频混剪工程数据失败: {e}")
+            raise
+
+    def _parse_srt_to_scenes_remix(self, srt_content: str, video_paths: list):
+        """解析混剪SRT内容为场景数据（根据original_episode关联视频）
+
+        Args:
+            srt_content: SRT文件内容
+            video_paths: 视频文件路径列表（按集数排序）
+
+        Returns:
+            场景列表
+        """
         import re
         scenes = []
-        # SRT格式正则表达式
+
+        # SRT格式正则表达式（包含可选的#ORIGINAL注释）
         srt_pattern = r'(\d+)\n([\d:,]+) --> ([\d:,]+)\n(.*?)(?=\n\d+\n|\n*$)'
         matches = re.findall(srt_pattern, srt_content, re.DOTALL)
+
         for match in matches:
-            scene_id, start_time_str, end_time_str, text = match
+            scene_id, start_time_str, end_time_str, text_block = match
+
+            # 分离文本和元数据
+            lines = text_block.strip().split('\n')
+            text_lines = []
+            original_metadata = {}
+
+            for line in lines:
+                if line.startswith('#ORIGINAL:'):
+                    # 解析原始时间码信息
+                    # 格式: #ORIGINAL: episode=1, index=5, start=00:01:23,456, end=00:01:26,789
+                    metadata_str = line.replace('#ORIGINAL:', '').strip()
+                    # 🔧 修复：使用更智能的解析方式，避免时间码中的逗号被错误分割
+                    # 匹配 key=value 模式，value可以包含冒号和逗号（时间码格式）
+                    kv_pattern = r'(\w+)=([^,\s]+(?:,\d{3})?)'
+                    kv_matches = re.findall(kv_pattern, metadata_str)
+                    for key, value in kv_matches:
+                        original_metadata[key.strip()] = value.strip()
+                else:
+                    text_lines.append(line)
+
+            text = ' '.join(text_lines).strip()
+
             # 转换时间格式
             start_time = self._time_str_to_seconds(start_time_str)
             end_time = self._time_str_to_seconds(end_time_str)
+
+            # 🔧 关键修复：根据original_episode字段确定video_path
+            episode_num = int(original_metadata.get('episode', 1))
+
+            # 确定视频路径（episode从1开始，列表索引从0开始）
+            if 1 <= episode_num <= len(video_paths):
+                video_path = video_paths[episode_num - 1]
+            else:
+                # 如果episode超出范围，使用第一个视频
+                log_handler.log("warning", f"场景{scene_id}的episode={episode_num}超出范围，使用第1个视频")
+                video_path = video_paths[0]
+
+            # 使用原始时间码（如果有）
+            if 'start' in original_metadata and 'end' in original_metadata:
+                source_start = self._time_str_to_seconds(original_metadata['start'])
+                source_end = self._time_str_to_seconds(original_metadata['end'])
+            else:
+                # 如果没有原始时间码，使用当前时间码
+                log_handler.log("warning", f"场景{scene_id}缺少原始时间码，使用当前时间码")
+                source_start = start_time
+                source_end = end_time
+
+            # 🔧 修复：使用原视频的时长，而不是混剪SRT的时长
+            source_duration = source_end - source_start
+
             scene = {
                 "scene_id": f"scene_{scene_id}",
                 "id": f"scene_{scene_id}",
-                "start_time": start_time,
-                "end_time": end_time,
+                "start_time": start_time,  # 混剪SRT的时间轴（仅用于参考）
+                "end_time": end_time,      # 混剪SRT的时间轴（仅用于参考）
+                "duration": source_duration,  # 🔧 使用原视频的时长
+                "text": text,
+                "video_path": video_path,  # 🔧 根据episode确定的视频路径
+                "source_start": source_start,  # 原视频的开始时间
+                "source_end": source_end,      # 原视频的结束时间
+                "original_episode": episode_num,
+                "original_index": int(original_metadata.get('index', 0)) if 'index' in original_metadata else None
+            }
+            scenes.append(scene)
+
+        log_handler.log("info", f"解析混剪SRT完成：{len(scenes)}个场景，涉及{len(set(s['original_episode'] for s in scenes))}集视频")
+        return scenes
+
+    def _parse_srt_to_scenes(self, srt_content: str, video_path: str):
+
+        """解析SRT内容为场景数据（支持原始时间码信息）"""
+        import re
+        scenes = []
+        # SRT格式正则表达式（包含可选的#ORIGINAL注释）
+        srt_pattern = r'(\d+)\n([\d:,]+) --> ([\d:,]+)\n(.*?)(?=\n\d+\n|\n*$)'
+        matches = re.findall(srt_pattern, srt_content, re.DOTALL)
+
+        for match in matches:
+            scene_id, start_time_str, end_time_str, text_block = match
+
+            # 分离文本和元数据
+            lines = text_block.strip().split('\n')
+            text_lines = []
+            original_metadata = {}
+
+            for line in lines:
+                if line.startswith('#ORIGINAL:'):
+                    # 解析原始时间码信息
+                    # 格式: #ORIGINAL: episode=1, index=5, start=00:01:23,456, end=00:01:26,789
+                    metadata_str = line.replace('#ORIGINAL:', '').strip()
+                    # 🔧 修复：使用更智能的解析方式，避免时间码中的逗号被错误分割
+                    # 匹配 key=value 模式，value可以包含冒号和逗号（时间码格式）
+                    kv_pattern = r'(\w+)=([^,\s]+(?:,\d{3})?)'
+                    kv_matches = re.findall(kv_pattern, metadata_str)
+                    for key, value in kv_matches:
+                        original_metadata[key.strip()] = value.strip()
+                else:
+                    text_lines.append(line)
+
+            text = ' '.join(text_lines).strip()
+
+            # 转换时间格式
+            start_time = self._time_str_to_seconds(start_time_str)
+            end_time = self._time_str_to_seconds(end_time_str)
+
+            # 🔧 新增：使用原始时间码（如果有）
+            if 'start' in original_metadata and 'end' in original_metadata:
+                source_start = self._time_str_to_seconds(original_metadata['start'])
+                source_end = self._time_str_to_seconds(original_metadata['end'])
+            else:
+                # 如果没有原始时间码，使用当前时间码
+                source_start = start_time
+                source_end = end_time
+
+            scene = {
+                "scene_id": f"scene_{scene_id}",
+                "id": f"scene_{scene_id}",
+                "start_time": start_time,  # 新时间轴的时间
+                "end_time": end_time,      # 新时间轴的时间
                 "duration": end_time - start_time,
-                "text": text.strip().replace('\n', ' '),
+                "text": text,
                 "video_path": video_path,
-                "source_start": start_time,
-                "source_end": end_time
+                "source_start": source_start,  # 原视频的开始时间
+                "source_end": source_end,      # 原视频的结束时间
+                "original_episode": int(original_metadata.get('episode', 0)) if 'episode' in original_metadata else None,
+                "original_index": int(original_metadata.get('index', 0)) if 'index' in original_metadata else None
             }
             scenes.append(scene)
         return scenes
+
+    def _merge_continuous_scenes(self, scenes: list, gap_threshold: float = 0.5) -> list:
+        """合并同一视频中连续的片段，减少碎片化
+        
+        Args:
+            scenes: 场景列表
+            gap_threshold: 允许的最大间隙（秒），小于此值的连续片段将被合并
+            
+        Returns:
+            合并后的场景列表
+        """
+        if not scenes or len(scenes) <= 1:
+            return scenes
+        
+        merged_scenes = []
+        current_scene = None
+        
+        for scene in scenes:
+            if current_scene is None:
+                # 第一个场景
+                current_scene = scene.copy()
+                current_scene["merged_texts"] = [scene.get("text", "")]
+                continue
+            
+            # 检查是否可以合并：
+            # 1. 同一个视频文件
+            # 2. 同一集（original_episode相同）
+            # 3. 原视频中的时间是连续的（间隙小于阈值）
+            same_video = current_scene.get("video_path") == scene.get("video_path")
+            same_episode = current_scene.get("original_episode") == scene.get("original_episode")
+            
+            # 计算原视频中的时间间隙
+            current_source_end = current_scene.get("source_end", 0)
+            next_source_start = scene.get("source_start", 0)
+            time_gap = next_source_start - current_source_end
+            
+            is_continuous = same_video and same_episode and (0 <= time_gap <= gap_threshold)
+            
+            if is_continuous:
+                # 合并场景：扩展当前场景的结束时间
+                current_scene["source_end"] = scene.get("source_end", 0)
+                current_scene["end_time"] = scene.get("end_time", 0)
+                current_scene["duration"] = current_scene["source_end"] - current_scene["source_start"]
+                current_scene["merged_texts"].append(scene.get("text", ""))
+                # 更新场景ID
+                current_scene["scene_id"] = f"merged_{current_scene['scene_id']}"
+            else:
+                # 不能合并，保存当前场景并开始新场景
+                # 合并文本
+                current_scene["text"] = " ".join(current_scene["merged_texts"])
+                del current_scene["merged_texts"]
+                merged_scenes.append(current_scene)
+                
+                current_scene = scene.copy()
+                current_scene["merged_texts"] = [scene.get("text", "")]
+        
+        # 添加最后一个场景
+        if current_scene is not None:
+            current_scene["text"] = " ".join(current_scene["merged_texts"])
+            del current_scene["merged_texts"]
+            merged_scenes.append(current_scene)
+        
+        original_count = len(scenes)
+        merged_count = len(merged_scenes)
+        if original_count != merged_count:
+            log_handler.log("info", f"片段合并完成: {original_count}个 -> {merged_count}个 (减少{original_count - merged_count}个碎片)")
+        
+        return merged_scenes
+
     def _time_str_to_seconds(self, time_str: str) -> float:
         """将时间字符串转换为秒数"""
         # 格式: HH:MM:SS,mmm
@@ -10684,24 +13241,54 @@ CPU模式下处理速度可能较慢，但功能完整。
 
         return hours * 3600 + minutes * 60 + seconds
 
+    def _convert_scenes_to_segments(self, scenes: list) -> list:
+        """将场景数据转换为片段数据（用于兼容旧的导出逻辑）
+
+        Args:
+            scenes: 场景列表
+
+        Returns:
+            片段列表
+        """
+        segments = []
+        for scene in scenes:
+            segment = {
+                "source_file": scene.get("video_path", ""),
+                "start_time": scene.get("source_start", 0.0),
+                "end_time": scene.get("source_end", 0.0),
+                "duration": scene.get("duration", 0.0),
+                "text": scene.get("text", ""),
+                "speed": 1.0,
+                "volume": 1.0
+            }
+            segments.append(segment)
+        return segments
+
     def export_to_jianying(self):
-        """导出到剪映（智能版：自动检测路径并导入）"""
+        """导出到剪映（启动剪映应用）"""
         try:
-            # 检查是否有生成的工程文件
-            if not hasattr(self, 'last_project_file') or not self.last_project_file:
-                QMessageBox.warning(
+            # 检查是否有生成的草稿
+            if not hasattr(self, 'last_draft_path') or not self.last_draft_path:
+                QMessageBox.information(
                     self,
-                    "提示",
-                    "请先点击生成工程文件按钮生成项目数据,然后再导出到剪映"
+                    "操作提示",
+                    "📋 正确的工作流程:\n\n"
+                    "步骤1: 添加多个视频到视频池\n"
+                    "步骤2: 添加对应的SRT字幕文件\n"
+                    "步骤3: 选中SRT文件,点击'AI优化字幕'\n"
+                    "步骤4: 点击'📦 创建剪映工程'生成混剪工程 ⬅️ 当前缺少\n"
+                    "步骤5: 点击'📱 导入到剪映'启动剪映\n\n"
+                    "💡 提示: 请先点击'📦 创建剪映工程'按钮生成草稿"
                 )
                 return
 
-            # 检查工程文件是否存在
-            if not os.path.exists(self.last_project_file):
+            # 检查草稿文件夹是否存在
+            if not os.path.exists(self.last_draft_path):
                 QMessageBox.warning(
                     self,
                     "错误",
-                    "工程文件不存在，请重新生成工程文件"
+                    f"草稿文件夹不存在，请重新生成工程\n\n"
+                    f"路径: {self.last_draft_path}"
                 )
                 return
 
@@ -10773,85 +13360,10 @@ CPU模式下处理速度可能较慢，但功能完整。
 
             log_handler.log("info", f"检测到剪映草稿目录: {draft_dir}")
 
-            # 执行导出
-            self.statusBar().showMessage("正在生成剪映草稿...")
-            self.process_progress_bar.setValue(40)
-
-            # 使用真实的JianyingProExporter
-            if JianyingProExporter is None:
-                QMessageBox.critical(self, "错误", "剪映导出器未安装，请检查安装")
-                return
-
-            # 创建导出器实例
-            exporter = JianyingProExporter()
-
-            # 生成项目名称
-            project_name = os.path.splitext(os.path.basename(self.last_project_file))[0]
-            project_name = f"{project_name}_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-
-            # 创建临时输出目录
-            temp_output_dir = os.path.join("data", "output", "temp_jianying_drafts")
-            os.makedirs(temp_output_dir, exist_ok=True)
-
-            temp_draft_path = os.path.join(temp_output_dir, project_name)
-            os.makedirs(temp_draft_path, exist_ok=True)
-
-            # 准备导出数据
-            if not hasattr(self, 'last_project_data') or not self.last_project_data:
-                QMessageBox.critical(self, "错误", "项目数据不存在，请重新生成工程文件")
-                return
-
-            # 导出草稿（使用JianyingProExporter的export方法）
-            try:
-                # 获取视频片段数据
-                segments = self.last_project_data.get('segments', [])
-                if not segments:
-                    QMessageBox.critical(self, "错误", "项目中没有视频片段数据")
-                    return
-
-                # 调用导出方法
-                result = exporter.export(
-                    segments=segments,
-                    output_path=temp_draft_path,
-                    project_name=project_name
-                )
-
-                if not result:
-                    self.process_progress_bar.setValue(0)
-                    self.statusBar().showMessage("导出失败")
-                    QMessageBox.critical(self, "错误", "生成剪映草稿失败，请检查日志")
-                    return
-
-            except Exception as e:
-                self.process_progress_bar.setValue(0)
-                self.statusBar().showMessage("导出失败")
-                QMessageBox.critical(self, "错误", f"导出失败: {str(e)}")
-                log_handler.log("error", f"JianyingProExporter导出失败: {e}", exc_info=True)
-                return
-
-            self.process_progress_bar.setValue(60)
-
-            # 复制到剪映草稿目录
-            self.statusBar().showMessage("正在复制草稿到剪映目录...")
-
-            target_draft_path = helper.copy_draft_to_jianying(temp_draft_path, project_name)
-
-            if not target_draft_path:
-                self.process_progress_bar.setValue(0)
-                self.statusBar().showMessage("复制失败")
-                QMessageBox.critical(self, "错误", "复制草稿到剪映目录失败")
-                return
-
+            # 🔧 修复：草稿已经在"创建剪映工程"时生成，这里只需要启动剪映
+            # 不再重新生成草稿，避免重复
+            log_handler.log("info", f"草稿已存在，准备启动剪映: {self.last_draft_path}")
             self.process_progress_bar.setValue(80)
-            log_handler.log("info", f"草稿已复制到: {target_draft_path}")
-
-            # 清理临时文件
-            try:
-                import shutil
-                shutil.rmtree(temp_draft_path)
-                log_handler.log("info", "临时草稿文件已清理")
-            except Exception as e:
-                log_handler.log("warning", f"清理临时文件失败: {e}")
 
             # 启动剪映
             self.statusBar().showMessage("正在启动剪映...")
@@ -10865,10 +13377,9 @@ CPU模式下处理速度可能较慢，但功能完整。
                     self,
                     "导出成功",
                     f"✅ 草稿已成功导入到剪映！\n\n"
-                    f"📁 草稿位置：{target_draft_path}\n\n"
+                    f"📁 草稿位置：{self.last_draft_path}\n\n"
                     f"🎬 剪映已自动启动\n\n"
-                    f"请在剪映的'本地草稿'中查找项目：\n"
-                    f"项目名称：{project_name}"
+                    f"请在剪映的'本地草稿'中查找项目"
                 )
             else:
                 self.statusBar().showMessage("导出成功")
@@ -10876,22 +13387,23 @@ CPU模式下处理速度可能较慢，但功能完整。
                     self,
                     "导出成功",
                     f"✅ 草稿已成功导入到剪映！\n\n"
-                    f"📁 草稿位置：{target_draft_path}\n\n"
+                    f"📁 草稿位置：{self.last_draft_path}\n\n"
                     f"⚠️ 无法自动启动剪映，请手动打开剪映\n\n"
-                    f"在剪映的'本地草稿'中查找项目：\n"
-                    f"项目名称：{project_name}\n\n"
                     f"是否打开草稿文件夹？",
                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
                 )
 
                 if reply == QMessageBox.StandardButton.Yes:
-                    self._open_file_folder(target_draft_path)
+                    self._open_file_folder(self.last_draft_path)
 
         except Exception as e:
             self.process_progress_bar.setValue(0)
             self.statusBar().showMessage("导出失败")
             QMessageBox.critical(self, "错误", f"导出过程中发生错误：{str(e)}")
-            log_handler.log("error", f"导出到剪映失败: {e}", exc_info=True)
+            # 🔧 修复：移除exc_info参数，使用traceback记录完整错误信息
+            import traceback
+            error_msg = f"导出到剪映失败: {e}\n{traceback.format_exc()}"
+            log_handler.log("error", error_msg)
     def _launch_jianying_app(self, project_file_path: str) -> bool:
         """尝试自动启动剪映应用"""
         try:
@@ -11127,8 +13639,8 @@ CPU模式下处理速度可能较慢，但功能完整。
             if not self.is_processing:
 
                 QMessageBox.warning(
-                    self, 
-                    "系统内存不足", 
+                    self,
+                    "系统内存不足",
                     "检测到系统内存严重不足，已进行紧急资源释放。\n\n建议保存工作并重启应用程序。"
                 )
             # 执行紧急清理
@@ -11390,8 +13902,8 @@ CPU模式下处理速度可能较慢，但功能完整。
                 meta.update(metadata)
             # 存入缓存
             self.disk_cache_manager.put(
-                cache_type, 
-                cache_key, 
+                cache_type,
+                cache_key,
                 file_data,
                 meta
             )
@@ -11455,7 +13967,7 @@ CPU模式下处理速度可能较慢，但功能完整。
             # 为文本输入字段应用优化
             input_fields = [
 
-                widget for widget in self.findChildren(QLineEdit) 
+                widget for widget in self.findChildren(QLineEdit)
                 if hasattr(widget, 'objectName') and widget.objectName()
             ]
             for field in input_fields:
@@ -11464,7 +13976,7 @@ CPU模式下处理速度可能较慢，但功能完整。
             # 为数字输入字段应用优化
             number_fields = [
 
-                widget for widget in self.findChildren(QSpinBox) 
+                widget for widget in self.findChildren(QSpinBox)
                 if hasattr(widget, 'objectName') and widget.objectName()
             ]
             for field in number_fields:
@@ -11473,7 +13985,7 @@ CPU模式下处理速度可能较慢，但功能完整。
             # 为所有滑块应用优化
             slider_fields = [
 
-                widget for widget in self.findChildren(QSlider) 
+                widget for widget in self.findChildren(QSlider)
                 if hasattr(widget, 'objectName') and widget.objectName()
             ]
             for field in slider_fields:
@@ -12245,21 +14757,31 @@ class TechDialog(QDialog):
         <div style="margin: 15px; line-height: 1.6;">
             <h3 style="color: #1a5276; border-bottom: 2px solid #3498db; padding-bottom: 5px;">🤖 双模型AI架构</h3>
             <div style="margin: 15px 0; padding: 12px; background-color: #f8f9fa; border-left: 4px solid #3498db;">
-                <h4 style="color: #2c3e50; margin-top: 0;">🇺🇸 Mistral系列 (英文处理)</h4>
-
+                <h4 style="color: #2c3e50; margin-top: 0;">🇺🇸 Mistral系列 (英文处理 - 本地模式)</h4>
                 <p><strong>模型规模：</strong>7B / 12B-Nemo / 24B-Small / Large-2 多规模支持</p>
                 <p><strong>量化策略：</strong>INT4/INT8多级量化，最低3GB内存运行</p>
                 <p><strong>智能推荐：</strong>根据设备配置自动选择最合适的模型规模</p>
                 <p><strong>应用场景：</strong>英文剧情分析、情感识别、字幕重构</p>
             </div>
             <div style="margin: 15px 0; padding: 12px; background-color: #f8f9fa; border-left: 4px solid #e74c3c;">
-                <h4 style="color: #2c3e50; margin-top: 0;">🇨🇳 Qwen2.5系列 (中文处理)</h4>
-
+                <h4 style="color: #2c3e50; margin-top: 0;">🇨🇳 Qwen3系列 (中文处理 - 本地模式)</h4>
                 <p><strong>模型规模：</strong>0.5B / 1.5B / 3B / 7B / 14B / 32B 多规模支持</p>
                 <p><strong>量化策略：</strong>INT4/INT8智能量化，最低300MB内存运行</p>
                 <p><strong>智能推荐：</strong>根据设备配置自动选择最合适的模型规模</p>
-                <p><strong>应用场景：</strong>中文剧情分析、情感识别、字幕重构</p>
                 <p><strong>应用场景：</strong>中文剧情分析、文化适配、本土化内容生成</p>
+            </div>
+            <h3 style="color: #1a5276; border-bottom: 2px solid #3498db; padding-bottom: 5px; margin-top: 25px;">☁️ 云端AI模式 (v1.2.0新增)</h3>
+            <div style="margin: 15px 0; padding: 12px; background-color: #fff3cd; border-left: 4px solid #ff6b35;">
+                <h4 style="color: #2c3e50; margin-top: 0;">🌐 硅基流动 (SiliconFlow)</h4>
+                <p><strong>Qwen3-235B：</strong>阿里通义千问3，235B参数MoE架构，22B激活参数</p>
+                <p><strong>DeepSeek-V3.2：</strong>深度求索V3.2，671B参数，支持思考模式和工具调用</p>
+                <p><strong>API地址：</strong>https://api.siliconflow.cn/v1</p>
+            </div>
+            <div style="margin: 15px 0; padding: 12px; background-color: #e8f4fd; border-left: 4px solid #17a2b8;">
+                <h4 style="color: #2c3e50; margin-top: 0;">🌐 魔搭社区 (ModelScope)</h4>
+                <p><strong>Qwen3-235B：</strong>阿里通义千问3大模型，API-Inference服务</p>
+                <p><strong>DeepSeek-V3：</strong>深度求索V3系列模型</p>
+                <p><strong>API地址：</strong>https://api-inference.modelscope.cn/v1</p>
             </div>
             <h3 style="color: #1a5276; border-bottom: 2px solid #3498db; padding-bottom: 5px; margin-top: 25px;">🎬 核心技术特色</h3>
             <div style="margin: 15px 0; padding: 12px; background-color: #f0f8ff; border-left: 4px solid #f39c12;">
@@ -12414,12 +14936,12 @@ class HistoryDialog(QDialog):
             <div style="margin: 15px 0; padding: 12px; background-color: #f8f9fa; border-left: 4px solid #3498db;">
                 <h4 style="color: #2c3e50; margin-top: 0;">📅 2025年3月 - 项目启动</h4>
                 <p><strong>核心理念：</strong>让AI技术服务于短剧内容创作</p>
-                <p><strong>技术选型：</strong>确定Mistral+Qwen2.5双模型架构和轻量化部署策略</p>
+                <p><strong>技术选型：</strong>确定Mistral+Qwen3双模型架构和轻量化部署策略</p>
                 <p><strong>开发团队：</strong>CKEN作为全栈AI开发者，具备AI算法、视频处理、UI设计等全方位技能</p>
             </div>
             <div style="margin: 15px 0; padding: 12px; background-color: #f0f8ff; border-left: 4px solid #27ae60;">
                 <h4 style="color: #2c3e50; margin-top: 0;">📅 2025年4月-6月 - 核心功能开发</h4>
-                <p><strong>AI模型集成：</strong>成功集成Mistral系列和Qwen2.5系列模型</p>
+                <p><strong>AI模型集成：</strong>成功集成Mistral系列和Qwen3系列模型</p>
                 <p><strong>视频处理：</strong>实现FFmpeg集成、精确切割、剪映导出</p>
                 <p><strong>智能分析：</strong>开发剧情分析、字幕重构、语言检测算法</p>
                 <p><strong>用户界面：</strong>设计并实现PyQt6响应式界面</p>
@@ -12431,13 +14953,20 @@ class HistoryDialog(QDialog):
                 <p><strong>UI优化：</strong>响应式字体设计，完美支持4K显示器</p>
                 <p><strong>EXCELLENT认证：</strong>达到生产就绪状态，v1.0.1正式发布</p>
             </div>
-            <div style="margin: 15px 0; padding: 12px; background-color: #fff3cd; border-left: 4px solid #ff6b35;">
-                <h4 style="color: #2c3e50; margin-top: 0;">📅 2025年10月 - v1.1.0重大更新 🎉</h4>
+            <div style="margin: 15px 0; padding: 12px; background-color: #e8f4fd; border-left: 4px solid #3498db;">
+                <h4 style="color: #2c3e50; margin-top: 0;">📅 2025年10月 - v1.1.0功能增强</h4>
                 <p><strong>真实训练系统：</strong>激活LoRA微调，支持原片+爆款字幕对训练</p>
                 <p><strong>硬件加速：</strong>启用CUDA GPU加速压缩，自动硬件选择</p>
                 <p><strong>内存优化：</strong>自动监控和智能清理，支持更低配设备</p>
                 <p><strong>UI功能集成：</strong>5个高级功能全部集成（性能监控、历史分析、错误可视化）</p>
-                <p><strong>依赖优化：</strong>修复所有版本冲突，系统更加稳定</p>
+            </div>
+            <div style="margin: 15px 0; padding: 12px; background-color: #fff3cd; border-left: 4px solid #ff6b35;">
+                <h4 style="color: #2c3e50; margin-top: 0;">📅 2025年12月 - v1.2.0云端AI升级 🎉</h4>
+                <p><strong>☁️ 云端AI模式：</strong>新增云端大模型API支持，无需本地GPU即可使用顶级AI能力</p>
+                <p><strong>🌐 双平台支持：</strong>集成硅基流动(SiliconFlow)和魔搭社区(ModelScope)两大平台</p>
+                <p><strong>🤖 顶级模型：</strong>支持Qwen3-235B和DeepSeek-V3.2等最新大模型</p>
+                <p><strong>🔄 混合推理：</strong>本地模式与云端模式无缝切换，灵活选择</p>
+                <p><strong>⚡ 一键配置：</strong>简化API配置流程，支持连接测试和配置持久化</p>
             </div>
             <h3 style="color: #1a5276; border-bottom: 2px solid #3498db; padding-bottom: 5px; margin-top: 25px;">🎯 关键里程碑</h3>
             <div style="margin: 15px 0;">
@@ -12467,10 +14996,15 @@ class HistoryDialog(QDialog):
                         <td style="padding: 10px; border: 1px solid #dee2e6;"><strong>v1.0.1发布</strong></td>
                         <td style="padding: 10px; border: 1px solid #dee2e6;">首个生产版本，功能完整，性能优化</td>
                     </tr>
+                    <tr style="background-color: #e8f4fd;">
+                        <td style="padding: 10px; border: 1px solid #dee2e6;">2025.10.10</td>
+                        <td style="padding: 10px; border: 1px solid #dee2e6;"><strong>v1.1.0发布</strong></td>
+                        <td style="padding: 10px; border: 1px solid #dee2e6;">真实训练系统、硬件加速、内存优化、5个UI功能集成</td>
+                    </tr>
                     <tr style="background-color: #fff3cd;">
-                        <td style="padding: 10px; border: 1px solid #dee2e6;"><strong>2025.10.10</strong></td>
-                        <td style="padding: 10px; border: 1px solid #dee2e6;"><strong>🎉 v1.1.0发布</strong></td>
-                        <td style="padding: 10px; border: 1px solid #dee2e6;"><strong>真实训练系统、硬件加速、内存优化、5个UI功能集成</strong></td>
+                        <td style="padding: 10px; border: 1px solid #dee2e6;"><strong>2025.12.19</strong></td>
+                        <td style="padding: 10px; border: 1px solid #dee2e6;"><strong>🎉 v1.2.0发布</strong></td>
+                        <td style="padding: 10px; border: 1px solid #dee2e6;"><strong>云端AI模式、双平台支持、Qwen3/DeepSeek-V3.2大模型</strong></td>
                     </tr>
                 </table>
             </div>
@@ -12478,21 +15012,29 @@ class HistoryDialog(QDialog):
             <div style="margin: 15px 0;">
                 <h4 style="color: #2c3e50;">🎯 v1.0.1 核心功能</h4>
                 <ul style="margin: 10px 0; padding-left: 20px;">
-                    <li><strong>双模型AI：</strong>Mistral系列(英文) + Qwen2.5系列(中文)，智能语言检测</li>
+                    <li><strong>双模型AI：</strong>Mistral系列(英文) + Qwen3系列(中文)，智能语言检测</li>
                     <li><strong>视频处理：</strong>FFmpeg GPU加速，精确切割，剪映工程导出</li>
                     <li><strong>AI剧本重构：</strong>原片→爆款字幕转换，智能长度控制</li>
                     <li><strong>质量保证：</strong>27项测试100%通过，EXCELLENT级别认证</li>
-                    <li><strong>性能优化：</strong>内存460MB，响应时间0.003秒，支持4K显示器</li>
                 </ul>
             </div>
-            <div style="margin: 15px 0; padding: 12px; background-color: #fff3cd; border-left: 4px solid #ff6b35;">
-                <h4 style="color: #2c3e50; margin-top: 0;">🎉 v1.1.0 重大更新</h4>
+            <div style="margin: 15px 0; padding: 12px; background-color: #e8f4fd; border-left: 4px solid #3498db;">
+                <h4 style="color: #2c3e50; margin-top: 0;">🚀 v1.1.0 功能增强</h4>
                 <ul style="margin: 10px 0; padding-left: 20px;">
                     <li><strong>真实训练系统：</strong>LoRA微调技术，支持原片+爆款字幕对训练</li>
                     <li><strong>硬件加速：</strong>CUDA GPU加速压缩，自动硬件选择（CUDA→QAT→CPU）</li>
                     <li><strong>内存优化：</strong>自动监控（每30秒），智能清理（80%/90%阈值）</li>
                     <li><strong>性能监控：</strong>压缩性能监控、历史数据分析、错误可视化</li>
-                    <li><strong>UI功能集成：</strong>5个高级功能全部集成，统一设计风格</li>
+                </ul>
+            </div>
+            <div style="margin: 15px 0; padding: 12px; background-color: #fff3cd; border-left: 4px solid #ff6b35;">
+                <h4 style="color: #2c3e50; margin-top: 0;">🎉 v1.2.0 云端AI升级</h4>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li><strong>☁️ 云端AI模式：</strong>新增云端大模型API，无需本地GPU即可使用顶级AI</li>
+                    <li><strong>🌐 双平台支持：</strong>硅基流动(SiliconFlow) + 魔搭社区(ModelScope)</li>
+                    <li><strong>🤖 顶级模型：</strong>Qwen3-235B (235B参数MoE) + DeepSeek-V3.2 (671B参数)</li>
+                    <li><strong>🔄 混合推理：</strong>本地/云端模式无缝切换，灵活选择推理方式</li>
+                    <li><strong>⚡ 简化配置：</strong>一键API配置，连接测试，配置持久化存储</li>
                 </ul>
             </div>
             <div style="text-align: center; margin-top: 20px; padding: 15px; background-color: #ecf0f1; border-radius: 5px;">
@@ -12505,12 +15047,12 @@ class HistoryDialog(QDialog):
             </div>
             <div style="text-align: center; margin-top: 15px; padding: 12px; background-color: #d5f4e6; border-radius: 5px;">
                 <p style="color: #27ae60; font-weight: bold; font-size: 14px; margin: 0;">
-                    🎉 当前状态：EXCELLENT级别 | 测试通过率：100% | 版本：v1.1.0-production
+                    🎉 当前状态：EXCELLENT级别 | 测试通过率：100% | 版本：v1.2.0-production
                 </p>
             </div>
             <div style="text-align: center; margin-top: 10px; padding: 10px; background-color: #fff3cd; border-radius: 5px;">
                 <p style="color: #856404; font-weight: bold; font-size: 14px; margin: 0;">
-                    ⭐ 项目成就：26项测试全部通过 | 真实训练系统激活 | 5个UI功能全集成 | 硬件加速启用 | 性能指标100%达标
+                    ⭐ v1.2.0亮点：云端AI模式 | 双平台支持 | Qwen3-235B/DeepSeek-V3.2 | 本地/云端混合推理
                 </p>
             </div>
         </div>
