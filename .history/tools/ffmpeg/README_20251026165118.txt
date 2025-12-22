@@ -1,0 +1,57 @@
+FFmpeg安装目录
+
+VisionAI-ClipsMaster 需要 FFmpeg 来处理视频文件。
+
+=== 安装步骤 ===
+
+1. 下载 FFmpeg
+   推荐下载地址（选择其一）：
+   - Windows: https://www.gyan.dev/ffmpeg/builds/
+   - 跨平台: https://github.com/BtbN/FFmpeg-Builds/releases
+   - 国内镜像: https://mirrors.tuna.tsinghua.edu.cn/github-release/BtbN/FFmpeg-Builds/
+
+2. 解压文件
+   - 下载 ffmpeg-master-latest-win64-gpl.zip（Windows）
+   - 解压后找到 bin 目录
+
+3. 复制文件
+   将以下文件复制到本目录的 bin/ 文件夹：
+   - ffmpeg.exe
+   - ffprobe.exe
+   - ffplay.exe（可选）
+
+4. 验证安装
+   运行以下命令验证：
+   ```
+   tools\ffmpeg\bin\ffmpeg.exe -version
+   ```
+
+=== 目录结构 ===
+
+tools/ffmpeg/
+├── README.txt（本文件）
+└── bin/
+    ├── ffmpeg.exe    ← 必需
+    ├── ffprobe.exe   ← 必需
+    └── ffplay.exe    ← 可选
+
+=== 故障排除 ===
+
+如果视频处理功能不可用：
+1. 确认 ffmpeg.exe 和 ffprobe.exe 已放置在 bin/ 目录
+2. 检查文件权限（右键 → 属性 → 解除锁定）
+3. 重启应用程序
+4. 查看控制台输出的 FFmpeg 检测日志
+
+=== 系统 PATH 方式（可选）===
+
+如果您已经在系统 PATH 中安装了 FFmpeg，
+应用程序会自动检测并使用系统版本。
+
+安装后的目录结构应该是：
+tools/
+└── ffmpeg/
+    ├── bin/
+    │   ├── ffmpeg.exe
+    │   └── ffprobe.exe
+    └── README.txt (本文件)

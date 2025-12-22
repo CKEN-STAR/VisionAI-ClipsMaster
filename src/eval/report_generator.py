@@ -558,7 +558,7 @@ if __name__ == "__main__":
     # 模拟测试数据
     test_results = {
         "model_info": {
-            "Qwen2.5-7B-zh": {
+            "Qwen3-1.7B-zh": {
                 "type": "中文模型",
                 "quantization": "Q4_K_M",
                 "status": "active",

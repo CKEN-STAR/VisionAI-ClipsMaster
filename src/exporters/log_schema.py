@@ -174,7 +174,7 @@ def create_sample_log() -> Dict[str, Any]:
             "gpu_util": 0.0
         },
         "model_info": {
-            "name": "Qwen2.5-7B",
+            "name": "Qwen3-1.7B",
             "version": "1.0.0",
             "language": "zh",
             "parameters": {

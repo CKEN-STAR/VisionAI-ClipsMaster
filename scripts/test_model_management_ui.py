@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 测试模型管理UI功能
@@ -45,7 +45,7 @@ def test_model_management():
         from src.inference.en_model_loader import EnModelLoader
         
         # 中文模型加载器
-        zh_loader = InferenceModelLoader("qwen2.5-7b-zh")
+        zh_loader = InferenceModelLoader("Qwen3-1.7B-zh")
         zh_info = zh_loader.get_model_info()
         print(f"   中文模型信息:")
         print(f"      GGUF: {zh_info['gguf']['path']}")

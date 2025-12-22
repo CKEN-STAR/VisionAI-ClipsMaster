@@ -212,7 +212,7 @@ class TrainingPanel(QWidget):
         # 语言选择
         data_layout.addWidget(QLabel("语言模式:"), 0, 0)
         self.language_combo = QComboBox()
-        self.language_combo.addItems(["中文 (Qwen2.5-7B)", "英文 (Mistral-7B)"])
+        self.language_combo.addItems(["中文 (Qwen3-1.7B)", "英文 (Mistral-7B)"])
         data_layout.addWidget(self.language_combo, 0, 1)
         
         # 训练轮数

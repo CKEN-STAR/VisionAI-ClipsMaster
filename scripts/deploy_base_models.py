@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """
@@ -19,10 +19,10 @@ import yaml
 
 # 模型配置
 MODEL_CONFIGS = {
-    'qwen2.5-7b-zh': {
-        'repo_id': 'Qwen/Qwen1.5-7B-Chat',
+    'Qwen3-1.7B-zh': {
+        'repo_id': 'Qwen/Qwen3-8B-Chat',
         'local_dir': 'models/qwen/base',
-        'config_file': 'configs/models/available_models/qwen2.5-7b-zh.yaml'
+        'config_file': 'configs/models/available_models/Qwen3-1.7B-zh.yaml'
     },
     'mistral-7b-en': {
         'repo_id': 'mistralai/Mistral-7B-v0.1',

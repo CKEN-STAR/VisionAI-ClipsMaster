@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """
 硬件自适应配置脚本 - VisionAI-ClipsMaster
 根据硬件检测结果自动更新模型配置文件
@@ -74,28 +74,28 @@ def update_model_configs(hardware_config):
     else:
         # 默认配置
         active_model = {
-            'active_model': 'qwen2.5-7b-zh',  # 默认使用中文模型
+            'active_model': 'Qwen3-1.7B-zh',  # 默认使用中文模型
             'language': 'zh',
             'last_updated': '2023-07-15 12:34:56',
             'switch_history': []
         }
     
     # 获取当前激活的模型名称
-    active_model_name = active_model.get('active_model', 'qwen2.5-7b-zh')
+    active_model_name = active_model.get('active_model', 'Qwen3-1.7B-zh')
     
     # 更新中文模型配置
-    zh_model_path = os.path.join(available_models_dir, 'qwen2.5-7b-zh.yaml')
+    zh_model_path = os.path.join(available_models_dir, 'Qwen3-1.7B-zh.yaml')
     if os.path.exists(zh_model_path):
         with open(zh_model_path, 'r', encoding='utf-8') as f:
             zh_model_config = yaml.safe_load(f) or {}
     else:
         # 创建默认中文模型配置
         zh_model_config = {
-            'name': 'qwen2.5-7b-zh',
+            'name': 'Qwen3-1.7B-zh',
             'display_name': 'Qwen 2.5-7B 中文',
             'language': 'zh',
             'description': '阿里云开发的强大中文大模型，针对对话和创意写作优化',
-            'model_path': 'models/qwen/quantized/qwen2.5-7b-zh-q4km.gguf',
+            'model_path': 'models/qwen/quantized/Qwen3-1.7B-zh-q4km.gguf',
             'tokenizer_path': 'models/qwen/base/tokenizer.model',
             'quantization': 'Q4_K_M',
             'loading_strategy': 'normal',
@@ -113,7 +113,7 @@ def update_model_configs(hardware_config):
             'last_updated': '2023-07-01',
             'training_status': {
                 'is_finetuned': True,
-                'base_model': 'qwen2.5-7b',
+                'base_model': 'Qwen3-1.7B',
                 'finetuning_date': '2023-07-10',
                 'finetuning_samples': 1200
             }
@@ -157,7 +157,7 @@ def update_model_configs(hardware_config):
         }
     
     # 应用硬件配置到模型配置
-    for model_config, model_name in [(zh_model_config, 'qwen2.5-7b-zh'), (en_model_config, 'mistral-7b-en')]:
+    for model_config, model_name in [(zh_model_config, 'Qwen3-1.7B-zh'), (en_model_config, 'mistral-7b-en')]:
         # 更新量化级别
         model_config['quantization'] = hardware_config.get('quantization', 'Q4_K_M')
         

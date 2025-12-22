@@ -91,7 +91,7 @@ model_adjustments:
 
 # 模型特定阈值调整
 model_specific_adjustments:
-  # 中文模型 (Qwen2.5-7B)
+  # 中文模型 (Qwen3系列)
   qwen_memory:
     - load: 70
       value: 4000

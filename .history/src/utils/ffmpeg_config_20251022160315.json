@@ -1,0 +1,8 @@
+{
+  "ffmpeg_path": "tools/ffmpeg/bin/ffmpeg.exe",
+  "ffprobe_path": "tools/ffmpeg/bin/ffprobe.exe",
+  "system": "windows",
+  "auto_detected": false,
+  "status": "configured",
+  "note": "使用相对路径，自动适配项目位置"
+}

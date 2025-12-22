@@ -1241,8 +1241,8 @@ class ModelDownloadThread(QThread):
                 'path': 'models/mistral/quantized/Q4_K_M.gguf',
                 'size': 4_000_000_000  # 约4GB
             },
-            'qwen2.5-7b-zh': {
-                'url': 'https://huggingface.co/Qwen/Qwen1.5-7B-Chat-GGUF/resolve/main/qwen1_5-7b-chat-q4_k_m.gguf',
+            'qwen3-1.7b-zh': {
+                'url': 'https://huggingface.co/Qwen/Qwen3-1.7B-Instruct-GGUF/resolve/main/qwen3-1_7b-instruct-q4_k_m.gguf',
                 'path': 'models/qwen/quantized/Q4_K_M.gguf',
                 'size': 4_000_000_000  # 约4GB
             }
@@ -2566,8 +2566,8 @@ class SimplifiedTrainingFeeder(QWidget):
             # 中文模型可能路径
             zh_model_paths = [
                 os.path.join(project_root, "models", "qwen", "quantized", "Q4_K_M.gguf"),
-                os.path.join(project_root, "models", "qwen", "base", "qwen2.5-7b.bin"),
-                os.path.join(project_root, "models", "qwen", "base", "qwen2.5-7b"),
+                os.path.join(project_root, "models", "qwen", "base", "qwen3-1.7b.bin"),
+                os.path.join(project_root, "models", "qwen", "base", "qwen3-1.7b"),
                 os.path.join(project_root, "models", "qwen", "finetuned")
             ]
 
@@ -2644,7 +2644,7 @@ class SimplifiedTrainingFeeder(QWidget):
                             main_window.enhanced_downloader.reset_state()
 
                             # 额外验证：确保请求的是正确的模型
-                            requested_model = "qwen2.5-7b"
+                            requested_model = "qwen3-1.7b"
                             log_handler.log("info", f"🎯 训练页面明确请求中文模型: {requested_model}")
 
                             # 强制验证：在调用前再次确认状态
@@ -2882,7 +2882,7 @@ class SimplifiedTrainingFeeder(QWidget):
         
         # 记录日志
         if self.language_mode == "zh":
-            model_name = "Qwen2.5-7B 中文模型"
+            model_name = "Qwen3-1.7B 中文模型"
         else:
             model_name = "Mistral-7B 英文模型"
             
@@ -2904,7 +2904,7 @@ class SimplifiedTrainingFeeder(QWidget):
         
         # 获取模型显示名称
         if language == "zh":
-            model_name = "Qwen2.5-7B 中文模型"
+            model_name = "Qwen3-1.7B 中文模型"
         else:
             model_name = "Mistral-7B 英文模型"
         
@@ -2922,7 +2922,7 @@ class SimplifiedTrainingFeeder(QWidget):
                  f"- 损失值: {loss:.4f}\n"
                  f"- {'使用了GPU加速' if used_gpu else '使用了CPU处理'}\n\n"
                  f"{model_name}已更新，现在可以自主生成爆款SRT，无需手动参数调整。\n"
-                 f"注意：此次训练仅更新了{model_name}，不影响{'Mistral-7B 英文模型' if language == 'zh' else 'Qwen2.5-7B 中文模型'}。")
+                 f"注意：此次训练仅更新了{model_name}，不影响{'Mistral-7B 英文模型' if language == 'zh' else 'Qwen3-1.7B 中文模型'}。")
         
         QMessageBox.information(self, f"{model_name}训练完成", message)
     
@@ -4601,7 +4601,7 @@ class SimpleScreenplayApp(QMainWindow):
         tech_layout.setContentsMargins(15, 25, 15, 15)
 
         tech_features = [
-            "🤖 双模型AI：Mistral-7B (英文) + Qwen2.5-7B (中文)",
+            "🤖 双模型AI：Mistral-7B (英文) + Qwen3系列 (中文)",
             "🎥 视频处理：FFmpeg GPU加速, 精确切割",
             "🧩 智能分析：剧情重构, 病毒式转换算法",
             "💾 轻量部署：4GB内存兼容, CPU优化",
@@ -5215,45 +5215,73 @@ class SimpleScreenplayApp(QMainWindow):
     
     def check_models(self):
         """检查模型是否已下载"""
-        # 检查中文模型
+        # 获取项目根目录（向上3级：main_window.py -> ui -> visionai_clipsmaster -> 项目根）
+        project_root = Path(__file__).resolve().parent.parent.parent
+
+        # 检查中文模型（更新为Qwen3系列）
         zh_model_paths = [
-            os.path.join(Path(__file__).resolve().parent, "models/qwen/quantized/Q4_K_M.gguf"),
-            os.path.join(Path(__file__).resolve().parent, "models/qwen/base/qwen2.5-7b.bin"),
-            os.path.join(Path(__file__).resolve().parent, "models/qwen/base/qwen2.5-7b"),
-            os.path.join(Path(__file__).resolve().parent, "models/qwen/finetuned")
+            project_root / "models" / "qwen" / "quantized" / "Q4_K_M.gguf",
+            project_root / "models" / "qwen" / "base",
+            project_root / "models" / "qwen" / "finetuned",
+            project_root / "models" / "qwen3-0.6b" / "base",  # Qwen3-0.6B
+            project_root / "models" / "qwen3-1.7b" / "base",  # Qwen3-1.7B
+            project_root / "models" / "qwen3-8b" / "base",  # Qwen3-8B
+            project_root / "models" / "qwen3-32b" / "base",  # Qwen3-32B
         ]
-        
+
         # 检查models/qwen目录是否存在并有实际模型文件
-        qwen_dir = os.path.join(Path(__file__).resolve().parent, "models/qwen")
-        self.zh_model_exists = any(os.path.exists(path) for path in zh_model_paths)
-        
-        if os.path.isdir(qwen_dir):
-            # 递归检查是否有大文件（模型文件通常很大）
-            self.zh_model_exists = self._has_large_files(qwen_dir)
-        
+        qwen_dir = project_root / "models" / "qwen"
+        qwen3_dirs = [
+            project_root / "models" / "qwen3-0.6b",
+            project_root / "models" / "qwen3-1.7b",
+            project_root / "models" / "qwen3-8b",
+            project_root / "models" / "qwen3-32b",
+        ]
+
+        # 检查任一路径是否存在
+        self.zh_model_exists = any(path.exists() for path in zh_model_paths)
+
+        # 如果路径检查失败，尝试检查目录中是否有大文件
+        if not self.zh_model_exists:
+            if qwen_dir.is_dir():
+                self.zh_model_exists = self._has_large_files(str(qwen_dir))
+            else:
+                for qwen3_dir in qwen3_dirs:
+                    if qwen3_dir.is_dir() and self._has_large_files(str(qwen3_dir)):
+                        self.zh_model_exists = True
+                        break
+
         # 检查英文模型
         en_model_paths = [
-            os.path.join(Path(__file__).resolve().parent, "models/mistral/quantized/Q4_K_M.gguf"),
-            os.path.join(Path(__file__).resolve().parent, "models/mistral/base/mistral-7b.bin"),
-            os.path.join(Path(__file__).resolve().parent, "models/mistral/base/mistral-7b"),
-            os.path.join(Path(__file__).resolve().parent, "models/mistral/finetuned")
+            project_root / "models" / "mistral" / "quantized" / "Q4_K_M.gguf",
+            project_root / "models" / "mistral" / "base" / "mistral-7b.bin",
+            project_root / "models" / "mistral" / "base" / "mistral-7b",
+            project_root / "models" / "mistral" / "finetuned",
+            project_root / "models" / "mistral-7b" / "fp16",  # 新增：检查新下载的模型
+            project_root / "models" / "mistral-7b" / "int4",
+            project_root / "models" / "mistral-7b" / "int8",
         ]
-        
+
         # 检查models/mistral目录是否存在并有实际模型文件
-        mistral_dir = os.path.join(Path(__file__).resolve().parent, "models/mistral")
-        self.en_model_exists = any(os.path.exists(path) for path in en_model_paths)
-        
-        if os.path.isdir(mistral_dir) and os.listdir(mistral_dir):
-            # 递归检查是否有大文件（模型文件通常很大）
-            has_large_files = self._has_large_files(mistral_dir)
-            # 只有当目录中确实存在大文件时，才认为模型已安装
-            self.en_model_exists = has_large_files
-        
+        mistral_dir = project_root / "models" / "mistral"
+        mistral_7b_dir = project_root / "models" / "mistral-7b"  # 新增：检查新模型目录
+
+        # 检查任一路径是否存在
+        self.en_model_exists = any(path.exists() for path in en_model_paths)
+
+        # 如果路径检查失败，尝试检查目录中是否有大文件
+        if not self.en_model_exists:
+            if mistral_dir.is_dir():
+                self.en_model_exists = self._has_large_files(str(mistral_dir))
+            elif mistral_7b_dir.is_dir():
+                self.en_model_exists = self._has_large_files(str(mistral_7b_dir))
+
         # 记录详细的模型检测日志
         log_handler.log("info", f"🔍 模型检测详情:")
-        log_handler.log("info", f"  - 中文模型目录: {qwen_dir}")
+        log_handler.log("info", f"  - 项目根目录: {project_root}")
+        log_handler.log("info", f"  - 中文模型目录: {qwen_dir} / {qwen2_5_dir}")
         log_handler.log("info", f"  - 中文模型状态: {'已安装' if self.zh_model_exists else '未安装'}")
-        log_handler.log("info", f"  - 英文模型目录: {mistral_dir}")
+        log_handler.log("info", f"  - 英文模型目录: {mistral_dir} / {mistral_7b_dir}")
         log_handler.log("info", f"  - 英文模型状态: {'已安装' if self.en_model_exists else '未安装'}")
 
         # 更新下载按钮状态
@@ -5319,9 +5347,10 @@ class SimpleScreenplayApp(QMainWindow):
                     log_handler.log("info", "✅ 使用增强下载器显示智能推荐对话框")
                     # 重要修复：彻底重置状态，确保状态隔离
                     self.enhanced_downloader.reset_state()
-                    success = self.enhanced_downloader.download_model("mistral-7b", self)
+                    # 🔧 修复：使用通用名称"mistral"触发智能推荐
+                    success = self.enhanced_downloader.download_model("mistral", self, auto_select=True)
                     if success:
-                        log_handler.log("info", "✅ 英文模型下载已启动")
+                        log_handler.log("info", "✅ 英文模型下载已启动（智能推荐）")
                     else:
                         log_handler.log("warning", "⚠️ 英文模型下载被取消")
                 else:
@@ -5377,9 +5406,10 @@ class SimpleScreenplayApp(QMainWindow):
                     log_handler.log("info", "✅ 使用增强下载器显示智能推荐对话框")
                     # 重要修复：彻底重置状态，确保状态隔离
                     self.enhanced_downloader.reset_state()
-                    success = self.enhanced_downloader.download_model("qwen2.5-7b", self)
+                    # 🔧 修复：使用通用名称"qwen"触发智能推荐
+                    success = self.enhanced_downloader.download_model("qwen", self, auto_select=True)
                     if success:
-                        log_handler.log("info", "✅ 中文模型下载已启动")
+                        log_handler.log("info", "✅ 中文模型下载已启动（智能推荐）")
                     else:
                         log_handler.log("warning", "⚠️ 中文模型下载被取消")
                 else:
@@ -5420,17 +5450,18 @@ class SimpleScreenplayApp(QMainWindow):
             self._global_model_dialog_showing = False
 
     def download_en_model(self):
-        """下载英文模型"""
+        """下载英文模型（使用智能推荐系统）"""
         log_handler.log("info", "用户请求下载英文模型")
 
         try:
             if self.enhanced_downloader:
-                # 使用增强下载器
+                # 使用增强下载器 + 智能推荐系统
                 # 重要修复：彻底重置状态，确保状态隔离
                 self.enhanced_downloader.reset_state()
-                success = self.enhanced_downloader.download_model("mistral-7b", self)
+                # 🔧 修复：使用通用名称"mistral"触发智能推荐，而不是硬编码"mistral-7b"
+                success = self.enhanced_downloader.download_model("mistral", self, auto_select=True)
                 if success:
-                    log_handler.log("info", "英文模型下载已启动")
+                    log_handler.log("info", "英文模型下载已启动（智能推荐）")
                 else:
                     log_handler.log("warning", "英文模型下载被取消")
             else:
@@ -5461,17 +5492,18 @@ class SimpleScreenplayApp(QMainWindow):
         self.download_thread.start()
     
     def download_zh_model(self):
-        """下载中文模型"""
+        """下载中文模型（使用智能推荐系统）"""
         log_handler.log("info", "用户请求下载中文模型")
 
         try:
             if self.enhanced_downloader:
-                # 使用增强下载器
+                # 使用增强下载器 + 智能推荐系统
                 # 重要修复：彻底重置状态，确保状态隔离
                 self.enhanced_downloader.reset_state()
-                success = self.enhanced_downloader.download_model("qwen2.5-7b", self)
+                # 🔧 修复：使用通用名称"qwen"触发智能推荐，而不是硬编码"qwen3-1.7b"
+                success = self.enhanced_downloader.download_model("qwen", self, auto_select=True)
                 if success:
-                    log_handler.log("info", "中文模型下载已启动")
+                    log_handler.log("info", "中文模型下载已启动（智能推荐）")
                 else:
                     log_handler.log("warning", "中文模型下载被取消")
             else:
@@ -5484,7 +5516,7 @@ class SimpleScreenplayApp(QMainWindow):
     def _fallback_download_zh_model(self):
         """回退的中文模型下载方法"""
         # 创建并启动下载线程
-        self.download_thread = ModelDownloadThread("qwen2.5-7b-zh")
+        self.download_thread = ModelDownloadThread("qwen3-1.7b-zh")
         self.download_thread.progress_updated.connect(self.update_download_progress)
         self.download_thread.download_completed.connect(self.on_zh_download_completed)
         self.download_thread.download_failed.connect(self.on_download_failed)
@@ -5711,7 +5743,7 @@ class SimpleScreenplayApp(QMainWindow):
 
         # 明确告知用户当前使用的是哪种语言模型
         if mode == "zh":
-            model_info = "Qwen2.5-7B 中文模型"
+            model_info = "Qwen3-1.7B 中文模型"
         elif mode == "en":
             model_info = "Mistral-7B 英文模型"
         else:
@@ -5733,9 +5765,10 @@ class SimpleScreenplayApp(QMainWindow):
                         # 重要修复：彻底重置状态，确保状态隔离
                         self.enhanced_downloader.reset_state()
                         # 注意：不在这里设置标志位，让enhanced_downloader内部管理
-                        success = self.enhanced_downloader.download_model("mistral-7b", self)
+                        # 🔧 修复：使用通用名称"mistral"触发智能推荐
+                        success = self.enhanced_downloader.download_model("mistral", self, auto_select=True)
                         if success:
-                            log_handler.log("info", "✅ 英文模型下载已启动")
+                            log_handler.log("info", "✅ 英文模型下载已启动（智能推荐）")
                             download_success = True
                         else:
                             log_handler.log("warning", "⚠️ 英文模型下载被取消")
@@ -5785,9 +5818,10 @@ class SimpleScreenplayApp(QMainWindow):
                         # 重要修复：彻底重置状态，确保状态隔离
                         self.enhanced_downloader.reset_state()
                         # 注意：不在这里设置标志位，让enhanced_downloader内部管理
-                        success = self.enhanced_downloader.download_model("qwen2.5-7b", self)
+                        # 🔧 修复：使用通用名称"qwen"触发智能推荐
+                        success = self.enhanced_downloader.download_model("qwen", self, auto_select=True)
                         if success:
-                            log_handler.log("info", "✅ 中文模型下载已启动")
+                            log_handler.log("info", "✅ 中文模型下载已启动（智能推荐）")
                             download_success = True
                         else:
                             log_handler.log("warning", "⚠️ 中文模型下载被取消")
@@ -5956,7 +5990,7 @@ class SimpleScreenplayApp(QMainWindow):
             <div style="margin: 15px 0; padding: 10px; background-color: #f8f9fa; border-left: 4px solid #e74c3c;">
                 <h4 style="color: #2c3e50; margin-top: 0;">🧠 AI算法开发</h4>
                 <p><strong>核心技能：</strong>大型语言模型优化、自然语言处理、深度学习算法设计</p>
-                <p><strong>项目成果：</strong>Mistral-7B/Qwen2.5-7B双模型架构、智能字幕重构、病毒式传播算法</p>
+                <p><strong>项目成果：</strong>Mistral-7B/Qwen3系列双模型架构、智能字幕重构、病毒式传播算法</p>
             </div>
 
             <div style="margin: 15px 0; padding: 10px; background-color: #f8f9fa; border-left: 4px solid #f39c12;">
@@ -8322,8 +8356,8 @@ class TechDialog(QDialog):
             </div>
 
             <div style="margin: 15px 0; padding: 12px; background-color: #f8f9fa; border-left: 4px solid #e74c3c;">
-                <h4 style="color: #2c3e50; margin-top: 0;">🇨🇳 Qwen2.5-7B (中文处理)</h4>
-                <p><strong>模型特点：</strong>专为中文优化的70亿参数模型</p>
+                <h4 style="color: #2c3e50; margin-top: 0;">🇨🇳 Qwen3系列 (中文处理)</h4>
+                <p><strong>模型特点：</strong>专为中文优化的新一代模型系列（0.6B-32B）</p>
                 <p><strong>量化策略：</strong>智能量化技术，保持中文理解精度</p>
                 <p><strong>应用场景：</strong>中文剧情分析、文化适配、本土化内容生成</p>
             </div>
@@ -8497,7 +8531,7 @@ class HistoryDialog(QDialog):
 
             <div style="margin: 15px 0; padding: 12px; background-color: #f8f9fa; border-left: 4px solid #e74c3c;">
                 <h4 style="color: #2c3e50; margin-top: 0;">📅 2025年3月中旬 - 技术原型开发</h4>
-                <p><strong>AI模型集成：</strong>成功集成Mistral-7B和Qwen2.5-7B模型</p>
+                <p><strong>AI模型集成：</strong>成功集成Mistral-7B和Qwen3系列模型</p>
                 <p><strong>核心算法：</strong>开发剧情分析和字幕重构算法</p>
                 <p><strong>架构设计：</strong>建立模块化系统架构</p>
                 <p><strong>技术验证：</strong>完成核心功能的可行性验证</p>
@@ -8609,7 +8643,7 @@ class HistoryDialog(QDialog):
             <div style="margin: 15px 0;">
                 <h4 style="color: #2c3e50;">🚀 功能特性完善</h4>
                 <ul style="margin: 10px 0; padding-left: 20px;">
-                    <li><strong>双模型架构：</strong>Mistral-7B + Qwen2.5-7B</li>
+                    <li><strong>双模型架构：</strong>Mistral-7B + Qwen3系列</li>
                     <li><strong>智能语言检测：</strong>自动识别并切换模型</li>
                     <li><strong>剪映工程导出：</strong>无缝对接专业编辑软件</li>
                     <li><strong>批量处理：</strong>支持100+文件批量处理</li>

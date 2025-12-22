@@ -21,7 +21,7 @@ from typing import Dict, Any, Optional, Tuple, Union, Callable
 
 # 尝试导入常用压缩库
 try:
-    import zstd
+    import zstandard as zstd
     HAS_ZSTD = True
 except ImportError:
     HAS_ZSTD = False
@@ -383,7 +383,8 @@ def try_recover_data(data: bytes) -> Optional[bytes]:
     for algo in ['zstd', 'lz4', 'gzip']:
         try:
             if algo == 'zstd' and HAS_ZSTD:
-                return zstd.decompress(data)
+                dctx = zstd.ZstdDecompressor()
+                return dctx.decompress(data)
             elif algo == 'lz4' and HAS_LZ4:
                 return lz4.frame.decompress(data)
             elif algo == 'gzip':

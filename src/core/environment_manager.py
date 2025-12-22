@@ -15,14 +15,89 @@ import platform
 from pathlib import Path
 from typing import Dict, Any, Optional, List, Tuple
 
-# 添加tests目录到系统路径，以便导入device_detector
-tests_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'tests'))
-if tests_dir not in sys.path:
-    sys.path.append(tests_dir)
+# 运行时环境检测实现（移除对 tests.* 的依赖）
+# 注意：避免在生产运行期依赖 tests 目录，提供内置的轻量检测与兼容性评估
+from datetime import datetime
+import shutil
 
-# 导入设备检测功能
-from tests.device_compatibility.device_detector import detect_environment
-from tests.device_compatibility.device_matrix import generate_compatibility_report
+def _runtime_detect_environment() -> Dict[str, Any]:
+    try:
+        total_gb = free_gb = 0.0
+        try:
+            total, used, free = shutil.disk_usage(os.getcwd())
+            total_gb = round(total / (1024**3), 1)
+            free_gb = round(free / (1024**3), 1)
+        except Exception:
+            pass
+        # 尝试使用 psutil 获取内存（可选）
+        ram_gb = 4.0
+        try:
+            import psutil  # 可选依赖
+            ram_gb = round(psutil.virtual_memory().total / (1024**3), 1)
+        except Exception:
+            try:
+                # Windows 下可从环境变量估计，失败则保持默认
+                ram_gb = float(os.environ.get("SYSTEM_RAM_GB", ram_gb))
+            except Exception:
+                pass
+        env = {
+            "cpu": platform.processor() or "Unknown CPU",
+            "gpu": "集成显卡",  # 轻量实现：默认集成显卡
+            "ram": ram_gb,
+            "os": platform.platform(),
+            "python_version": platform.python_version(),
+            "cpu_cores": os.cpu_count() or 2,
+            "is_64bit": platform.machine().endswith('64'),
+            "detection_time": datetime.now().isoformat(timespec="seconds"),
+            "storage": {"total_gb": total_gb, "free_gb": free_gb},
+        }
+        return env
+    except Exception as e:
+        logger.warning(f"轻量环境检测失败，将返回基本信息：{e}")
+        return {
+            "cpu": platform.processor() or "Unknown CPU",
+            "gpu": "集成显卡",
+            "ram": 4.0,
+            "os": platform.platform(),
+            "python_version": platform.python_version(),
+            "cpu_cores": os.cpu_count() or 2,
+            "is_64bit": platform.machine().endswith('64'),
+            "detection_time": "Unknown",
+        }
+
+def _runtime_generate_compatibility_report(device_info: Dict[str, Any]) -> Dict[str, Any]:
+    ram = device_info.get("ram", 4)
+    gpu = device_info.get("gpu", "集成显卡")
+    cores = device_info.get("cpu_cores", 2)
+    if ram >= 16 and gpu != "集成显卡" and cores >= 8:
+        tier = "high"
+    elif ram >= 8 and cores >= 4:
+        tier = "mid"
+    else:
+        tier = "entry"
+    recommendations = []
+    if tier == "entry":
+        recommendations = [
+            "建议至少升级至8GB内存以支持更多功能",
+            "建议添加支持的GPU以启用实时增强和4K处理功能",
+        ]
+    return {
+        "device_tier": tier,
+        "expected_performance": {
+            "fps": 30 if tier == "high" else (24 if tier == "mid" else 15),
+            "processing_speed": "1.5x实时" if tier == "high" else ("1.0x实时" if tier == "mid" else "0.5x实时"),
+            "max_resolution": "4k" if tier == "high" else ("1440p" if tier == "mid" else "1080p"),
+            "concurrent_tasks": 4 if tier == "high" else (2 if tier == "mid" else 1),
+        },
+        "supported_features": ["basic_processing", "multi_language"] if tier != "entry" else ["basic_processing"],
+        "limited_features": ["batch_processing"] if tier == "entry" else [],
+        "unsupported_features": [] if tier != "entry" else ["4k_processing", "real_time_enhancement"],
+        "recommendations": recommendations,
+    }
+
+# 对外导出兼容函数名
+detect_environment = _runtime_detect_environment
+generate_compatibility_report = _runtime_generate_compatibility_report
 
 # 设置日志记录器
 logger = logging.getLogger("environment_manager")
@@ -302,9 +377,9 @@ class EnvironmentManager:
         # 根据内存和GPU情况选择模型
         if is_chinese:
             if ram_gb >= 16 and has_gpu:
-                return "qwen2.5-7b"
+                return "qwen3-8b"
             else:
-                return "qwen2.5-1.8b"  # 轻量版
+                return "qwen3-1.7b"  # 轻量版
         else:
             if ram_gb >= 16 and has_gpu:
                 return "mistral-7b"

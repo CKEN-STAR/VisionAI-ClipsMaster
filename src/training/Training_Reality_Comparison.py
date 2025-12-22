@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 VisionAI-ClipsMaster 训练真实性对比分析
@@ -15,7 +15,7 @@ class CurrentSimulatedTraining:
     """当前的模拟训练实现（基于项目现状）"""
     
     def __init__(self):
-        self.model_name = "Qwen2.5-7B"
+        self.model_name = "Qwen3-1.7B"
         self.language = "zh"
         print("🎭 当前模拟训练器初始化")
     
@@ -62,7 +62,7 @@ class ProposedRealTraining:
     """建议的真实训练实现"""
     
     def __init__(self):
-        self.model_name = "Qwen2.5-7B"
+        self.model_name = "Qwen3-1.7B"
         self.language = "zh"
         print("🤖 真实训练器初始化")
     

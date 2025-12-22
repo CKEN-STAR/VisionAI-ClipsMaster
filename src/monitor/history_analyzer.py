@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """
@@ -558,7 +558,7 @@ class HistoryAnalyzer:
             try:
                 # 这里使用模拟数据，实际使用时应从模型性能监控系统获取
                 model_perf = {
-                    "model_name": "qwen2.5-7b-zh",  # 默认中文模型
+                    "model_name": "Qwen3-1.7B-zh",  # 默认中文模型
                     "latency_ms": random.uniform(100, 500),  # 模拟100-500ms的延迟
                     "tokens_per_second": random.uniform(10, 30),  # 模拟10-30 token/s的吞吐量
                     "memory_used_mb": random.uniform(2200, 2800)  # 模拟2.2-2.8GB的内存使用

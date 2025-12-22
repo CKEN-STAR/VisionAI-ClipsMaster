@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 双轨制设计工作流程测试脚本
@@ -99,7 +99,7 @@ def test_model_loader():
     logger.info("=" * 80)
 
     from src.inference.model_loader import InferenceModelLoader
-    loader = InferenceModelLoader("qwen2.5-7b-zh")
+    loader = InferenceModelLoader("Qwen3-1.7B-zh")
     
     # 获取模型信息
     info = loader.get_model_info()
@@ -143,7 +143,7 @@ def test_workflow_summary():
     
     logger.info("📋 完整工作流程:")
     logger.info("   1. 模型初始化:")
-    logger.info("      python scripts/setup_models_integrated.py --model qwen2.5-7b-zh")
+    logger.info("      python scripts/setup_models_integrated.py --model Qwen3-1.7B-zh")
     logger.info("")
     logger.info("   2. 训练模型:")
     logger.info("      - 使用HuggingFace格式进行训练")
@@ -169,7 +169,7 @@ def test_workflow_summary():
     logger.info("   models/qwen/")
     logger.info("   ├── base/                    # HF基础模型（用于训练）")
     logger.info("   ├── quantized/               # GGUF推理模型")
-    logger.info("   │   ├── qwen2.5-7b-zh_Q4_K_M.gguf  # 基础GGUF模型")
+    logger.info("   │   ├── Qwen3-1.7B-zh_Q4_K_M.gguf  # 基础GGUF模型")
     logger.info("   │   └── trained/             # 训练后的GGUF模型")
     logger.info("   │       ├── trained_YYYYMMDD_HHMMSS_Q4_K_M.gguf")
     logger.info("   │       └── latest.gguf      # 最新版本链接")

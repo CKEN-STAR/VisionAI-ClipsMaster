@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """
@@ -18,7 +18,7 @@ from typing import Dict, Optional
 
 # 量化配置
 QUANT_CONFIGS = {
-    'qwen2.5-7b-zh': {
+    'Qwen3-1.7B-zh': {
         'base_dir': 'models/qwen/base/qwen/Qwen-7B-Chat',
         'quant_dir': 'models/qwen/quantized',
         'quant_type': 'Q4_K_M',  # 默认量化类型
@@ -30,7 +30,7 @@ QUANT_CONFIGS = {
                        'model-00006-of-00008.safetensors',
                        'model-00007-of-00008.safetensors',
                        'model-00008-of-00008.safetensors'],
-        'config_file': 'configs/models/available_models/qwen2.5-7b-zh.yaml'
+        'config_file': 'configs/models/available_models/Qwen3-1.7B-zh.yaml'
     },
     'mistral-7b-en': {
         'base_dir': 'models/mistral/base',

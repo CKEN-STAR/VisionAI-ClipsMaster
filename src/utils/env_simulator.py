@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 测试环境模拟器
@@ -244,7 +244,7 @@ class EnvironmentSimulator:
         # 生成Docker命令
         docker_cmd = self.generate_docker_command(
             profile_name, 
-            command="python src/utils/memory_test_cli.py stability --hours 1 --use-model --model-id qwen2.5-7b-chat --save-report"
+            command="python src/utils/memory_test_cli.py stability --hours 1 --use-model --model-id Qwen3-1.7B-chat --save-report"
         )
         
         # 脚本内容

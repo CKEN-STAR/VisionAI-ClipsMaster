@@ -1,4 +1,4 @@
-# VisionAI-ClipsMaster 测试配置文件
+﻿# VisionAI-ClipsMaster 测试配置文件
 # 定义所有测试模块的参数、阈值和预期结果
 
 # 全局测试配置
@@ -221,7 +221,7 @@ test_data:
   # 混合语言测试数据
   mixed_language_samples:
     original_srt: "mixed_language.srt"
-    target_model: "qwen2.5-7b-zh"  # 混合语言默认使用中文模型
+    target_model: "Qwen3-1.7B-zh"  # 混合语言默认使用中文模型
 
 # 6. 报告生成配置
 reporting:

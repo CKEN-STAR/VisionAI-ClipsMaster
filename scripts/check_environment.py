@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 VisionAI-ClipsMaster 环境检查脚本
@@ -241,7 +241,7 @@ class EnvironmentChecker:
             return {"score": 0, "issues": ["模型目录不存在"]}
             
         # 检查模型目录
-        model_types = ["mistral-7b", "qwen2.5-7b"]
+        model_types = ["mistral-7b", "Qwen3-1.7B"]
         
         for model_type in model_types:
             model_dir = models_dir / model_type

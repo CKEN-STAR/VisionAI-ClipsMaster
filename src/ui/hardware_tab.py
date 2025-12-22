@@ -444,7 +444,7 @@ class HardwareTabWidget(QWidget):
             # 中文模型建议
             if "qwen" in model_compatibility:
                 qwen_compat = model_compatibility["qwen"]
-                advice_text += f"### 中文模型 (Qwen2.5-7B):\n"
+                advice_text += f"### 中文模型 (Qwen3系列):\n"
                 advice_text += f"- 推荐量化: {qwen_compat.get('recommended_quantization', 'Q4_K_M')}\n"
                 for note in qwen_compat.get("notes", []):
                     advice_text += f"- {note}\n"

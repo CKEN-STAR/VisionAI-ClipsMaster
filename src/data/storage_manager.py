@@ -27,9 +27,9 @@ storage_logger = get_logger("storage_manager")
 # 全局存储管理器实例
 _storage_manager = None
 
-def get_storage_manager() -> StorageManager:
+def get_storage_manager() -> "StorageManager":
     """获取存储管理器实例
-    
+
     Returns:
         StorageManager: 存储管理器实例
     """

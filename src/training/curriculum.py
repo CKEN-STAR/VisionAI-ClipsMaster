@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 课程学习策略 - 渐进式训练计划
@@ -64,7 +64,7 @@ class CurriculumLearning:
         # 语言特定配置
         if language == "zh":
             self.language_config = {
-                "model_name": "Qwen2.5-7B",
+                "model_name": "Qwen3-1.7B",
                 "quantization": "Q4_K_M",
                 "batch_size": 2,
                 "special_tokens": ["震撼", "惊呆", "不敢相信", "史上最"]

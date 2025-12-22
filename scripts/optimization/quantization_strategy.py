@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -121,7 +121,7 @@ class QuantizationManager:
     def _get_download_url(self, language: str, quantization: str) -> str:
         """获取下载URL"""
         base_urls = {
-            "zh": "https://modelscope.cn/models/qwen/Qwen2.5-7B-Instruct-GGUF/resolve/main",
+            "zh": "https://modelscope.cn/models/Qwen/Qwen3-8B-Instruct-GGUF/resolve/main",
             "en": "https://huggingface.co/microsoft/DialoGPT-medium/resolve/main"
         }
         

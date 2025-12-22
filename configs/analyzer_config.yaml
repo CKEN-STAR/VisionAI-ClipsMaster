@@ -30,7 +30,7 @@ analysis_interval: 60               # 自动分析间隔 (秒)
 
 # 模型特定参数
 model_specific:
-  # 中文模型 (Qwen2.5-7B)
+  # 中文模型 (Qwen3系列)
   qwen:
     inference_threshold: 2000       # 推理时间阈值 (ms)
     tokens_per_second_threshold: 5  # 处理速度阈值 (tokens/s)

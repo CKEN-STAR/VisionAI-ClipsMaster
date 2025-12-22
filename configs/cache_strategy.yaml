@@ -95,7 +95,7 @@ device_specific:
 
 # 模型特定配置
 model_specific:
-  "qwen2.5-7b-zh":
+  "qwen3-1.7b-zh":
     default_strategy: "freq_aware"
     max_items: 5
     warm_up_items: ["embedding", "attention_1"]

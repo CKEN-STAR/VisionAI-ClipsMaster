@@ -32,15 +32,6 @@ class QuantizationSelector:
         
         # 量化方法评分表
         self.method_scores = {
-            'GPTQ': {  # GPT-Q量化方法
-                'en': 0.92,
-                'zh': 0.89,
-                'performance_impact': 0.15,  # 性能影响(越小越好)
-                'memory_reduction': 0.75,    # 内存减少比例
-                'hardware_compatibility': ['cuda', 'cpu'],
-                'min_bits': 4,
-                'max_bits': 8
-            },
             'AWQ': {   # Activation-aware Weight Quantization
                 'en': 0.83,
                 'zh': 0.81,

@@ -284,7 +284,7 @@ class ErrorDashboardUI:
         error_types = [
             (ErrorCode.FILE_NOT_FOUND, "文件未找到", {"path": "test.mp4"}),
             (ErrorCode.PERMISSION_DENIED, "权限被拒绝", {"path": "access.log"}),
-            (ErrorCode.MODEL_ERROR, "模型加载失败", {"model": "qwen2.5-7b-zh"}),
+            (ErrorCode.MODEL_ERROR, "模型加载失败", {"model": "qwen3-1.7b-zh"}),
             (ErrorCode.NETWORK_ERROR, "网络连接失败", {"url": "api.example.com"}),
             (ErrorCode.VALIDATION_ERROR, "验证失败", {"field": "resolution"}),
             (ErrorCode.TIMEOUT_ERROR, "操作超时", {"operation": "export"}),

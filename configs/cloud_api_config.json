@@ -1,0 +1,13 @@
+{
+  "mode": "cloud",
+  "cloud": {
+    "platform": "siliconflow",
+    "model": "deepseek-v3.2",
+    "api_key": "sk-zxeyrtsoxvhiapxgyvnfojjizuyhxvmkkvplrhhsgtszhsah",
+    "last_used": null
+  },
+  "local": {
+    "language_mode": "auto",
+    "model_path": ""
+  }
+}

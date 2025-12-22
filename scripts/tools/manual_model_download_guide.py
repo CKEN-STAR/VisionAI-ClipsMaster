@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -24,8 +24,8 @@ class ModelDownloadGuide:
     
     def __init__(self):
         self.models_config = {
-            "qwen2.5-7b": {
-                "name": "Qwen2.5-7B-Instruct",
+            "Qwen3-1.7B": {
+                "name": "Qwen3-1.7B-Instruct",
                 "description": "通义千问2.5-7B指令模型（中文优化）",
                 "size": "14.4GB",
                 "files": [
@@ -44,9 +44,9 @@ class ModelDownloadGuide:
                 ],
                 "target_dir": "models/models/qwen/base",
                 "download_sources": {
-                    "modelscope": "https://modelscope.cn/models/qwen/Qwen2.5-7B-Instruct",
-                    "huggingface": "https://huggingface.co/Qwen/Qwen2.5-7B-Instruct",
-                    "hf_mirror": "https://hf-mirror.com/Qwen/Qwen2.5-7B-Instruct"
+                    "modelscope": "https://modelscope.cn/models/Qwen/Qwen3-8B-Instruct",
+                    "huggingface": "https://huggingface.co/Qwen/Qwen3-8B-Instruct",
+                    "hf_mirror": "https://hf-mirror.com/Qwen/Qwen3-8B-Instruct"
                 }
             },
             "mistral-7b": {
@@ -68,18 +68,18 @@ class ModelDownloadGuide:
                     "modelscope": "https://modelscope.cn/models/AI-ModelScope/Mistral-7B-Instruct-v0.1"
                 }
             },
-            "qwen2.5-7b-gguf": {
-                "name": "Qwen2.5-7B-Instruct-GGUF (量化版)",
-                "description": "Qwen2.5-7B GGUF量化模型（推荐）",
+            "Qwen3-1.7B-gguf": {
+                "name": "Qwen3-1.7B-Instruct-GGUF (量化版)",
+                "description": "Qwen3-1.7B GGUF量化模型（推荐）",
                 "size": "4.1GB",
                 "files": [
-                    "qwen2.5-7b-instruct-q4_k_m.gguf"
+                    "Qwen3-1.7B-instruct-q4_k_m.gguf"
                 ],
                 "target_dir": "models/models/qwen/quantized",
                 "target_filename": "Q4_K_M.gguf",
                 "download_sources": {
-                    "modelscope": "https://modelscope.cn/models/qwen/Qwen2.5-7B-Instruct-GGUF",
-                    "huggingface": "https://huggingface.co/Qwen/Qwen2.5-7B-Instruct-GGUF"
+                    "modelscope": "https://modelscope.cn/models/Qwen/Qwen3-8B-Instruct-GGUF",
+                    "huggingface": "https://huggingface.co/Qwen/Qwen3-8B-Instruct-GGUF"
                 }
             },
             "mistral-7b-gguf": {

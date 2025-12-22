@@ -40,7 +40,7 @@ resource_types:
     max_retain_time: 600   # 10分钟未使用自动卸载
     model_specific:
       # 中文模型配置 - 当前使用
-      - model_id: "qwen2.5-7b-zh"
+      - model_id: "qwen3-1.7b-zh"
         min_required_layers: 4
         emergency_quantization: "Q2_K"  # 紧急情况下更激进量化
       

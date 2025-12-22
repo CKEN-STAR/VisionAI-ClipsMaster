@@ -18,6 +18,9 @@ from src.utils.device_manager import HybridDevice
 from src.utils.memory_manager import MemoryManager
 from src.core.model_sharding import ModelSharding
 
+# 内存使用警告阈值（百分比）
+MEMORY_WARNING_THRESHOLD = 80
+
 
 class ShardPolicyManager:
     """模型分片策略管理类"""
@@ -126,10 +129,6 @@ class ShardPolicyManager:
         """
         import time
 
-# 内存使用警告阈值（百分比）
-MEMORY_WARNING_THRESHOLD = 80
-
-        
         record = {
             "timestamp": time.time(),
             "datetime": time.strftime("%Y-%m-%d %H:%M:%S"),

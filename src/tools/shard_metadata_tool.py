@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -382,16 +382,16 @@ def main():
         epilog="""
 示例:
   创建元数据:
-    python shard_metadata_tool.py create qwen2.5-7b-zh --shard-dir models/qwen2.5-7b-zh_shards
+    python shard_metadata_tool.py create Qwen3-1.7B-zh --shard-dir models/Qwen3-1.7B-zh_shards
     
   添加分片元数据:
-    python shard_metadata_tool.py add qwen2.5-7b-zh shard_001 --layers embedding,attention_1 --shard-path models/qwen2.5-7b-zh_shards/model_part_000.bin
+    python shard_metadata_tool.py add Qwen3-1.7B-zh shard_001 --layers embedding,attention_1 --shard-path models/Qwen3-1.7B-zh_shards/model_part_000.bin
     
   显示元数据:
-    python shard_metadata_tool.py show qwen2.5-7b-zh --verbose
+    python shard_metadata_tool.py show Qwen3-1.7B-zh --verbose
     
   验证元数据:
-    python shard_metadata_tool.py verify qwen2.5-7b-zh --dependencies --files
+    python shard_metadata_tool.py verify Qwen3-1.7B-zh --dependencies --files
     
   列出所有模型:
     python shard_metadata_tool.py show --list-models

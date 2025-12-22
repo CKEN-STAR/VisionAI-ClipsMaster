@@ -1,0 +1,78 @@
+{
+  "session_id": "20251119210125",
+  "timestamp": "2025-11-19T21:01:25.503198",
+  "probes": {
+    "0.10": {
+      "timestamp": 4.132000000000001,
+      "metrics": {
+        "audio_quality": 1.0,
+        "visual_quality": 0.7208324
+      }
+    },
+    "0.25": {
+      "timestamp": 10.33,
+      "metrics": {
+        "audio_quality": 1.0,
+        "visual_quality": 0.7208324
+      }
+    },
+    "0.50": {
+      "timestamp": 20.66,
+      "metrics": {
+        "audio_quality": 1.0,
+        "visual_quality": 0.7208324
+      }
+    },
+    "0.75": {
+      "timestamp": 30.990000000000002,
+      "metrics": {
+        "audio_quality": 1.0,
+        "visual_quality": 0.7208324
+      }
+    },
+    "0.90": {
+      "timestamp": 37.188,
+      "metrics": {
+        "audio_quality": 1.0,
+        "visual_quality": 0.7208324
+      }
+    }
+  },
+  "summary": {
+    "overall_quality": 0.51624972,
+    "metrics": {
+      "narrative_coherence": 0.0,
+      "audio_quality": 1.0,
+      "visual_quality": 0.7208324
+    },
+    "issues": [
+      "narrative_coherence得分过低 (0.00 < 0.7)"
+    ],
+    "recommendations": [
+      "提高字幕片段之间的连贯性，减少时间间隔"
+    ],
+    "pass": false
+  },
+  "markers": {
+    "marker_PROBE_0.1": {
+      "timestamp": "00:00:04.132",
+      "name": "PROBE_0.1"
+    },
+    "marker_PROBE_0.25": {
+      "timestamp": "00:00:10.330",
+      "name": "PROBE_0.25"
+    },
+    "marker_PROBE_0.5": {
+      "timestamp": "00:00:20.660",
+      "name": "PROBE_0.5"
+    },
+    "marker_PROBE_0.75": {
+      "timestamp": "00:00:30.990",
+      "name": "PROBE_0.75"
+    },
+    "marker_PROBE_0.9": {
+      "timestamp": "00:00:37.188",
+      "name": "PROBE_0.9"
+    }
+  }
+}

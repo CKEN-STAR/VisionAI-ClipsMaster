@@ -96,10 +96,10 @@ class QuantConfigLoader:
     def get_model_specific_config(self, model_name: str) -> Dict[str, Any]:
         """
         获取特定模型的量化配置
-        
+
         Args:
-            model_name: 模型名称，如 'qwen2.5-7b-zh'
-            
+            model_name: 模型名称，如 'qwen3-1.7b-zh'
+
         Returns:
             Dict: 模型特定配置
         """
@@ -313,11 +313,11 @@ if __name__ == "__main__":
         
         optimal_level = config.select_optimal_quant_level()
         print(f"\n当前推荐量化级别: {optimal_level}")
-        
+
         print("\nQwen模型最佳配置:")
-        params = config.get_optimal_quant_params("qwen2.5-7b-zh")
+        params = config.get_optimal_quant_params("qwen3-1.7b-zh")
         print(params)
-        
+
         print("\n系统配置推荐:")
         recommendations = config.get_recommendations(total_gb)
         for i, rec in enumerate(recommendations[:3], 1):

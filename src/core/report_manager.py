@@ -175,9 +175,9 @@ report_manager = ReportManager()
 if __name__ == "__main__":
     # 测试代码
     manager = ReportManager()
-    
+
     # 添加测试数据
-    manager.set_model_info("Qwen2.5-7B-zh", {
+    manager.set_model_info("Qwen3-1.7B-zh", {
         "type": "中文模型",
         "quantization": "Q4_K_M",
         "status": "active",

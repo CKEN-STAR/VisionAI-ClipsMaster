@@ -7,6 +7,8 @@
 
 from typing import List, Dict, Any, Tuple, Optional
 from ..utils.log_handler import get_logger
+from ..utils.file_utils import safe_read_yaml
+import os
 
 logger = get_logger(__name__)
 
@@ -15,14 +17,37 @@ class SegmentAdvisor:
 
     def __init__(self):
         """初始化片段建议器"""
+        # 基于方案S默认的权重配置（可由Auto长度逻辑/环境变量在上层调参覆盖）
         self.importance_weights = {
-            "text_length": 0.3,      # 文本长度权重
-            "emotional_intensity": 0.4,  # 情感强度权重
-            "position_bonus": 0.2,   # 位置奖励权重
-            "duration_penalty": 0.1  # 时长惩罚权重
+            "text_length": 0.25,          # 降低长文本偏好
+            "emotional_intensity": 0.45,  # 提升情感峰值
+            "position_bonus": 0.20,
+            "duration_penalty": 0.20      # 提升对时长的约束（偏向短节奏）
         }
 
-        logger.info("🎯 片段建议器初始化完成")
+        # 理想片段时长区间（贴合爆款均值≈1.67s）
+        self.ideal_duration = (1.3, 2.3)
+
+        # 片段上限（可由环境变量/配置覆盖）
+        self.max_segments = 320
+        try:
+            env_ms = os.getenv("VACL_MAX_SEGMENTS")
+            if env_ms:
+                self.max_segments = max(1, int(env_ms))
+            else:
+                # YAML回退：narrative_config.yaml > param_matrix.yaml
+                try:
+                    ncfg = safe_read_yaml("configs/narrative_config.yaml", {}) or {}
+                    ms = int(((ncfg.get("segment_selection") or {}).get("max_segments") or self.max_segments))
+                    self.max_segments = ms
+                except Exception:
+                    pm = safe_read_yaml("configs/param_matrix.yaml", {}) or {}
+                    g = pm.get("global") or {}
+                    self.max_segments = int(g.get("max_segments", self.max_segments))
+        except Exception:
+            pass
+
+        logger.info(f"🎯 片段建议器初始化完成｜ideal={self.ideal_duration}｜max_segments={self.max_segments}")
 
     def suggest_segment_merging(self, segments: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
@@ -191,7 +216,8 @@ class SegmentAdvisor:
 
                 # 时长惩罚（过长或过短的片段扣分）
                 duration = self._get_duration(segment)
-                if 2.0 <= duration <= 6.0:  # 理想时长范围
+                min_ideal, max_ideal = getattr(self, "ideal_duration", (2.0, 6.0))
+                if min_ideal <= duration <= max_ideal:  # 理想时长范围（方案S：1.3–2.3s）
                     duration_score = 1.0
                 else:
                     duration_score = 0.5
@@ -255,9 +281,13 @@ class SegmentAdvisor:
             selected_segments = []
             current_duration = 0.0
             target_duration = (min_length + max_length) / 2
+            max_segments = getattr(self, "max_segments", 10**9)
+            logger.info(f"🧩 组合选择｜目标={min_length}-{max_length}s｜中值={target_duration:.1f}s｜上限片段数={max_segments}")
 
-            # 贪心算法选择片段
+            # 贪心算法选择片段（考虑片段上限）
             for score, segment in scored_segments:
+                if len(selected_segments) >= max_segments:
+                    break
                 segment_duration = self._get_duration(segment)
 
                 # 检查是否可以添加这个片段
@@ -265,8 +295,8 @@ class SegmentAdvisor:
                     selected_segments.append(segment)
                     current_duration += segment_duration
 
-                    # 如果达到目标长度，停止添加
-                    if current_duration >= min_length:
+                    # 如果达到目标长度，停止添加（按目标中值而非最小值）
+                    if current_duration >= target_duration:
                         break
 
             # 如果选择的片段太少，添加更多片段
@@ -275,6 +305,8 @@ class SegmentAdvisor:
                                     if seg not in selected_segments]
 
                 for segment in remaining_segments:
+                    if len(selected_segments) >= max_segments:
+                        break
                     segment_duration = self._get_duration(segment)
                     if current_duration + segment_duration <= max_length:
                         selected_segments.append(segment)

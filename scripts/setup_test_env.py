@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 设置VisionAI-ClipsMaster测试环境
@@ -102,7 +102,7 @@ def setup_model_configs():
     # 设置当前激活的中文模型
     with open("configs/models/active_model.yaml", "w", encoding="utf-8") as f:
         f.write("# 当前激活的模型配置\n")
-        f.write("active_model: qwen2.5-7b-zh\n")
+        f.write("active_model: Qwen3-1.7B-zh\n")
         f.write("language: zh\n")
     
     print("✓ 模型配置准备完成")
@@ -171,7 +171,7 @@ class MemoryTest:
     @profile
     def simulate_model_loading(self):
         \"\"\"模拟模型加载\"\"\"
-        print("模拟Qwen2.5-7B量化模型加载...")
+        print("模拟Qwen3-1.7B量化模型加载...")
         
         # 模拟模型内存占用(约3.8GB)
         large_list = [0] * (950 * 1024 * 1024)  # 约3.8GB

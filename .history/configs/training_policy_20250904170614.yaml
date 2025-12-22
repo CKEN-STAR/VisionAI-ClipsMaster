@@ -1,0 +1,381 @@
+# VisionAI-ClipsMaster 训练策略配置
+# 支持中英文独立训练和课程学习
+
+# 全局训练配置
+global_config:
+  max_epochs: 10
+  batch_size: 4
+  learning_rate: 3e-5
+  warmup_steps: 100
+  save_steps: 500
+  eval_steps: 250
+  gradient_accumulation_steps: 2
+  max_grad_norm: 1.0
+  weight_decay: 0.01
+  adam_epsilon: 1e-8
+
+# 英文训练配置
+en_training:
+  model_name: "mistral-7b-en"
+  model_path: "models/mistral/base"
+  quantization: "Q5_K_M"
+  language: "en"
+
+  # 数据配置
+  data_config:
+    train_data_path: "data/training/en"
+    hit_subtitles_path: "data/training/en/hit_subtitles"
+    raw_pairs_path: "data/training/en/raw_pairs"
+    augmented_data_path: "data/training/en/augmented_data"
+    max_sequence_length: 512
+    min_sequence_length: 10
+
+  # 课程学习配置
+  curriculum_learning:
+    enabled: true
+    stages:
+      - name: "basic_alignment"
+        description: "Learn basic timeline alignment"
+        difficulty: "easy"
+        max_samples: 50
+        epochs: 2
+        learning_rate: 5e-5
+      - name: "structure_understanding"
+        description: "Master plot structure reorganization"
+        difficulty: "medium"
+        max_samples: 100
+        epochs: 3
+        learning_rate: 3e-5
+      - name: "advanced_reconstruction"
+        description: "Master non-linear narrative structures"
+        difficulty: "hard"
+        max_samples: 200
+        epochs: 4
+        learning_rate: 2e-5
+
+  # 特殊标记
+  special_tokens:
+    - "SHOCKING"
+    - "AMAZING"
+    - "UNBELIEVABLE"
+    - "INCREDIBLE"
+    - "MUST WATCH"
+    - "VIRAL"
+
+# 中文训练配置
+zh_training:
+  model_name: "qwen2.5-7b-zh"
+  model_path: "models/qwen/base"
+  quantization: "Q4_K_M"
+  language: "zh"
+
+  # 数据配置
+  data_config:
+    train_data_path: "data/training/zh"
+    hit_subtitles_path: "data/training/zh/hit_subtitles"
+    raw_pairs_path: "data/training/zh/raw_pairs"
+    augmented_data_path: "data/training/zh/augmented_data"
+    max_sequence_length: 512
+    min_sequence_length: 10
+
+  # 课程学习配置
+  curriculum_learning:
+    enabled: true
+    stages:
+      - name: "基础对齐阶段"
+        description: "学习基础时间轴对齐"
+        difficulty: "easy"
+        max_samples: 50
+        epochs: 2
+        learning_rate: 5e-5
+      - name: "结构理解阶段"
+        description: "掌握剧情结构重组"
+        difficulty: "medium"
+        max_samples: 100
+        epochs: 3
+        learning_rate: 3e-5
+      - name: "高级重构阶段"
+        description: "掌握非线性叙事结构"
+        difficulty: "hard"
+        max_samples: 200
+        epochs: 4
+        learning_rate: 2e-5
+
+  # 特殊标记
+  special_tokens:
+    - "震撼"
+    - "惊呆"
+    - "不敢相信"
+    - "史上最"
+    - "必看"
+    - "爆款"
+
+# 基础训练配置（保持向后兼容）
+training:
+  # 学习率配置
+  learning_rate:
+    initial: 2e-5
+    min: 1e-6
+    scheduler: "cosine"
+    warmup_steps: 100
+    
+  # 批次配置
+  batch_size:
+    train: 4
+    eval: 8
+    gradient_accumulation_steps: 4
+    
+  # 训练轮数
+  epochs:
+    max: 10
+    early_stopping_patience: 3
+    
+  # 优化器配置
+  optimizer:
+    type: "AdamW"
+    weight_decay: 0.01
+    beta1: 0.9
+    beta2: 0.999
+    eps: 1e-8
+
+# LoRA微调配置
+lora:
+  # LoRA参数
+  rank: 16
+  alpha: 32
+  dropout: 0.1
+  
+  # 目标模块
+  target_modules:
+    - "q_proj"
+    - "v_proj"
+    - "k_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+  
+  # 任务类型
+  task_type: "CAUSAL_LM"
+
+# 数据配置
+data:
+  # 数据集分割
+  train_split: 0.8
+  val_split: 0.1
+  test_split: 0.1
+  
+  # 数据预处理
+  max_length: 512
+  truncation: true
+  padding: "max_length"
+  
+  # 数据增强
+  augmentation:
+    enabled: true
+    synonym_replacement: 0.1
+    random_insertion: 0.1
+    random_swap: 0.1
+    random_deletion: 0.1
+
+# 模型配置
+model:
+  # 中文模型
+  chinese:
+    name: "Qwen/Qwen2.5-7B-Instruct"
+    max_length: 512
+    temperature: 0.7
+    top_p: 0.9
+    top_k: 50
+    
+  # 英文模型
+  english:
+    name: "mistralai/Mistral-7B-Instruct-v0.1"
+    max_length: 512
+    temperature: 0.7
+    top_p: 0.9
+    top_k: 50
+
+# 评估配置
+evaluation:
+  # 评估指标
+  metrics:
+    - "bleu"
+    - "rouge"
+    - "perplexity"
+    - "viral_score"
+    
+  # 评估频率
+  eval_steps: 100
+  save_steps: 200
+  logging_steps: 50
+  
+  # 最佳模型保存
+  metric_for_best_model: "viral_score"
+  greater_is_better: true
+
+# 硬件配置
+hardware:
+  # 内存优化
+  memory:
+    max_memory_mb: 3500  # 4GB设备的安全阈值
+    gradient_checkpointing: true
+    dataloader_pin_memory: false
+    
+  # CPU配置
+  cpu:
+    num_workers: 2
+    use_cpu: true
+    mixed_precision: false
+    
+  # 量化配置
+  quantization:
+    enabled: true
+    bits: 4
+    quant_type: "nf4"
+    use_double_quant: true
+
+# 输出配置
+output:
+  # 模型保存
+  output_dir: "./models/fine_tuned"
+  save_total_limit: 3
+  save_strategy: "steps"
+  
+  # 日志配置
+  logging_dir: "./logs/training"
+  report_to: ["tensorboard"]
+  
+  # 推送到Hub（可选）
+  push_to_hub: false
+  hub_model_id: null
+
+# 训练策略
+strategy:
+  # 训练模式
+  mode: "lora"  # 可选: "full", "lora", "prefix"
+  
+  # 数据策略
+  data_strategy: "balanced"  # 平衡中英文数据
+  
+  # 损失函数
+  loss_function: "cross_entropy"
+  label_smoothing: 0.1
+  
+  # 正则化
+  regularization:
+    dropout: 0.1
+    attention_dropout: 0.1
+    
+# 质量控制
+quality:
+  # 数据质量阈值
+  min_quality_score: 0.7
+  max_length_ratio: 3.0  # 输出/输入长度比例上限
+  
+  # 病毒式潜力评分
+  viral_potential:
+    min_score: 0.3
+    weight_factors:
+      suspense: 0.3
+      emotion: 0.25
+      conflict: 0.2
+      novelty: 0.15
+      engagement: 0.1
+
+# 实验配置
+experiment:
+  # 实验名称
+  name: "visionai_clipmaster_v1"
+  
+  # 种子设置
+  seed: 42
+  
+  # 调试模式
+  debug: false
+  
+  # A/B测试
+  ab_testing:
+    enabled: false
+    variants: ["baseline", "enhanced"]
+    
+# 部署配置
+deployment:
+  # 模型格式
+  export_format: "onnx"
+  
+  # 推理优化
+  inference:
+    batch_size: 1
+    max_new_tokens: 256
+    do_sample: true
+    
+  # 服务配置
+  service:
+    port: 8000
+    workers: 1
+    timeout: 30
+
+# 数据增强配置
+data_augmentation:
+  enabled: true
+  techniques:
+    - "synonym_replacement"
+    - "sentence_reordering"
+    - "emotional_intensification"
+    - "plot_variation"
+
+  # 增强比例
+  augmentation_ratio: 0.3
+
+  # 质量控制
+  quality_threshold: 0.8
+  max_augmented_samples: 1000
+
+# 评估配置
+evaluation:
+  metrics:
+    - "bleu_score"
+    - "rouge_score"
+    - "narrative_coherence"
+    - "emotional_impact"
+
+  # 验证集配置
+  validation_split: 0.2
+  test_split: 0.1
+
+  # 早停配置
+  early_stopping:
+    enabled: true
+    patience: 3
+    min_delta: 0.001
+
+# 模型保存配置
+model_saving:
+  save_best_only: true
+  save_total_limit: 3
+  output_dir: "models/finetuned"
+
+  # 检查点配置
+  checkpoint_config:
+    save_steps: 500
+    keep_best_checkpoints: 5
+
+# 硬件优化配置
+hardware_optimization:
+  # 内存优化
+  memory_optimization:
+    gradient_checkpointing: true
+    dataloader_num_workers: 2
+    pin_memory: true
+
+  # CPU优化
+  cpu_optimization:
+    use_cpu_only: true
+    num_threads: 4
+
+  # 量化配置
+  quantization_config:
+    load_in_4bit: true
+    bnb_4bit_compute_dtype: "float16"
+    bnb_4bit_use_double_quant: true

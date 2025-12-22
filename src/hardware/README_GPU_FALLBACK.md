@@ -8,7 +8,7 @@ VisionAI-ClipsMaster的GPU回退机制使系统能够智能选择最适合当前
 - **优雅的回退路径**：GPU不可用时自动回退到CPU
 - **CPU优化路径**：根据CPU支持的指令集(AVX512/AVX2/AVX)选择优化路径
 - **内存优化**：根据设备可用资源动态调整内存使用
-- **中英文模型支持**：为Qwen2.5-7B中文模型和Mistral-7B英文模型提供专门配置
+- **中英文模型支持**：为Qwen3-1.7B中文模型和Mistral-7B英文模型提供专门配置
 
 ## 用法示例
 
@@ -44,7 +44,7 @@ from src.hardware.gpu_fallback import get_gpu_fallback_manager
 manager = get_gpu_fallback_manager()
 
 # 获取特定模型的优化配置
-qwen_config = manager.get_optimized_config("qwen2.5-7b-zh")
+qwen_config = manager.get_optimized_config("qwen3-1.7b-zh")
 print(f"Qwen配置: {qwen_config}")
 ```
 

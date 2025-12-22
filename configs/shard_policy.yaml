@@ -78,7 +78,7 @@ shard_strategies:
 
 # 特定模型的分片调优参数
 model_specific:
-  "qwen2.5-7b-zh":
+  "qwen3-1.7b-zh":
     default_strategy: "balanced"
     custom_settings:
       max_shard_size: 1200  # MB

@@ -1,0 +1,74 @@
+{
+  "session_id": "20251105104840",
+  "timestamp": "2025-11-05T10:48:40.025680",
+  "probes": {
+    "0.10": {
+      "timestamp": 7.8294,
+      "metrics": {
+        "audio_quality": 1.0,
+        "visual_quality": 0.8068592
+      }
+    },
+    "0.25": {
+      "timestamp": 19.5735,
+      "metrics": {
+        "audio_quality": 1.0,
+        "visual_quality": 0.8068592
+      }
+    },
+    "0.50": {
+      "timestamp": 39.147,
+      "metrics": {
+        "audio_quality": 1.0,
+        "visual_quality": 0.8068592
+      }
+    },
+    "0.75": {
+      "timestamp": 58.7205,
+      "metrics": {
+        "audio_quality": 1.0,
+        "visual_quality": 0.8068592
+      }
+    },
+    "0.90": {
+      "timestamp": 70.4646,
+      "metrics": {
+        "audio_quality": 1.0,
+        "visual_quality": 0.8068592
+      }
+    }
+  },
+  "summary": {
+    "overall_quality": 0.94205776,
+    "metrics": {
+      "narrative_coherence": 1.0,
+      "audio_quality": 1.0,
+      "visual_quality": 0.8068592000000001
+    },
+    "issues": [],
+    "recommendations": [],
+    "pass": true
+  },
+  "markers": {
+    "marker_PROBE_0.1": {
+      "timestamp": "00:00:07.829",
+      "name": "PROBE_0.1"
+    },
+    "marker_PROBE_0.25": {
+      "timestamp": "00:00:19.573",
+      "name": "PROBE_0.25"
+    },
+    "marker_PROBE_0.5": {
+      "timestamp": "00:00:39.147",
+      "name": "PROBE_0.5"
+    },
+    "marker_PROBE_0.75": {
+      "timestamp": "00:00:58.721",
+      "name": "PROBE_0.75"
+    },
+    "marker_PROBE_0.9": {
+      "timestamp": "00:01:10.465",
+      "name": "PROBE_0.9"
+    }
+  }
+}

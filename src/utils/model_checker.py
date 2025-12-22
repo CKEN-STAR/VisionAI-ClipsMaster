@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """
@@ -219,4 +219,4 @@ def verify_model_integrity(model_name: str) -> bool:
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     # 验证中文模型
-    verify_model_integrity("qwen2.5-7b-zh") 
+    verify_model_integrity("Qwen3-1.7B-zh") 

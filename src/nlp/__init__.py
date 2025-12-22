@@ -16,39 +16,39 @@ def check_nlp_dependencies():
     try:
         import transformers
         logger.info(f"transformers可用: 版本 {transformers.__version__}")
-    except ImportError:
-        logger.warning("transformers未安装，深度学习模型功能受限")
-    
+    except Exception:
+        logger.warning("transformers不可用（已降级）：深度学习模型功能受限")
+
     # 检查spaCy
     try:
         import spacy
         logger.info(f"spaCy可用: 版本 {spacy.__version__}")
-    except ImportError:
-        logger.warning("spaCy未安装，将使用备用方法进行NLP处理")
-    
+    except Exception:
+        logger.warning("spaCy不可用（已降级）：将使用备用方法进行NLP处理")
+
     # 检查jieba
     try:
         import jieba
         logger.info(f"jieba可用: 版本 {jieba.__version__}")
-    except ImportError:
+    except Exception:
         logger.warning("jieba未安装，中文分词功能可能受限")
-    
+
     # 检查nltk
     try:
         import nltk
         logger.info(f"nltk可用: 版本 {nltk.__version__}")
-    except ImportError:
+    except Exception:
         logger.warning("nltk未安装，自然语言处理功能可能受限")
-    
+
     # 检查sentence-transformers
     try:
         import sentence_transformers
         logger.info(f"sentence-transformers可用: 版本 {sentence_transformers.__version__}")
-    except ImportError:
-        logger.warning("sentence-transformers未安装，文本嵌入功能将使用备用算法")
+    except Exception:
+        logger.warning("sentence-transformers不可用（已降级）：文本嵌入功能将使用备用算法")
 
-# 运行依赖检查
-check_nlp_dependencies()
+# 运行依赖检查（禁用导入期执行，避免触发沉重依赖/DLL 加载）
+# 如需检查，请在应用启动后显式调用：check_nlp_dependencies()
 
 # 导入主要函数
 try:

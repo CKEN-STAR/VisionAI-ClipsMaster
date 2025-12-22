@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 """
@@ -91,7 +91,7 @@ class ModelInitializer:
     def _get_model_id(self, model_name):
         """Get Hugging Face model ID based on model name"""
         model_ids = {
-            'qwen2.5-7b-zh': 'Qwen/Qwen1.5-7B',
+            'Qwen3-1.7B-zh': 'Qwen/Qwen3-8B',
             'mistral-7b-en': 'mistralai/Mistral-7B-v0.1'
         }
         return model_ids.get(model_name)

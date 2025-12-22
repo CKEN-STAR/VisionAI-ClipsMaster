@@ -1,0 +1,235 @@
+# VisionAI-ClipsMaster 全局模型配置
+# 更新时间：2025-10-07（支持智能推荐下载器系统 + 40个模型变体）
+#
+# 重要更新：
+# 1. 模型系列：Qwen2.5系列（qwen2.5-0.5b, qwen2.5-1.5b, qwen2.5-3b, qwen2.5-7b, qwen2.5-14b, qwen2.5-32b）
+# 2. 新增量化配置：INT8-128, INT4-128, INT8-PerChannel, INT4-PerChannel
+# 3. 硬件评分系统：从5级离散分级升级到0-100分连续评分
+# 4. 总计40个模型变体（10个模型 × 4个量化配置）
+
+# 智能推荐模式（新增）
+intelligent_recommendation:
+  enabled: true  # 启用智能推荐
+  auto_detect_device: true  # 自动检测设备
+  auto_select_model: true  # 自动选择模型
+  fallback_to_manual: true  # 检测失败时回退到手动选择
+
+# 当前激活的模型（智能推荐模式下会自动更新）
+active_models:
+  chinese: qwen2.5-0.5b-zh  # 默认使用最小模型，实际会根据设备自动调整
+  english: mistral-7b-en  # 默认使用7B模型，实际会根据设备自动调整
+
+# 可用模型列表（Qwen2.5系列）
+available_models:
+  chinese:
+    - qwen2.5-0.5b-zh
+    - qwen2.5-1.5b-zh
+    - qwen2.5-3b-zh      # 中级设备（硬件评分55-65分）
+    - qwen2.5-7b-zh
+    - qwen2.5-14b-zh     # 高级设备（硬件评分75-85分）
+    - qwen2.5-32b-zh
+  english:
+    - mistral-7b-en
+    - mistral-12b-nemo-en
+    - mistral-24b-small-en
+    - mistral-large2-en
+
+# 设备分级规则（更新：基于连续硬件评分0-100分）
+# 注意：实际推荐由intelligent_model_selector.py的calculate_hardware_score()动态计算
+device_tiers:
+  entry:
+    name: "入门级"
+    hardware_score_range: [0, 35]
+    min_memory_gb: 3
+    max_memory_gb: 4
+    device_type: "CPU"
+    recommended_models:
+      chinese: qwen2.5-0.5b-zh
+      english: mistral-7b-en
+    quantization: "INT4-128"
+
+  basic:
+    name: "基础级"
+    hardware_score_range: [35, 45]
+    min_vram_gb: 3
+    max_vram_gb: 4
+    device_type: "GPU"
+    recommended_models:
+      chinese: qwen2.5-0.5b-zh
+      english: mistral-7b-en
+    quantization: "INT4-128"
+
+  advanced:
+    name: "进阶级"
+    hardware_score_range: [45, 55]
+    min_vram_gb: 4
+    max_vram_gb: 6
+    device_type: "GPU"
+    recommended_models:
+      chinese: qwen2.5-1.5b-zh
+      english: mistral-12b-nemo-en
+    quantization: "INT4-128"
+
+  mid:
+    name: "中级"
+    hardware_score_range: [55, 65]
+    min_vram_gb: 6
+    max_vram_gb: 8
+    device_type: "GPU"
+    recommended_models:
+      chinese: qwen2.5-3b-zh
+      english: mistral-12b-nemo-en
+    quantization: "INT4-PerChannel"
+
+  high:
+    name: "中高级"
+    hardware_score_range: [65, 75]
+    min_vram_gb: 8
+    max_vram_gb: 12
+    device_type: "GPU"
+    recommended_models:
+      chinese: qwen2.5-7b-zh
+      english: mistral-24b-small-en
+    quantization: "INT4-PerChannel"
+
+  advanced_high:
+    name: "高级"
+    hardware_score_range: [75, 85]
+    min_vram_gb: 12
+    max_vram_gb: 18
+    device_type: "GPU"
+    recommended_models:
+      chinese: qwen2.5-14b-zh
+      english: mistral-24b-small-en
+    quantization: "INT4-128"
+
+  flagship:
+    name: "旗舰级"
+    hardware_score_range: [85, 100]
+    min_vram_gb: 20
+    max_vram_gb: 40
+    device_type: "GPU"
+    recommended_models:
+      chinese: qwen2.5-32b-zh
+      english: mistral-large2-en
+    quantization: "INT8-PerChannel"
+
+# 量化配置（更新：新增4种量化配置）
+quantization:
+  default: "INT4-128"  # 默认量化等级
+  low_memory: "INT4-128"  # 低内存模式
+  high_performance: "INT4-PerChannel"  # 高性能模式（精度优先）
+
+  # 量化策略（新增：支持4种量化配置）
+  strategies:
+    # INT8-128：8bit量化，group_size=128（平衡模式）
+    INT8-128:
+      quantization_type: "int8"
+      group_size: 128
+      memory_reduction: 0.50  # 相比FP16减少50%
+      precision_loss: 0.05  # 精度损失约5%
+      use_case: "平衡模式"
+      quality_retention: 0.95
+      inference_speed_factor: 0.85
+
+    # INT4-128：4bit量化，group_size=128（速度优先）
+    INT4-128:
+      quantization_type: "int4"
+      group_size: 128
+      memory_reduction: 0.75  # 相比FP16减少75%
+      precision_loss: 0.10  # 精度损失约10%
+      use_case: "低配设备，速度优先"
+      quality_retention: 0.90
+      inference_speed_factor: 0.80
+
+    # INT8-PerChannel：8bit per-channel量化（高精度）
+    INT8-PerChannel:
+      quantization_type: "q8_0"
+      group_size: -1  # per-channel
+      memory_reduction: 0.50  # 相比FP16减少50%
+      precision_loss: 0.04  # 精度损失约4%
+      use_case: "高精度模式"
+      quality_retention: 0.96
+      inference_speed_factor: 0.83
+
+    # INT4-PerChannel：4bit per-channel量化（精度优先）
+    INT4-PerChannel:
+      quantization_type: "q4_k_m"
+      group_size: -1  # per-channel
+      memory_reduction: 0.75  # 相比FP16减少75%
+      precision_loss: 0.08  # 精度损失约8%
+      use_case: "低配设备，精度优先"
+      quality_retention: 0.92
+      inference_speed_factor: 0.75
+
+    # 兼容旧配置
+    INT4:
+      quantization_type: "int4"
+      group_size: 128
+      memory_reduction: 0.75
+      precision_loss: 0.10
+      use_case: "低配设备（兼容旧配置）"
+      quality_retention: 0.90
+      inference_speed_factor: 0.80
+
+    INT8:
+      quantization_type: "int8"
+      group_size: 128
+      memory_reduction: 0.50
+      precision_loss: 0.05
+      use_case: "平衡模式（兼容旧配置）"
+      quality_retention: 0.95
+      inference_speed_factor: 0.85
+
+# 性能配置（更新）
+performance:
+  max_threads: 4
+  batch_size: 2
+  use_gpu: true  # 优先使用GPU
+  auto_detect_gpu: true  # 自动检测GPU
+
+  # 内存优化
+  memory_optimization:
+    gradient_checkpointing: true  # 梯度检查点（节省40%显存）
+    dynamic_quantization: true  # 动态量化
+    model_offloading: false  # 模型卸载（暂不启用）
+
+# 下载配置（新增）
+download:
+  # 镜像源优先级
+  mirror_priority:
+    - modelscope  # 国内镜像（优先）
+    - hf_mirror  # HuggingFace镜像
+    - huggingface  # 官方源
+
+  # 下载设置
+  resume_download: true  # 断点续传
+  max_retries: 3  # 最大重试次数
+  timeout: 600  # 超时时间（秒）
+  verify_checksum: true  # 校验哈希值
+
+  # 缓存设置
+  cache_dir: "models/.cache"
+  auto_cleanup: false  # 自动清理旧版本
+
+# 训练配置（新增）
+training:
+  enabled: true
+  use_lora: true  # 使用LoRA微调
+  auto_config: true  # 自动配置训练参数
+
+  # 默认训练参数（会根据设备等级自动调整）
+  default_params:
+    learning_rate: 3e-4
+    num_epochs: 3
+    warmup_steps: 100
+    logging_steps: 10
+    save_steps: 100
+
+# 日志配置
+logging:
+  level: "INFO"
+  log_model_loading: true
+  log_inference: true
+  log_training: true
+  log_device_detection: true

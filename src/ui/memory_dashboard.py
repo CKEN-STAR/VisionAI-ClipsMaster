@@ -26,7 +26,7 @@ try:
         QTableWidgetItem, QHeaderView, QProgressBar, QTabWidget,
         QApplication, QMainWindow
     )
-    from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QSize, QPoint
+    from PyQt6.QtCore import Qt, QTimer, pyqtSignal, QSize, QPoint, QRect
     from PyQt6.QtGui import QPainter, QPen, QColor, QFont, QBrush, QPixmap, QRadialGradient
     HAS_QT = True
 
@@ -172,13 +172,13 @@ class GaugeChart(QWidget):
         # 绘制标题
         painter.setPen(QPen(Qt.GlobalColor.black))
         painter.setFont(QFont("Arial", 12, QFont.Weight.Bold))
-        painter.drawText(0, 0, w, int(h - radius / 2), Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignBottom, self.title)
+        painter.drawText(QRect(0, 0, w, int(h - radius / 2)), Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignBottom, self.title)
 
         # 绘制值
         painter.setFont(QFont("Arial", 16, QFont.Weight.Bold))
         painter.setPen(QPen(color))
         text = f"{self.value:.1f}{self.unit}"
-        painter.drawText(0, int(h - radius / 2), w, int(radius / 2), Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignCenter, text)
+        painter.drawText(QRect(0, int(h - radius / 2), w, int(radius / 2)), Qt.AlignmentFlag.AlignHCenter | Qt.AlignmentFlag.AlignCenter, text)
 
 
 class SimpleLineChart(QWidget):

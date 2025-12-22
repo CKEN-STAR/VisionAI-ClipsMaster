@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 VisionAI-ClipsMaster 核心视频处理问题修复脚本
@@ -229,7 +229,7 @@ def optimize_model_quantization():
 # 针对3.8GB内存限制进行优化
 
 available_models:
-  - name: "qwen2.5-7b-zh-optimized"
+  - name: "Qwen3-1.7B-zh-optimized"
     language: "zh"
     quantization: "Q2_K"  # 更激进的量化
     memory_requirement_mb: 2800  # 优化后内存需求

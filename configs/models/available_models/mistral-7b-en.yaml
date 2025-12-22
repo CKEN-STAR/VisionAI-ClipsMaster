@@ -3,32 +3,20 @@ model:
   display_name: Mistral-7B 英文剧本重构模型
   language: en
   version: '0.3'
-  model_format: gptq
+  model_format: huggingface
   hf_model_id: mistralai/Mistral-7B-Instruct-v0.3
   modelscope_id: AI-ModelScope/Mistral-7B-Instruct-v0.3
   parameters: 7B
   size_fp16: 14GB
-  size_int4: 3.5GB
-  size_int8: 7GB
 paths:
   base: models/mistral/mistral-7b
   quantized: models/mistral/mistral-7b/quantized
   adapters: models/mistral/mistral-7b/adapters
   checkpoint: models/mistral/mistral-7b/base/model.safetensors
 quantization:
-  default_level: INT4
-  emergency_level: INT4
-  performance_level: INT4
-  gptq_config:
-    bits: 4
-    group_size: 128
-    desc_act: false
-    sym: true
-    true_sequential: true
-  llm_int8_config:
-    load_in_8bit: true
-    llm_int8_threshold: 6.0
-    llm_int8_skip_modules: null
+  default_level: FP16
+  emergency_level: FP16
+  performance_level: FP16
 lora_config:
   entry_tier:
     r: 4
@@ -82,37 +70,23 @@ hardware_requirements:
     min_memory: 3GB
     recommended_memory: 4GB
     device_type: CPU
-    quantization: INT8
+    quantization: FP16
     estimated_inference_time: 10s
   basic_tier:
     min_vram: 3GB
     recommended_vram: 4GB
     device_type: GPU
-    quantization: INT4
+    quantization: FP16
     estimated_inference_time: 5s
 download:
   modelscope_url: https://www.modelscope.cn/models/AI-ModelScope/Mistral-7B-Instruct-v0.3
   hf_mirror_url: https://hf-mirror.com/mistralai/Mistral-7B-Instruct-v0.3
   hf_url: https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.3
   quantized_versions:
-    int4: https://www.modelscope.cn/models/LoneStriker/Mistral-7B-Instruct-v0.3-GPTQ
-    int4_128: https://www.modelscope.cn/models/LoneStriker/Mistral-7B-Instruct-v0.3-GPTQ
-    int4_perchannel: https://www.modelscope.cn/models/LoneStriker/Mistral-7B-Instruct-v0.3-GPTQ
-    int8: https://www.modelscope.cn/models/LoneStriker/Mistral-7B-Instruct-v0.3-GPTQ
-    int8_128: https://www.modelscope.cn/models/LoneStriker/Mistral-7B-Instruct-v0.3-GPTQ
-    int8_perchannel: https://www.modelscope.cn/models/LoneStriker/Mistral-7B-Instruct-v0.3-GPTQ
+    fp16: https://www.modelscope.cn/models/AI-ModelScope/Mistral-7B-Instruct-v0.3
   resume_download: true
   max_retries: 3
   timeout: 300
-  mirror_sources:
-    int4:
-      primary: https://www.modelscope.cn/models/LoneStriker/Mistral-7B-Instruct-v0.3-GPTQ
-      mirror: https://hf-mirror.com/LoneStriker/Mistral-7B-Instruct-v0.3-4.0bpw-h6-exl2
-      official: https://huggingface.co/LoneStriker/Mistral-7B-Instruct-v0.3-4.0bpw-h6-exl2
-    int8:
-      primary: https://www.modelscope.cn/models/LoneStriker/Mistral-7B-Instruct-v0.3-GPTQ
-      mirror: https://hf-mirror.com/LoneStriker/Mistral-7B-Instruct-v0.3-8.0bpw-h8-exl2
-      official: https://huggingface.co/LoneStriker/Mistral-7B-Instruct-v0.3-8.0bpw-h8-exl2
 剧本重构配置:
   max_input_length: 8000
   max_output_length: 2000
@@ -168,9 +142,9 @@ download:
     '
 benchmark:
   device: CPU (Intel i5-10400)
-  quantization: INT8
+  quantization: FP16
   inference_time_per_subtitle: 9.2s
-  memory_usage: 3.5GB
+  memory_usage: 5.5GB
   bleu_score: 0.7
   device_gpu: GPU (NVIDIA GTX 1650 4GB)
   quantization_gpu: INT4
@@ -179,13 +153,16 @@ benchmark:
   bleu_score_gpu: 0.72
 known_issues:
 - CPU mode inference is slower, GPU recommended
-- INT4 quantization may cause slight precision loss, but within acceptable range
 changelog:
+- version: '2.0'
+  date: '2025-10-23'
+  changes:
+  - 移除GPTQ量化支持，专注于FP16训练
+  - 优化下载逻辑，从服务器动态获取文件大小
+  - 增强下载中断清理机制
 - version: '0.3'
   date: '2025-01-06'
   changes:
   - Upgraded to Mistral-7B-Instruct-v0.3
   - Added support for intelligent recommendation downloader system
-  - Added LoRA/QLoRA fine-tuning support
-  - Added INT4/INT8 quantization support
   - Added multi-tier device support

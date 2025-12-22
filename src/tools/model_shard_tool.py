@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -387,16 +387,16 @@ def main():
         epilog="""
 示例:
   分片模型:
-    python model_shard_tool.py split models/qwen2.5-7b-zh.pt --strategy balanced
+    python model_shard_tool.py split models/Qwen3-1.7B-zh.pt --strategy balanced
     
   合并分片:
-    python model_shard_tool.py merge models/qwen2.5-7b-zh_shards
+    python model_shard_tool.py merge models/Qwen3-1.7B-zh_shards
     
   查看分片信息:
-    python model_shard_tool.py info models/qwen2.5-7b-zh_shards
+    python model_shard_tool.py info models/Qwen3-1.7B-zh_shards
     
   验证分片完整性:
-    python model_shard_tool.py verify models/qwen2.5-7b-zh_shards
+    python model_shard_tool.py verify models/Qwen3-1.7B-zh_shards
     
   列出可用策略:
     python model_shard_tool.py strategies

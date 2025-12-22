@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 """
 模型下载脚本
 用于下载和设置模型文件
@@ -20,8 +20,8 @@ MODEL_CONFIGS = {
         'path': 'models/mistral/quantized/Q4_K_M.gguf',
         'size': 4_000_000_000  # 约4GB
     },
-    'qwen2.5-7b-zh': {
-        'url': 'https://huggingface.co/Qwen/Qwen1.5-7B-Chat-GGUF/resolve/main/qwen1_5-7b-chat-q4_k_m.gguf',
+    'Qwen3-1.7B-zh': {
+        'url': 'https://huggingface.co/Qwen/Qwen3-8B-Chat-GGUF/resolve/main/qwen1_5-7b-chat-q4_k_m.gguf',
         'path': 'models/qwen/quantized/Q4_K_M.gguf',
         'size': 4_000_000_000  # 约4GB
     }

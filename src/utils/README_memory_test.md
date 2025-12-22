@@ -45,10 +45,10 @@ python src/utils/memory_test_cli.py simple --mode allocate_full
 
 ```bash
 # 在突发式压力下加载模型
-python src/utils/memory_test_cli.py model --model-id qwen2.5-7b-zh --mode burst --save-report
+python src/utils/memory_test_cli.py model --model-id qwen3-1.7b-zh --mode burst --save-report
 
 # 在阶梯式压力下加载模型，自定义测试持续时间
-python src/utils/memory_test_cli.py model --model-id qwen2.5-7b-zh --mode staircase --test-duration 120 --save-report
+python src/utils/memory_test_cli.py model --model-id qwen3-1.7b-zh --mode staircase --test-duration 120 --save-report
 ```
 
 ### 量化级别测试
@@ -57,7 +57,7 @@ python src/utils/memory_test_cli.py model --model-id qwen2.5-7b-zh --mode stairc
 
 ```bash
 # 测试三种量化级别
-python src/utils/memory_test_cli.py quantization --model-id qwen2.5-7b-zh --quant-levels Q2_K,Q4_K_M,Q6_K --save-report
+python src/utils/memory_test_cli.py quantization --model-id qwen3-1.7b-zh --quant-levels Q2_K,Q4_K_M,Q6_K --save-report
 ```
 
 ### 长时间稳定性测试
@@ -69,7 +69,7 @@ python src/utils/memory_test_cli.py quantization --model-id qwen2.5-7b-zh --quan
 python src/utils/memory_test_cli.py stability --hours 1.0 --save-report
 
 # 运行8小时稳定性测试，加载模型
-python src/utils/memory_test_cli.py stability --hours 8.0 --use-model --model-id qwen2.5-7b-zh --save-report
+python src/utils/memory_test_cli.py stability --hours 8.0 --use-model --model-id qwen3-1.7b-zh --save-report
 ```
 
 ### 测试环境模拟
@@ -106,7 +106,7 @@ scripts\run_memory_env_test.bat --environment "极限2GB模式" --mode burst --t
 可以通过`--output-dir`参数自定义输出目录：
 
 ```bash
-python src/utils/memory_test_cli.py model --model-id qwen2.5-7b-zh --save-report --output-dir custom/report/path
+python src/utils/memory_test_cli.py model --model-id qwen3-1.7b-zh --save-report --output-dir custom/report/path
 ```
 
 ## 压力模式详解

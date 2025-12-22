@@ -1,11 +1,21 @@
 # VisionAI-ClipsMaster 全局模型配置
-# 更新时间：2025-10-07（支持智能推荐下载器系统 + 40个模型变体）
+# 更新时间：2025-10-23（GPTQ弃用 + FP16训练 + GGUF推理）
 #
-# 重要更新：
-# 1. 模型系列：Qwen2.5系列（qwen2.5-0.5b, qwen2.5-1.5b, qwen2.5-3b, qwen2.5-7b, qwen2.5-14b, qwen2.5-32b）
-# 2. 新增量化配置：INT8-128, INT4-128, INT8-PerChannel, INT4-PerChannel
+# 重要更新（2025-10-23）：
+# 1. ⚠️ GPTQ量化已弃用：不再支持GPTQ量化模型用于训练
+# 2. ✅ 推荐工作流程：FP16训练 → GGUF推理
+# 3. 训练阶段：下载FP16原始模型 → 使用LoRA微调
+# 4. 推理阶段：将训练后的模型转换为GGUF格式（INT4/INT8量化）
+#
+# 最新更新（2025-01-31）：
+# 1. 模型系列：全面升级到Qwen3系列（qwen3-0.6b, qwen3-1.7b, qwen3-8b, qwen3-32b）
+# 2. Qwen3优势：更好的指令遵循能力、更强的中文理解、更好的输出格式控制
+# 3. 参数量提升：0.5B→0.6B (+20%), 1.5B→1.7B (+13%), 7B→8B (+14%)
+#
+# 历史更新（2025-10-07）：
+# 1. 模型系列：Qwen3系列（qwen3-0.6b, qwen3-1.7b, qwen3-8b, qwen3-32b）
+# 2. 量化配置：INT8-128, INT4-128, INT8-PerChannel, INT4-PerChannel（仅用于GGUF推理）
 # 3. 硬件评分系统：从5级离散分级升级到0-100分连续评分
-# 4. 总计40个模型变体（10个模型 × 4个量化配置）
 
 # 智能推荐模式（新增）
 intelligent_recommendation:
@@ -16,18 +26,16 @@ intelligent_recommendation:
 
 # 当前激活的模型（智能推荐模式下会自动更新）
 active_models:
-  chinese: qwen2.5-0.5b-zh  # 默认使用最小模型，实际会根据设备自动调整
+  chinese: qwen3-0.6b-zh  # 默认使用最小模型，实际会根据设备自动调整
   english: mistral-7b-en  # 默认使用7B模型，实际会根据设备自动调整
 
-# 可用模型列表（Qwen2.5系列）
+# 可用模型列表（Qwen3系列）
 available_models:
   chinese:
-    - qwen2.5-0.5b-zh
-    - qwen2.5-1.5b-zh
-    - qwen2.5-3b-zh      # 中级设备（硬件评分55-65分）
-    - qwen2.5-7b-zh
-    - qwen2.5-14b-zh     # 高级设备（硬件评分75-85分）
-    - qwen2.5-32b-zh
+    - qwen3-0.6b-zh      # 入门级设备（硬件评分0-35分）
+    - qwen3-1.7b-zh      # 进阶级设备（硬件评分35-55分）
+    - qwen3-8b-zh        # 中高级设备（硬件评分55-75分）
+    - qwen3-32b-zh       # 旗舰级设备（硬件评分75-100分）
   english:
     - mistral-7b-en
     - mistral-12b-nemo-en
@@ -44,7 +52,7 @@ device_tiers:
     max_memory_gb: 4
     device_type: "CPU"
     recommended_models:
-      chinese: qwen2.5-0.5b-zh
+      chinese: qwen3-0.6b-zh
       english: mistral-7b-en
     quantization: "INT4-128"
 
@@ -55,7 +63,7 @@ device_tiers:
     max_vram_gb: 4
     device_type: "GPU"
     recommended_models:
-      chinese: qwen2.5-0.5b-zh
+      chinese: qwen3-0.6b-zh
       english: mistral-7b-en
     quantization: "INT4-128"
 
@@ -66,61 +74,41 @@ device_tiers:
     max_vram_gb: 6
     device_type: "GPU"
     recommended_models:
-      chinese: qwen2.5-1.5b-zh
+      chinese: qwen3-1.7b-zh
       english: mistral-12b-nemo-en
     quantization: "INT4-128"
-
-  mid:
-    name: "中级"
-    hardware_score_range: [55, 65]
-    min_vram_gb: 6
-    max_vram_gb: 8
-    device_type: "GPU"
-    recommended_models:
-      chinese: qwen2.5-3b-zh
-      english: mistral-12b-nemo-en
-    quantization: "INT4-PerChannel"
 
   high:
     name: "中高级"
-    hardware_score_range: [65, 75]
-    min_vram_gb: 8
+    hardware_score_range: [55, 75]
+    min_vram_gb: 6
     max_vram_gb: 12
     device_type: "GPU"
     recommended_models:
-      chinese: qwen2.5-7b-zh
+      chinese: qwen3-8b-zh
       english: mistral-24b-small-en
     quantization: "INT4-PerChannel"
 
-  advanced_high:
-    name: "高级"
-    hardware_score_range: [75, 85]
-    min_vram_gb: 12
-    max_vram_gb: 18
-    device_type: "GPU"
-    recommended_models:
-      chinese: qwen2.5-14b-zh
-      english: mistral-24b-small-en
-    quantization: "INT4-128"
-
   flagship:
     name: "旗舰级"
-    hardware_score_range: [85, 100]
-    min_vram_gb: 20
+    hardware_score_range: [75, 100]
+    min_vram_gb: 12
     max_vram_gb: 40
     device_type: "GPU"
     recommended_models:
-      chinese: qwen2.5-32b-zh
+      chinese: qwen3-32b-zh
       english: mistral-large2-en
     quantization: "INT8-PerChannel"
 
-# 量化配置（更新：新增4种量化配置）
+# 量化配置（仅用于GGUF推理，不用于训练）
+# ⚠️ 注意：这些量化配置仅用于将训练后的模型转换为GGUF格式进行推理
+# 训练阶段使用FP16原始模型 + LoRA微调
 quantization:
-  default: "INT4-128"  # 默认量化等级
-  low_memory: "INT4-128"  # 低内存模式
-  high_performance: "INT4-PerChannel"  # 高性能模式（精度优先）
+  default: "INT4-128"  # 默认量化等级（GGUF推理）
+  low_memory: "INT4-128"  # 低内存模式（GGUF推理）
+  high_performance: "INT4-PerChannel"  # 高性能模式（GGUF推理，精度优先）
 
-  # 量化策略（新增：支持4种量化配置）
+  # 量化策略（仅用于GGUF推理）
   strategies:
     # INT8-128：8bit量化，group_size=128（平衡模式）
     INT8-128:

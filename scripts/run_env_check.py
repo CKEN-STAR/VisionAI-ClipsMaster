@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 VisionAI-ClipsMaster 环境检测工具
@@ -527,9 +527,9 @@ def get_optimal_config(device_info: Dict[str, Any], compatibility: Dict[str, Any
     
     if is_chinese:
         if ram >= 16 and has_gpu:
-            preferred_model = "qwen2.5-7b"
+            preferred_model = "Qwen3-1.7B"
         else:
-            preferred_model = "qwen2.5-1.8b"  # 轻量版
+            preferred_model = "qwen3-1.7b"  # 轻量版
     else:
         if ram >= 16 and has_gpu:
             preferred_model = "mistral-7b"

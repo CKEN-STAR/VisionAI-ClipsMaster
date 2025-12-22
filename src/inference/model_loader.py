@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 推理模型加载器
@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 class InferenceModelLoader:
     """推理模型加载器"""
     
-    def __init__(self, model_name: str = "qwen2.5-7b-zh"):
+    def __init__(self, model_name: str = "Qwen3-1.7B-zh"):
         """
         初始化推理模型加载器
         

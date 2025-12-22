@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 量化策略切换执行器
@@ -594,7 +594,7 @@ if __name__ == "__main__":
     switcher = QuantSwitcher()
     
     # 注册模型加载和卸载回调
-    model_name = "qwen2.5-7b-zh"
+    model_name = "Qwen3-1.7B-zh"
     switcher.register_model(
         model_name=model_name,
         load_func=lambda level: load_model_with_level(model_name, level),

@@ -1,0 +1,121 @@
+# 模型分片策略配置 - VisionAI-ClipsMaster
+# 定义不同的模型分片策略，优化大型模型的加载、处理和内存占用
+
+version: "1.0.0"
+description: "大型语言模型分片策略配置"
+
+# 全局分片设置
+sharding:
+  max_shard_size: 1024      # 单个分片最大体积(MB)
+  default_strategy: "balanced"  # 默认使用的分片策略
+  auto_select: true         # 是否自动选择分片策略
+  enable_parallel_loading: true # 启用并行加载
+  verification_level: "checksum" # 验证级别: none, checksum, full
+
+  # 模型层依赖关系，用于智能分片 
+  layer_dependencies:
+    - name: "embedding"
+      next: ["attention_1"]
+      
+    - name: "attention_1"
+      next: ["ffn_1"]
+      
+    - name: "ffn_1"
+      next: ["attention_2"]
+      
+    - name: "attention_2"
+      next: ["ffn_2"]
+
+# 分片策略定义
+shard_strategies:
+  - name: "minimum"
+    desc: "最小分片策略"
+    max_shard_size: 512    # MB
+    min_shards: 4
+    suitable_for: "低端设备，内存严重受限"
+    loading_mode: "sequential"
+    layer_grouping: "isolated"
+    priority_layers: ["embedding", "attention_1"]
+    memory_threshold: 4096  # MB
+    disk_io_optimization: "aggressive"
+    quality_impact: "high"
+    
+  - name: "conservative"
+    desc: "保守分片策略"
+    max_shard_size: 768    # MB
+    min_shards: 3
+    suitable_for: "入门级设备，内存受限"
+    loading_mode: "semi_parallel"
+    layer_grouping: "minimal"
+    priority_layers: ["embedding", "attention_1", "ffn_1"]
+    memory_threshold: 6144  # MB
+    disk_io_optimization: "moderate"
+    quality_impact: "medium"
+    
+  - name: "balanced"
+    desc: "平衡分片策略"
+    max_shard_size: 1024   # MB
+    min_shards: 2
+    suitable_for: "主流配置，平衡内存和性能"
+    loading_mode: "parallel"
+    layer_grouping: "functional"
+    priority_layers: ["embedding", "attention_1", "ffn_1", "attention_2"]
+    memory_threshold: 8192  # MB
+    disk_io_optimization: "balanced"
+    quality_impact: "low"
+    
+  - name: "performance"
+    desc: "性能优先策略"
+    max_shard_size: 2048   # MB
+    min_shards: 1
+    suitable_for: "高端设备，内存充足"
+    loading_mode: "fully_parallel"
+    layer_grouping: "integrated"
+    priority_layers: ["all"]
+    memory_threshold: 16384 # MB
+    disk_io_optimization: "minimal"
+    quality_impact: "none"
+
+# 特定模型的分片调优参数
+model_specific:
+  "qwen2.5-7b-zh":
+    default_strategy: "balanced"
+    custom_settings:
+      max_shard_size: 1200  # MB
+      layer_grouping_override:
+        - group: ["embedding", "attention_1"]
+        - group: ["ffn_1", "attention_2"]
+        - group: ["ffn_2", "attention_3"]
+        - group: ["ffn_3", "attention_4"]
+      load_priority: ["embedding", "attention_1", "ffn_1"]
+
+  "mistral-7b-en":
+    default_strategy: "balanced"
+    custom_settings:
+      max_shard_size: 1100  # MB
+      layer_grouping_override:
+        - group: ["embedding", "attention_1"]
+        - group: ["ffn_1", "attention_2"]
+        - group: ["ffn_2", "attention_3"]
+      load_priority: ["embedding", "attention_1"]
+
+# 自动选择分片策略的内存阈值（单位: MB）
+auto_select_thresholds:
+  critical: 4096     # 当系统内存低于4GB时，使用minimum策略
+  low: 6144          # 当系统内存低于6GB时，使用conservative策略
+  normal: 12288      # 当系统内存低于12GB时，使用balanced策略
+  high: null         # 当系统内存充足时，使用performance策略
+
+# 高级设置
+advanced:
+  enable_dynamic_adjustment: true  # 运行时动态调整分片
+  prefetch_distance: 2             # 预加载分片数量
+  unload_distance: 3               # 卸载超出距离的分片
+  cache_strategy: "lru"            # 分片缓存策略: lru, fifo, adaptive
+  io_buffer_size: 8192             # IO缓冲区大小(KB)
+  max_parallel_loads: 4            # 最大并行加载数
+  verify_after_load: true          # 加载后验证
+  compression:
+    enabled: true                  # 启用分片压缩
+    algorithm: "zstd"              # 压缩算法: zstd, lz4, gzip
+    level: 3                       # 压缩级别(1-9) 

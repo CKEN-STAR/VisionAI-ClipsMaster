@@ -78,7 +78,7 @@ class CognitiveLoadMonitor:
             "language_models": {
                 "chinese": {
                     "enabled": True,
-                    "model": "Qwen2.5-7B",
+                    "model": "Qwen3-1.7B",
                     "collect_metrics": True
                 },
                 "english": {

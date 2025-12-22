@@ -94,7 +94,7 @@ def install_compression_libs():
         # 尝试导入库以检查是否已安装
         try:
             if alias == "zstd":
-                import zstd
+                import zstandard as zstd
                 logger.info(f"{alias} 已安装，版本: {getattr(zstd, '__version__', '未知')}")
                 success_count += 1
                 continue
@@ -255,7 +255,7 @@ def main():
     
     # 尝试重新导入库以验证安装
     try:
-        import zstd
+        import zstandard as zstd
         logger.info(f"zstd 库可用: 版本 {getattr(zstd, '__version__', '未知')}")
     except ImportError:
         logger.warning("zstd 库不可用，无法使用zstd压缩算法")

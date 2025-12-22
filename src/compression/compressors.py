@@ -17,7 +17,7 @@ import lzma
 
 # 条件导入，可能不是所有系统都有这些库
 try:
-    import zstd
+    import zstandard as zstd
     HAS_ZSTD = True
 except ImportError:
     HAS_ZSTD = False
@@ -198,13 +198,15 @@ class ZstdCompressor(CompressorBase):
     def compress(self, data: Union[bytes, bytearray, memoryview]) -> bytes:
         """使用zstd压缩数据"""
         if HAS_ZSTD:
-            return zstd.compress(data, self.level)
+            cctx = zstd.ZstdCompressor(level=self.level)
+            return cctx.compress(data)
         return bytes(data)
-        
+
     def decompress(self, data: Union[bytes, bytearray, memoryview]) -> bytes:
         """使用zstd解压数据"""
         if HAS_ZSTD:
-            return zstd.decompress(data)
+            dctx = zstd.ZstdDecompressor()
+            return dctx.decompress(data)
         return bytes(data)
     
     def get_info(self) -> Dict[str, Any]:

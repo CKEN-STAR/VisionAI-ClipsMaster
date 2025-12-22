@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-中文训练器 - 专门用于训练Qwen2.5-7B中文模型
+中文训练器 - 专门用于训练Qwen3-1.7B中文模型
 支持中文剧本重构和爆款字幕生成
 """
 
@@ -22,9 +22,11 @@ sys.path.insert(0, PROJECT_ROOT)
 # 导入版本管理器和转换器
 from src.training.model_version_manager import ModelVersionManager
 from models.converters.model_converter import ModelConverter
+# 🆕 导入剧本重构数据增强器
+from src.training.reconstruction_augmenter import ReconstructionAugmenter
 
 class ZhTrainer:
-    """中文训练器 - Qwen2.5-7B模型"""
+    """中文训练器 - Qwen3-1.7B模型"""
 
     def __init__(self, model_path: Optional[str] = None, use_gpu: bool = False):
         """
@@ -34,7 +36,7 @@ class ZhTrainer:
             model_path: 模型路径
             use_gpu: 是否使用GPU
         """
-        self.model_name = "Qwen2.5-7B"
+        self.model_name = "Qwen3-1.7B"
         self.language = "zh"
         self.use_gpu = use_gpu
         self.model_path = model_path or os.path.join(PROJECT_ROOT, "models", "qwen")
@@ -130,12 +132,16 @@ class ZhTrainer:
         if self.gpu_accelerator:
             print(f"🚀 GPU加速: {self.gpu_accelerator.active_backend or 'CPU'}")
 
-    def prepare_chinese_data(self, training_data: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def prepare_chinese_data(self, training_data: List[Dict[str, Any]],
+                            use_reconstruction_augmentation: bool = True,
+                            num_variants: int = 3) -> Dict[str, Any]:
         """
-        准备中文训练数据
+        准备中文训练数据（支持7步重构算法数据增强）
 
         Args:
             training_data: 原始训练数据
+            use_reconstruction_augmentation: 是否使用剧本重构数据增强
+            num_variants: 每个样本生成的变体数量
 
         Returns:
             处理后的中文训练数据
@@ -146,13 +152,24 @@ class ZhTrainer:
             "statistics": {
                 "total_samples": 0,
                 "avg_length": 0,
-                "chinese_char_ratio": 0
+                "chinese_char_ratio": 0,
+                "augmented_samples": 0  # 🆕 增强样本数
             }
         }
 
         total_length = 0
         total_chinese_chars = 0
         total_chars = 0
+
+        # 🆕 初始化数据增强器
+        augmenter = None
+        if use_reconstruction_augmentation:
+            try:
+                augmenter = ReconstructionAugmenter()
+                self.logger.info(f"🔄 启用剧本重构数据增强，每个样本生成 {num_variants} 个变体")
+            except Exception as e:
+                self.logger.warning(f"初始化数据增强器失败: {e}，将使用原始数据")
+                augmenter = None
 
         for item in training_data:
             original = item.get("original", "")
@@ -167,16 +184,58 @@ class ZhTrainer:
 
                 # 只处理中文内容占比超过30%的样本
                 if chinese_ratio >= 0.3:
-                    processed_sample = {
-                        "input": f"原始剧本: {original}",
-                        "output": f"爆款剧本: {viral}",
-                        "chinese_ratio": chinese_ratio,
-                        "length": len(original)
-                    }
+                    # 🆕 使用数据增强器生成变体
+                    samples_to_add = []
 
-                    processed_data["samples"].append(processed_sample)
+                    if augmenter:
+                        try:
+                            variants = augmenter.augment_sample(
+                                original, viral,
+                                language="zh",
+                                num_variants=num_variants
+                            )
 
-                    # 统计信息
+                            # 处理所有变体（包括原始样本）
+                            for variant in variants:
+                                processed_sample = {
+                                    "input": f"原始剧本: {variant['original']}",
+                                    "output": f"爆款剧本: {variant['viral']}",
+                                    "chinese_ratio": chinese_ratio,
+                                    "length": len(variant['original']),
+                                    "augmented": variant.get("augmented", False),
+                                    "method": variant.get("method", "original")
+                                }
+                                samples_to_add.append(processed_sample)
+
+                                if variant.get("augmented", False):
+                                    processed_data["statistics"]["augmented_samples"] += 1
+
+                        except Exception as e:
+                            self.logger.warning(f"增强样本失败: {e}，使用原始样本")
+                            # 回退到原始样本
+                            samples_to_add = [{
+                                "input": f"原始剧本: {original}",
+                                "output": f"爆款剧本: {viral}",
+                                "chinese_ratio": chinese_ratio,
+                                "length": len(original),
+                                "augmented": False,
+                                "method": "original"
+                            }]
+                    else:
+                        # 不使用增强，直接添加原始样本
+                        samples_to_add = [{
+                            "input": f"原始剧本: {original}",
+                            "output": f"爆款剧本: {viral}",
+                            "chinese_ratio": chinese_ratio,
+                            "length": len(original),
+                            "augmented": False,
+                            "method": "original"
+                        }]
+
+                    # 添加所有样本
+                    processed_data["samples"].extend(samples_to_add)
+
+                    # 统计信息（基于原始样本）
                     total_length += len(original)
                     total_chinese_chars += chinese_chars
                     total_chars += total_chars_in_sample
@@ -188,13 +247,27 @@ class ZhTrainer:
 
         # 计算统计信息
         sample_count = len(processed_data["samples"])
+        original_count = len(training_data)
+
         if sample_count > 0:
-            processed_data["statistics"] = {
+            processed_data["statistics"].update({
                 "total_samples": sample_count,
-                "avg_length": total_length / sample_count,
+                "original_samples": original_count,
+                "avg_length": total_length / original_count if original_count > 0 else 0,
                 "chinese_char_ratio": total_chinese_chars / total_chars if total_chars > 0 else 0,
-                "vocabulary_size": len(processed_data["vocabulary"])
-            }
+                "vocabulary_size": len(processed_data["vocabulary"]),
+                "augmentation_ratio": sample_count / original_count if original_count > 0 else 1.0
+            })
+
+            # 🆕 输出增强统计
+            if augmenter:
+                aug_stats = augmenter.get_stats()
+                self.logger.info(f"📊 数据增强统计:")
+                self.logger.info(f"  - 原始样本: {original_count}")
+                self.logger.info(f"  - 增强后样本: {sample_count}")
+                self.logger.info(f"  - 增强倍数: {sample_count / original_count:.1f}x")
+                self.logger.info(f"  - 成功率: {aug_stats.get('success_rate', 0):.1%}")
+                self.logger.info(f"  - 平均处理时间: {aug_stats.get('avg_time_per_sample', 0):.2f}秒/样本")
 
         return processed_data
 
@@ -225,25 +298,37 @@ class ZhTrainer:
             
             if progress_callback:
                 progress_callback(0.1, "加载中文模型...")
-            
-            # 1. 加载模型和分词器 - 使用较小的模型以适配4GB内存
-            model_name = "Qwen/Qwen2.5-1.5B-Instruct"  # 使用Qwen2.5-1.5B版本以适配内存限制
-            
-            # 加载本地缓存的模型
+
+            # 1. 加载模型和分词器 - 使用本地模型
+            # 本地模型路径（FP16原始模型，用于训练）
+            model_path = "models/qwen3-1.7b/base"
+
+            # 检查模型是否存在
+            import os
+            if not os.path.exists(os.path.join(model_path, "config.json")):
+                return {
+                    "success": False,
+                    "error": f"中文模型未找到，路径: {model_path}。请先下载模型。"
+                }
+
+            # 加载本地模型
             tokenizer = AutoTokenizer.from_pretrained(
-                model_name,
+                model_path,
                 trust_remote_code=True,
-                cache_dir="./models/cache",
-                local_files_only=True  # 只使用本地文件
+                local_files_only=True  # 只使用本地文件，不连接HuggingFace
             )
 
+            # 智能设备分配：只要有CUDA就使用device_map="auto"进行GPU-CPU混合分配
+            # device_map="auto"会自动根据显存大小将模型层分配到GPU/CPU
+            # 显存充足时全部使用GPU，显存不足时自动混合GPU+CPU，充分利用硬件资源
+            has_cuda = torch.cuda.is_available()
+
             model = AutoModelForCausalLM.from_pretrained(
-                model_name,
-                torch_dtype=torch.float16 if self.use_gpu and torch.cuda.is_available() else torch.float32,
-                device_map="auto" if self.use_gpu and torch.cuda.is_available() else None,
+                model_path,
+                torch_dtype=torch.float16 if has_cuda else torch.float32,
+                device_map="auto" if has_cuda else None,  # 有GPU就智能分配，无GPU就用CPU
                 trust_remote_code=True,
-                cache_dir="./models/cache",
-                local_files_only=True  # 只使用本地文件
+                local_files_only=True  # 只使用本地文件，不连接HuggingFace
             )
 
             if tokenizer.pad_token is None:
@@ -1798,7 +1883,7 @@ class ZhTrainer:
 
             # 准备模型元数据
             model_metadata = {
-                "model_type": "chinese_qwen2.5_7b",
+                "model_type": "chinese_qwen3_1.7b",
                 "training_time": time.time(),
                 "model_version": "1.0.0",
                 "language": "zh",
@@ -1839,63 +1924,6 @@ class ZhTrainer:
                 "error": error_msg,
                 "save_type": "MODEL_SAVE_FAILED"
             }
-
-    def _convert_to_gguf_after_training(self, model_path: str) -> Optional[str]:
-        """
-        训练后转换为GGUF格式
-
-        Args:
-            model_path: HuggingFace格式模型路径
-
-        Returns:
-            GGUF格式模型路径
-        """
-        try:
-            self.logger.info("🔄 开始转换为GGUF格式...")
-
-            # 创建量化目录
-            quant_dir = Path("models/qwen/quantized/trained")
-            quant_dir.mkdir(parents=True, exist_ok=True)
-
-            # 生成GGUF文件名
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            gguf_path = quant_dir / f"trained_{timestamp}_Q4_K_M.gguf"
-
-            self.logger.info(f"   源路径: {model_path}")
-            self.logger.info(f"   目标路径: {gguf_path}")
-
-            # 执行转换
-            self.model_converter.convert_format(
-                str(model_path),
-                "gguf",
-                str(gguf_path),
-                "Q4_K_M"
-            )
-
-            # 验证转换结果
-            if gguf_path.exists():
-                self.logger.info(f"✅ GGUF转换成功: {gguf_path}")
-
-                # 创建符号链接指向最新版本
-                latest_link = quant_dir / "latest.gguf"
-                if latest_link.exists() or latest_link.is_symlink():
-                    latest_link.unlink()
-
-                # 在Windows上创建副本而不是符号链接
-                import shutil
-                shutil.copy2(gguf_path, latest_link)
-                self.logger.info(f"✅ 已更新最新版本链接: {latest_link}")
-
-                return str(gguf_path)
-            else:
-                self.logger.error("❌ GGUF转换失败，文件不存在")
-                return None
-
-        except Exception as e:
-            self.logger.error(f"❌ GGUF转换失败: {e}")
-            import traceback
-            self.logger.error(traceback.format_exc())
-            return None
 
     def _register_trained_version(
         self,
@@ -2066,11 +2094,14 @@ class ZhTrainer:
                 return {"success": False, "error": f"缺少必需依赖: {e}"}
 
             # 加载tokenizer和模型
+            # 智能设备分配：有CUDA就自动混合GPU-CPU
+            has_cuda = torch.cuda.is_available()
+
             tokenizer = AutoTokenizer.from_pretrained(hf_path)
             model = AutoModelForCausalLM.from_pretrained(
                 hf_path,
-                torch_dtype=torch.float16 if self.use_gpu else torch.float32,
-                device_map="auto" if self.use_gpu else None
+                torch_dtype=torch.float16 if has_cuda else torch.float32,
+                device_map="auto" if has_cuda else None  # 智能GPU-CPU混合分配
             )
 
             self.logger.info("✅ 模型加载成功")

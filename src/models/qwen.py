@@ -32,8 +32,8 @@ class QwenLLM(BaseLLM):
             config: 模型配置
         """
         super().__init__(config)
-        # 默认使用Qwen2.5-0.5B（入门级模型）
-        self.model_name = config.model_info.get("name", "qwen2.5-0.5b-zh")
+        # 默认使用Qwen3-0.6B（入门级模型）
+        self.model_name = config.model_info.get("name", "qwen3-0.6b-zh")
         self.quantization = config.quantization
 
         # 模拟实现，实际项目中会真正加载模型

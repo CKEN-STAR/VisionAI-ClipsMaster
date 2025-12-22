@@ -1,0 +1,54 @@
+{
+  "session_id": "20251104234547",
+  "timestamp": "2025-11-04T23:45:47.619850",
+  "probes": {
+    "0.10": {
+      "timestamp": 7.8294,
+      "metrics": {
+        "audio_quality": 1.0,
+        "visual_quality": 0.8068592
+      }
+    },
+    "0.25": {
+      "timestamp": 19.5735,
+      "metrics": {
+        "audio_quality": 1.0,
+        "visual_quality": 0.8068592
+      }
+    },
+    "0.50": {
+      "timestamp": 39.147,
+      "metrics": {
+        "audio_quality": 1.0,
+        "visual_quality": 0.8068592
+      }
+    },
+    "0.75": {
+      "timestamp": 58.7205,
+      "metrics": {
+        "audio_quality": 1.0,
+        "visual_quality": 0.8068592
+      }
+    },
+    "0.90": {
+      "timestamp": 70.4646,
+      "metrics": {
+        "audio_quality": 1.0,
+        "visual_quality": 0.8068592
+      }
+    }
+  },
+  "summary": {
+    "overall_quality": 0.54205776,
+    "metrics": {
+      "narrative_coherence": 0,
+      "audio_quality": 1.0,
+      "visual_quality": 0.8068592000000001
+    },
+    "issues": [
+      "narrative_coherence得分过低 (0.00 < 0.7)"
+    ],
+    "recommendations": [
+      "提高字幕片段之间的连贯性，减少时间间隔"
+    ],
+    "pass": 

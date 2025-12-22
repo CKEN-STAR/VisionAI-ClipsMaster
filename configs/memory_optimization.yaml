@@ -5,9 +5,9 @@ memory_limits:
   
   # 模型内存使用估算
   models:
-    qwen2.5-7b-zh:
-      base_memory_mb: 4100
-      quantized_q4_mb: 2800
+    qwen3-1.7b-zh:
+      base_memory_mb: 3400
+      quantized_q4_mb: 2300
       quantized_q2_mb: 1900
     
     mistral-7b-en:

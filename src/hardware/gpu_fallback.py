@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 GPU回退机制 - VisionAI-ClipsMaster
@@ -12,7 +12,7 @@ GPU回退机制 - VisionAI-ClipsMaster
 2. 不同CPU指令集优化级联
 3. 模型动态加载与设备切换
 4. 内存使用监控与优化
-5. 为中文Qwen2.5-7B模型和英文Mistral-7B模型提供统一接口
+5. 为中文Qwen3-1.7B模型和英文Mistral-7B模型提供统一接口
 """
 
 import os
@@ -336,8 +336,8 @@ class GPUFallbackManager:
             config["batch_size"] = 4  # GPU可以处理更大的批次
             
         # 对于不同模型的特定配置
-        if "qwen2.5-7b" in model_name.lower():
-            # 中文模型Qwen2.5-7B配置
+        if "Qwen3-1.7B" in model_name.lower():
+            # 中文模型Qwen3-1.7B配置
             config["model_type"] = "qwen"
         elif "mistral-7b" in model_name.lower():
             # 英文模型Mistral-7B配置
@@ -398,8 +398,8 @@ if __name__ == "__main__":
     print(f"设备状态: {manager.get_device_state()}")
     
     # 测试模型配置
-    qwen_config = manager.get_optimized_config("qwen2.5-7b-zh")
-    print(f"Qwen2.5-7B中文模型配置: {qwen_config}")
+    qwen_config = manager.get_optimized_config("Qwen3-1.7B-zh")
+    print(f"Qwen3-1.7B中文模型配置: {qwen_config}")
     
     mistral_config = manager.get_optimized_config("mistral-7b-en")
     print(f"Mistral-7B英文模型配置: {mistral_config}")

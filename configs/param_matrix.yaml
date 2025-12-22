@@ -4,10 +4,10 @@
 # 全局设置
 global:
   min_segment_duration: 1.5     # 最小片段时长(秒)
-  max_total_duration: 120       # 最大总时长(秒)
-  min_total_duration: 20        # 最小总时长(秒)
-  target_duration: 60           # 目标总时长(秒)
-  max_segments: 15              # 最大片段数
+  max_total_duration: 180       # 最大总时长(秒)
+  min_total_duration: 90        # 最小总时长(秒)
+  target_duration: 120          # 目标总时长(秒)
+  max_segments: 30              # 最大片段数
 
 # 基础预设参数组
 presets:

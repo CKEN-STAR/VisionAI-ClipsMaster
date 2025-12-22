@@ -1,4 +1,4 @@
-{
+﻿{
   "name": "prod",
   "description": "生产环境配置",
   "unit_test": {
@@ -51,7 +51,7 @@
   },
   "models": {
     "chinese": {
-      "path": "models/qwen2.5-7b-int8",
+      "path": "models/Qwen3-1.7B-int8",
       "quantization_level": "int8",
       "enabled": true
     },

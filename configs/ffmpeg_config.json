@@ -1,13 +1,10 @@
 {
-  "ffmpeg_path": "ffmpeg",
-  "ffprobe_path": "ffprobe",
-  "version_info": "FFmpeg temporarily disabled - core functions available",
+  "ffmpeg_path": "tools/ffmpeg/bin/ffmpeg.exe",
+  "ffprobe_path": "tools/ffmpeg/bin/ffprobe.exe",
   "system": "windows",
   "configured_at": "D:\\Material\\Project\\VisionAI-ClipsMaster",
-  "status": "configured_skip_mode",
-  "skip_ffmpeg_check": true,
-  "use_opencv_fallback": true,
-  "video_processing_mode": "limited",
-  "core_functions_enabled": true,
-  "note": "FFmpeg功能暂时跳过，核心功能正常可用"
+  "status": "configured",
+  "skip_ffmpeg_check": false,
+  "auto_detected": false,
+  "note": "使用相对路径，自动适配项目位置。如果FFmpeg不可用，请下载并放置到tools/ffmpeg/bin/目录"
 }

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 VisionAI-ClipsMaster 模型下载和配置脚本
@@ -48,8 +48,8 @@ class ModelDownloader:
                     "gguf_q5": "https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF/resolve/main/mistral-7b-instruct-v0.2.Q5_K.gguf"
                 }
             },
-            "qwen2.5-7b": {
-                "name": "Qwen2.5-7B-Instruct",
+            "Qwen3-1.7B": {
+                "name": "Qwen3-1.7B-Instruct",
                 "language": "zh",
                 "size_gb": 13.5,
                 "quantized_versions": {
@@ -59,9 +59,9 @@ class ModelDownloader:
                     "Q8_0": {"size_gb": 7.1, "quality": "极高"}
                 },
                 "download_urls": {
-                    "huggingface": "https://huggingface.co/Qwen/Qwen2.5-7B-Instruct",
-                    "gguf_q4": "https://huggingface.co/Qwen/Qwen2.5-7B-Instruct-GGUF/resolve/main/qwen2.5-7b-instruct-q4_k_m.gguf",
-                    "gguf_q5": "https://huggingface.co/Qwen/Qwen2.5-7B-Instruct-GGUF/resolve/main/qwen2.5-7b-instruct-q5_k.gguf"
+                    "huggingface": "https://huggingface.co/Qwen/Qwen3-8B-Instruct",
+                    "gguf_q4": "https://huggingface.co/Qwen/Qwen3-8B-Instruct-GGUF/resolve/main/Qwen3-1.7B-instruct-q4_k_m.gguf",
+                    "gguf_q5": "https://huggingface.co/Qwen/Qwen3-8B-Instruct-GGUF/resolve/main/Qwen3-1.7B-instruct-q5_k.gguf"
                 }
             }
         }
@@ -279,19 +279,19 @@ class ModelDownloader:
             print("推荐配置: 轻量化模式")
             models_to_download = [
                 ("mistral-7b", "Q2_K"),
-                ("qwen2.5-7b", "Q2_K")
+                ("Qwen3-1.7B", "Q2_K")
             ]
         elif memory_gb <= 8:
             print("推荐配置: 平衡模式")
             models_to_download = [
                 ("mistral-7b", "Q4_K_M"),
-                ("qwen2.5-7b", "Q4_K_M")
+                ("Qwen3-1.7B", "Q4_K_M")
             ]
         else:
             print("推荐配置: 高质量模式")
             models_to_download = [
                 ("mistral-7b", "Q5_K"),
-                ("qwen2.5-7b", "Q5_K")
+                ("Qwen3-1.7B", "Q5_K")
             ]
             
         print("\n将下载以下模型:")

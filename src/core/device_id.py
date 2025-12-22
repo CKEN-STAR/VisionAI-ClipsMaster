@@ -15,10 +15,50 @@ import json
 from pathlib import Path
 from typing import Dict, Any, Optional
 
-# 导入硬件指纹模块
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
-from tests.device_compatibility.hardware_fingerprint import get_hardware_id, get_detailed_hardware_fingerprint
-from tests.device_compatibility.hardware_fingerprint_simple import get_hardware_id as get_simple_hardware_id
+# 运行时硬件指纹实现（移除对 tests.* 的依赖）
+# 注意：避免在运行期依赖 tests 目录，提供内置的最小实现
+
+def _runtime_collect_fingerprint() -> Dict[str, Any]:
+    import platform, uuid
+    try:
+        node = platform.node()
+    except Exception:
+        node = ""
+    try:
+        mac = uuid.getnode()
+    except Exception:
+        mac = 0
+    return {
+        "node": node,
+        "system": platform.system(),
+        "release": platform.release(),
+        "version": platform.version(),
+        "machine": platform.machine(),
+        "processor": platform.processor(),
+        "python": platform.python_version(),
+        "mac": mac,
+        "cpu_count": os.cpu_count(),
+    }
+
+def _runtime_get_hardware_id() -> str:
+    fp = _runtime_collect_fingerprint()
+    try:
+        s = json.dumps(fp, sort_keys=True, ensure_ascii=False)
+    except Exception:
+        s = str(fp)
+    return hashlib.sha256(s.encode("utf-8", errors="ignore")).hexdigest()
+
+def _runtime_get_simple_hardware_id() -> str:
+    import platform, uuid
+    return hashlib.sha256((platform.node() + str(uuid.getnode())).encode()).hexdigest()
+
+def _runtime_get_detailed_hardware_fingerprint(verbose: bool = False) -> Dict[str, Any]:
+    return _runtime_collect_fingerprint()
+
+# 兼容旧名
+get_hardware_id = _runtime_get_hardware_id
+get_detailed_hardware_fingerprint = _runtime_get_detailed_hardware_fingerprint
+get_simple_hardware_id = _runtime_get_simple_hardware_id
 
 # 设置日志
 logger = logging.getLogger("device_id")

@@ -4,7 +4,7 @@ API模式定义
 定义VisionAI-ClipsMaster的API请求和响应数据结构
 """
 
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional, List, Dict, Any, Union
 from enum import Enum
 
@@ -40,7 +40,7 @@ class ClipRequest(BaseModel):
     temperature: float = Field(0.7, description="生成温度，控制创意度(0.1-1.0)")
     preserve_segments: Optional[List[Dict[str, float]]] = Field(None, description="必须保留的片段时间点列表，格式[{start: 秒, end: 秒}]")
     
-    @validator('temperature')
+    @field_validator('temperature')
     def validate_temperature(cls, v):
         if v < 0.1 or v > 1.0:
             raise ValueError('temperature必须在0.1到1.0之间')
@@ -79,7 +79,7 @@ class BatchClipRequest(BaseModel):
     clips: List[ClipRequest] = Field(..., description="剪辑请求列表")
     parallel: int = Field(1, description="并行处理数量，默认为1")
     
-    @validator('parallel')
+    @field_validator('parallel')
     def validate_parallel(cls, v):
         if v < 1 or v > 8:
             raise ValueError('parallel必须在1到8之间')

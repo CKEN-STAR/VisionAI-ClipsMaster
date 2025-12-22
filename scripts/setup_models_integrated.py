@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 模型初始化脚本（集成智能推荐下载器版本）
@@ -34,7 +34,7 @@ class ModelSetup:
         self.downloader = EnhancedModelDownloader()
         self.selector = IntelligentModelSelector()
         
-    def setup_base_model(self, model_name: str = "qwen2.5-7b-zh") -> Tuple[bool, Optional[str], Optional[str]]:
+    def setup_base_model(self, model_name: str = "Qwen3-1.7B-zh") -> Tuple[bool, Optional[str], Optional[str]]:
         """
         设置基础模型
         
@@ -197,7 +197,7 @@ class ModelSetup:
             logger.error(traceback.format_exc())
             return None
     
-    def verify_setup(self, model_name: str = "qwen2.5-7b-zh") -> bool:
+    def verify_setup(self, model_name: str = "Qwen3-1.7B-zh") -> bool:
         """验证模型设置是否成功"""
         logger.info("=" * 70)
         logger.info(f"🔍 验证模型设置: {model_name}")
@@ -236,8 +236,8 @@ def main():
     parser.add_argument(
         "--model",
         type=str,
-        default="qwen2.5-7b-zh",
-        help="模型名称 (默认: qwen2.5-7b-zh)"
+        default="Qwen3-1.7B-zh",
+        help="模型名称 (默认: Qwen3-1.7B-zh)"
     )
     parser.add_argument(
         "--verify-only",

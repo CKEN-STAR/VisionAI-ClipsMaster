@@ -1,0 +1,42 @@
+# VisionAI-ClipsMaster 实时分析器配置
+# 此配置文件定义了趋势分析器的参数设置
+
+version: "1.0"
+description: "实时分析器配置"
+
+# 内存泄漏检测配置
+leak_threshold: 0.5      # 内存增长速率阈值 (MB/s)
+leak_window: 300         # 用于检测泄漏的数据窗口大小 (秒)
+
+# 内存预测配置
+max_memory: 4096         # 系统可用最大内存 (MB)
+prediction_window: 180   # 用于预测OOM的数据窗口大小 (秒)
+critical_time: 600       # 临界状态阈值 (秒)
+
+# 缓存分析配置
+cache_efficiency_threshold: 0.7     # 缓存效率阈值
+cache_analysis_window: 1800         # 缓存分析窗口大小 (秒)
+
+# 模型性能配置
+perf_degradation_threshold: 0.2     # 性能下降检测阈值
+perf_analysis_window: 3600          # 性能分析窗口大小 (秒)
+
+# 系统行为模式配置
+pattern_window: 86400               # 模式分析窗口大小 (秒)
+pattern_resolution: 300             # 模式识别分辨率 (秒)
+
+# 自动分析配置
+analysis_interval: 60               # 自动分析间隔 (秒)
+
+# 模型特定参数
+model_specific:
+  # 中文模型 (Qwen2.5-7B)
+  qwen:
+    inference_threshold: 2000       # 推理时间阈值 (ms)
+    tokens_per_second_threshold: 5  # 处理速度阈值 (tokens/s)
+  
+  # 英文模型 (Mistral-7B) - 预留配置，尚未下载
+  mistral:
+    inference_threshold: 2000
+    tokens_per_second_threshold: 5
+    enabled: false                  # 默认禁用 

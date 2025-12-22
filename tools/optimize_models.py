@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -110,8 +110,8 @@ class ModelOptimizer:
                 "removed_models": removed_files,
                 "download_sources": {
                     "qwen": {
-                        "modelscope": "https://modelscope.cn/models/qwen/Qwen2.5-7B-Instruct-GGUF",
-                        "huggingface": "https://huggingface.co/Qwen/Qwen2.5-7B-Instruct-GGUF"
+                        "modelscope": "https://modelscope.cn/models/Qwen/Qwen3-8B-Instruct-GGUF",
+                        "huggingface": "https://huggingface.co/Qwen/Qwen3-8B-Instruct-GGUF"
                     },
                     "mistral": {
                         "modelscope": "https://modelscope.cn/models/mistralai/Mistral-7B-Instruct-v0.3-GGUF", 

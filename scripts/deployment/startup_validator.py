@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 VisionAI-ClipsMaster 启动验证器
@@ -147,7 +147,7 @@ class StartupValidator:
         path_manager = get_model_path_manager()
         available_models = path_manager.get_available_models()
         
-        required_models = ["mistral-7b-en", "qwen2.5-7b-zh"]
+        required_models = ["mistral-7b-en", "Qwen3-1.7B-zh"]
         missing_models = [m for m in required_models if m not in available_models]
         
         model_info = {}

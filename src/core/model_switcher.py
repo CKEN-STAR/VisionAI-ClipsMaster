@@ -18,7 +18,7 @@ class ModelSwitcher:
         self.model_root = Path(model_root) if model_root else Path('models')
         self._current_model = None
         self.available_models = {
-            "zh": "qwen2.5-7b-zh",
+            "zh": "qwen3-1.7b-zh",
             "en": "mistral-7b-en"
         }
         self.model_cache = {}
@@ -119,7 +119,7 @@ class ModelSwitcher:
                 # 简化检查：如果目录存在或者是已知模型，则认为可用
                 is_available = (
                     model_path.exists() or
-                    model_name in ["qwen2.5-7b-zh", "mistral-7b-en"] or
+                    model_name in ["qwen3-1.7b-zh", "mistral-7b-en"] or
                     language in ["zh", "en"]
                 )
 

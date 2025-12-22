@@ -377,6 +377,11 @@ def get_llm_for_language(language: str) -> Optional[BaseLLM]:
     """
     获取特定语言的LLM实例 - 增强版实现
 
+    优先级：
+    1. RealAIEngine（真实GGUF推理）
+    2. 增强版模型加载器
+    3. 传统缓存方法（模拟推理）
+
     Args:
         language: 语言代码，如 'zh' 或 'en'
 
@@ -385,7 +390,23 @@ def get_llm_for_language(language: str) -> Optional[BaseLLM]:
     """
     global _model_cache
 
-    # 优先使用增强版模型加载器
+    # 优先级1: 使用RealAIEngine（真实GGUF推理）
+    try:
+        from src.models.real_ai_engine_adapter import get_real_ai_engine_adapter
+
+        logger.info(f"尝试使用RealAIEngine获取{language}语言模型")
+        adapter = get_real_ai_engine_adapter(language)
+
+        if adapter and adapter.is_ready():
+            logger.info(f"✅ 使用RealAIEngine（真实GGUF推理）获取{language}语言模型")
+            return adapter
+        else:
+            logger.warning(f"RealAIEngine不可用，尝试备用方法")
+
+    except Exception as e:
+        logger.warning(f"RealAIEngine加载失败: {str(e)}，尝试备用方法")
+
+    # 优先级2: 使用增强版模型加载器
     enhanced_loader = get_enhanced_loader()
     if enhanced_loader:
         try:
@@ -403,8 +424,8 @@ def get_llm_for_language(language: str) -> Optional[BaseLLM]:
         except Exception as e:
             logger.error(f"增强版加载器异常: {str(e)}，使用传统方法")
 
-    # 回退到传统缓存方法
-    logger.info(f"使用传统方法获取{language}语言模型")
+    # 优先级3: 回退到传统缓存方法（模拟推理）
+    logger.info(f"使用传统方法获取{language}语言模型（模拟推理）")
 
     # 检查缓存
     if language in _model_cache and _model_cache[language] is not None:

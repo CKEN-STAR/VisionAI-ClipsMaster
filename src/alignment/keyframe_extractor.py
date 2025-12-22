@@ -15,7 +15,7 @@ import tempfile
 from src.utils.log_handler import get_logger
 
 # 导入异常处理
-from src.utils.exceptions import MediaProcessingError
+from src.utils.exceptions import VideoProcessError
 
 # 配置日志
 logger = get_logger("keyframe_extractor")
@@ -43,16 +43,16 @@ def extract_keyframes(
         关键帧信息列表，每帧包含timestamp(时间戳)和frame(图像数据)
     
     异常:
-        MediaProcessingError: 视频处理失败
+        VideoProcessError: 视频处理失败
     """
     if not os.path.exists(video_path):
-        raise MediaProcessingError(f"视频文件不存在: {video_path}")
+        raise VideoProcessError(f"视频文件不存在: {video_path}")
     
     try:
         # 打开视频文件
         cap = cv2.VideoCapture(video_path)
         if not cap.isOpened():
-            raise MediaProcessingError(f"无法打开视频文件: {video_path}")
+            raise VideoProcessError(f"无法打开视频文件: {video_path}")
         
         # 获取视频信息
         fps = cap.get(cv2.CAP_PROP_FPS)
@@ -85,7 +85,7 @@ def extract_keyframes(
         
     except Exception as e:
         logger.error(f"关键帧提取失败: {str(e)}")
-        raise MediaProcessingError(f"关键帧提取失败: {str(e)}")
+        raise VideoProcessError(f"关键帧提取失败: {str(e)}")
     finally:
         # 确保视频捕获对象被释放
         if 'cap' in locals() and cap.isOpened():

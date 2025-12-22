@@ -23,6 +23,8 @@ sys.path.insert(0, PROJECT_ROOT)
 # 导入版本管理器和转换器
 from src.training.model_version_manager import ModelVersionManager
 from models.converters.model_converter import ModelConverter
+# 🆕 导入剧本重构数据增强器
+from src.training.reconstruction_augmenter import ReconstructionAugmenter
 
 class EnTrainer:
     """英文训练器 - Mistral-7B模型"""
@@ -62,12 +64,16 @@ class EnTrainer:
         print(f"🇺🇸 英文训练器初始化完成: {self.model_name}")
         print(f"📊 配置: {self.config['quantization']}量化, GPU={'启用' if use_gpu else '禁用'}")
 
-    def prepare_english_data(self, training_data: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def prepare_english_data(self, training_data: List[Dict[str, Any]],
+                            use_reconstruction_augmentation: bool = True,
+                            num_variants: int = 3) -> Dict[str, Any]:
         """
-        准备英文训练数据
+        准备英文训练数据（支持7步重构算法数据增强）
 
         Args:
             training_data: 原始训练数据
+            use_reconstruction_augmentation: 是否使用剧本重构数据增强
+            num_variants: 每个样本生成的变体数量
 
         Returns:
             处理后的英文训练数据
@@ -79,7 +85,8 @@ class EnTrainer:
                 "total_samples": 0,
                 "avg_length": 0,
                 "english_ratio": 0,
-                "word_count": 0
+                "word_count": 0,
+                "augmented_samples": 0  # 🆕 增强样本数
             }
         }
 
@@ -87,6 +94,16 @@ class EnTrainer:
         total_english_chars = 0
         total_chars = 0
         total_words = 0
+
+        # 🆕 初始化数据增强器
+        augmenter = None
+        if use_reconstruction_augmentation:
+            try:
+                augmenter = ReconstructionAugmenter()
+                print(f"🔄 启用剧本重构数据增强，每个样本生成 {num_variants} 个变体")
+            except Exception as e:
+                print(f"⚠️ 初始化数据增强器失败: {e}，将使用原始数据")
+                augmenter = None
 
         for item in training_data:
             original = item.get("original", "")
@@ -105,17 +122,62 @@ class EnTrainer:
                     words = re.findall(r'\b[a-zA-Z]+\b', original)
                     word_count = len(words)
 
-                    processed_sample = {
-                        "input": f"Original script: {original}",
-                        "output": f"Viral script: {viral}",
-                        "english_ratio": english_ratio,
-                        "length": len(original),
-                        "word_count": word_count
-                    }
+                    # 🆕 使用数据增强器生成变体
+                    samples_to_add = []
 
-                    processed_data["samples"].append(processed_sample)
+                    if augmenter:
+                        try:
+                            variants = augmenter.augment_sample(
+                                original, viral,
+                                language="en",
+                                num_variants=num_variants
+                            )
 
-                    # 统计信息
+                            # 处理所有变体（包括原始样本）
+                            for variant in variants:
+                                variant_words = re.findall(r'\b[a-zA-Z]+\b', variant['original'])
+                                processed_sample = {
+                                    "input": f"Original script: {variant['original']}",
+                                    "output": f"Viral script: {variant['viral']}",
+                                    "english_ratio": english_ratio,
+                                    "length": len(variant['original']),
+                                    "word_count": len(variant_words),
+                                    "augmented": variant.get("augmented", False),
+                                    "method": variant.get("method", "original")
+                                }
+                                samples_to_add.append(processed_sample)
+
+                                if variant.get("augmented", False):
+                                    processed_data["statistics"]["augmented_samples"] += 1
+
+                        except Exception as e:
+                            print(f"⚠️ 增强样本失败: {e}，使用原始样本")
+                            # 回退到原始样本
+                            samples_to_add = [{
+                                "input": f"Original script: {original}",
+                                "output": f"Viral script: {viral}",
+                                "english_ratio": english_ratio,
+                                "length": len(original),
+                                "word_count": word_count,
+                                "augmented": False,
+                                "method": "original"
+                            }]
+                    else:
+                        # 不使用增强，直接添加原始样本
+                        samples_to_add = [{
+                            "input": f"Original script: {original}",
+                            "output": f"Viral script: {viral}",
+                            "english_ratio": english_ratio,
+                            "length": len(original),
+                            "word_count": word_count,
+                            "augmented": False,
+                            "method": "original"
+                        }]
+
+                    # 添加所有样本
+                    processed_data["samples"].extend(samples_to_add)
+
+                    # 统计信息（基于原始样本）
                     total_length += len(original)
                     total_english_chars += english_chars
                     total_chars += total_chars_in_sample
@@ -127,15 +189,29 @@ class EnTrainer:
 
         # 计算统计信息
         sample_count = len(processed_data["samples"])
+        original_count = len(training_data)
+
         if sample_count > 0:
-            processed_data["statistics"] = {
+            processed_data["statistics"].update({
                 "total_samples": sample_count,
-                "avg_length": total_length / sample_count,
+                "original_samples": original_count,
+                "avg_length": total_length / original_count if original_count > 0 else 0,
                 "english_ratio": total_english_chars / total_chars if total_chars > 0 else 0,
                 "word_count": total_words,
                 "vocabulary_size": len(processed_data["vocabulary"]),
-                "avg_words_per_sample": total_words / sample_count
-            }
+                "avg_words_per_sample": total_words / original_count if original_count > 0 else 0,
+                "augmentation_ratio": sample_count / original_count if original_count > 0 else 1.0
+            })
+
+            # 🆕 输出增强统计
+            if augmenter:
+                aug_stats = augmenter.get_stats()
+                print(f"📊 数据增强统计:")
+                print(f"  - 原始样本: {original_count}")
+                print(f"  - 增强后样本: {sample_count}")
+                print(f"  - 增强倍数: {sample_count / original_count:.1f}x")
+                print(f"  - 成功率: {aug_stats.get('success_rate', 0):.1%}")
+                print(f"  - 平均处理时间: {aug_stats.get('avg_time_per_sample', 0):.2f}秒/样本")
 
         return processed_data
 
@@ -166,23 +242,35 @@ class EnTrainer:
             
             if progress_callback:
                 progress_callback(0.1, "Loading English model...")
-            
-            # 1. 加载模型和分词器 - 使用较小的模型以适配4GB内存
-            model_name = "microsoft/DialoGPT-medium"  # 使用medium版本以适配内存限制
 
-            # 加载本地缓存的模型
+            # 1. 加载模型和分词器 - 使用本地模型
+            # 本地模型路径（FP16原始模型，用于训练）
+            model_path = "models/mistral/base"
+
+            # 检查模型是否存在
+            import os
+            if not os.path.exists(os.path.join(model_path, "config.json")):
+                return {
+                    "success": False,
+                    "error": f"English model not found at {model_path}. Please download the model first."
+                }
+
+            # 加载本地模型
             tokenizer = AutoTokenizer.from_pretrained(
-                model_name,
-                cache_dir="./models/cache",
-                local_files_only=True  # 只使用本地文件
+                model_path,
+                local_files_only=True  # 只使用本地文件，不连接HuggingFace
             )
 
+            # 智能设备分配：只要有CUDA就使用device_map="auto"进行GPU-CPU混合分配
+            # device_map="auto"会自动根据显存大小将模型层分配到GPU/CPU
+            # 显存充足时全部使用GPU，显存不足时自动混合GPU+CPU，充分利用硬件资源
+            has_cuda = torch.cuda.is_available()
+
             model = AutoModelForCausalLM.from_pretrained(
-                model_name,
-                torch_dtype=torch.float16 if self.use_gpu and torch.cuda.is_available() else torch.float32,
-                device_map="auto" if self.use_gpu and torch.cuda.is_available() else None,
-                cache_dir="./models/cache",
-                local_files_only=True  # 只使用本地文件
+                model_path,
+                torch_dtype=torch.float16 if has_cuda else torch.float32,
+                device_map="auto" if has_cuda else None,  # 有GPU就智能分配，无GPU就用CPU
+                local_files_only=True  # 只使用本地文件，不连接HuggingFace
             )
 
             if tokenizer.pad_token is None:
@@ -306,7 +394,7 @@ class EnTrainer:
             except Exception as e:
                 return {"success": False, "error": f"Model saving failed: {str(e)}"}
 
-            # 7. 训练后自动转换为GGUF格式并注册版本
+            # 7. 注册训练后的模型版本（不自动转换GGUF）
             gguf_path = None
             version_id = None
 
@@ -627,63 +715,6 @@ class EnTrainer:
             self.logger.error(f"Quick inference test failed: {e}")
             raise
 
-    def _convert_to_gguf_after_training(self, model_path: str) -> Optional[str]:
-        """
-        训练后转换为GGUF格式
-
-        Args:
-            model_path: HuggingFace格式模型路径
-
-        Returns:
-            GGUF格式模型路径
-        """
-        try:
-            self.logger.info("🔄 Converting to GGUF format...")
-
-            # 创建量化目录
-            quant_dir = Path("models/mistral/quantized/trained")
-            quant_dir.mkdir(parents=True, exist_ok=True)
-
-            # 生成GGUF文件名
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            gguf_path = quant_dir / f"trained_{timestamp}_Q5_K.gguf"
-
-            self.logger.info(f"   Source path: {model_path}")
-            self.logger.info(f"   Target path: {gguf_path}")
-
-            # 执行转换
-            self.model_converter.convert_format(
-                str(model_path),
-                "gguf",
-                str(gguf_path),
-                "Q5_K"  # 英文模型使用Q5_K量化
-            )
-
-            # 验证转换结果
-            if gguf_path.exists():
-                self.logger.info(f"✅ GGUF conversion successful: {gguf_path}")
-
-                # 创建符号链接指向最新版本
-                latest_link = quant_dir / "latest.gguf"
-                if latest_link.exists() or latest_link.is_symlink():
-                    latest_link.unlink()
-
-                # 在Windows上创建副本而不是符号链接
-                import shutil
-                shutil.copy2(gguf_path, latest_link)
-                self.logger.info(f"✅ Updated latest version link: {latest_link}")
-
-                return str(gguf_path)
-            else:
-                self.logger.error("❌ GGUF conversion failed, file does not exist")
-                return None
-
-        except Exception as e:
-            self.logger.error(f"❌ GGUF conversion failed: {e}")
-            import traceback
-            self.logger.error(traceback.format_exc())
-            return None
-
     def _register_trained_version(
         self,
         model_path: str,
@@ -853,11 +884,14 @@ class EnTrainer:
                 return {"success": False, "error": f"Missing required dependencies: {e}"}
 
             # 加载tokenizer和模型
+            # 智能设备分配：有CUDA就自动混合GPU-CPU
+            has_cuda = torch.cuda.is_available()
+
             tokenizer = AutoTokenizer.from_pretrained(hf_path)
             model = AutoModelForCausalLM.from_pretrained(
                 hf_path,
-                torch_dtype=torch.float16 if self.use_gpu else torch.float32,
-                device_map="auto" if self.use_gpu else None
+                torch_dtype=torch.float16 if has_cuda else torch.float32,
+                device_map="auto" if has_cuda else None  # 智能GPU-CPU混合分配
             )
 
             self.logger.info("✅ Model loaded successfully")

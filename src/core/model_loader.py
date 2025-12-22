@@ -12,7 +12,7 @@ import time
 import logging
 from typing import Dict, Any, Optional, List
 
-from src.utils.config_manager import get_config
+# get_config removed: using runtime params from app and sane defaults
 
 # 配置日志
 logging.basicConfig(level=logging.INFO,
@@ -25,19 +25,28 @@ class ModelLoader:
     负责加载和管理大模型，支持中英文模型的按需加载。
     """
     
-    def __init__(self):
-        """初始化模型加载器"""
-        # 加载配置
-        self.config = get_config("models")
-        
+    def __init__(self, preferred_model: Optional[str] = None, use_quantization: bool = False, use_low_memory: bool = False):
+        """初始化模型加载器
+        兼容 app.py 传参：preferred_model / use_quantization / use_low_memory
+        """
+        # 运行期配置（兼容旧实现）
+        self.config = {
+            "preferred_model": preferred_model or "auto",
+            "use_quantization": bool(use_quantization),
+            "use_low_memory": bool(use_low_memory),
+            # 供旧API使用的占位配置
+            "chinese": {"name": "Qwen3-1.7B", "use_quantization": bool(use_quantization), "quantization_level": 4},
+            "english": {"name": "Mistral-7B", "use_quantization": bool(use_quantization), "quantization_level": 4},
+        }
+
         # 模型缓存
         self.models = {}
-        
+
         # 模拟一些模型属性
-        self.chinese_model_path = "models/chinese/Qwen2.5-7B"
-        self.english_model_path = "models/english/Mistral-7B" 
-        
-        logger.info("模型加载器初始化完成")
+        self.chinese_model_path = "models/chinese/Qwen3-1.7B"
+        self.english_model_path = "models/english/Mistral-7B"
+
+        logger.info(f"模型加载器初始化完成，preferred_model={self.config['preferred_model']}, use_quantization={self.config['use_quantization']}")
     
     def load_chinese_model(self) -> Dict[str, Any]:
         """加载中文模型

@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![PyQt6](https://img.shields.io/badge/GUI-PyQt6-green.svg)](https://www.riverbankcomputing.com/software/pyqt/)
-[![AI Models](https://img.shields.io/badge/AI-Mistral%20%2B%20Qwen2.5系列-red.svg)](https://huggingface.co/)
+[![AI Models](https://img.shields.io/badge/AI-Mistral%20%2B%20Qwen3系列-red.svg)](https://huggingface.co/)
 [![Version](https://img.shields.io/badge/Version-v1.1.0-blue.svg)]()
 [![Status](https://img.shields.io/badge/Status-Production%20Ready-brightgreen.svg)]()
 [![Test Status](https://img.shields.io/badge/Tests-EXCELLENT%20(100%25)-brightgreen.svg)]()
@@ -24,7 +24,7 @@
 
 ## ✨ 项目亮点
 
-- 🤖 **双模型AI架构**: Mistral系列(英文) + Qwen2.5系列(中文)，智能分析剧情结构
+- 🤖 **双模型AI架构**: Mistral系列(英文) + Qwen3系列(中文)，智能分析剧情结构
 
 - 🎯 **智能剧本重构**: AI深度理解原始字幕，重构为病毒式传播的爆款短剧风格
 
@@ -124,8 +124,8 @@ python simple_ui_fixed.py
 ├── Mistral系列 (英文处理)
 │   ├── 量化版本: Q2_K (2.8GB) / Q4_K_M (4.1GB) / Q5_K (6.3GB)
 │   └── 专长: 英文剧情分析、情节重构
-└── Qwen2.5系列 (中文处理)
-    ├── 智能推荐: 根据设备性能自动选择0.5B/1.5B/3B/7B/14B/32B
+└── Qwen3系列 (中文处理)
+    ├── 智能推荐: 根据设备性能自动选择0.6B/1.7B/8B/32B
     ├── 量化版本: INT4 / INT8 / INT4-128 / INT8-PerChannel
     └── 专长: 中文语境理解、本土化改编
 ```
@@ -286,7 +286,7 @@ python simple_ui_fixed.py
 
 ### AI模型
 - **Mistral-7B-Instruct**: 英文语言模型
-- **Qwen2.5-7B-Instruct**: 中文语言模型
+- **Qwen3-1.7B-Instruct**: 中文语言模型
 - **GGUF格式**: 量化模型格式
 
 ## 🚀 安装与设置
@@ -511,7 +511,7 @@ python comprehensive_production_verification_test.py
 ### v1.0.0 (2025-07-22) - 生产就绪版本
 #### ✨ 新功能
 - 🎬 完整的AI短剧混剪工作流程
-- 🤖 双语言模型支持 (Mistral-7B + Qwen2.5-7B)
+- 🤖 双语言模型支持 (Mistral-7B + Qwen3系列)
 - 🎨 现代化PyQt6用户界面
 - 📤 剪映项目文件导出功能
 - 🔧 智能模型下载和管理
@@ -558,7 +558,7 @@ python comprehensive_production_verification_test.py
 感谢以下开源项目和组织的支持：
 
 - **Mistral AI** - 提供优秀的Mistral-7B语言模型
-- **Qwen Team** - 提供强大的Qwen2.5中文语言模型
+- **Qwen Team** - 提供强大的Qwen3中文语言模型
 - **Hugging Face** - 提供模型托管和推理框架
 - **PyQt6** - 提供现代化的GUI开发框架
 - **FFmpeg** - 提供强大的视频处理能力
@@ -592,7 +592,7 @@ python comprehensive_production_verification_test.py
 
 **🎉 首个正式版本**
 - 🤖 完整的AI短剧混剪工作流程
-- 🌐 双语言AI模型支持 (Mistral-7B + Qwen2.5-7B)
+- 🌐 双语言AI模型支持 (Mistral-7B + Qwen3系列)
 - 🎨 现代化PyQt6用户界面
 - 📤 剪映项目文件导出功能
 - 💾 4GB内存优化支持

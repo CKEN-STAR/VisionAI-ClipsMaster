@@ -1,4 +1,4 @@
-{
+﻿{
     "profiles": {
         "high_end": {
             "model_precision": "q4_k_m",
@@ -57,7 +57,7 @@
         }
     },
     "model_specific_settings": {
-        "qwen2.5-7b-zh": {
+        "Qwen3-1.7B-zh": {
             "high_end": {
                 "context_length": 8192,
                 "batch_size": 8

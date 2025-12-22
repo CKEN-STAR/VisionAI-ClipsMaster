@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 VisionAI-ClipsMaster 部署优化器
@@ -336,7 +336,7 @@ class DeploymentOptimizer:
         
         config = {
             'active_models': {
-                'chinese': 'qwen2.5-7b-zh',
+                'chinese': 'Qwen3-1.7B-zh',
                 'english': 'mistral-7b-en'
             },
             'quantization': {

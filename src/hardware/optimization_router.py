@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 指令集优化路由器 - VisionAI-ClipsMaster
@@ -321,7 +321,7 @@ class OptimizationRouter:
             'cpu_features': {k: v for k, v in self.instruction_sets.items() if v},
             'details': self.get_optimization_level(),
             'model_parameters': {
-                'qwen2.5-7b-zh': self.get_model_parameters('qwen2.5-7b-zh'),
+                'Qwen3-1.7B-zh': self.get_model_parameters('Qwen3-1.7B-zh'),
                 'mistral-7b-en': self.get_model_parameters('mistral-7b-en')
             },
             'has_simd': HAS_SIMD,
@@ -611,7 +611,7 @@ if __name__ == "__main__":
     
     # 显示模型参数
     print("\n模型优化参数:")
-    for model in ['qwen2.5-7b-zh', 'mistral-7b-en']:
+    for model in ['Qwen3-1.7B-zh', 'mistral-7b-en']:
         params = router.get_model_parameters(model)
         print(f"  {model}:")
         for k, v in params.items():

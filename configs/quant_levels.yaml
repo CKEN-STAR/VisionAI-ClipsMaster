@@ -73,7 +73,7 @@ quant_levels:
 
 # 特定模型的量化调优参数
 model_specific:
-  "qwen2.5-7b-zh":
+  "qwen3-1.7b-zh":
     default_level: "Q4_K_M"
     quant_params:
       Q4_K_M:

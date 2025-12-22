@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 VisionAI-ClipsMaster 快速打包脚本
@@ -197,7 +197,7 @@ VisionAI-ClipsMaster/
 ### 构建信息
 - 构建时间: {build_time}
 - Python版本: {python_version.major}.{python_version.minor}.{python_version.micro}
-- 包含模型: Mistral-7B (英文), Qwen2.5-7B (中文)
+- 包含模型: Mistral-7B (英文), Qwen3-1.7B (中文)
 
 ### 技术支持
 如遇问题，请查看 `logs/` 目录下的日志文件。

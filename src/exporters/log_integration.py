@@ -421,7 +421,7 @@ if __name__ == "__main__":
         
     # 测试模型使用日志
     log_model_usage(
-        model_name="Qwen2.5-7B",
+        model_name="Qwen3-1.7B",
         language="zh",
         operation="text_generation",
         parameters={

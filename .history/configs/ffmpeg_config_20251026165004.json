@@ -1,0 +1,10 @@
+{
+  "ffmpeg_path": "tools/ffmpeg/bin/ffmpeg.exe",
+  "ffprobe_path": "tools/ffmpeg/bin/ffprobe.exe",
+  "system": "windows",
+  "configured_at": "D:\\Material\\Project\\VisionAI-ClipsMaster",
+  "status": "configured",
+  "skip_ffmpeg_check": false,
+  "auto_detected": false,
+  "note": "使用相对路径，自动适配项目位置。如果FFmpeg不可用，请下载并放置到tools/ffmpeg/bin/目录"
+}

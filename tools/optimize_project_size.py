@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -201,8 +201,8 @@ class ProjectOptimizer:
         """设置按需下载"""
         download_config = {
             "models": {
-                "qwen2.5-7b": {
-                    "url": "https://modelscope.cn/models/qwen/Qwen2.5-7B-Instruct-GGUF/resolve/main/qwen2.5-7b-instruct-q4_k_m.gguf",
+                "Qwen3-1.7B": {
+                    "url": "https://modelscope.cn/models/Qwen/Qwen3-8B-Instruct-GGUF/resolve/main/Qwen3-1.7B-instruct-q4_k_m.gguf",
                     "size": "4.1GB",
                     "priority": 1
                 },

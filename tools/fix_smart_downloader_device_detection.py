@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 智能推荐下载器设备检测修复脚本
@@ -127,7 +127,7 @@ class SmartDownloaderFixer:
             selector.force_refresh_hardware()
             
             # 测试中文模型推荐
-            zh_recommendation = selector.recommend_model_version("qwen2.5-7b")
+            zh_recommendation = selector.recommend_model_version("Qwen3-1.7B")
             
             # 测试英文模型推荐
             en_recommendation = selector.recommend_model_version("mistral-7b")

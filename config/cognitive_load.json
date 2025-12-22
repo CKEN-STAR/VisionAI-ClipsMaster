@@ -1,4 +1,4 @@
-{
+﻿{
   "threshold": 3.0,
   "monitoring_interval": 3600,
   "auto_visualization": true,
@@ -11,7 +11,7 @@
   "language_models": {
     "chinese": {
       "enabled": true,
-      "model": "Qwen2.5-7B",
+      "model": "Qwen3-1.7B",
       "collect_metrics": true
     },
     "english": {

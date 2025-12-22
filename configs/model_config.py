@@ -93,11 +93,11 @@ def get_default_model_config() -> Dict[str, Any]:
     """
     return {
         "models": {
-            "qwen2.5-7b-zh": {
-                "name": "Qwen2.5-7B-Instruct",
-                "checkpoint": "Qwen/Qwen2.5-7B-Instruct",
+            "qwen3-1.7b-zh": {
+                "name": "Qwen3-1.7B-Instruct",
+                "checkpoint": "Qwen/Qwen3-1.7B-Instruct",
                 "language": "zh",
-                "size": "7B",
+                "size": "1.7B",
                 "quantization": "INT4",
                 "context_length": 8192
             },
@@ -111,7 +111,7 @@ def get_default_model_config() -> Dict[str, Any]:
             }
         },
         "default_models": {
-            "zh": "qwen2.5-7b-zh",
+            "zh": "qwen3-1.7b-zh",
             "en": "mistral-7b-en"
         }
     }
@@ -141,14 +141,14 @@ def get_model_config(model_id: str) -> Optional[ModelConfig]:
     )
 
 def get_qwen_config() -> ModelConfig:
-    """获取Qwen模型配置（默认使用Qwen2.5-0.5B）
+    """获取Qwen模型配置（默认使用Qwen3-0.6B）
 
     Returns:
         ModelConfig: Qwen模型配置对象
     """
     config = load_model_config()
-    # 更新为Qwen2.5系列默认模型
-    default_zh_model_id = config.get("default_models", {}).get("zh", "qwen2.5-0.5b-zh")
+    # 更新为Qwen3系列默认模型
+    default_zh_model_id = config.get("default_models", {}).get("zh", "qwen3-0.6b-zh")
     return get_model_config(default_zh_model_id)
 
 def get_mistral_config() -> ModelConfig:

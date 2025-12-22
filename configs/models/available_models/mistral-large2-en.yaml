@@ -3,26 +3,20 @@ model:
   display_name: Mistral-Large-2 英文剧本重构模型
   language: en
   version: '2407'
-  model_format: gptq
+  model_format: huggingface
   hf_model_id: mistralai/Mistral-Large-Instruct-2407
   modelscope_id: AI-ModelScope/Mistral-Large-Instruct-2407
   parameters: 123B
   size_fp16: 246GB
-  size_int4: 61.5GB
-  size_int8: 123GB
 paths:
   base: models/mistral/mistral-large2
   quantized: models/mistral/mistral-large2/quantized
   adapters: models/mistral/mistral-large2/adapters
   checkpoint: models/mistral/mistral-large2/base/model.safetensors
 quantization:
-  default_level: INT4
-  emergency_level: INT4
-  performance_level: INT4
-  gptq_config:
-    bits: 4
-    group_size: 128
-    desc_act: false
+  default_level: FP16
+  emergency_level: FP16
+  performance_level: FP16
 lora_config:
   flagship_tier:
     r: 64
@@ -53,31 +47,17 @@ hardware_requirements:
     min_vram: 20GB
     recommended_vram: 24GB
     device_type: GPU
-    quantization: INT4
+    quantization: FP16
     estimated_inference_time: 1.5s
 download:
   modelscope_url: https://www.modelscope.cn/models/AI-ModelScope/Mistral-Large-Instruct-2407
   hf_mirror_url: https://hf-mirror.com/mistralai/Mistral-Large-Instruct-2407
   hf_url: https://huggingface.co/mistralai/Mistral-Large-Instruct-2407
   quantized_versions:
-    int4: https://www.modelscope.cn/models/LoneStriker/Mistral-Large-Instruct-2407-GPTQ
-    int4_128: https://www.modelscope.cn/models/LoneStriker/Mistral-Large-Instruct-2407-GPTQ
-    int4_perchannel: https://www.modelscope.cn/models/LoneStriker/Mistral-Large-Instruct-2407-GPTQ
-    int8: https://www.modelscope.cn/models/LoneStriker/Mistral-Large-Instruct-2407-GPTQ
-    int8_128: https://www.modelscope.cn/models/LoneStriker/Mistral-Large-Instruct-2407-GPTQ
-    int8_perchannel: https://www.modelscope.cn/models/LoneStriker/Mistral-Large-Instruct-2407-GPTQ
+    fp16: https://www.modelscope.cn/models/AI-ModelScope/Mistral-Large-Instruct-2407
   resume_download: true
   max_retries: 3
   timeout: 1800
-  mirror_sources:
-    int4:
-      primary: https://www.modelscope.cn/models/LoneStriker/Mistral-Large-Instruct-2407-GPTQ
-      mirror: https://hf-mirror.com/LoneStriker/Mistral-Large-Instruct-2407-4.0bpw-h6-exl2
-      official: https://huggingface.co/LoneStriker/Mistral-Large-Instruct-2407-4.0bpw-h6-exl2
-    int8:
-      primary: https://www.modelscope.cn/models/LoneStriker/Mistral-Large-Instruct-2407-GPTQ
-      mirror: https://hf-mirror.com/LoneStriker/Mistral-Large-Instruct-2407-8.0bpw-h8-exl2
-      official: https://huggingface.co/LoneStriker/Mistral-Large-Instruct-2407-8.0bpw-h8-exl2
 剧本重构配置:
   max_input_length: 32000
   max_output_length: 8000
@@ -89,13 +69,20 @@ download:
   max_output_ratio: 0.8
 benchmark:
   device: GPU (NVIDIA RTX 4090 24GB)
-  quantization: INT4
+  quantization: FP16
   inference_time_per_subtitle: 1.0s
-  memory_usage: 22GB
+  memory_usage: 24.0GB
   bleu_score: 0.82
 changelog:
+- version: '2.0'
+  date: '2025-10-23'
+  changes:
+  - 移除GPTQ量化支持，专注于FP16训练
+  - 优化下载逻辑，从服务器动态获取文件大小
+  - 增强下载中断清理机制
 - version: '1.0'
   date: '2025-01-06'
   changes:
   - 初始版本
   - 支持旗舰级设备
+  - 支持LoRA微调

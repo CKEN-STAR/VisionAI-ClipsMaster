@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
 训练管理器模块
@@ -376,7 +376,7 @@ class TrainManager:
         try:
             # 模拟模型加载和初始化
             time.sleep(0.2)
-            model_name = "Qwen2.5-7B-Instruct" if language == "zh" else "Mistral-7B-Instruct"
+            model_name = "Qwen3-1.7B-Instruct" if language == "zh" else "Mistral-7B-Instruct"
             return {
                 "status": "success",
                 "duration": 0.2,

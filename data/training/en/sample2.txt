@@ -10,7 +10,7 @@ By adding such legal samples, we can test that the validator not only isolates n
 
 The VisionAI-ClipsMaster project aims to create engaging short drama remixes from original videos and subtitles using large language models. 
 
-It uses Mistral-7B for English content processing and Qwen2.5-7B for Chinese processing. The core concept involves analyzing original drama subtitles, generating new engaging subtitle arrangements, and creating remixed videos through sequence cutting.
+It uses Mistral-7B for English content processing and Qwen3-1.7B for Chinese processing. The core concept involves analyzing original drama subtitles, generating new engaging subtitle arrangements, and creating remixed videos through sequence cutting.
 
 This training methodology uses successful "hit" remixes for fine-tuning the models, creating a feedback loop that improves the system over time.
 

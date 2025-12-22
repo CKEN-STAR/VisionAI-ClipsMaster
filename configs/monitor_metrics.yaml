@@ -163,7 +163,7 @@ application_metrics:
 
 # 模型特定指标
 model_specific_metrics:
-  # 中文模型 (Qwen2.5-7B)
+  # 中文模型 (Qwen3系列)
   - name: "qwen_memory"
     desc: "Qwen模型内存"
     unit: "MB"

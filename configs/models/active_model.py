@@ -193,9 +193,9 @@ if __name__ == "__main__":
         
         installed = get_installed_models()
         print(f"已安装模型: {installed}")
-        
-        print(f"Qwen2.5模型配置: {get_model_config('qwen2.5-7b-zh')}")
-        
+
+        print(f"Qwen3模型配置: {get_model_config('qwen3-1.7b-zh')}")
+
         print(f"标准量化级别配置: {get_quantization_info()}")
         print(f"紧急量化级别配置: {get_quantization_info('emergency')}")
         

@@ -1,0 +1,192 @@
+model:
+  name: mistral-7b-en
+  display_name: Mistral-7B 英文剧本重构模型
+  language: en
+  version: '0.3'
+  model_format: gptq
+  hf_model_id: mistralai/Mistral-7B-Instruct-v0.3
+  modelscope_id: AI-ModelScope/Mistral-7B-Instruct-v0.3
+  parameters: 7B
+  size_fp16: 14GB
+  size_int4: 3.5GB
+  size_int8: 7GB
+paths:
+  base: models/mistral/mistral-7b
+  quantized: models/mistral/mistral-7b/quantized
+  adapters: models/mistral/mistral-7b/adapters
+  checkpoint: models/mistral/mistral-7b/base/model.safetensors
+quantization:
+  default_level: INT4
+  emergency_level: INT4
+  performance_level: INT4
+  gptq_config:
+    bits: 4
+    group_size: 128
+    desc_act: false
+    sym: true
+    true_sequential: true
+  llm_int8_config:
+    load_in_8bit: true
+    llm_int8_threshold: 6.0
+    llm_int8_skip_modules: null
+lora_config:
+  entry_tier:
+    r: 4
+    lora_alpha: 16
+    target_modules:
+    - q_proj
+    - v_proj
+    lora_dropout: 0.05
+    bias: none
+    task_type: CAUSAL_LM
+  basic_tier:
+    r: 8
+    lora_alpha: 32
+    target_modules:
+    - q_proj
+    - k_proj
+    - v_proj
+    - o_proj
+    lora_dropout: 0.05
+    bias: none
+    task_type: CAUSAL_LM
+training:
+  entry_tier:
+    learning_rate: 3e-4
+    batch_size: 1
+    gradient_accumulation_steps: 16
+    num_epochs: 3
+    max_seq_length: 2048
+    warmup_steps: 100
+    logging_steps: 10
+    save_steps: 100
+    eval_steps: 100
+    fp16: false
+    bf16: false
+    gradient_checkpointing: true
+  basic_tier:
+    learning_rate: 3e-4
+    batch_size: 2
+    gradient_accumulation_steps: 8
+    num_epochs: 3
+    max_seq_length: 2048
+    warmup_steps: 100
+    logging_steps: 10
+    save_steps: 100
+    eval_steps: 100
+    fp16: true
+    bf16: false
+    gradient_checkpointing: true
+hardware_requirements:
+  entry_tier:
+    min_memory: 3GB
+    recommended_memory: 4GB
+    device_type: CPU
+    quantization: INT8
+    estimated_inference_time: 10s
+  basic_tier:
+    min_vram: 3GB
+    recommended_vram: 4GB
+    device_type: GPU
+    quantization: INT4
+    estimated_inference_time: 5s
+download:
+  modelscope_url: https://www.modelscope.cn/models/AI-ModelScope/Mistral-7B-Instruct-v0.3
+  hf_mirror_url: https://hf-mirror.com/mistralai/Mistral-7B-Instruct-v0.3
+  hf_url: https://huggingface.co/mistralai/Mistral-7B-Instruct-v0.3
+  quantized_versions:
+    fp16: https://www.modelscope.cn/models/AI-ModelScope/Mistral-7B-Instruct-v0.3
+    int4: https://www.modelscope.cn/models/LoneStriker/Mistral-7B-Instruct-v0.3-GPTQ
+    int4_128: https://www.modelscope.cn/models/LoneStriker/Mistral-7B-Instruct-v0.3-GPTQ
+    int4_perchannel: https://www.modelscope.cn/models/LoneStriker/Mistral-7B-Instruct-v0.3-GPTQ
+    int8: https://www.modelscope.cn/models/LoneStriker/Mistral-7B-Instruct-v0.3-GPTQ
+    int8_128: https://www.modelscope.cn/models/LoneStriker/Mistral-7B-Instruct-v0.3-GPTQ
+    int8_perchannel: https://www.modelscope.cn/models/LoneStriker/Mistral-7B-Instruct-v0.3-GPTQ
+  resume_download: true
+  max_retries: 3
+  timeout: 300
+  mirror_sources:
+    int4:
+      primary: https://www.modelscope.cn/models/LoneStriker/Mistral-7B-Instruct-v0.3-GPTQ
+      mirror: https://hf-mirror.com/LoneStriker/Mistral-7B-Instruct-v0.3-4.0bpw-h6-exl2
+      official: https://huggingface.co/LoneStriker/Mistral-7B-Instruct-v0.3-4.0bpw-h6-exl2
+    int8:
+      primary: https://www.modelscope.cn/models/LoneStriker/Mistral-7B-Instruct-v0.3-GPTQ
+      mirror: https://hf-mirror.com/LoneStriker/Mistral-7B-Instruct-v0.3-8.0bpw-h8-exl2
+      official: https://huggingface.co/LoneStriker/Mistral-7B-Instruct-v0.3-8.0bpw-h8-exl2
+剧本重构配置:
+  max_input_length: 8000
+  max_output_length: 2000
+  temperature: 0.7
+  top_p: 0.9
+  top_k: 50
+  repetition_penalty: 1.1
+  min_output_ratio: 0.2
+  max_output_ratio: 0.8
+  system_prompt: 'You are a professional short drama editor who excels at extracting
+    exciting clips from original subtitles and reorganizing them into attractive mixed-cut
+    video subtitles.
+
+    Your tasks are:
+
+    1. Understand the plot direction and emotional curve of the original drama
+
+    2. Extract the most exciting and attractive clips
+
+    3. Reorganize these clips to ensure plot coherence and emotional progression
+
+    4. Generate new subtitle files with timecodes and dialogue content
+
+
+    Notes:
+
+    - Maintain plot coherence and avoid excessive jumps
+
+    - Ensure reasonable emotional curves with ups and downs
+
+    - Avoid being too short (incomplete plot) or too long (not much different from
+    the original)
+
+    - Prioritize key plots such as conflicts, turns, and climaxes
+
+    '
+  user_prompt_template: 'Original subtitles are as follows:
+
+    {original_srt}
+
+
+    Please generate attractive mixed-cut video subtitles based on the above original
+    subtitles. Requirements:
+
+    1. Extract the most exciting clips
+
+    2. Ensure plot coherence
+
+    3. Generate new SRT format subtitle files
+
+    4. Control subtitle length between {min_ratio} and {max_ratio} of the original
+
+    '
+benchmark:
+  device: CPU (Intel i5-10400)
+  quantization: INT8
+  inference_time_per_subtitle: 9.2s
+  memory_usage: 3.5GB
+  bleu_score: 0.7
+  device_gpu: GPU (NVIDIA GTX 1650 4GB)
+  quantization_gpu: INT4
+  inference_time_per_subtitle_gpu: 4.8s
+  memory_usage_gpu: 3.2GB
+  bleu_score_gpu: 0.72
+known_issues:
+- CPU mode inference is slower, GPU recommended
+- INT4 quantization may cause slight precision loss, but within acceptable range
+changelog:
+- version: '0.3'
+  date: '2025-01-06'
+  changes:
+  - Upgraded to Mistral-7B-Instruct-v0.3
+  - Added support for intelligent recommendation downloader system
+  - Added LoRA/QLoRA fine-tuning support
+  - Added INT4/INT8 quantization support
+  - Added multi-tier device support

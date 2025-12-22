@@ -1,5 +1,0 @@
-{
-    "framework": "pytorch",
-    "task": "chat",
-    "allow_remote": true
-}

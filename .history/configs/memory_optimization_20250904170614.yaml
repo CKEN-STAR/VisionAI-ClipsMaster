@@ -1,0 +1,36 @@
+# 模型内存优化配置
+memory_limits:
+  # 4GB内存设备的安全限制
+  safe_limit_mb: 3800
+  
+  # 模型内存使用估算
+  models:
+    qwen2.5-7b-zh:
+      base_memory_mb: 4100
+      quantized_q4_mb: 2800
+      quantized_q2_mb: 1900
+    
+    mistral-7b-en:
+      base_memory_mb: 6300
+      quantized_q4_mb: 3200
+      quantized_q2_mb: 2100
+
+# 量化策略
+quantization:
+  emergency_mode:
+    level: "Q2_K"
+    memory_threshold_mb: 3000
+  
+  normal_mode:
+    level: "Q4_K_M"
+    memory_threshold_mb: 2000
+  
+  performance_mode:
+    level: "Q5_K"
+    memory_threshold_mb: 1000
+
+# 模拟模式配置（用于测试）
+simulation:
+  enabled: true
+  mock_model_loading: true
+  simulate_memory_usage: true
