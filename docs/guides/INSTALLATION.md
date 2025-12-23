@@ -231,6 +231,36 @@ pip install -r requirements.txt --timeout 1000
 pip install -r requirements.txt --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org
 ```
 
+---
+
+## 🌐 云端模式配置 (v1.2.0 新增)
+
+如果您没有GPU或希望使用更强大的AI模型，可以配置云端模式。
+
+### 步骤1：获取API密钥
+
+#### 硅基流动 (推荐)
+1. 访问 https://cloud.siliconflow.cn
+2. 注册账号（无需绑定其他账号）
+3. 进入控制台 → API密钥 → 创建密钥
+
+#### 魔搭社区
+1. 访问 https://modelscope.cn
+2. 注册并绑定阿里云账号
+3. 进入个人中心 → API Token → 创建Token
+
+### 步骤2：配置云端模式
+
+1. 启动程序后，在"AI模式"下拉框选择"云端模式"
+2. 选择平台（硅基流动/魔搭社区）
+3. 选择模型（Qwen3-235B/DeepSeek-V3.2）
+4. 填写API密钥
+5. 点击"测试连接"验证
+
+详细说明请参考: [云端AI模式使用指南](../CLOUD_AI_MODE_GUIDE.md)
+
+---
+
 ## 📞 获取帮助
 
 如果遇到安装问题，请：

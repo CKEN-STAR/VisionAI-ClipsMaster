@@ -1,13 +1,14 @@
 # 📚 VisionAI-ClipsMaster API 参考文档
 
-> **版本**: v1.1.0
-> **更新日期**: 2025年10月10日
+> **版本**: v1.2.0
+> **更新日期**: 2025年12月22日
 > **适用范围**: 开发者和集成者
 
 ## 📋 目录
 
 - [🚀 快速开始](#-快速开始)
 - [🧠 核心模块](#-核心模块)
+- [🌐 云端AI引擎](#-云端ai引擎)
 - [🎬 剧本重构API](#-剧本重构api)
 - [🔄 模型管理API](#-模型管理api)
 - [📤 导出功能API](#-导出功能api)
@@ -44,6 +45,32 @@ result = engineer.reconstruct_screenplay("input.srt")
 # 4. 导出结果
 exporter = JianyingProExporter()
 exporter.export_project(result, "output.json")
+```
+
+### 云端模式使用流程 (v1.2.0 新增)
+
+```python
+from src.core.cloud_ai_engine import CloudAIEngine
+from src.config.cloud_api_config import CloudAPIConfig
+
+# 1. 配置云端API
+config = CloudAPIConfig()
+config.set_provider("siliconflow")
+config.set_api_key("your-api-key")
+config.set_model("Qwen/Qwen3-235B-A22B")
+
+# 2. 初始化云端引擎
+cloud_engine = CloudAIEngine(config)
+
+# 3. 测试连接
+if cloud_engine.test_connection():
+    print("云端连接成功")
+
+# 4. 生成爆款字幕
+result = cloud_engine.generate_viral_subtitle(
+    original_subtitles=subtitles,
+    language="zh"
+)
 ```
 
 ## 🧠 核心模块
@@ -195,6 +222,119 @@ def analyze_narrative(self, subtitles: List[dict]) -> dict:
             'pacing_analysis': dict      # 节奏分析
         }
     """
+```
+
+## 🌐 云端AI引擎 (v1.2.0 新增)
+
+### CloudAIEngine 类
+
+云端AI推理引擎，支持调用云端大模型API进行字幕重构。
+
+#### 初始化
+
+```python
+class CloudAIEngine:
+    def __init__(self, config: CloudAPIConfig = None):
+        """
+        初始化云端AI引擎
+        
+        Args:
+            config (CloudAPIConfig): 云端API配置，为None时自动加载
+        """
+```
+
+#### 主要方法
+
+##### test_connection()
+
+```python
+def test_connection(self) -> bool:
+    """
+    测试云端API连接
+    
+    Returns:
+        bool: 连接是否成功
+        
+    Example:
+        >>> engine = CloudAIEngine()
+        >>> if engine.test_connection():
+        ...     print("连接成功")
+    """
+```
+
+##### generate_viral_subtitle()
+
+```python
+def generate_viral_subtitle(
+    self,
+    original_subtitles: List[dict],
+    language: str = "zh",
+    retention_ratio: float = 0.45
+) -> List[dict]:
+    """
+    生成爆款风格字幕
+    
+    Args:
+        original_subtitles (List[dict]): 原始字幕列表
+        language (str): 语言代码 ('zh' 或 'en')
+        retention_ratio (float): 关键对白保留比例
+        
+    Returns:
+        List[dict]: 重构后的字幕列表
+        
+    Raises:
+        ConnectionError: API连接失败
+        APIError: API调用错误
+    """
+```
+
+### CloudAPIConfig 类
+
+云端API配置管理器。
+
+```python
+class CloudAPIConfig:
+    def set_provider(self, provider: str) -> None:
+        """
+        设置云端平台
+        
+        Args:
+            provider (str): 平台名称 ('siliconflow' 或 'modelscope')
+        """
+    
+    def set_api_key(self, api_key: str) -> None:
+        """
+        设置API密钥
+        
+        Args:
+            api_key (str): API密钥
+        """
+    
+    def set_model(self, model: str) -> None:
+        """
+        设置模型
+        
+        Args:
+            model (str): 模型标识符
+            - 硅基流动: 'Qwen/Qwen3-235B-A22B', 'deepseek-ai/DeepSeek-V3'
+            - 魔搭社区: 'Qwen/Qwen3-235B-A22B-FP8', 'deepseek-ai/DeepSeek-V3'
+        """
+    
+    def save(self) -> bool:
+        """
+        保存配置到文件
+        
+        Returns:
+            bool: 保存是否成功
+        """
+    
+    def load(self) -> bool:
+        """
+        从文件加载配置
+        
+        Returns:
+            bool: 加载是否成功
+        """
 ```
 
 ## 🎬 剧本重构API
@@ -349,4 +489,4 @@ class JianyingProExporter:
 
 ---
 
-**VisionAI-ClipsMaster API 文档** | 版本 v1.0.1 | 更新于 2025-07-25
+**VisionAI-ClipsMaster API 文档** | 版本 v1.2.0 | 更新于 2025-12-22

@@ -177,7 +177,7 @@ VisionAI-ClipsMaster/
 
 **优化改进:**
 - 🧠 叙事连贯性算法优化（10大智能策略）
-- 📊 关键对白保留比例调整至45%
+- 📊 关键对白保留比例默认75%（可配置）
 - 🧹 项目体积优化（1GB+ → 216MB）
 
 [查看完整更新日志](docs/release-notes/RELEASE_NOTES_v1.2.0.md)
@@ -216,6 +216,7 @@ VisionAI-ClipsMaster/
 - [Transformers](https://huggingface.co/transformers/) - AI模型框架
 - [llama.cpp](https://github.com/ggerganov/llama.cpp) - GGUF推理引擎
 - [FFmpeg](https://ffmpeg.org/) - 视频处理
+- [pyCapCut](https://github.com/GuanYixuan/pyCapCut) - 剪映项目导出参考
 - [硅基流动](https://siliconflow.cn/) - 云端API服务
 - [魔搭社区](https://modelscope.cn/) - 云端API服务
 

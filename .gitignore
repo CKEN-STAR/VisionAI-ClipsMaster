@@ -59,6 +59,7 @@ cache/
 .env
 .env.local
 config/secrets/
+configs/cloud_api_config.json
 *.key
 *.pem
 

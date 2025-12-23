@@ -9,8 +9,8 @@ __version__ = "1.2.0"
 __version_info__ = (1, 2, 0)
 
 # 发布信息
-__release_date__ = "2025-12-19"
-__release_name__ = "云端API集成版"
+__release_date__ = "2025-12-22"
+__release_name__ = "云端AI集成版"
 __build_type__ = "stable"
 
 # 兼容性信息
