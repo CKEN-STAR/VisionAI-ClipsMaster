@@ -10,25 +10,37 @@ VisionAI-ClipsMaster 让您通过AI技术将完整短剧转化为吸引眼球的
 安装程序 → 导入素材 → AI处理 → 导出视频
 ```
 
+### v1.2.0 新增：双模式推理
+
+| 模式 | 特点 | 适用场景 |
+|------|------|----------|
+| **本地模式** | 使用本地GGUF模型 | 隐私敏感、离线环境 |
+| **云端模式** | 调用云端大模型API | 无GPU设备、追求效果 |
+
 ## ⚡ 5分钟快速开始
 
 ### 第1步：环境准备（1分钟）
 
 **系统要求检查：**
-- ✅ 内存：4GB以上
-- ✅ 存储：10GB可用空间
-- ✅ Python：3.8+版本
+- ✅ 操作系统：Windows 10/11
+- ✅ 内存：8GB以上（推荐16GB）
+- ✅ 存储：5GB可用空间
+- ✅ Python：3.11+版本
 
 **快速安装：**
 ```bash
 # 1. 克隆项目
-git clone https://github.com/your-repo/VisionAI-ClipsMaster.git
+git clone https://github.com/CKEN-STAR/VisionAI-ClipsMaster.git
 cd VisionAI-ClipsMaster
 
-# 2. 安装依赖
-pip install -r requirements.txt
+# 2. 创建虚拟环境
+python -m venv .venv
+.venv\Scripts\activate
 
-# 3. 启动程序
+# 3. 安装依赖（使用国内镜像加速）
+pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/
+
+# 4. 启动程序
 python simple_ui_fixed.py
 ```
 
@@ -46,19 +58,33 @@ python simple_ui_fixed.py
 
 ### 第3步：AI智能处理（2分钟）
 
+**选择推理模式：**
+
+#### 方式A：本地模式（需要下载模型）
+1. 在AI模式下拉框选择"本地模式"
+2. 首次使用需下载模型（设置 → 模型管理）
+3. 系统自动检测语言并加载对应模型
+
+#### 方式B：云端模式（推荐新手）
+1. 在AI模式下拉框选择"云端模式"
+2. 选择平台：硅基流动（推荐）或魔搭社区
+3. 选择模型：Qwen3-235B 或 DeepSeek-V3.2
+4. 填写API密钥（获取方式见下文）
+5. 点击"测试连接"验证
+
+**获取API密钥：**
+- **硅基流动**（推荐，无需绑定）: https://cloud.siliconflow.cn
+- **魔搭社区**（需绑定阿里云）: https://modelscope.cn
+
 **自动处理流程：**
 1. **语言检测：** 系统自动识别字幕语言
-   - 中文内容 → 智能推荐Qwen2.5系列模型（根据设备性能自动选择0.5B/1.5B/3B/7B/14B/32B）
-   - 英文内容 → 加载Mistral-7B模型
-
 2. **剧本分析：** AI深度理解剧情结构
    - 分析角色关系和情节发展
    - 识别关键情节点和高潮部分
    - 评估情感曲线和节奏变化
-
 3. **智能重构：** 生成爆款风格字幕
-   - 提取最精彩的片段
-   - 重新组织叙事结构
+   - 提取最精彩的片段（保留约45%关键对白）
+   - 确保叙事连贯性（10大智能策略）
    - 优化节奏和情感张力
 
 **处理状态监控：**
