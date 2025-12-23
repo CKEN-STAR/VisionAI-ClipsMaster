@@ -4744,7 +4744,7 @@ class SimpleScreenplayApp(QMainWindow):
 
         try:
             # 设置窗口属性（关键组件，立即加载）
-            self.setWindowTitle("🎬 VisionAI-ClipsMaster - v1.2.0 [洪良完美无敌版]")
+            self.setWindowTitle("🎬 VisionAI-ClipsMaster - v1.2.0 [完美无敌版]")
             self.resize(1350, 900)  # 增加到1350x900尺寸，保持3:2宽高比，提供更好的屏幕空间利用率
             # 设置窗口最小尺寸
             self.setMinimumSize(800, 600)
