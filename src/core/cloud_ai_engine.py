@@ -57,7 +57,7 @@ PLATFORM_CONFIG = {
         "base_url": "https://api.siliconflow.cn/v1",
         "models": {
             CloudModel.QWEN3: "Qwen/Qwen3-235B-A22B",  # 硅基流动上的Qwen3-235B模型
-            CloudModel.DEEPSEEK_V3_2: "deepseek-ai/DeepSeek-V3.2",  # 硅基流动上的DeepSeek-V3.2模型
+            CloudModel.DEEPSEEK_V3_2: "deepseek-ai/DeepSeek-V3",  # 硅基流动上的DeepSeek-V3模型
         },
         "headers_template": {
             "Content-Type": "application/json",
@@ -68,8 +68,8 @@ PLATFORM_CONFIG = {
         "name": "魔搭社区",
         "base_url": "https://api-inference.modelscope.cn/v1",
         "models": {
-            CloudModel.QWEN3: "Qwen/Qwen3-235B-A22B-FP8",  # 魔搭社区上的Qwen3模型
-            CloudModel.DEEPSEEK_V3_2: "deepseek-ai/DeepSeek-V3-0324",  # 魔搭社区上的DeepSeek-V3模型
+            CloudModel.QWEN3: "Qwen/Qwen3-235B-A22B",  # 魔搭社区上的Qwen3模型
+            CloudModel.DEEPSEEK_V3_2: "deepseek-ai/DeepSeek-V3.2",  # 魔搭社区上的DeepSeek-V3.2模型
         },
         "headers_template": {
             "Content-Type": "application/json",
@@ -157,6 +157,8 @@ class ModelScopeProvider(BaseCloudProvider):
         # 获取实际模型名称
         model_name = self.config["models"].get(model, model)
         
+        logger.info(f"魔搭社区API请求: model={model_name}, url={url}")
+        
         payload = {
             "model": model_name,
             "messages": messages,
@@ -174,6 +176,8 @@ class ModelScopeProvider(BaseCloudProvider):
                 timeout=120
             )
             
+            logger.info(f"魔搭社区API响应状态码: {response.status_code}")
+            
             # 检查特定错误
             if response.status_code == 401:
                 try:
@@ -187,6 +191,41 @@ class ModelScopeProvider(BaseCloudProvider):
                         )
                 except (json.JSONDecodeError, KeyError):
                     pass
+                raise Exception(f"API认证失败(401): 请检查API密钥是否正确")
+            
+            # 处理403 Forbidden错误
+            if response.status_code == 403:
+                try:
+                    error_data = response.json()
+                    error_msg = error_data.get("error", {}).get("message", "") or error_data.get("message", "")
+                    logger.error(f"魔搭社区403错误详情: {error_data}")
+                except (json.JSONDecodeError, KeyError):
+                    error_msg = response.text
+                
+                # 检查是否是模型访问权限问题
+                if "model" in error_msg.lower() or "access" in error_msg.lower():
+                    raise Exception(
+                        f"模型访问被拒绝(403): {error_msg}\n\n"
+                        f"可能原因:\n"
+                        f"1. 模型 {model_name} 可能需要申请访问权限\n"
+                        f"2. 您的账户可能没有开通该模型服务\n"
+                        f"3. 请访问 https://modelscope.cn 检查模型访问权限"
+                    )
+                else:
+                    raise Exception(
+                        f"访问被拒绝(403): {error_msg}\n\n"
+                        f"请检查:\n"
+                        f"1. API密钥是否有效\n"
+                        f"2. 账户是否已绑定阿里云\n"
+                        f"3. 是否有访问该模型的权限"
+                    )
+            
+            # 处理404错误 - 模型不存在
+            if response.status_code == 404:
+                raise Exception(
+                    f"模型不存在(404): {model_name}\n\n"
+                    f"请检查模型名称是否正确，或尝试其他模型。"
+                )
             
             response.raise_for_status()
             return response.json()
