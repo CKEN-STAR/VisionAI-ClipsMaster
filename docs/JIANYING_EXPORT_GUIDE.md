@@ -446,5 +446,5 @@ project/
 
 **文档版本**：1.0  
 **最后更新**：2025-10-05  
-**维护者**：VisionAI-ClipsMaster Team  
+**维护者**：Cken
 
